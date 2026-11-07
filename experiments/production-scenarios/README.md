@@ -341,3 +341,17 @@ It is an execution guard, not an Azure spending limit or a measured invoice.
 If a watchdog performs cleanup after the runner exits, reconcile its verified
 absence evidence before marking the ledger allocation cleaned up. Never delete
 the ledger to bypass an exhausted allowance or unresolved cleanup.
+
+North Europe's quota API reported 30 instances for each SKU, but [provider
+validation](evidence/web-validation-northeurope-6478043/) rejected both plans
+with `SubscriptionIsOverQuotaForSku` and an effective limit of zero. Treat the
+provider result as authoritative for this attempted deployment; the quota listing
+alone does not authorize a run.
+
+An [interrupted follow-up](evidence/web-interrupted-6478043/) was started before
+that separate validation result had been inspected. The operator stopped it,
+the watchdog verified cleanup, and a second ownership-scoped check confirmed
+all resource and deployment IDs absent. The budget allocation remains retained.
+This interrupted attempt is not a completed deployment comparison. The runner
+now performs provider validation inside its own execution path, before allocating
+budget or starting provisioning, and refuses rejected or incomplete validation.

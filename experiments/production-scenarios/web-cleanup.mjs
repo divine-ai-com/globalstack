@@ -21,6 +21,7 @@ export function webArmClient(manifest, observe = () => {}, transport = fetch) {
     const url = new URL(path, 'https://management.azure.com');
     const nestedDeployment = `${scope.group}/providers/Microsoft.Resources/deployments/web-component`;
     const allowed = [scope.group, `${scope.group}/resources`, ...scope.plans, scope.deployment, `${scope.deployment}/cancel`];
+    if (method === 'POST') allowed.push(`${scope.deployment}/validate`);
     if (method === 'GET') allowed.push(nestedDeployment, `${nestedDeployment}/operations`, `${scope.deployment}/operations`);
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed.some(item => item.toLowerCase() === url.pathname.toLowerCase()), 'Request escaped the owned Web scope');
     const startedAt = new Date().toISOString();

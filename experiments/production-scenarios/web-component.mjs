@@ -81,14 +81,21 @@ try {
   const body = { location: report.region, properties: { mode: 'Incremental', template: JSON.parse(compiled), parameters: Object.fromEntries(Object.entries({
     groupName: manifest.group, serviceName: manifest.service, location: report.region, runId,
   }).map(([key, value]) => [key, { value }])) } };
+  process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = manifest.subscription;
+  arm = createArmServer({ store: new ResourceStore() });
+  await new Promise(done => arm.listen(0, '127.0.0.1', done));
+  phase = 'provider-validation';
+  const validationBody = { ...body, properties: { ...body.properties, validationLevel: 'Provider' } };
+  const validationPath = `${scope.deployment}/validate?api-version=2025-04-01`;
+  const validation = await pair('POST', validationPath, validationBody);
+  // Fail closed on an incomplete asynchronous validation as well as rejection.
+  // Quota listings can disagree with this actual provider validation.
+  assert.ok(validation.azure.status === 200 && !validation.azure.body?.error, 'Azure provider validation did not complete successfully; no provisioning permitted');
   report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: `Hosting comparison in ${region}` });
   manifestPath = resolve(out, 'private-cleanup.json');
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'web-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
   await new Promise((done, fail) => { watchdog.once('spawn', done); watchdog.once('error', fail); }); watchdog.unref();
-  process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = manifest.subscription;
-  arm = createArmServer({ store: new ResourceStore() });
-  await new Promise(done => arm.listen(0, '127.0.0.1', done));
   phase = 'azure-deploy';
   let deploymentError;
   try {
@@ -152,6 +159,14 @@ try {
       await writeFile(donePath, 'verified\n', { mode: 0o600 }); watchdog?.kill('SIGTERM'); await rm(manifestPath);
       await confirmBudgetCleanup(budgetPath, runId);
     } catch { report.cleanup = { cleanupComplete: false, recoveryRequired: true }; }
+  }
+  if (!manifestPath && arm) {
+    const absence = [];
+    for (const id of [scope.group, ...scope.plans, scope.deployment]) {
+      absence.push((await request('GET', `${id}?api-version=${scope.plans.includes(id) ? '2024-11-01' : '2025-04-01'}`)).status);
+    }
+    report.preflightAbsence = absence;
+    if (absence.every(status => status === 404)) report.cleanup = { groupAbsent: true, plansAbsent: true, deploymentAbsent: true, provisioningNotStarted: true };
   }
   if (arm) {
     await local('DELETE', `${scope.group}?api-version=2025-04-01`).catch(() => {});
