@@ -70,7 +70,7 @@ function validateIndex(body) {
   }
   if (!body.name || typeof body.name !== 'string') return 'Index payload requires a string name.';
   if (!Array.isArray(body.fields) || body.fields.length === 0) return 'Index payload requires at least one field.';
-  if (!body.fields.some(field => field?.key === true)) return 'Index payload requires exactly one key field.';
+  if (body.fields.filter(field => field?.key === true).length !== 1) return 'Index payload requires exactly one key field.';
   for (const field of body.fields) {
     if (!field?.name || typeof field.name !== 'string') return 'Each index field requires a string name.';
     if (!field?.type || typeof field.type !== 'string') return `Field '${field.name}' requires a string type.`;

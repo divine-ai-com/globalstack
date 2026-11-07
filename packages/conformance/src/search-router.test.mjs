@@ -123,3 +123,30 @@ test('azure ai search runtime supports index, document indexing, search, count, 
     assert.equal(missing.body.error.code, 'IndexNotFound');
   });
 });
+
+test('invalid index key definitions do not create or overwrite an index', async () => {
+  await withSearchServer(async ({ port }) => {
+    const path = "/indexes('contracts')?api-version=2024-07-01";
+    const first = { name: 'contractId', type: 'Edm.String', key: true };
+    const second = { name: 'revisionId', type: 'Edm.String', key: true };
+    for (const fields of [[{ ...first, key: false }], [first, second]]) {
+      const rejected = await httpJson(port, 'PUT', path, { name: 'contracts', fields });
+      assert.equal(rejected.status, 400);
+      assert.equal(rejected.body.error.code, 'InvalidRequestParameter');
+      assert.equal((await httpJson(port, 'GET', path)).status, 404);
+    }
+    const definition = { name: 'contracts', fields: [first, { ...second, key: false }] };
+    const created = await httpJson(port, 'PUT', path, definition);
+    assert.equal(created.status, 201);
+    const invalidUpdate = await httpJson(port, 'PUT', path, { ...definition, fields: [first, second] });
+    assert.equal(invalidUpdate.status, 400);
+    const retained = await httpJson(port, 'GET', path);
+    assert.deepEqual(retained.body, created.body);
+    const indexed = await httpJson(port, 'POST', "/indexes('contracts')/docs/search.index?api-version=2024-07-01", {
+      value: [{ '@search.action': 'upload', contractId: 'agreement-17', revisionId: 'r2' }],
+    });
+    assert.equal(indexed.status, 200);
+    const results = await httpJson(port, 'POST', "/indexes('contracts')/docs/search?api-version=2024-07-01", { search: '*' });
+    assert.equal(results.body.value[0].contractId, 'agreement-17');
+  });
+});
