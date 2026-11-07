@@ -46,9 +46,12 @@ export function validateStorageSystemSubscription(store, providerRoute, body) {
   const policy = properties.retryPolicy ?? {};
   if (policy.maxDeliveryAttempts !== undefined && (!Number.isInteger(policy.maxDeliveryAttempts) || policy.maxDeliveryAttempts < 1 || policy.maxDeliveryAttempts > 30)
     || policy.eventTimeToLiveInMinutes !== undefined && (!Number.isInteger(policy.eventTimeToLiveInMinutes) || policy.eventTimeToLiveInMinutes < 1 || policy.eventTimeToLiveInMinutes > 1440)) return error(400, 'InvalidRequest', 'Invalid event retry policy.');
-  // Destination setup is authorized at the account boundary. Queue-only role
-  // assignment failures are retained in the Azure component captures.
-  if (!queueSenderAuthorized(store, principal, account.id)) return error(400, 'Managed Identity Authorization Error', 'Managed identity for event subscription does not have authorization to deliver to the endpoint.');
+  // Account-scoped setup has a successful Azure capture. Queue-only setup
+  // failed there, but the cause is not established as a universal Azure rule.
+  if (!queueSenderAuthorized(store, principal, account.id)) {
+    if (queueSenderAuthorized(store, principal, queue.id)) return unsupported('Queue-scoped identity setup needs further Azure validation; only account-scoped setup is implemented.');
+    return error(409, 'Managed Identity Authorization Error', 'Managed identity for event subscription does not have authorization to deliver to the endpoint.');
+  }
   return null;
 }
 

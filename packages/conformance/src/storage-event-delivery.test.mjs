@@ -119,7 +119,7 @@ test('firewall denial and retry exhaustion do not turn a Blob write into false d
   assert.deepEqual(await events(), []);
 });
 
-test('subscription updates reject unsupported features and queue-only setup authorization', async t => {
+test('subscription updates reject unsupported features and leave queue-only setup explicitly unsupported', async t => {
   const { request, upload, events } = await fixture(t);
   const original = (await request('GET', `${subscription}?api-version=2025-02-15`)).body;
   const unsupported = structuredClone(original);
@@ -130,8 +130,8 @@ test('subscription updates reject unsupported features and queue-only setup auth
   const queueRole = `${account}/queueServices/default/queues/event-arrivals/providers/Microsoft.Authorization/roleAssignments/${roleName}`;
   assert.equal((await request('PUT', `${queueRole}?api-version=2022-04-01`, assignment)).status, 201);
   const rejected = await request('PUT', `${subscription}?api-version=2025-02-15`, original);
-  assert.equal(rejected.status, 400);
-  assert.equal(rejected.body.error.code, 'Managed Identity Authorization Error');
+  assert.equal(rejected.status, 501);
+  assert.equal(rejected.body.error.code, 'GlobalStackEventDeliveryNotImplemented');
   // The failed update must preserve the already-created subscription.
   assert.equal((await request('GET', `${subscription}?api-version=2025-02-15`)).body.properties.filter.advancedFilters, undefined);
   await upload('/other/filtered.txt');
