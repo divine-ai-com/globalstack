@@ -26,9 +26,9 @@ async function setup(t) {
     body: storageBatch(operations).replaceAll('{account}', account) }) };
 }
 
-test('Azure batch and query capture replays with atomic rollback and exact projected fields', async t => {
+for (const directory of ['storage-durable-92c1e82', 'storage-batches-b19f5cb']) test(`Azure batch and query capture ${directory} replays atomic decisions and projected fields`, async t => {
   const { request } = await setup(t);
-  const base = new URL('../../../experiments/production-scenarios/evidence/storage-durable-92c1e82/', import.meta.url);
+  const base = new URL(`../../../experiments/production-scenarios/evidence/${directory}/`, import.meta.url);
   const index = JSON.parse(await readFile(new URL('index.json', base), 'utf8'));
   for (const [name, metadata] of Object.entries(index.files)) {
     const bytes = await readFile(new URL(name, base));
@@ -41,6 +41,7 @@ test('Azure batch and query capture replays with atomic rollback and exact proje
     const local = await request({ method: azure.method, path: azure.path, ...azure.request,
       body: azure.request.body.replaceAll('<storage-account>', account) });
     assert.equal(local.status, azure.status, azure.phase);
+    for (const key of ['x-ms-continuation-nextpartitionkey', 'x-ms-continuation-nextrowkey']) assert.equal(Boolean(local.headers[key]), Boolean(azure.headers[key]), `${azure.phase}: ${key} presence`);
     if (azure.path === '/$batch') {
       assert.deepEqual(statuses(local.body), statuses(azure.body), azure.phase);
       assert.equal(errorCode(local.body), errorCode(azure.body), azure.phase);
@@ -73,7 +74,7 @@ test('batch updates are conditional and a failing delete rolls back earlier writ
   assert.equal(contenders.filter(result => statuses(result.body)[0] === 204).length, 1);
   assert.equal(contenders.filter(result => statuses(result.body)[0] === 412).length, 7);
   assert.equal(JSON.parse((await get()).body).Retained, undefined);
-  const merge = await batch([{ method: 'MERGE', path: path.slice(1), body: { Added: 'value' } }]);
+  const merge = await batch([{ method: 'PATCH', path: path.slice(1), body: { Added: 'value' } }]);
   assert.deepEqual(statuses(merge.body), [204]);
   const after = JSON.parse((await get()).body);
   assert.equal(after.Count, 2); assert.equal(after.Added, 'value');
@@ -89,4 +90,37 @@ test('batch parser bounds operations and rejects foreign URLs and malformed boun
   assert.throws(() => parseTableBatch(source, 'multipart/mixed; boundary=wrong', account));
   assert.throws(() => parseTableBatch(storageBatch(Array.from({ length: 101 }, (_, i) => ({ body: { PartitionKey: 'p', RowKey: String(i) } }))).replaceAll('{account}', account), contentType, account));
   assert.throws(() => parseTableBatch('x'.repeat(4 * 1024 ** 2 + 1), contentType, account), /too large/);
+});
+
+test('Table pages follow opaque continuations without leaking rows outside the filter', async t => {
+  const { router, request, batch } = await setup(t);
+  router.registerTable({ accountName: account, tableName: 'Pages' });
+  for (const partition of ['allowed', 'foreign']) {
+    assert.deepEqual(statuses((await batch(['a', 'b', 'c'].map(row => ({ path: 'Pages',
+      body: { PartitionKey: partition, RowKey: row, Value: `${partition}-${row}` } })))).body), [204, 204, 204]);
+  }
+  const base = new URLSearchParams({ '$filter': "PartitionKey eq 'allowed'", '$select': 'Value,Absent', '$top': '1' });
+  const rows = []; let previous;
+  for (let page = 0; page < 3; page++) {
+    const response = await request({ method: 'GET', path: `/Pages()?${base}`, headers: { accept: 'application/json;odata=nometadata' } });
+    assert.equal(response.status, 200);
+    rows.push(...JSON.parse(response.body).value);
+    const partition = response.headers['x-ms-continuation-nextpartitionkey'], row = response.headers['x-ms-continuation-nextrowkey'];
+    if (page < 2) {
+      assert.ok(partition && row); assert.notEqual(row, previous); previous = row;
+      base.set('NextPartitionKey', partition); base.set('NextRowKey', row);
+    } else { assert.equal(partition, undefined); assert.equal(row, undefined); }
+  }
+  assert.deepEqual(rows, ['a', 'b', 'c'].map(row => ({ Value: `allowed-${row}`, Absent: null })));
+  const empty = await request({ method: 'GET', path: '/Pages()?$top=0', headers: { accept: 'application/json;odata=nometadata' } });
+  assert.deepEqual(JSON.parse(empty.body).value, []);
+  assert.equal(empty.headers['x-ms-continuation-nextpartitionkey'], undefined);
+  const malformed = await request({ method: 'GET', path: '/Pages()?NextPartitionKey=invalid', headers: { accept: 'application/json' } });
+  assert.equal(malformed.status, 400);
+  const target = "/Pages(PartitionKey='allowed',RowKey='a')";
+  const patch = await request({ method: 'PATCH', path: target, headers: { accept: 'application/json', 'content-type': 'application/json', 'if-match': '*' }, body: '{"Added":"native-patch"}' });
+  assert.equal(patch.status, 204);
+  const merged = await request({ method: 'GET', path: target, headers: { accept: 'application/json' } });
+  assert.equal(JSON.parse(merged.body).Added, 'native-patch');
+  assert.equal(JSON.parse(merged.body).Value, 'allowed-a');
 });

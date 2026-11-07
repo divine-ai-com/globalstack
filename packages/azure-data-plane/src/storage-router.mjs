@@ -2,7 +2,7 @@ import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
 import { leaseHeaders, leaseGuard, operateLease, blobConditions, leaseState } from './storage-lease.mjs';
-import { tableFilter } from './storage-table-filter.mjs';
+import { tableFilter, tableCursor, readTableCursor } from './storage-table-filter.mjs';
 import { parseTableBatch, executeTableBatch, tableBatchResponse } from './storage-table-batch.mjs';
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 
@@ -691,27 +691,39 @@ export class StorageDataPlaneRouter {
       if (req.method === 'GET' && queryPath) {
         const table = account.tables.get(lower(queryPath[1]));
         if (!table) return failure(404, 'TableNotFound', 'The table specified does not exist.');
-        if ([...url.searchParams.keys()].some(key => !['$filter', '$select', '$top', 'timeout', '$format'].includes(key))) return failure(501, 'NotImplemented', 'This Table query option is not implemented.');
+        if ([...url.searchParams.keys()].some(key => !['$filter', '$select', '$top', 'timeout', '$format', 'NextPartitionKey', 'NextRowKey'].includes(key))) return failure(501, 'NotImplemented', 'This Table query option is not implemented.');
         const filter = url.searchParams.get('$filter');
         let predicate;
         try { predicate = tableFilter(filter); } catch (error) { return failure(501, 'NotImplemented', error.message); }
-        const values = [...table.entities.values()].filter(predicate);
+        let values = [...table.entities.values()].filter(predicate);
         const top = url.searchParams.get('$top');
-        if (top !== null && (!/^\d+$/.test(top) || Number(top) < 1 || Number(top) > 1000)) return failure(400, 'InvalidInput', 'The query parameter value is invalid.');
+        if (top !== null && (!/^\d+$/.test(top) || Number(top) < 0 || Number(top) > 1000)) return failure(400, 'InvalidInput', 'The query parameter value is invalid.');
         const limit = top === null ? 1000 : Number(top);
-        if (values.length > limit) return failure(501, 'NotImplemented', 'Entity query continuation is not implemented.');
+        if (url.searchParams.has('NextPartitionKey') || url.searchParams.has('NextRowKey')) {
+          let partition, row;
+          try {
+            partition = readTableCursor(url.searchParams.get('NextPartitionKey'), table.tableName, 'partition');
+            row = url.searchParams.has('NextRowKey') ? readTableCursor(url.searchParams.get('NextRowKey'), table.tableName, 'row') : '';
+          } catch { return failure(400, 'InvalidInput', 'The continuation token is invalid.'); }
+          values = values.filter(entity => entity.PartitionKey > partition || entity.PartitionKey === partition && entity.RowKey >= row);
+        }
         const select = url.searchParams.get('$select');
         const selected = select === null ? null : select.split(',');
         if (selected && (selected.length > 255 || selected.some(name => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)))) return failure(400, 'InvalidInput', 'The projection is invalid.');
         values.sort((a, b) => a.PartitionKey < b.PartitionKey ? -1 : a.PartitionKey > b.PartitionKey ? 1 : a.RowKey < b.RowKey ? -1 : a.RowKey > b.RowKey ? 1 : 0);
-        const projected = values.map(entity => selected ? {
+        const next = limit > 0 ? values[limit] : undefined;
+        const continuation = next ? {
+          'x-ms-continuation-NextPartitionKey': tableCursor(table.tableName, 'partition', next.PartitionKey),
+          'x-ms-continuation-NextRowKey': tableCursor(table.tableName, 'row', next.RowKey),
+        } : {};
+        const projected = values.slice(0, limit).map(entity => selected ? {
           ...(!format.includes('odata=nometadata') ? { 'odata.etag': entity['odata.etag'] } : {}),
           ...Object.fromEntries(selected.map(name => [name, entity[name] ?? null])),
         } : entityBody(entity));
         const metadata = format.includes('odata=nometadata') ? {} : {
           'odata.metadata': `https://${account.accountName}.table.core.windows.net/$metadata#${table.tableName}${select ? `&$select=${select}` : ''}`,
         };
-        return send(res, 200, JSON.stringify({ ...metadata, value: projected }), common);
+        return send(res, 200, JSON.stringify({ ...metadata, value: projected }), { ...common, ...continuation });
       }
       if (req.method === 'POST' && path && path !== 'Tables') {
         const table = account.tables.get(lower(decodeURIComponent(path)));
@@ -749,7 +761,7 @@ export class StorageDataPlaneRouter {
       }
 
       const entityMatch = path.match(/^([^()]+)\(PartitionKey='((?:[^']|'')*)',RowKey='((?:[^']|'')*)'\)$/);
-      if (entityMatch && ['PUT', 'MERGE', 'DELETE'].includes(req.method)) {
+      if (entityMatch && ['PUT', 'MERGE', 'PATCH', 'DELETE'].includes(req.method)) {
         const [, tableName, partitionKey, rowKey] = entityMatch.map(value => decodeURIComponent(value).replaceAll("''", "'"));
         const table = account.tables.get(lower(tableName));
         if (!table) return failure(404, 'TableNotFound', 'The table specified does not exist.');
@@ -772,7 +784,7 @@ export class StorageDataPlaneRouter {
         const properties = Object.fromEntries(Object.entries(body).filter(([name, value]) => value !== null && name !== 'Timestamp' && !name.startsWith('odata.')));
         table.lastTimestamp = Math.max(Date.now(), (table.lastTimestamp ?? 0) + 1);
         const timestamp = new Date(table.lastTimestamp).toISOString();
-        const entity = { ...(req.method === 'MERGE' ? existing : {}), ...properties, PartitionKey: partitionKey, RowKey: rowKey,
+        const entity = { ...(['MERGE', 'PATCH'].includes(req.method) ? existing : {}), ...properties, PartitionKey: partitionKey, RowKey: rowKey,
           Timestamp: timestamp, 'odata.etag': `W/"datetime'${timestamp}'"` };
         table.entities.set(key, entity);
         return send(res, 204, '', { ...common, etag: entity['odata.etag'] });

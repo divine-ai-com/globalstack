@@ -191,7 +191,7 @@ The local Table implementation now supports a single JSON changeset with up to
 100 operations and a 4 MiB body limit, conditional writes, transactional rollback,
 projection, and bounded string-equality filters with `and`, `or` and parentheses.
 Tests replay the Azure decisions and verify that concurrent stale writers cannot
-both commit. Query pagination, other filter operators, multiple changesets,
+both commit. Other filter operators, multiple changesets,
 read batches and complete OData type/metadata fidelity remain unsupported.
 These changes do not establish complete Table compatibility.
 
@@ -202,3 +202,11 @@ orchestration to persist a failure after activity retries. Its success is a
 failure-path runtime check, not a completed document pipeline. Host-only mode
 remains available without that environment variable. Neither mode deploys the
 Function App to Azure or supplies Portal screenshots.
+
+The [fourth capture](evidence/storage-batches-b19f5cb/) confirms batch commit,
+rollback, compound filtering, merge and deletion in a fresh Azure-first run.
+It exposes two remaining query differences: `$top=0` and continuation after a
+bounded page. The subsequent local implementation supports both. Local
+continuation tokens have their own documented opaque encoding; exact token
+bytes are not an Azure compatibility claim. Pagination tests follow the issued
+token, preserve the filter/projection and check exhaustion and malformed tokens.

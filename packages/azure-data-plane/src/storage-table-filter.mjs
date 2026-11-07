@@ -46,3 +46,17 @@ export function tableFilter(source) {
   if (position !== tokens.length) unsupported();
   return predicate;
 }
+
+// Continuation values are opaque to clients. This local encoding is deliberately
+// versioned; it does not claim Azure's private token representation.
+export function tableCursor(table, kind, key) {
+  return `gs1.${Buffer.from(JSON.stringify([table.toLowerCase(), kind, key])).toString('base64url')}`;
+}
+
+export function readTableCursor(token, table, kind) {
+  if (typeof token !== 'string' || token.length > 8192 || !/^gs1\.[\w-]+$/.test(token)) throw new Error('Invalid continuation token');
+  const decoded = JSON.parse(Buffer.from(token.slice(4), 'base64url').toString('utf8'));
+  if (!Array.isArray(decoded) || decoded.length !== 3 || decoded[0] !== table.toLowerCase() || decoded[1] !== kind
+    || typeof decoded[2] !== 'string' || decoded[2].length > 1024 || tableCursor(table, kind, decoded[2]) !== token) throw new Error('Invalid continuation token');
+  return decoded[2];
+}

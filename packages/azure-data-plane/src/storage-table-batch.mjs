@@ -42,7 +42,7 @@ export function parseTableBatch(text, contentType, accountName) {
     const mime = headers(metadata);
     if (mime['content-type'] !== 'application/http' || mime['content-transfer-encoding']?.toLowerCase() !== 'binary') throw invalid();
     const [head, body] = split(content), lines = head.split('\r\n');
-    const request = /^(POST|PUT|MERGE|DELETE) ([^\s]+) HTTP\/1\.1$/.exec(lines.shift());
+    const request = /^(POST|PUT|MERGE|PATCH|DELETE) ([^\s]+) HTTP\/1\.1$/.exec(lines.shift());
     if (!request) throw problem('NotImplemented', 'This batch operation is not implemented.', 501);
     const url = new URL(request[2], `https://${accountName}.table.core.windows.net`);
     if (url.hostname !== `${accountName}.table.core.windows.net` || !['http:', 'https:'].includes(url.protocol)
@@ -89,7 +89,7 @@ export function executeTableBatch(account, operations) {
       const properties = Object.fromEntries(Object.entries(operation.entity).filter(([name, value]) => value !== null && name !== 'Timestamp' && !name.startsWith('odata.')));
       working.lastTimestamp = Math.max(Date.now(), (working.lastTimestamp ?? 0) + 1);
       const timestamp = new Date(working.lastTimestamp).toISOString();
-      const entity = { ...(operation.method === 'MERGE' ? current : {}), ...properties,
+      const entity = { ...(['MERGE', 'PATCH'].includes(operation.method) ? current : {}), ...properties,
         PartitionKey: operation.partition, RowKey: operation.row, Timestamp: timestamp, 'odata.etag': `W/"datetime'${timestamp}'"` };
       working.entities.set(key, entity);
       const echo = operation.method === 'POST' && operation.headers.prefer !== 'return-no-content';

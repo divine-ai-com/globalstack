@@ -1,0 +1,23 @@
+{
+  "scope": "Fourth Azure-first Storage API diagnostic, with 42 paired requests. No full application run.",
+  "files": {
+    "result.json": {
+      "sha256": "0419c187e3a44c187ccff0719576fcccd67b7a0773e5bd9835dd46db6b2c389d",
+      "bytes": 128084
+    },
+    "events.ndjson": {
+      "sha256": "8db54986c8ca962b674d36a7a79827bb2cec9a7a163a19eac2bcdc0a2dfdebab",
+      "bytes": 172760
+    },
+    "recording.json": {
+      "sha256": "deec419f999dbeaa561da4ba43e8babdb87622ac6ff79b40f313cf008c59da0d",
+      "bytes": 643
+    }
+  },
+  "observations": [
+    "Batch inserts, conflict rollback, mixed-partition rejection, compound filters, merge and deletion now match measured statuses and entity contents.",
+    "Azure accepts top=0 with no rows. The captured local revision rejects it.",
+    "Azure returns a continuation after top=1 on two rows. The captured local revision does not implement pagination.",
+    "Account and resource group deletion verified."
+  ]
+}
