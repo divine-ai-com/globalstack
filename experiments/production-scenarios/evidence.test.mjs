@@ -31,6 +31,23 @@ test('native Durable failure capture executed retries and retained the terminal 
 
 const base = new URL('./evidence/', import.meta.url);
 const load = async name => JSON.parse(await readFile(new URL(name, base), 'utf8'));
+test('later hosting retry preserves nested throttling and verified cleanup', async () => {
+  const prefix = 'web-throttle-a2ec5ef/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(`${prefix}result.json`);
+  assert.equal(report.sourceDirty, false);
+  assert.match(report.error, /throttled/);
+  assert.deepEqual(report.cleanup, { groupAbsent: true, plansAbsent: true, deploymentAbsent: true });
+  assert.ok(report.exchanges.some(exchange => exchange.target === 'azure' && exchange.phase === 'azure-deployment-diagnostic'
+    && exchange.body?.value?.some(operation => operation.properties?.statusCode === 429)));
+  assert.ok(report.exchanges.some(exchange => exchange.target === 'azure' && exchange.method === 'POST'
+    && exchange.path.includes('/cancel?') && exchange.status === 204));
+});
 test('scanner evidence retains the concurrent timeout and subsequent real HTTP recovery', async () => {
   for (const prefix of ['scanner-vendor-2c9f2f4/', 'scanner-daemon-cd26108/']) {
     const index = await load(`${prefix}index.json`);

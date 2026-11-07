@@ -435,6 +435,13 @@ handling path, not a successful paired hosting or application run.
 The account constraint and its proof are tracked in [#36](https://github.com/divine-ai-com/globalstack/issues/36);
 the bounded emulator fix is tracked separately in [#35](https://github.com/divine-ai-com/globalstack/issues/35).
 
+A [later hosting recheck](evidence/web-throttle-a2ec5ef/) at 14:29 UTC on
+2026-11-07 again returned nested provider 429 for EP1. Automatic cancellation
+and all cleanup checks completed. Further paid hosting retries are deferred
+pending resolution of the subscription limit. The earlier authorization for a
+free quota review still covers one P0v3 and one EP1 instance in West US 2;
+it does not authorize paid support or a higher experiment allowance.
+
 Set `PAIRED_WEB_REGION=northeurope` to test the alternative region. Its quota
 listing conflicts with provider validation, as documented below. The [retained retail prices](evidence/hosting-prices-20261107.json)
 are USD 0.084/hour for P0v3, and USD 0.167/vCPU-hour plus USD 0.0119/GiB-hour for

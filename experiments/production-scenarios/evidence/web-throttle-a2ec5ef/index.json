@@ -1,0 +1,21 @@
+{
+  "scope": "Post-upgrade hosting recheck. Azure again throttled EP1 creation with nested 429; runner canceled the deployment and verified group, both plans and deployment history absent. Not a successful paired hosting or application run.",
+  "files": {
+    "result.json": {
+      "sha256": "eb26acbe6b888f9628002daaa5fd8f696da0d73eab2e1a86af6b1e0ec11f3030",
+      "bytes": 67443
+    },
+    "events.ndjson": {
+      "sha256": "5666ca9b5f20c5fcd6ba0fd42cc1a015ff13b8e46ddddcc210ec508614c378c3",
+      "bytes": 78161
+    },
+    "compiled-template.json": {
+      "sha256": "cf92a03f88569e2717aee11c5914b737aaf35ea780f799cace8c6ca85a5a3b68",
+      "bytes": 3228
+    },
+    "recording.json": {
+      "sha256": "981a23fed4692a67e674a1e6fef3a0d6f2f396a55a393b9433c1613f693046f3",
+      "bytes": 638
+    }
+  }
+}
