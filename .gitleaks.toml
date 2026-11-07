@@ -202,3 +202,10 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/production-scenarios/evidence/blob-events-fc6c225/result\.json$''']
 regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in Blob event baseline evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-events-after-2ee7731/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']

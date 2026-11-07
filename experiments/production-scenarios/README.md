@@ -248,6 +248,21 @@ GlobalStack still rejected the unsupported child subscription in that capture.
 All six cloud cleanup assertions passed. These are component observations,
 not completed document processing scenarios. Account scope changes only the
 Sender role on the temporary experiment account; it is not a broader role.
+The failed queue-only runs do not establish a universal Azure rule. Setup with
+only a queue-scoped role remains explicitly unsupported locally until that
+case is resolved; delivery can use a queue-scoped grant after setup.
+
+The [fresh comparison after implementation](evidence/blob-events-after-2ee7731/comparison.json)
+checks the recorded deployment inputs, configured identity/source/destination
+references and actual queue event correlations on both targets. Both delivered
+the event and all cloud resources were removed. Azure's first attempt failed
+authorization and its unchanged retry succeeded. GlobalStack returned immediate
+success. The observed queue polling windows were 4376 ms and 4 ms respectively;
+these are single observations, not latency distributions. Deployment lifecycle,
+retry timing and role-propagation parity remain unresolved. Reproduce the
+selected comparison with `node compare-blob-events.mjs RESULT_JSON OUTPUT_JSON`.
+Its tests reject missing queue events, changed bytes/templates/identities,
+nonterminal deployment state and incomplete cleanup even if a summary says pass.
 
 The local implementation now uses the deployed system topic, subscription,
 role assignment and queue state to route PutBlob/DeleteBlob events. Tests

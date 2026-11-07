@@ -1,0 +1,36 @@
+{
+  "scope": "Selected Blob-to-Event-Grid-to-Queue contracts. Not full application or protocol parity.",
+  "selectedComparisonPassed": true,
+  "revision": "2ee7731d91a51f9c6bcc4b4902e34e135a372bb0",
+  "checks": [
+    "azure: source, destination and identity references",
+    "azure: BlobCreated event correlates with uploaded bytes",
+    "local: source, destination and identity references",
+    "local: BlobCreated event correlates with uploaded bytes",
+    "identical deployed template and parameters",
+    "selected event schema and payload fields"
+  ],
+  "observedUniqueEvents": {
+    "azure": 1,
+    "local": 1
+  },
+  "observedPollWindowMs": {
+    "azure": 4376,
+    "local": 4
+  },
+  "initialDeploymentStates": {
+    "azure": "Accepted",
+    "local": "Succeeded"
+  },
+  "exclusions": [
+    "Full Functions/scanning/SQL/Search flow",
+    "Azure Portal screenshots",
+    "Exhaustive negative-filter timing",
+    "Role revocation and retries on live Azure",
+    "Durable delivery across emulator restarts",
+    "Full ARM asynchronous lifecycle",
+    "All response headers and messages",
+    "Exact event timing, random identifiers and opaque sequencer encoding"
+  ],
+  "cleanupVerified": true
+}

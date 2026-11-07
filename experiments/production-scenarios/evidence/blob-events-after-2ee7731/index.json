@@ -1,0 +1,40 @@
+{
+  "scope": "Fresh Azure-first paired Blob-to-Event-Grid-to-Storage-Queue component. Both targets deployed and delivered the correlated event. Azure needed one unchanged retry; local completed immediately. All six Azure cleanup assertions passed.",
+  "postCaptureRedaction": "Provider-internal identities in error messages are replaced in public text copies. Queue payload identifiers were redacted by the recorder before storage. Video and recording metadata refer to the original operator-held stream.",
+  "originalPrivateFileDigests": {
+    "result.json": {
+      "sha256": "53726623d9e76d5980216193de64f0453af1208c24d15c2aa624f11b9874b3bd",
+      "bytes": 310299
+    },
+    "events.ndjson": {
+      "sha256": "45bd7584ba01c54d0f0ba52c56db71ed8a0fa03d8fdbc496bdc4aceebb6df9ec",
+      "bytes": 370001
+    },
+    "recording.json": {
+      "sha256": "e7c1212e54d54211ff6e337a217311a7390ac6ce1cbb33c44d6f6162b46dd7a7",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "f4ed4fc2317ea8bca743d803543394a37b7cac7263d2b4f137a738203ecd0fda",
+      "bytes": 4180
+    }
+  },
+  "files": {
+    "result.json": {
+      "sha256": "eb2f06f1c1f1671170faa50172b2165cacb66230e66db7fc1fcc5daa30e6f103",
+      "bytes": 310292
+    },
+    "events.ndjson": {
+      "sha256": "a94a1d70d29723d93dd595e9930d60f61c92b59f12e3f826b1aaf03411a78b3b",
+      "bytes": 369994
+    },
+    "recording.json": {
+      "sha256": "e7c1212e54d54211ff6e337a217311a7390ac6ce1cbb33c44d6f6162b46dd7a7",
+      "bytes": 643
+    },
+    "template.json": {
+      "sha256": "f4ed4fc2317ea8bca743d803543394a37b7cac7263d2b4f137a738203ecd0fda",
+      "bytes": 4180
+    }
+  }
+}
