@@ -359,3 +359,20 @@ test('native database adapter evidence verifies TLS and secret-role removal with
   assert.deepEqual(database.checks, [{ phase: 'authorized', encrypted: true, tlsVersion: 'TLSv1.3', schemaMigrated: true },
     { phase: 'untrusted-ca', certificateRejected: true }, { phase: 'role-removed', connectionDenied: true }]);
 });
+
+test('scoped hosting retains Azure throttling and verifies individual resource cleanup', async () => {
+  const prefix = 'scoped-hosting-throttled-8b3eece/';
+  const index = await load(prefix + 'index.json');
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(prefix + 'result.json');
+  assert.equal(report.sourceDirty, false); assert.match(report.error, /throttled/);
+  assert.deepEqual(report.cleanup, { plansAbsent: true, deploymentAbsent: true, groupPreserved: true });
+  assert.ok(report.exchanges.some(item => item.target === 'azure' && item.phase === 'provider-validation' && item.status === 200));
+  const failures = report.exchanges.flatMap(item => item.target === 'azure' ? item.body?.value ?? [] : []).filter(item => item.properties?.statusCode === 429);
+  assert.equal(new Set(failures.map(item => item.properties.targetResource.id)).size, 2);
+  assert.ok(!report.exchanges.some(item => item.target === 'azure' && item.method === 'DELETE' && /\/resourceGroups\/<group>\?/.test(item.path)));
+});

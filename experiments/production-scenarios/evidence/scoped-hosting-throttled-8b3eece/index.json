@@ -1,0 +1,18 @@
+{
+  "scope": "Azure hosting create throttled after successful provider validation. Both plans and deployment removed; operator group preserved. No application workflow.",
+  "sourceRevision": "8b3eecec6cc244e1c96963e29b362230a90c8edb",
+  "files": {
+    "result.json": {
+      "sha256": "177635ef8130bf7726525e3d0b95b6e51bb1e4c675a2f3c13d6459faaf825c37",
+      "bytes": 57220
+    },
+    "compiled-template.json": {
+      "sha256": "c1e6df64064b50f0180e2b7be3cac6d22920eedb34f3434f9fa3fede73cfc9f2",
+      "bytes": 1580
+    },
+    "events.ndjson": {
+      "sha256": "1da4ba6d85a53ddc4d93f9d918dba047dd9be6f3998522a7ef7f504140e22746",
+      "bytes": 59770
+    }
+  }
+}

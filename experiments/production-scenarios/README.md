@@ -540,3 +540,11 @@ Both observations leave the cloud group empty. The
 [native database adapter capture](evidence/functions-native-database-14e4f4a/)
 verifies signed secret access, native PostgreSQL TLS and the negative certificate
 and role-removal checks. It is a local adapter diagnostic, not a full workflow.
+
+The [scoped live hosting attempt](evidence/scoped-hosting-throttled-8b3eece/)
+passed Azure provider validation but both P0v3 and EP1 creation returned provider
+429 with a subscription creation-throttling message. Cancellation completed;
+both plan IDs and the deployment record returned 404, while the operator group
+remained present. This uses a dedicated certificate-authenticated service
+principal, so interactive sign-in is no longer the blocker. It does not resolve
+the hosting restriction, prove plan deployment, or complete either workflow.
