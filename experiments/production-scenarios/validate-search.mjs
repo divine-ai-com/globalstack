@@ -47,6 +47,8 @@ try {
   report.compiledSha256 = hash(compiled);
   record('output', { target: 'azure', phase: 'shared-compile', text: `Compiled once for both targets. SHA-256 ${report.compiledSha256}\n` });
   record('command-end', { target: 'azure', phase: 'shared-compile', exitCode: 0 });
+  // Configure the emulator externally so both requests use the same subscription scope.
+  process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription;
   server = createArmServer({ store: new ResourceStore() });
   await new Promise(done => server.listen(0, '127.0.0.1', done));
 
