@@ -1,6 +1,7 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { leaseHeaders, leaseGuard, operateLease, blobConditions, leaseState } from './storage-lease.mjs';
 import { QueueDeleteStaleReadTracker } from './queue-delete-window.mjs';
 
 function nowUtc() {
@@ -343,7 +344,7 @@ export class StorageDataPlaneRouter {
       if (!auth.ok) return sendXmlError(res, auth.status ?? 401, auth.code ?? 'NoAuthenticationInformation', auth.message ?? 'Server failed to authenticate the request.', requestId);
       if (containerRequest) {
         const comp = url.searchParams.get('comp');
-        if (comp && comp !== 'metadata') return sendXmlError(res, 501, 'NotImplemented', `Container operation '${comp}' is not implemented.`, requestId);
+        if (comp && !['metadata', 'lease'].includes(comp)) return sendXmlError(res, 501, 'NotImplemented', `Container operation '${comp}' is not implemented.`, requestId);
         if (!['$root', '$logs', '$web'].includes(containerName)) {
           if (containerName.length < 3 || containerName.length > 63) return sendXmlError(res, 400, 'OutOfRangeInput', 'The specified resource name length is not within the permissible limits.', requestId);
           if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(containerName)) return sendXmlError(res, 400, 'InvalidResourceName', 'The specifed resource name contains invalid characters.', requestId);
@@ -361,6 +362,13 @@ export class StorageDataPlaneRouter {
           return send(res, 201, '', { ...headers, etag: created.etag, 'last-modified': created.lastModified });
         }
         if (!existing) return sendXmlError(res, 404, 'ContainerNotFound', 'The specified container does not exist.', requestId);
+        if (req.method === 'PUT' && comp === 'lease') {
+          const result = operateLease(existing, req.headers, 'Container');
+          if (result.code) return sendXmlError(res, result.status, result.code, result.message, requestId);
+          return send(res, result.status, '', { ...headers, ...result.headers, etag: existing.etag, 'last-modified': existing.lastModified });
+        }
+        const leaseError = leaseGuard(existing, req.headers, 'Container', req.method === 'DELETE');
+        if (leaseError) return sendXmlError(res, leaseError.status, leaseError.code, leaseError.message, requestId);
         if (req.method === 'PUT' && comp === 'metadata') {
           existing.metadata = metadata;
           existing.etag = `"${randomUUID()}"`;
@@ -369,7 +377,7 @@ export class StorageDataPlaneRouter {
         }
         if (req.method === 'GET' || req.method === 'HEAD') return send(res, 200, '', {
           ...headers, ...existing.metadata, etag: existing.etag, 'last-modified': existing.lastModified,
-          'x-ms-lease-status': 'unlocked', 'x-ms-lease-state': 'available',
+          ...leaseHeaders(existing),
           'x-ms-has-immutability-policy': 'false', 'x-ms-has-legal-hold': 'false',
         });
         if (req.method === 'DELETE' && !comp) {
@@ -383,13 +391,36 @@ export class StorageDataPlaneRouter {
       if (!container) return sendXmlError(res, 404, 'ContainerNotFound', `The specified container does not exist.`, requestId);
       const blobName = blobParts.join('/');
       const key = blobKey(containerName, blobName);
+      let existingBlob = account.blobs.get(key);
+      const comp = url.searchParams.get('comp');
+      const conditionError = blobConditions(existingBlob, req.headers, req.method);
+      if (conditionError) {
+        if (conditionError.status === 304) return send(res, 304, '', { etag: existingBlob.etag });
+        return sendXmlError(res, conditionError.status, conditionError.code, conditionError.message, requestId);
+      }
+      if (req.method === 'PUT' && comp === 'lease') {
+        if (!existingBlob) return sendXmlError(res, 404, 'BlobNotFound', 'The specified blob does not exist.', requestId);
+        const result = operateLease(existingBlob, req.headers, 'Blob');
+        if (result.code) return sendXmlError(res, result.status, result.code, result.message, requestId);
+        return send(res, result.status, '', { ...result.headers, etag: existingBlob.etag, 'last-modified': existingBlob.lastModified, 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() });
+      }
+      if (comp) return sendXmlError(res, 501, 'NotImplemented', `Blob operation '${comp}' is not implemented.`, requestId);
+      const leaseError = leaseGuard(existingBlob, req.headers, 'Blob', ['PUT', 'DELETE'].includes(req.method));
+      if (leaseError) return sendXmlError(res, leaseError.status, leaseError.code, leaseError.message, requestId);
 
       if (req.method === 'PUT') {
         if (!req.headers['x-ms-blob-type']) {
           return sendXmlError(res, 400, 'MissingRequiredHeader', "An HTTP header that's mandatory for this request is not specified.", requestId);
         }
         const body = await readBody(req);
+        // The body may arrive slowly while another writer or lease holder acts.
+        // Recheck against current state immediately before the atomic Map update.
+        if (account.containers.get(lower(containerName)) !== container) return sendXmlError(res, 404, 'ContainerNotFound', 'The specified container does not exist.', requestId);
+        existingBlob = account.blobs.get(key);
+        const currentError = blobConditions(existingBlob, req.headers, req.method) || leaseGuard(existingBlob, req.headers, 'Blob', true);
+        if (currentError) return sendXmlError(res, currentError.status, currentError.code, currentError.message, requestId);
         account.blobs.set(key, {
+          ...(existingBlob && ['leased', 'breaking'].includes(leaseState(existingBlob)) ? { lease: existingBlob.lease } : {}),
           blobName,
           containerName,
           contentType: String(req.headers['content-type'] ?? 'application/octet-stream'),
@@ -415,6 +446,7 @@ export class StorageDataPlaneRouter {
           etag: blob.etag,
           'last-modified': blob.lastModified,
           'x-ms-blob-type': 'BlockBlob',
+          ...leaseHeaders(blob),
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),
@@ -428,6 +460,7 @@ export class StorageDataPlaneRouter {
           'last-modified': blob.lastModified,
           'content-length': String(blob.body.length),
           'x-ms-blob-type': 'BlockBlob',
+          ...leaseHeaders(blob),
           'x-ms-request-id': requestId,
           'x-ms-version': '2023-11-03',
           date: nowUtc(),

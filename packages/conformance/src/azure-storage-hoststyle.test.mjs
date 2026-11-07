@@ -362,3 +362,21 @@ test('container lifecycle replays archived Azure statuses without pre-registerin
   router.registerContainer({ accountName, containerName: 'independent-container' });
   assert.equal((await call('HEAD', path)).headers.etag, current);
 });
+
+test('concurrent conditional blob creation has one winner and preserves its content', async t => {
+  const router = createStorageDataPlaneRouter();
+  const accountName = 'concurrentblob123', accountKey = Buffer.alloc(64, 41).toString('base64');
+  router.registerStorageAccount({ accountName, accountKey });
+  router.registerContainer({ accountName, containerName: 'locks' });
+  const server = createBlobStorageServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const config = { host: `${accountName}.blob.core.windows.net`, path: '/locks/shared', accountName, accountKey };
+  const results = await Promise.all(Array.from({ length: 16 }, (_, i) => storageRequest(server.address().port, {
+    ...config, method: 'PUT', body: `writer-${i}`, extraHeaders: { 'x-ms-blob-type': 'BlockBlob', 'if-none-match': '*' },
+  })));
+  assert.equal(results.filter(item => item.status === 201).length, 1);
+  assert.equal(results.filter(item => item.status === 409).length, 15);
+  const retained = await storageRequest(server.address().port, { ...config, method: 'GET' });
+  assert.equal(retained.body.toString(), `writer-${results.findIndex(item => item.status === 201)}`);
+});
