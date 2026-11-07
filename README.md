@@ -50,11 +50,17 @@ is synchronized with its router; deleting the resource removes its route.
 Creating resources alone does not provide function workers or complete service
 behavior. See the [runtime scope](packages/azure-data-plane/README.md).
 
-Direct local HTTP requests must retain the deployed service host, for example
-`curl -H 'Host: example-search.search.windows.net' -H 'api-key: local-test-key'
-'http://127.0.0.1:10006/indexes?api-version=2024-07-01'` after deploying
-`example-search`. SDK use additionally needs external DNS/endpoint and certificate
-configuration. The application should not branch on the target environment.
+Direct local HTTP requests must retain the deployed service host. After deploying
+`example-search`, set `SEARCH_API_KEY` to your synthetic local test key and run:
+
+```bash
+curl --header 'Host: example-search.search.windows.net' \
+  --header "api-key: ${SEARCH_API_KEY}" \
+  'http://127.0.0.1:10006/indexes?api-version=2024-07-01'
+```
+
+SDK use additionally needs external DNS/endpoint and certificate configuration.
+The application should not branch on the target environment.
 
 ## Run the container
 

@@ -270,3 +270,5 @@ a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/eviden
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:663
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:720
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:788
+# Reviewed historical README placeholder, not a credential. The current example uses an environment variable.
+905f53bc84e05cebd98df776a40d1459be558553:README.md:curl-auth-header:54
