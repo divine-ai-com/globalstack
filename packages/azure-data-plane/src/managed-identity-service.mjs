@@ -28,7 +28,7 @@ function safeResource(value) {
 // is never handed to the workload or accepted as an Azure/Entra signing key.
 export async function createManagedIdentityService({ store, tenantId, subscriptionIds,
   issuer = 'https://identity.globalstack.test/', audiences = ['https://storage.azure.com', 'https://storage.azure.com/'],
-  tokenLifetimeSeconds = 300 } = {}) {
+  tokenLifetimeSeconds = 300, applicationAudiences = [] } = {}) {
   assert.ok(store?.resources instanceof Map, 'Managed identity needs the live resource store');
   assert.ok(uuid.test(tenantId) && Array.isArray(subscriptionIds) && subscriptionIds.length
     && subscriptionIds.every(id => typeof id === 'string' && uuid.test(id)), 'Tenant and subscription UUIDs are required');
@@ -37,7 +37,10 @@ export async function createManagedIdentityService({ store, tenantId, subscripti
     'Managed identity audiences must be explicit resource URIs');
   assert.ok(Number.isInteger(tokenLifetimeSeconds) && tokenLifetimeSeconds >= 60 && tokenLifetimeSeconds <= 3600,
     'Token lifetime must be between 60 and 3600 seconds');
-  const subscriptions = new Set(subscriptionIds.map(lower)), allowedAudiences = new Set(audiences);
+  assert.ok(Array.isArray(applicationAudiences) && applicationAudiences.length <= 16 && applicationAudiences.every(value => typeof value === 'string' && uuid.test(value)),
+    'Application audiences must be explicit UUIDs');
+  const appAudiences = new Map(applicationAudiences.map(value => [`api://${value}`, value]));
+  const subscriptions = new Set(subscriptionIds.map(lower)), allowedAudiences = new Set([...audiences, ...appAudiences.keys()]);
   const { publicKey, privateKey } = await generateKeyPair('RS256');
   const kid = randomUUID(), jwk = { ...await exportJWK(publicKey), kid, alg: 'RS256', use: 'sig' };
   const trust = { issuer, tenantId, subscriptionIds: [...subscriptions], jwks: { keys: [jwk] } };
@@ -105,8 +108,9 @@ export async function createManagedIdentityService({ store, tenantId, subscripti
         inFlight++;
         try {
           const now = Math.floor(Date.now() / 1000), expiry = now + tokenLifetimeSeconds;
-          const token = await new SignJWT({ iss: issuer, aud: audience, tid: tenantId, oid: identity.principalId,
-            appid: identity.clientId, xms_mirid: identity.resourceId ?? appResourceId, iat: now, nbf: now, exp: expiry })
+          const token = await new SignJWT({ iss: issuer, aud: appAudiences.get(audience) ?? audience, tid: tenantId, oid: identity.principalId,
+            ...(appAudiences.has(audience) ? { azp: identity.clientId, ver: '2.0' } : {}),
+            appid: identity.clientId, idtyp: 'app', xms_mirid: identity.resourceId ?? appResourceId, iat: now, nbf: now, exp: expiry })
             .setProtectedHeader({ alg: 'RS256', kid, typ: 'JWT' }).sign(privateKey);
           // Signing yields to the event loop. Do not return a token if the
           // workload was removed or the binding revoked while it was in flight.

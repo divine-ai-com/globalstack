@@ -4,7 +4,7 @@ const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 const lower = value => String(value ?? '').toLowerCase();
 
 // Trust is operator configuration. A token cannot supply its own key location.
-export function createWorkloadTokenVerifier({ trusts = [], audiences }) {
+export function createWorkloadClaimsVerifier({ trusts = [], audiences }) {
   if (!Array.isArray(audiences) || !audiences.length || !audiences.every(value => typeof value === 'string' && value)) {
     throw new Error('Explicit token audiences are required.');
   }
@@ -24,7 +24,7 @@ export function createWorkloadTokenVerifier({ trusts = [], audiences }) {
       || key.key_ops !== undefined && (!Array.isArray(key.key_ops) || key.key_ops.length !== 1 || key.key_ops[0] !== 'verify'))
       || new Set(keys.map(key => key.kid)).size !== keys.length) throw new Error('Workload token trusts require unique public RS256 signing keys of at least 2048 bits.');
     return { issuer: trust.issuer, tenantId: lower(trust.tenantId), subscriptions: new Set(trust.subscriptionIds.map(lower)),
-      keys: createLocalJWKSet({ keys: structuredClone(keys) }) };
+      configurationIssuer: trust.configurationIssuer ?? trust.issuer, keys: createLocalJWKSet({ keys: structuredClone(keys) }) };
   });
 
   return async ({ authorization, subscription, tenantId }) => {
@@ -42,10 +42,17 @@ export function createWorkloadTokenVerifier({ trusts = [], audiences }) {
           || !uuid.test(payload.oid) || lower(payload.tid) !== trust.tenantId
           || ![payload.exp, payload.nbf, payload.iat].every(Number.isSafeInteger)
           || payload.iat > Math.floor(Date.now() / 1000) || payload.exp <= payload.iat || payload.exp <= payload.nbf) continue;
-        principal = lower(payload.oid);
+        principal = Object.freeze({ principal: lower(payload.oid), tenant: lower(payload.tid),
+          client: payload.azp ?? payload.appid, delegated: payload.scp !== undefined,
+          applicationType: payload.idtyp, configurationIssuer: trust.configurationIssuer });
         break;
       } catch { /* Invalid or untrusted tokens never reach role evaluation. */ }
     }
     return principal ?? null;
   };
+}
+
+export function createWorkloadTokenVerifier(options) {
+  const verify = createWorkloadClaimsVerifier(options);
+  return async input => (await verify(input))?.principal ?? null;
 }

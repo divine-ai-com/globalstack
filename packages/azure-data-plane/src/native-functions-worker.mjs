@@ -34,16 +34,21 @@ function localAddress(hostname) {
   return a === 127 || a === 10 || a === 192 && b === 168 || a === 172 && b >= 16 && b <= 31;
 }
 
+export function nativeWorkerOrigin(value) {
+  const origin = new URL(value);
+  assert.ok(['http:', 'https:'].includes(origin.protocol) && localAddress(origin.hostname)
+    && origin.pathname === '/' && !origin.username && !origin.password && !origin.search && !origin.hash,
+  'Native workers must use a credential-free loopback or private IP origin');
+  return origin.origin;
+}
+
 export function nativeWorkerBindings(values = []) {
   assert.ok(Array.isArray(values), 'Functions worker bindings must be an array');
   const bindings = new Map();
   for (const value of values) {
     assert.ok(value && typeof value === 'object' && typeof value.appResourceId === 'string', 'A worker needs an ARM site resource ID');
     assert.match(value.appResourceId, /^\/subscriptions\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/resourceGroups\/[^/]+\/providers\/Microsoft\.Web\/sites\/[^/]+$/i);
-    const origin = new URL(value.origin);
-    assert.ok(['http:', 'https:'].includes(origin.protocol) && localAddress(origin.hostname)
-      && origin.pathname === '/' && !origin.username && !origin.password && !origin.search && !origin.hash,
-    'Functions workers must use a credential-free loopback or private IP origin');
+    const origin = new URL(nativeWorkerOrigin(value.origin));
     const key = value.appResourceId.toLowerCase();
     assert.ok(!bindings.has(key), 'Duplicate Functions worker binding');
     assert.ok(value.masterKeyFile === undefined || typeof value.masterKeyFile === 'string' && isAbsolute(value.masterKeyFile),
@@ -55,7 +60,8 @@ export function nativeWorkerBindings(values = []) {
 
 // Bindings are trusted operator configuration. Request hosts and ARM bodies
 // cannot select an upstream address. Redirects are returned, never followed.
-export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, connectTimeoutMs = 3000, maxRequestBytes = 12 * 1024 * 1024 } = {}) {
+export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, connectTimeoutMs = 3000, maxRequestBytes = 12 * 1024 * 1024, kind = 'Functions' } = {}) {
+  assert.ok(['Functions', 'ContainerApp'].includes(kind));
   return new Promise(resolve => {
     let settled = false, bytes = 0, connectTimer;
     const target = new URL(origin);
@@ -78,7 +84,7 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, co
     function fail(status, code) {
       req.unpipe(request); request.destroy();
       if (!res.headersSent) {
-        const payload = JSON.stringify({ error: { code, message: 'The configured native Functions worker could not complete the request.' } });
+        const payload = JSON.stringify({ error: { code, message: `The configured native ${kind} worker could not complete the request.` } });
         res.writeHead(status, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(payload), connection: 'close' });
         res.end(payload);
       } else res.destroy();
@@ -87,26 +93,26 @@ export function forwardNativeFunction(req, res, origin, { timeoutMs = 120000, co
     function abort() { request.destroy(); finish(); }
     function disconnected() { if (!res.writableFinished) request.destroy(); finish(); }
     function count(chunk) { bytes += chunk.length; if (bytes > maxRequestBytes) fail(413, 'RequestBodyTooLarge'); }
-    const timer = setTimeout(() => fail(504, 'NativeFunctionsWorkerTimeout'), timeoutMs);
+    const timer = setTimeout(() => fail(504, `Native${kind}WorkerTimeout`), timeoutMs);
     timer.unref?.();
     req.once('aborted', abort); req.on('data', count); res.once('close', disconnected);
     request.once('socket', socket => {
       if (request.reusedSocket || target.protocol === 'http:' && !socket.connecting) return;
       // A removed container can leave a route that drops connection attempts.
       // Bound TCP/TLS establishment separately from valid long-running work.
-      connectTimer = setTimeout(() => fail(502, 'NativeFunctionsWorkerUnavailable'), Math.min(connectTimeoutMs, timeoutMs));
+      connectTimer = setTimeout(() => fail(502, `Native${kind}WorkerUnavailable`), Math.min(connectTimeoutMs, timeoutMs));
       connectTimer.unref?.();
       socket.once(target.protocol === 'https:' ? 'secureConnect' : 'connect', () => clearTimeout(connectTimer));
     });
-    request.on('error', () => { if (!settled) fail(502, 'NativeFunctionsWorkerUnavailable'); });
+    request.on('error', () => { if (!settled) fail(502, `Native${kind}WorkerUnavailable`); });
     request.on('response', upstream => {
       clearTimeout(connectTimer);
       if (settled) { upstream.destroy(); return; }
       const status = Number(upstream.statusCode);
-      if (!Number.isInteger(status) || status < 200 || status > 599) return fail(502, 'NativeFunctionsWorkerInvalidResponse');
+      if (!Number.isInteger(status) || status < 200 || status > 599) return fail(502, `Native${kind}WorkerInvalidResponse`);
       res.writeHead(status, workerResponseHeaders(upstream.headers));
-      upstream.on('error', () => fail(502, 'NativeFunctionsWorkerUnavailable'));
-      upstream.once('aborted', () => fail(502, 'NativeFunctionsWorkerUnavailable'));
+      upstream.on('error', () => fail(502, `Native${kind}WorkerUnavailable`));
+      upstream.once('aborted', () => fail(502, `Native${kind}WorkerUnavailable`));
       upstream.pipe(res);
       res.once('finish', finish);
     });

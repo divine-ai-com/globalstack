@@ -1113,7 +1113,7 @@ export const tier2Capabilities = [
     tier: 2,
     awsAnalogue: 'Service Discovery / Cloud Map',
     azureEquivalent: 'Azure Private DNS / Container Apps service discovery',
-    resourceTypes: ['Microsoft.Network/privateDnsZones', 'Microsoft.App/managedEnvironments', 'Microsoft.App/containerApps'],
+    resourceTypes: ['Microsoft.Network/privateDnsZones', 'Microsoft.App/managedEnvironments', 'Microsoft.App/containerApps', 'Microsoft.App/containerApps/authConfigs'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE, supportLevels.REAL_AZURE_CAPTURE_REQUIRED],
     backingEngines: ['globalstack-service-registry', 'globalstack-dns-registry'],
     implementedOperations: [
@@ -1129,6 +1129,9 @@ export const tier2Capabilities = [
       'ContainerApps.Get',
       'ContainerApps.List',
       'ContainerApps.Delete',
+      'ContainerAppAuthConfigs.CreateOrUpdate',
+      'ContainerAppAuthConfigs.Get',
+      'ContainerAppAuthConfigs.Delete',
       'ContainerAppRoutes.RejectUnsupportedRoutes',
       'Services.RegisterLocal',
       'Services.ResolveLocal',

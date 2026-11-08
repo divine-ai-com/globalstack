@@ -1,3 +1,4 @@
+import { createContainerAppRouter } from './container-app-router.mjs';
 import { URL } from 'node:url';
 import { capabilityForResourceType } from '../../core/src/azure-tier1-capabilities.mjs';
 import { createActivityLogStore } from './activity-log-store.mjs';
@@ -139,7 +140,8 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nativeFunctionsProvisioner, storageTokenTrusts = [], keyVaultTokenTrusts = [], searchTokenTrusts = [] }) {
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nativeFunctionsProvisioner, nativeContainerAppProvisioner, containerAppTokenTrusts = [], storageTokenTrusts = [], keyVaultTokenTrusts = [], searchTokenTrusts = [] }) {
+  const containerAppRouter = createContainerAppRouter({ store, provision: nativeContainerAppProvisioner, trusts: containerAppTokenTrusts });
   const storageRouter = createStorageDataPlaneRouter({ store, tokenTrusts: storageTokenTrusts });
   const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
   storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
@@ -679,6 +681,11 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nati
       return;
     }
 
+    if (resourceType === 'Microsoft.App/containerApps') {
+      containerAppRouter.sync(resource);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.registerApp({
         appName: resource.name,
@@ -1077,6 +1084,11 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nati
       return;
     }
 
+    if (resourceType === 'Microsoft.App/containerApps') {
+      containerAppRouter.remove({ id: resource?.id ?? resourcePath(providerRoute) });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       nativeFunctionsLifecycle?.remove({ id: resource?.id ?? resourcePath(providerRoute) });
       functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
@@ -1357,12 +1369,18 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nati
 
   async function dispose() {
     storageEventDelivery.dispose();
-    await kubernetesRouter.dispose?.();
-    await nativeFunctionsLifecycle?.dispose();
+    const results = await Promise.allSettled([
+      Promise.resolve().then(() => kubernetesRouter.dispose?.()),
+      Promise.resolve().then(() => nativeFunctionsLifecycle?.dispose()),
+      Promise.resolve().then(() => containerAppRouter.dispose()),
+    ]);
+    const failures = results.filter(result => result.status === 'rejected').map(result => result.reason);
+    if (failures.length) throw new AggregateError(failures, 'Runtime cleanup is incomplete');
   }
 
   return {
     nativeFunctionsLifecycle,
+    containerAppRouter,
     storageRouter,
     storageEventDelivery,
     appConfigurationRouter,

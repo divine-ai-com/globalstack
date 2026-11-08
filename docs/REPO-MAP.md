@@ -94,10 +94,13 @@ flowchart TD
 - `packages/azure-data-plane/src/azure-files-router.mjs`
 - `packages/azure-data-plane/src/azurite-client.mjs`
 - `packages/azure-data-plane/src/backend-proxy.mjs`
+- `packages/azure-data-plane/src/container-app-auth.mjs`
+- `packages/azure-data-plane/src/container-app-router.mjs`
 - `packages/azure-data-plane/src/container-registry-router.mjs`
 - `packages/azure-data-plane/src/cosmos-sql-router.mjs`
 - `packages/azure-data-plane/src/digital-twins-router.mjs`
 - `packages/azure-data-plane/src/dns-registry.mjs`
+- `packages/azure-data-plane/src/docker-container-app-provisioner.mjs`
 - `packages/azure-data-plane/src/docker-functions-provisioner.mjs`
 - `packages/azure-data-plane/src/edge-router.mjs`
 - `packages/azure-data-plane/src/emulator-runtime.mjs`
@@ -115,6 +118,7 @@ flowchart TD
 - `packages/azure-data-plane/src/native-functions-lifecycle.mjs`
 - `packages/azure-data-plane/src/native-functions-platform.mjs`
 - `packages/azure-data-plane/src/native-functions-worker.mjs`
+- `packages/azure-data-plane/src/native-workload-lifecycle.mjs`
 - `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
 - `packages/azure-data-plane/src/queue-delete-window.mjs`
@@ -154,6 +158,9 @@ flowchart TD
 - `packages/conformance/src/azure-storage-data-plane-expectations.test.mjs`
 - `packages/conformance/src/azure-storage-hoststyle.test.mjs`
 - `packages/conformance/src/azure-storage-normalizer.test.mjs`
+- `packages/conformance/src/container-app-auth.test.mjs`
+- `packages/conformance/src/container-app-router.test.mjs`
+- `packages/conformance/src/container-app-runtime-spec.test.mjs`
 - `packages/conformance/src/cross-service-flows.test.mjs`
 - `packages/conformance/src/digital-twins-router.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`

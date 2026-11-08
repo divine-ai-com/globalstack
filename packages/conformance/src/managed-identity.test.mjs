@@ -12,7 +12,7 @@ const siteId = `${group}/providers/Microsoft.Web/sites/worker`;
 const userId = `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/worker-identity`;
 const query = 'resource=https%3A%2F%2Fstorage.azure.com&api-version=2019-08-01';
 
-async function fixture(t) {
+async function fixture(t, options = {}) {
   const store = new ResourceStore();
   async function listen(server) {
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -32,7 +32,7 @@ async function fixture(t) {
   const planId = `${group}/providers/Microsoft.Web/serverfarms/worker`;
   await management('PUT', planId, { location: 'westus2', sku: { name: 'Y1', tier: 'Dynamic' }, properties: {} });
   const site = await management('PUT', siteId, { location: 'westus2', kind: 'functionapp', identity: { type: 'SystemAssigned' }, properties: { serverFarmId: planId } });
-  const service = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [sub] });
+  const service = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [sub], ...options });
   t.after(() => service.dispose());
   let binding = service.bind(siteId);
   const endpoint = await listen(createServer((req, res) => binding.handler(req, res)));
@@ -119,4 +119,17 @@ test('identity broker rejects unsafe operator configuration and workload binding
   for (const id of [userId, siteId + '/slots/other', siteId.replace(sub, '11111111-1111-4111-8111-111111111111'), siteId + '-missing']) {
     assert.throws(() => f.service.bind(id));
   }
+});
+
+test('explicit application audiences issue app-only v2 audience claims without opening arbitrary resources', async t => {
+  const audience = '11111111-1111-4111-8111-111111111111';
+  const f = await fixture(t, { applicationAudiences: [audience] });
+  const response = await f.request({ params: `resource=${encodeURIComponent(`api://${audience}`)}&api-version=2019-08-01` });
+  assert.equal(response.status, 200);
+  const { payload } = await jwtVerify(response.body.access_token, createLocalJWKSet(f.service.trust.jwks), {
+    issuer: f.service.trust.issuer, audience, algorithms: ['RS256'],
+  });
+  assert.equal(payload.ver, '2.0'); assert.equal(payload.idtyp, 'app');
+  assert.equal(payload.azp, response.body.client_id);
+  assert.equal((await f.request({ params: 'resource=api%3A%2F%2Funlisted&api-version=2019-08-01' })).status, 501);
 });

@@ -138,7 +138,10 @@ for this change.
    creation by the pilot. A [live API token check](evidence/document-api-auth/) passed the unchanged application's
    read, upload and delete role checks. Wrong-audience and ungranted-role checks
    were rejected. This is authentication evidence, not a deployed HTTP workflow.
-   Scanner identity and delegated-user cases still need separate setup.
+   The operator also completed the separate scanner audience registration. Its
+   [live token diagnostic](evidence/scanner-api-auth/) passes signature and
+   negative checks. Scanner ingress on Azure and delegated-user cases remain
+   unverified. Local native scanner execution is under implementation in #55.
 4. Establish a usable authenticated Portal capture channel. A logged-in tab URL
    is not a screenshot or browser-control capability. None of this session's
    HTTP replays is Portal evidence.
