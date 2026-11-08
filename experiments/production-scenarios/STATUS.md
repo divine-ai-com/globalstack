@@ -101,7 +101,8 @@ and failure queue have not yet been deployed to Azure as part of this scenario.
 The Search module now gives its system-assigned identity Blob Data Reader only
 on the clean-projection container. A shared provisioner defines separate push
 and projection indexes, a managed-identity Blob data source with a tombstone
-policy, and a five-minute scheduled indexer. In an actual local router run,
+policy, explicit document-ID mapping, and a five-minute scheduled indexer.
+Deletion markers contain no extracted text. In an actual local router run,
 the two index definitions were accepted and the data-source step returned
 HTTP 501. Blob projection indexing remains unimplemented ([#75](https://github.com/divine-ai-com/globalstack/issues/75)); none of these additions is a paired Azure result.
 The document ingress also emits multiword fuzzy queries as an all-`AND` Lucene

@@ -28,6 +28,7 @@ export const projectionIndexer = {
   name: 'document-projection-indexer',
   dataSourceName: 'document-projection-source',
   targetIndexName: projectionIndex.name,
+  fieldMappings: [{ sourceFieldName: '/document_id', targetFieldName: 'document_id' }],
   parameters: { configuration: { parsingMode: 'json' } },
   schedule: { interval: 'PT5M' },
 };
@@ -39,7 +40,7 @@ export function projectionBlob(document, operation) {
   const deleted = operation === 'delete' ? 'true' : 'false';
   return {
     name: `${document.document_id}.json`,
-    body: { ...document, deleted },
+    body: operation === 'delete' ? { document_id: document.document_id, deleted } : { ...document, deleted },
     metadata: { isdeleted: deleted },
   };
 }

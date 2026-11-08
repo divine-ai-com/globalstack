@@ -16,11 +16,13 @@ test('clean projection and tombstone match the separate Blob indexer contract', 
   assert.equal(clean.name, deleted.name);
   assert.equal(clean.metadata[source.dataDeletionDetectionPolicy.softDeleteColumnName], 'false');
   assert.equal(deleted.metadata[source.dataDeletionDetectionPolicy.softDeleteColumnName], source.dataDeletionDetectionPolicy.softDeleteMarkerValue);
+  assert.deepEqual(deleted.body, { document_id: 'doc-1', deleted: 'true' });
   assert.equal(projectionIndex.name, projectionIndexer.targetIndexName);
   assert.notEqual(projectionIndex.name, documentIndex.name);
   assert.equal(source.container.name, 'clean-projection');
   assert.equal(source.credentials.connectionString, `ResourceId=${storageId};`);
   assert.equal(projectionIndexer.parameters.configuration.parsingMode, 'json');
+  assert.deepEqual(projectionIndexer.fieldMappings, [{ sourceFieldName: '/document_id', targetFieldName: 'document_id' }]);
   assert.equal(projectionIndexer.schedule.interval, 'PT5M');
   assert.throws(() => projectionDataSource('AccountKey=secret'));
 });
