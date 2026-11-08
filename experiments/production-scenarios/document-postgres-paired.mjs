@@ -30,7 +30,7 @@ const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url'));
 assert.equal(claims.tid, account.tenantId);
 assert.match(claims.oid, /^[a-f0-9-]{36}$/i);
 const runId = randomBytes(6).toString('hex');
-const manifest = { subscription: account.id, runId, group: `gs-prod-${runId}`, config,
+const manifest = { subscription: account.id, runId, group: 'gs-conformance-pilot', config,
   parentPid: process.pid, deadline: Date.now() + 60 * 60000 };
 const scope = postgresScope(manifest);
 const replacements = [[token, '<redacted>'], [account.id, '<subscription>'], [account.tenantId, '<tenant>'],
@@ -65,7 +65,9 @@ async function pollAzureDeployment() {
 try {
   const all = azureCli(config, ['resource', 'list', '--subscription', account.id]);
   assert.equal(all.length, 0, 'Existing Azure resources require separate reconciliation before this paid run');
-  assert.equal((await azure('GET', `${scope.group}?api-version=2022-09-01`)).status, 404);
+  assert.equal((await azure('GET', `${scope.group}?api-version=2022-09-01`)).status, 200);
+  assert.equal((await azure('GET', `${scope.deployment}?api-version=2025-04-01`)).status, 404);
+  assert.equal((await azure('GET', `${scope.server}?api-version=2024-08-01`)).status, 404);
   report.budget.ledger = await reserveBudget(productionBudgetPath, { runId, envelopeUsd: 12,
     purpose: 'One bounded PostgreSQL deployment and immediate cleanup in westus2' });
   allocated = true;
@@ -74,9 +76,8 @@ try {
     manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
   await new Promise((done, fail) => { watchdog.once('spawn', done); watchdog.once('error', fail); });
   watchdog.unref();
-  phase = 'create-group';
+  phase = 'prepare-local-group';
   const groupBody = { location: 'westus2', tags: { project: 'globalstack-production-scenarios', run: runId } };
-  assert.ok([200, 201, 202].includes((await azure('PUT', `${scope.group}?api-version=2022-09-01`, groupBody)).status));
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = account.id;
   arm = createArmServer({ store: new ResourceStore() });
   await new Promise(done => arm.listen(0, '127.0.0.1', done));
@@ -124,4 +125,4 @@ try {
 }
 console.log(JSON.stringify({ out, azure: report.azureTerminalState, local: report.localTerminalState,
   cleanup: report.cleanup, error: report.error ?? null }));
-if (report.error || !report.comparisonComplete || !report.cleanup?.groupAbsent) process.exitCode = 1;
+if (report.error || !report.comparisonComplete || !report.cleanup?.resourcesAbsent) process.exitCode = 1;

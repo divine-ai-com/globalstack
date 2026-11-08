@@ -10,7 +10,7 @@ const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 export function postgresScope(manifest) {
   assert.match(manifest.subscription ?? '', uuid);
   assert.match(manifest.runId ?? '', /^[a-f0-9]{12}$/);
-  assert.equal(manifest.group, `gs-prod-${manifest.runId}`);
+  assert.equal(manifest.group, 'gs-conformance-pilot');
   const base = `/subscriptions/${manifest.subscription}/resourceGroups/${manifest.group}`;
   const server = `${base}/providers/Microsoft.DBforPostgreSQL/flexibleServers/gs${manifest.runId}-db`;
   return { group: base, server, deployment: `${base}/providers/Microsoft.Resources/deployments/gs-document-postgres-${manifest.runId}` };
@@ -22,7 +22,8 @@ export function postgresClient(manifest, observe = () => {}, exchange = httpExch
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     const allowed = method === 'GET' && [scope.group, `${scope.group}/resources`, scope.server, scope.deployment, `${scope.deployment}/operations`].includes(url.pathname)
-      || ['PUT', 'DELETE'].includes(method) && [scope.group, scope.deployment].includes(url.pathname)
+      || method === 'PUT' && url.pathname === scope.deployment
+      || method === 'DELETE' && [scope.server, scope.deployment].includes(url.pathname)
       || method === 'POST' && url.pathname === `${scope.deployment}/cancel`;
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed,
       'PostgreSQL request escaped the owned run scope');
@@ -45,7 +46,6 @@ export async function cleanupPostgres(manifest, request = postgresClient(manifes
 } = {}) {
   const scope = postgresScope(manifest), deadline = Date.now() + timeoutMs;
   const path = (id, version) => `${id}?api-version=${version}`;
-  const groupPath = path(scope.group, '2022-09-01'), deploymentPath = path(scope.deployment, '2025-04-01');
   const get = async (id, version) => {
     for (let attempt = 0; ; attempt++) {
       assert.ok(Date.now() < deadline, 'PostgreSQL cleanup deadline exceeded');
@@ -68,31 +68,43 @@ export async function cleanupPostgres(manifest, request = postgresClient(manifes
     }
   }
   const group = await get(scope.group, '2022-09-01');
-  if (group.status !== 404) {
-    assert.equal(group.status, 200);
-    assert.equal(group.body.tags?.project, project, 'Group project mismatch');
-    assert.equal(group.body.tags?.run, manifest.runId, 'Group run mismatch');
-    const inventory = await get(`${scope.group}/resources`, '2021-04-01');
-    assert.equal(inventory.status, 200);
-    assert.ok(!inventory.body.nextLink && Array.isArray(inventory.body.value), 'Incomplete PostgreSQL inventory');
-    assert.ok(inventory.body.value.every(item => item.id?.toLowerCase() === scope.server.toLowerCase()
-      || item.id?.toLowerCase().startsWith(`${scope.server.toLowerCase()}/`)), 'Unexpected resource in PostgreSQL group');
-    const server = await get(scope.server, '2024-08-01');
-    if (server.status === 200) {
-      assert.equal(server.body.tags?.project, project, 'Server project mismatch');
-      assert.equal(server.body.tags?.run, manifest.runId, 'Server run mismatch');
-    } else assert.equal(server.status, 404);
-    assert.ok([200, 202, 204, 404].includes((await request('DELETE', groupPath)).status));
+  assert.equal(group.status, 200, 'Preserved pilot group is unavailable');
+  const inventory = await get(`${scope.group}/resources`, '2021-04-01');
+  assert.equal(inventory.status, 200);
+  assert.ok(!inventory.body.nextLink && Array.isArray(inventory.body.value), 'Incomplete PostgreSQL inventory');
+  const owned = inventory.body.value.filter(item => item.id?.toLowerCase() === scope.server.toLowerCase()
+    || item.id?.toLowerCase().startsWith(`${scope.server.toLowerCase()}/`));
+  const server = await get(scope.server, '2024-08-01');
+  if (server.status === 200) {
+    assert.equal(server.body.tags?.project, project, 'Server project mismatch');
+    assert.equal(server.body.tags?.run, manifest.runId, 'Server run mismatch');
+    assert.ok([200, 202, 204, 404].includes((await request('DELETE', path(scope.server, '2024-08-01'))).status));
+  } else {
+    assert.equal(server.status, 404);
+    assert.equal(owned.length, 0, 'Owned child remains without its server');
   }
   while (true) {
-    const observed = await get(scope.group, '2022-09-01');
+    const observed = await get(scope.server, '2024-08-01');
     if (observed.status === 404) break;
     assert.ok([200, 409].includes(observed.status));
     await sleep(3000);
   }
-  assert.equal((await get(scope.server, '2024-08-01')).status, 404, 'PostgreSQL server remains after cleanup');
-  assert.equal((await get(scope.deployment, '2025-04-01')).status, 404, 'PostgreSQL deployment remains after cleanup');
-  return { groupAbsent: true, serverAbsent: true, deploymentAbsent: true };
+  if (deployment.status !== 404) {
+    assert.ok([200, 202, 204, 404].includes((await request('DELETE', path(scope.deployment, '2025-04-01'))).status));
+    while (true) {
+      const observed = await get(scope.deployment, '2025-04-01');
+      if (observed.status === 404) break;
+      assert.ok([200, 409].includes(observed.status));
+      await sleep(3000);
+    }
+  }
+  const after = await get(`${scope.group}/resources`, '2021-04-01');
+  assert.equal(after.status, 200);
+  assert.ok(!after.body.nextLink && Array.isArray(after.body.value));
+  assert.ok(!after.body.value.some(item => item.id?.toLowerCase() === scope.server.toLowerCase()
+    || item.id?.toLowerCase().startsWith(`${scope.server.toLowerCase()}/`)), 'PostgreSQL children remain after cleanup');
+  assert.equal((await get(scope.group, '2022-09-01')).status, 200, 'Pilot group was removed');
+  return { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
