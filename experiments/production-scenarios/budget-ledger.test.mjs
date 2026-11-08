@@ -40,6 +40,15 @@ test('authorized USD 200 ceiling accepts the next run while retaining earlier al
   assert.equal(JSON.parse(await readFile(path)).allocations.length, 2);
 });
 
+test('repeated recovery preserves the first cleanup verification time', async t => {
+  const path = await ledger(t);
+  await reserveBudget(path, { runId: 'aa1111111111', envelopeUsd: 12, purpose: 'paired run' });
+  await confirmBudgetCleanup(path, 'aa1111111111');
+  const first = JSON.parse(await readFile(path)).allocations[0].cleanupVerifiedAt;
+  await confirmBudgetCleanup(path, 'aa1111111111');
+  assert.equal(JSON.parse(await readFile(path)).allocations[0].cleanupVerifiedAt, first);
+});
+
 test('Search, Storage and hosting retain their combined allowances across runs', async t => {
   const path = await ledger(t);
   for (const [index, purpose, envelopeUsd] of [[1, 'Search', 2], [2, 'Storage', 1], [3, 'Hosting', 1]]) {

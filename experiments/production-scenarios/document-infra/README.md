@@ -10,13 +10,23 @@ These modules cover document storage and event routing. A successful Bicep build
 `event-diagnostics` container and a second BlobCreated subscription targeting
 `documentEventDiagnostic`. The production subscription remains in place. Keeping
 the diagnostic in its own module preserves the hashes of the already captured
-document data and event templates. The diagnostic module has passed a local
-native-worker run; it has not yet been deployed to Azure.
+document data and event templates. The diagnostic module passed a paired native
+worker run on Azure and GlobalStack. Both targets wrote and read the marker;
+the production handler still failed before the full document workflow.
 
 Deploy the data module before the worker app so its Blob endpoint is available in the worker's initial settings. Deploy the event subscription only after the Functions host reports the Event Grid trigger. Compile one immutable revision and run Azure first, then replay it unchanged locally. Record any provider errors and clean up each run. These modules do not yet include PostgreSQL, Search, Service Bus, ingress, private network wiring, or the full document workflow.
 
 `worker-scanner-paired.mjs` extends the worker/scanner component run with the document and diagnostic modules. It reserves a USD 12 experiment envelope, starts a detached ownership-checked cleanup watchdog, deploys to Azure first, then replays each template locally. It records a failed stage as a failed stage, including an Azure/GlobalStack mismatch. All owned document resources and deployments must be absent before the budget reservation can be marked cleanup-verified. The opt-in upload and event diagnostics test a managed-identity Blob write and a correlated event marker, but do not substitute for document ingestion and search.
 
 For long runs, invoke `paired-detached.mjs` with the same environment as the runner. It starts the runner in a separate process group and writes `launch.json` and `launcher.log` in the private run directory. Poll the run's `result.json` and watchdog result; a launch record alone is not a completed test. Reconcile any interrupted budget allocation only after a fresh Azure inventory and deployment absence check.
+
+If both the runner and watchdog stop, use `document-paired-recover.mjs` with the
+absolute private `private-cleanup.json` path and a new private result path. The
+recovery command refuses a live runner, verifies ownership, finishes any
+remaining cleanup, independently checks that Azure has zero resources and
+deployment records in the preserved pilot group, then marks the allocation
+cleanup-verified. It does not recover local container state or measured Azure
+billing; verify those separately. The certificate-backed Azure CLI session must
+be available through `PAIRED_AZURE_CERTIFICATE_FILE`.
 
 The Event Grid identity and dead-letter role follow [Microsoft's managed-identity guidance](https://learn.microsoft.com/en-us/azure/event-grid/managed-service-identity). The subscription shape follows the [system-topic Bicep reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.eventgrid/systemtopics/eventsubscriptions).

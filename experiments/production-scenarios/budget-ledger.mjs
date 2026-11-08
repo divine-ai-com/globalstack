@@ -51,6 +51,7 @@ export async function confirmBudgetCleanup(path, runId) {
   return update(path, state => {
     const allocation = state.allocations.find(item => item.runId === runId);
     assert.ok(allocation, 'Unknown run allocation');
+    if (allocation.cleanupVerified) return;
     allocation.cleanupVerified = true;
     allocation.cleanupVerifiedAt = new Date().toISOString();
     // Keep the complete envelope charged against the experiment allowance.

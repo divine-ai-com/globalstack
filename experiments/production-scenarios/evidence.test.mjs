@@ -270,6 +270,7 @@ test('paired event diagnostic evidence separates marker delivery from the incomp
   assert.equal(report.runnerFinalResultWritten, false);
   assert.deepEqual(report.independentAzureReadback, { resources: 0, deploymentRecords: 0 });
   assert.equal(report.cleanupReconciledManually, true);
+  assert.equal(report.recoveryCommandVerified, true);
   assert.equal(report.budget.actualAzureSpendMeasured, false);
 });
 

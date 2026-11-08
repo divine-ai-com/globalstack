@@ -40,6 +40,7 @@
   "independentAzureReadback": { "resources": 0, "deploymentRecords": 0 },
   "localManagedContainersRemaining": 0,
   "cleanupReconciledManually": true,
+  "recoveryCommandVerified": true,
   "budget": {
     "runEnvelopeUsd": 12,
     "cumulativeConservativeAllowanceUsd": 169,
