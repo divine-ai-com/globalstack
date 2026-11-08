@@ -1550,7 +1550,14 @@ export function evaluateArmExpression(expression, parameters) {
 export function evaluateArmValue(value, parameters) {
   if (Array.isArray(value)) return value.map(item => evaluateArmValue(item, parameters));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, evaluateArmValue(item, parameters)]));
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => {
+      const evaluatedKey = key.startsWith('[') && key.endsWith(']') ? evaluateArmValue(key, parameters) : key;
+      if (typeof evaluatedKey !== 'string') {
+        const error = new Error('An ARM object property name must evaluate to a string.');
+        error.code = 'InvalidTemplate'; error.status = 400; throw error;
+      }
+      return [evaluatedKey, evaluateArmValue(item, parameters)];
+    }));
   }
   if (typeof value !== 'string') return value;
   const trimmed = value.trim();

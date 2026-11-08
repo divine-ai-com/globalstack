@@ -1158,7 +1158,7 @@ export function createArmRequestHandler({
           if (!site) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webHostKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
-          if (functionsRouter?.hasNativeWorker(site.id)) {
+          if (functionsRouter?.requiresNativeWorker(site.id)) {
             const result = await functionsRouter.readNativeHostKeys(site.id);
             return sendJson(res, result.status, result.body, { 'cache-control': 'no-store' });
           }
@@ -1180,7 +1180,7 @@ export function createArmRequestHandler({
           if (!app) {
             return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
           }
-          if (functionsRouter?.hasNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
+          if (functionsRouter?.requiresNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           const fn = store.getResource(webFunctionKeysRoute.functionRoute);
           if (!fn) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionKeysRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
@@ -1201,7 +1201,7 @@ export function createArmRequestHandler({
           if (!app) {
             return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
           }
-          if (functionsRouter?.hasNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
+          if (functionsRouter?.requiresNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           const fn = store.getResource(webFunctionSecretsRoute.functionRoute);
           if (!fn) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionSecretsRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);

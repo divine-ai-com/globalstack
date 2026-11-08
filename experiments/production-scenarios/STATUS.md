@@ -105,7 +105,7 @@ remain outstanding.
 
 ## Budget and storage
 
-The private cumulative ledger currently reserves USD 35 in conservative envelopes
+The private cumulative ledger currently reserves USD 52 in conservative envelopes
 against the USD 150 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup. The scoped hosting plans were removed. The
@@ -130,3 +130,27 @@ output type casing differed (Azure capitalizes types). The serializer now
 matches the observed String and Array types, with a regression test against
 the retained Azure response. This latter correction has not had a fresh live run. No application traffic or effective network isolation is
 established by this foundation test.
+
+## Document worker runtime comparison
+
+The [clean worker attempt](evidence/document-worker-runtime-0c09247/) published the
+actual application image to a private registry and deployed it on one EP1 instance
+with identity-based host storage. Azure returned `200 {"worker":"ready"}` from the
+package's health route. Both local ARM deployments returned `Succeeded`, but the
+local application route returned `404 FunctionNotFound`. No native container was
+provisioned by the local deployment. Resources, six scoped roles and both deployment
+records were removed from Azure; the operator group was preserved.
+
+The preceding [subscription setup failure](evidence/document-worker-setup-c0940fc/)
+and [transport failure](evidence/document-worker-transport-5f12442/) remain retained
+as harness failures. Subscription setup is now checked before cloud mutation, and
+capture requests use fresh sockets after blocking native CLI commands. The fresh
+worker attempt passed both earlier failure points.
+
+The ARM evaluator now resolves expression-based object keys used by Bicep identity
+maps. An unprovisioned container Function App now fails explicitly instead of
+serving simulated HTTP/SCM execution or generated host keys. These corrections have
+local regression coverage. They do not implement automatic worker provisioning or
+establish a live paired pass. Container lifecycle, native function discovery,
+managed host-storage execution, event traversal and downstream services remain
+required. No full-workflow assertion has been promoted from `not-run`.

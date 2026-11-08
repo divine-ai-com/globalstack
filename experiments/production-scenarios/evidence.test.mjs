@@ -492,3 +492,24 @@ test('foundation evidence retains the false success and cleanup independently of
   assert.deepEqual(report.cleanup, { resourcesAbsent: true, deploymentAbsent: true, groupPreserved: true });
   assert.equal(report.businessWorkflowCompleted, false);
 });
+
+test('deployed document worker evidence distinguishes native Azure health from missing local execution', async () => {
+  const prefix = 'document-worker-runtime-0c09247/';
+  const index = await load(prefix + 'index.json');
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(prefix + 'result.json');
+  assert.equal(report.revision, index.sourceRevision);
+  assert.equal(report.azureNativeHealth, true);
+  assert.equal(report.hostLocalState, 'Succeeded'); assert.equal(report.appLocalState, 'Succeeded');
+  assert.equal(report.localHealthStatus, 404);
+  assert.equal(report.localNativeRuntimeVerified, false); assert.equal(report.businessWorkflowCompleted, false);
+  assert.match(report.applicationImage.digest, /@sha256:[a-f0-9]{64}$/);
+  const observed = report.exchanges.filter(item => item.phase === 'native-health');
+  assert.ok(observed.some(item => item.target === 'azure' && item.status === 200 && item.body?.worker === 'ready'));
+  assert.ok(observed.some(item => item.target === 'local' && item.body?.error?.code === 'FunctionNotFound'));
+  assert.deepEqual(report.cleanup, { resourcesAbsent: true, rolesAbsent: true, deploymentsAbsent: true, groupPreserved: true });
+});

@@ -680,6 +680,8 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
         appName: resource.name,
         resourceId: resource.id,
         defaultHostName: resource.properties?.defaultHostName,
+        requiresNativeWorker: String(resource.kind ?? '').toLowerCase().split(',').includes('functionapp')
+          && /^DOCKER\|/i.test(resource.properties?.siteConfig?.linuxFxVersion ?? ''),
       });
       return;
     }

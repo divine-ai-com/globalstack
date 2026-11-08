@@ -137,6 +137,7 @@ finally {
     } catch { report.cleanup = { cleanupComplete: false, recoveryRequired: true }; }
   }
   for (const server of [facade, arm]) if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
+  await runtime?.dispose();
   await rm(dockerConfig, { recursive: true, force: true });
   if (imageReference) try { execFileSync('docker', ['image', 'rm', imageReference], { stdio: 'ignore' }); } catch {}
   report.completedAt = new Date().toISOString(); emit('run-end', { summary: report.error ?? 'Worker observations recorded. No full application workflow.' });

@@ -180,3 +180,36 @@ test('native connection establishment has a deadline separate from function exec
   assert.equal(response.status, 502);
   assert.equal((await response.json()).error.code, 'NativeFunctionsWorkerUnavailable');
 });
+
+test('a container Function App without a worker cannot report simulated execution or host keys', async t => {
+  const store = new ResourceStore();
+  store.putResourceGroup('00000000-0000-0000-0000-000000000000', 'native-workers');
+  const runtime = createEmulatorRuntime({ store }); t.after(() => runtime.dispose());
+  const arm = await listen(t, createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter }));
+  const endpoint = await listen(t, createServer(runtime.functionsRouter.handler()));
+  const headers = { authorization: 'Bearer globalstack-local-token', 'content-type': 'application/json' };
+  const request = (method, id, body) => wireFetch(`${arm}${id}?api-version=2024-11-01`, { method, headers,
+    ...(body ? { body: JSON.stringify(body) } : {}) });
+  const planId = resourceId.replace('/sites/real-worker', '/serverfarms/container-plan');
+  const plan = await request('PUT', planId, { location: 'westus2', kind: 'elastic', sku: { name: 'EP1', tier: 'ElasticPremium', capacity: 1 }, properties: { reserved: true } });
+  assert.ok([200, 201, 202].includes(plan.status)); await plan.arrayBuffer();
+  for (let i = 0; i < 6; i++) await (await request('GET', planId)).arrayBuffer();
+  const created = await request('PUT', resourceId, { location: 'westus2', kind: 'functionapp,linux,container',
+    properties: { serverFarmId: planId, siteConfig: { linuxFxVersion: 'DOCKER|registry.invalid/independent-worker:fixture' } } });
+  assert.ok([200, 201, 202].includes(created.status), await created.text());
+  runtime.functionsRouter.registerHttpFunction({ appName: 'real-worker', functionName: 'synthetic', route: 'health', authLevel: 'anonymous' });
+  for (const [path, options] of [
+    ['/api/health', { headers: host }],
+    ['/api/zipdeploy', { method: 'POST', headers: { host: 'real-worker.scm.azurewebsites.net' }, body: 'not-a-package' }],
+  ]) {
+    const response = await wireFetch(endpoint + path, options);
+    assert.equal(response.status, 503);
+    assert.equal((await response.json()).error.code, 'NativeFunctionsWorkerNotProvisioned');
+  }
+  const keys = await request('POST', `${resourceId}/host/default/listKeys`);
+  assert.equal(keys.status, 503);
+  assert.equal((await keys.json()).error.code, 'NativeFunctionsWorkerNotProvisioned');
+  assert.equal(runtime.functionsRouter.apps.get('real-worker').deployments.length, 0);
+  await (await request('DELETE', resourceId)).arrayBuffer();
+  assert.equal((await wireFetch(`${endpoint}/api/health`, { headers: host })).status, 404);
+});

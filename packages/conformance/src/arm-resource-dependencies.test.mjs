@@ -144,3 +144,12 @@ test('copy loops reject invalid counts and unsupported serial execution before w
   assert.throws(() => evaluateArmValue('[copyIndex()]', {}), { code: 'InvalidTemplate' });
   assert.equal((await request('GET', `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/must-not-exist?api-version=2023-01-31`)).status, 404);
 });
+
+test('compiled identity map keys resolve to resource IDs instead of expression text', () => {
+  const scope = { __subscriptionId: subscription, __resourceGroupName: 'dependency-check', worker: 'independent-worker' };
+  const expected = `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/independent-worker`;
+  const identity = evaluateArmValue({ type: 'UserAssigned', userAssignedIdentities: {
+    "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('worker')))]": {},
+  } }, scope);
+  assert.deepEqual(identity.userAssignedIdentities, { [expected]: {} });
+});

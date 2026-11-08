@@ -272,12 +272,13 @@ export class FunctionsRouter {
     this.apps = new Map();
   }
 
-  registerApp({ appName, defaultHostName, resourceId }) {
+  registerApp({ appName, defaultHostName, resourceId, requiresNativeWorker }) {
     const name = String(appName);
     const existing = this.apps.get(name.toLowerCase());
     if (existing) {
       // ARM PUT/PATCH refreshes site metadata. Only deletion discards the
       // registered application and its in-memory execution/deployment state.
+      if (requiresNativeWorker !== undefined) existing.requiresNativeWorker = requiresNativeWorker;
       if (resourceId !== undefined) existing.resourceId = resourceId;
       if (defaultHostName !== undefined && defaultHostName !== null) existing.defaultHostName = defaultHostName;
       return;
@@ -285,6 +286,7 @@ export class FunctionsRouter {
     this.apps.set(name.toLowerCase(), {
       appName: name,
       resourceId,
+      requiresNativeWorker: requiresNativeWorker === true,
       defaultHostName: defaultHostName ?? `${name}.azurewebsites.net`,
       scmHostName: `${name}.scm.azurewebsites.net`,
       functions: new Map(),
@@ -300,7 +302,16 @@ export class FunctionsRouter {
     });
   }
 
+  requiresNativeWorker(resourceId) {
+    return this.hasNativeWorker(resourceId) || [...this.apps.values()].some(app =>
+      app.resourceId?.toLowerCase() === String(resourceId).toLowerCase() && app.requiresNativeWorker);
+  }
+
   readNativeHostKeys(resourceId) {
+    if (this.requiresNativeWorker(resourceId) && !this.hasNativeWorker(resourceId)) {
+      return { status: 503, body: { error: { code: 'NativeFunctionsWorkerNotProvisioned',
+        message: 'The declared container has no provisioned native Functions worker.' } } };
+    }
     return readNativeHostKeys(this.nativeWorkers.get(String(resourceId ?? '').toLowerCase()));
   }
 
@@ -1240,6 +1251,9 @@ export class FunctionsRouter {
       if (workerOrigin) {
         if (hostInfo.scm) return sendError(res, 501, 'NativeFunctionsDeploymentNotImplemented', 'Native worker package deployment through SCM is not implemented.');
         return forwardNativeFunction(req, res, workerOrigin.origin);
+      }
+      if (app.requiresNativeWorker) {
+        return sendError(res, 503, 'NativeFunctionsWorkerNotProvisioned', 'The declared container has no provisioned native Functions worker.');
       }
       const origin = `http://${req.headers.host ?? app.defaultHostName}`;
       if (hostInfo.scm) {
