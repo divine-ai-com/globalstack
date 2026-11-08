@@ -15,7 +15,7 @@ import { createArmServer } from '../../packages/azure-control-plane/src/server.m
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { createDockerContainerAppProvisioner } from '../../packages/azure-data-plane/src/docker-container-app-provisioner.mjs';
 
-assert.ok(process.env.PAIRED_RUN_DIR && process.env.SCANNER_IMAGE_ID && process.env.SCANNER_API_AUDIENCE && process.env.ENTRA_TENANT_ID);
+assert.ok(process.env.PAIRED_RUN_DIR && process.env.SCANNER_IMAGE_ID && process.env.SCANNER_API_AUDIENCE && process.env.ENTRA_TENANT_ID && process.env.PILOT_CLIENT_ID);
 assert.equal(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(), '');
 const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const out = resolve(process.env.PAIRED_RUN_DIR); await mkdir(out, { mode: 0o700 });
@@ -26,7 +26,7 @@ const m = { subscription: process.env.PAIRED_SUBSCRIPTION_ID, group: process.env
 const s = scannerPaths(m), token = azureToken(m.config), replacements = [[token, '<redacted>'], [m.subscription, '<subscription>'], [m.publisher, '<publisher>']];
 const emit = createRecording(out, { platform: 'Scanner ingress: Azure and local ARM', revision, sourceDirty: false });
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
-  scope: 'Native scanner deployment and rejection of unauthenticated and unlisted callers. Valid worker execution on Azure is not tested in this stage.',
+  scope: 'Native scanner deployment, denied callers, and real scans under a temporary explicit pilot-client allowlist. The worker-only policy is restored. Valid worker execution on Azure is not tested in this stage.',
   workerAccessTestedOnAzure: false, fullWorkflowCompleted: false, portalEvidenceComplete: false, exchanges: [], cleanup: null };
 let phase = 'preflight', allocated = false, watchdog, arm, facade, runtime, imageTag, localHostname;
 const images = new Map(), manifest = resolve(out, 'private-cleanup.json'), done = resolve(out, 'cleanup.done'), dockerConfig = resolve(out, 'private-docker');
@@ -136,7 +136,58 @@ try {
     const response = await httpExchange(`https://${hostname}/scan`, { method: 'POST', body: { harmlessProbe: true }, headers: bearer ? { authorization: `Bearer ${bearer}` } : {}, timeoutMs: 20000 });
     observe('azure', { control: name, path: '/scan', ...response });
     const localResponse = await localIngress(bearer); observe('local', { control: name, path: '/scan', ...localResponse });
-    report[name] = { azure: response.status, local: localResponse.status, expected, statusMatched: response.status === localResponse.status };
+    report[name] = { azure: response.status, local: localResponse.status, expected, expectedMatchedBoth: response.status === expected && localResponse.status === expected, statusMatched: response.status === localResponse.status };
+  }
+  phase = 'authorized-scanner-component-probe';
+  const permitted = structuredClone(config.body.properties);
+  permitted.identityProviders.azureActiveDirectory.validation.defaultAuthorizationPolicy.allowedApplications = [process.env.PILOT_CLIENT_ID];
+  permitted.identityProviders.azureActiveDirectory.validation.defaultAuthorizationPolicy.allowedPrincipals.identities = [m.publisher];
+  permitted.identityProviders.azureActiveDirectory.validation.jwtClaimChecks.allowedClientApplications = [process.env.PILOT_CLIENT_ID];
+  async function setPolicy(properties) {
+    const actual = await request('PUT', `${s.auth}?api-version=2025-01-01`, { properties });
+    assert.ok([200, 201].includes(actual.status));
+    const counterpart = await local('PUT', `${s.auth}?api-version=2025-01-01`, { properties });
+    assert.ok([200, 201].includes(counterpart.status));
+  }
+  async function scanBytes(url, hostname, ca, content) {
+    const payload = Buffer.from(content), correlationId = randomUUID(), started = Date.now();
+    const result = await new Promise((done, fail) => {
+      const req = tlsRequest(url, { ca, method: 'POST', signal: AbortSignal.timeout(30000), headers: { host: hostname,
+        authorization: `Bearer ${pilot}`, 'content-type': 'text/plain', 'content-length': payload.length, 'x-correlation-id': correlationId } }, res => {
+        const chunks = []; let bytes = 0;
+        res.on('data', chunk => { bytes += chunk.length; if (bytes > 4 * 1024 * 1024) res.destroy(new Error('Scanner response exceeds capture limit')); else chunks.push(chunk); });
+        res.on('error', fail); res.on('end', () => {
+          const body = Buffer.concat(chunks).toString();
+          try { done({ status: res.statusCode, body: JSON.parse(body) }); }
+          catch { done({ status: res.statusCode, body: { unparsedBytes: bytes, sha256: createHash('sha256').update(body).digest('hex') } }); }
+        });
+      }); req.on('error', fail); req.end(payload);
+    });
+    return { correlationId, elapsedMs: Date.now() - started, inputSha256: createHash('sha256').update(payload).digest('hex'), ...result };
+  }
+  const normalize = value => ({ ...value, engines: value.engines?.map(({ durationMs, ...engine }) => { void durationMs; return engine; }) });
+  report.scans = [];
+  try {
+    await setPolicy(permitted);
+    for (const [name, content, decision] of [
+      ['clean-text', 'Document scanner paired native execution.', 'clean'],
+      ['yara-harmless-marker', 'PILOT_DOCUMENT_DETECTION_73261', 'detected'],
+      ['clamav-harmless-marker', 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*', 'detected'],
+    ]) {
+      const actual = await scanBytes(`https://${hostname}/scan`, hostname, undefined, content);
+      const counterpart = await scanBytes(`https://127.0.0.1:${facade.address().port}/scan`, localHostname, ca, content);
+      observe('azure', { control: name, ...actual }); observe('local', { control: name, ...counterpart });
+      report.scans.push({ name, azureStatus: actual.status, localStatus: counterpart.status,
+        expectedDecision: decision, azureDecision: actual.body.status, localDecision: counterpart.body.status,
+        bodyMatchedExceptEngineTiming: actual.status === 200 && counterpart.status === 200 && actual.body.status === decision && counterpart.body.status === decision && JSON.stringify(normalize(actual.body)) === JSON.stringify(normalize(counterpart.body)) });
+    }
+  } finally {
+    phase = 'restore-worker-only-policy';
+    await setPolicy(config.body.properties);
+    const actual = await httpExchange(`https://${hostname}/scan`, { method: 'POST', body: {}, headers: { authorization: `Bearer ${pilot}` } });
+    const counterpart = await localIngress(pilot);
+    observe('azure', { control: 'pilot-denied-after-restoration', ...actual }); observe('local', { control: 'pilot-denied-after-restoration', ...counterpart });
+    report.restoredPolicy = { azureStatus: actual.status, localStatus: counterpart.status };
   }
   await runtime.containerAppRouter.lifecycle.settle();
   report.localRuntimeState = runtime.containerAppRouter.lifecycle.status(s.app);

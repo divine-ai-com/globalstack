@@ -80,6 +80,7 @@ flowchart TD
 - `packages/core/src/event-grid-storage-contract.mjs`
 - `packages/core/src/hybrid-coverage.mjs`
 - `packages/core/src/resource-store.mjs`
+- `packages/azure-control-plane/src/container-environment-validation.mjs`
 - `packages/azure-control-plane/src/deployment-validation.mjs`
 - `packages/azure-control-plane/src/provider-validation-support.mjs`
 - `packages/azure-control-plane/src/provider-validation.mjs`
@@ -161,6 +162,7 @@ flowchart TD
 - `packages/conformance/src/container-app-auth.test.mjs`
 - `packages/conformance/src/container-app-router.test.mjs`
 - `packages/conformance/src/container-app-runtime-spec.test.mjs`
+- `packages/conformance/src/container-environment-validation.test.mjs`
 - `packages/conformance/src/cross-service-flows.test.mjs`
 - `packages/conformance/src/digital-twins-router.test.mjs`
 - `packages/conformance/src/docs-navigation.test.mjs`

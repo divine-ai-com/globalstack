@@ -1,3 +1,4 @@
+import { validateContainerEnvironment } from './container-environment-validation.mjs';
 import { createServer, STATUS_CODES } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
@@ -379,6 +380,11 @@ export function createArmRequestHandler({
       return storageAccountNotProvisioned();
     }
 
+    if (resourceType === 'Microsoft.App/managedEnvironments') {
+      const error = validateContainerEnvironment(body);
+      if (error) return { status: 400, body: { error } };
+    }
+
     if (resourceType === 'Microsoft.App/containerApps' && body.properties?.managedEnvironmentId) {
       const environmentRoute = providerRouteFromResourceId(body.properties.managedEnvironmentId);
       if (!environmentRoute || !store.getResource(environmentRoute)) {
@@ -477,6 +483,16 @@ export function createArmRequestHandler({
     } catch (error) {
       return { status: error.status ?? 400, body: { error: {
         code: error.code ?? 'InvalidTemplate', message: error.message, details: [],
+      } } };
+    }
+    for (const operation of expanded.operations) {
+      if (operation.kind !== 'resource' || operation.providerRoute.providerNamespace !== 'Microsoft.App'
+        || operation.providerRoute.typePath.split('/')[0] !== 'managedEnvironments'
+        || operation.providerRoute.typePath.split('/').length !== 2) continue;
+      const error = validateContainerEnvironment(operation.body);
+      if (error) return { status: 400, body: { error: { code: 'InvalidTemplateDeployment',
+        message: `The template deployment '${body.name ?? 'deployment'}' is not valid according to the validation procedure. See inner errors for details.`,
+        details: [{ code: 'ValidationForResourceFailed', message: "Validation failed for a resource. Check 'Error.Details[0]' for more information.", details: [error] }],
       } } };
     }
     const operations = expanded.operations;

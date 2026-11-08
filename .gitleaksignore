@@ -284,3 +284,7 @@ experiments/production-scenarios/evidence/version-readiness-2205374/result.json:
 f4c1effae13cf4a22397445a2f61d6782dc289a7:experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2316
 experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2317
 f4c1effae13cf4a22397445a2f61d6782dc289a7:experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2317
+
+# Historical SHA-256 of the compiled scanner auth template, not a credential.
+# The current manifest separates paths and digests. Retain only this exact finding.
+e953a7b2545f82dce64f583fca6dc45cf73c1626:experiments/production-scenarios/evidence/scanner-native-4e0904c/SHA256SUMS.json:generic-api-key:2
