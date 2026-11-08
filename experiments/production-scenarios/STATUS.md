@@ -87,10 +87,34 @@ while Azure deleted its managed environment, before writing its final result.
 Independent Azure inventory later found zero resources and deployment records;
 local managed containers were absent. The cleanup ledger was reconciled manually.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
-allocation ledger now totals USD 169, leaving USD 31 unallocated. A read-only Cost Management query for the pilot group returned no current
+allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181, leaving USD 19 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
+
+The document Search and failure-queue templates now compile and deploy through
+the local ARM runtime with scoped identity roles. A local Search regression
+found that the application's tenant, clean-state, owner and group filter
+returned HTTP 501. A bounded general filter evaluator now passes the clean,
+unresolved, cross-tenant and denied-reader cases. The Search service, index
+and failure queue have not yet been deployed to Azure as part of this scenario.
+Native Service Bus AMQP message delivery remains missing ([#71](https://github.com/divine-ai-com/globalstack/issues/71)).
+
+An [Azure-first Entra-only PostgreSQL validation](evidence/document-postgres-validation-3ee3c25/)
+returned HTTP 200 while GlobalStack returned 501. The
+[follow-up validation](evidence/document-postgres-validation-38e1f19/)
+returned HTTP 200 on both targets without creating Azure resources. The
+[paid deployment pair](evidence/document-postgres-paired-efb90ad/) then
+reached `Succeeded` on Azure but failed on GlobalStack with
+`MissingRequiredParameter`, because the local server PUT required a password
+administrator. After a bounded creation fix, a
+[local replay of the original Azure request](evidence/document-postgres-local-replay-f10ee8a/)
+returned HTTP 201 and `Succeeded`; the server, administrator and database were
+readable and local cleanup passed. Azure first-pass cleanup reported a stale
+child inventory, but separate recovery verified zero resources and the
+deployment record absent. The USD 12 allocation is cleanup-verified; actual
+billing remains unmeasured. PostgreSQL TLS/Entra data-plane access, schema
+initialization and the document worker path remain open ([#74](https://github.com/divine-ai-com/globalstack/issues/74)).
 
 ## Latest scanner and worker checkpoint
 
