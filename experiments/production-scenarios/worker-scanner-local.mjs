@@ -18,9 +18,12 @@ import { httpExchange } from './http-exchange.mjs';
 const out = resolve(process.env.WORKER_SCANNER_RUN_DIR ?? `reports/production-scenarios/worker-scanner-${randomBytes(5).toString('hex')}`);
 await mkdir(out, { recursive: true, mode: 0o700 });
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
+const tenant = process.env.WORKER_SCANNER_TENANT_ID ?? sub;
+assert.match(tenant, /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i);
+process.env.GLOBALSTACK_AZURE_TENANT_ID = tenant;
 const store = new ResourceStore(), audience = randomUUID(), invokeFunction = process.env.WORKER_SCANNER_HTTP === 'true';
 let scannerConfiguration, scannerId, scannerHostname;
-const identity = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub], applicationAudiences: [audience] });
+const identity = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [sub], applicationAudiences: [audience] });
 const images = new Map(), image = execFileSync('docker', ['image', 'inspect', process.env.WORKER_IMAGE_TAG ?? 'globalstack/document-functions:pilot', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
 const imageReference = 'document-pilot@' + image; images.set(imageReference, image);
 const scannerImage = execFileSync('docker', ['image', 'inspect', 'globalstack/document-scanner:frozen-20261107', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
@@ -28,11 +31,11 @@ const scannerReference = 'scanner-pilot@' + scannerImage; images.set(scannerRefe
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
   scope: (invokeFunction ? 'Includes an actual admin-authenticated Functions handler calling the scanner. ' : '') + 'Local ARM-deployed native Functions container obtains a managed-identity token through the Azure SDK and calls the native scanner. SDK commands execute inside the worker container; this is not an Event Grid invocation, Azure comparison or complete business workflow.',
-  startedAt: new Date().toISOString(), image, scannerImage, functionHandlerRequested: invokeFunction, functionCalls: [], exchanges: [], storage: [], scans: [], cleanup: false };
+  startedAt: new Date().toISOString(), tenantId: tenant, image, scannerImage, functionHandlerRequested: invokeFunction, functionCalls: [], exchanges: [], storage: [], scans: [], cleanup: false };
 let runtime;
 const provision = createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'),
   preparePlatform: createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter, store, containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'], observe: event => report.storage.push(event) }) });
-runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust], containerAppTokenTrusts: [{ ...identity.trust, configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` }], nativeFunctionsProvisioner: provision, nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'scanner.private') }) });
+runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust], containerAppTokenTrusts: [{ ...identity.trust, configurationIssuer: `https://login.microsoftonline.com/${tenant}/v2.0` }], nativeFunctionsProvisioner: provision, nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'scanner.private') }) });
 const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
 const facade = createFunctionsRouterServer(runtime.functionsRouter);
 try {
@@ -64,7 +67,7 @@ try {
       const scanner = await scannerDeploy('scanner-app', { serviceName: name, location: 'westus2', runId: name, environmentId,
         imageReference: scannerReference, registryHost: `${name}images.azurecr.io`, publicIngress: true });
       scannerHostname = scanner.properties.outputs.hostname.value;
-      await scannerDeploy('scanner-auth', { scannerName: `${name}-scanner`, tenantId: sub, scannerAudience: audience, workerIdentityName: `${name}-worker` });
+      await scannerDeploy('scanner-auth', { scannerName: `${name}-scanner`, tenantId: tenant, scannerAudience: audience, workerIdentityName: `${name}-worker` });
       scannerConfiguration = structuredClone(store.resources.get(`${scannerId}/authconfigs/current`.toLowerCase()));
       await runtime.containerAppRouter.lifecycle.settle();
       assert.equal(runtime.containerAppRouter.lifecycle.status(scannerId), 'running');

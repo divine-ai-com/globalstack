@@ -1,0 +1,14 @@
+[
+  {
+    "file": "README.md",
+    "sha256": "b4facc34eb32dab57667223c60c4feaa96c359a8b9b82cefa1a195a5689eff2f"
+  },
+  {
+    "file": "events.ndjson",
+    "sha256": "2dbda1e669cce07e3fd635edc234830c36167be0243509d25f4950c709d68d27"
+  },
+  {
+    "file": "identity-probe.json",
+    "sha256": "105f165509c1f56b9f61c8f6b11adaa3043f42b43be0ead0981b948de9b36efe"
+  }
+]

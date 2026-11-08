@@ -90,6 +90,7 @@ try {
     assert.equal(execFileSync('docker', ['image', 'inspect', id, '--format', '{{.Id}}'], { encoding: 'utf8' }).trim(), id);
   }
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = m.subscription;
+  process.env.GLOBALSTACK_AZURE_TENANT_ID = process.env.ENTRA_TENANT_ID;
   const store = new ResourceStore(), tenant = process.env.ENTRA_TENANT_ID, audience = process.env.SCANNER_API_AUDIENCE;
   identity = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [m.subscription], applicationAudiences: [audience] });
   const preparePlatform = createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter, store,

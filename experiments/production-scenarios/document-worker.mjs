@@ -86,8 +86,10 @@ try {
   const host = compile('worker-host'), app = compile('worker-app');
   report.templates = { host: host.sha256, app: app.sha256 };
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = m.subscription;
+  const tenantId = process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? process.env.AZURE_TENANT_ID ?? '00000000-0000-0000-0000-000000000000';
+  process.env.GLOBALSTACK_AZURE_TENANT_ID = tenantId;
   const store = new ResourceStore();
-  identityService = await createManagedIdentityService({ store, tenantId: process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? process.env.AZURE_TENANT_ID ?? '00000000-0000-0000-0000-000000000000', subscriptionIds: [m.subscription] });
+  identityService = await createManagedIdentityService({ store, tenantId, subscriptionIds: [m.subscription] });
   const preparePlatform = createNativeFunctionsPlatform({ identityService, storageRouter: () => runtime.storageRouter,
     observe: event => observe('local-storage', event) });
   runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identityService.trust], nativeFunctionsProvisioner: input =>

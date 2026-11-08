@@ -1,0 +1,9 @@
+{
+  "capturedAt": "2026-11-08T11:44:33.138418+00:00",
+  "sourceRevision": "8707add",
+  "method": "Direct request inside the original native worker to its configured managed-identity endpoint. Only status and error retained.",
+  "response": {
+    "status": 400,
+    "error": "identity_not_found"
+  }
+}
