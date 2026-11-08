@@ -1,3 +1,4 @@
+import { retryableDependencyFailure } from './dependency-retry.mjs';
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { spawn, execFileSync } from 'node:child_process';
@@ -59,6 +60,13 @@ async function command(label, executable, args, options = {}) {
   });
   const log = `${String(++commandIndex).padStart(2, '0')}-${label}.log`;
   await writeFile(resolve(output, 'logs', log), result.stdout + '\n' + result.stderr);
+  if ((options.retryCount ?? 0) < 2 && retryableDependencyFailure(label, result.code, result.stderr)) {
+    record.dependencyRetries ??= [];
+    record.dependencyRetries.push({ label, exitCode: result.code, log, attempt: (options.retryCount ?? 0) + 1 });
+    await save();
+    await new Promise(done => setTimeout(done, 5000));
+    return command(label, executable, args, { ...options, retryCount: (options.retryCount ?? 0) + 1 });
+  }
   record.stages.push({ label, exitCode: result.code, log });
   await save();
   if (result.code !== 0) throw new Error(`${label} exited ${result.code}; see logs/${log}`);

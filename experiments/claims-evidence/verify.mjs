@@ -35,6 +35,12 @@ for (const report of reports) {
   stages.push('destroy');
   assert.deepEqual(report.stages.map(s => s.label), stages);
   assert.ok(report.stages.every(s => s.exitCode === 0));
+  assert.ok((report.dependencyRetries ?? []).length <= 2);
+  for (const [index, retry] of (report.dependencyRetries ?? []).entries()) {
+    assert.equal(retry.label, 'init'); assert.equal(retry.attempt, index + 1);
+    assert.ok(Number.isInteger(retry.exitCode) && retry.exitCode !== 0);
+    assert.match(retry.log, /^\d+-init\.log$/);
+  }
   assert.deepEqual(report.managementChecks.map(r => r.label), resources);
   assert.ok(report.managementChecks.every(r => r.status === 200));
   assert.deepEqual(report.cleanup.resourceStatuses.map(r => r.label), resources);
