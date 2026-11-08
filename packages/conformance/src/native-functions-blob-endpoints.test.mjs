@@ -4,13 +4,24 @@ import { request } from 'node:https';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { createNativeFunctionsPlatform, resolveNativeBlobEndpoints } from '../../azure-data-plane/src/native-functions-platform.mjs';
+import { blobHostMasterKeys, createNativeFunctionsPlatform, resolveNativeBlobEndpoints } from '../../azure-data-plane/src/native-functions-platform.mjs';
 
 const subscriptionId = '11111111-1111-4111-8111-111111111111';
 const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/fixture/providers/Microsoft.Storage/storageAccounts/pilotdocs`;
 const router = { account(name) { return name === 'pilotdocs' ? { resourceId } : null; } };
 const valid = { settings: { STORAGE_ENDPOINT: 'https://pilotdocs.blob.core.windows.net/' },
   names: ['STORAGE_ENDPOINT'], router, subscriptionId };
+
+test('native host reads only valid Blob-backed master keys from host secret blobs', () => {
+  const key = 'testHostKeyValue1234567890';
+  const account = { blobs: new Map([
+    ['azure-webjobs-secrets\0app-host/host.json', { body: Buffer.from(JSON.stringify({ masterKey: { value: key, encrypted: false } })) }],
+    ['azure-webjobs-secrets\0app-host/functions.json', { body: Buffer.from(JSON.stringify({ masterKey: { value: 'otherHostKeyValue123456789', encrypted: false } })) }],
+    ['other-container\0app-host/host.json', { body: Buffer.from(JSON.stringify({ masterKey: { value: 'otherHostKeyValue123456789', encrypted: false } })) }],
+    ['azure-webjobs-secrets\0bad-host/host.json', { body: Buffer.from('{') }],
+  ]) };
+  assert.deepEqual(blobHostMasterKeys(account), [key]);
+});
 
 test('native Function platform maps only a deployed Blob account in its subscription', () => {
   assert.deepEqual(resolveNativeBlobEndpoints(valid), [{ setting: 'STORAGE_ENDPOINT', hostname: 'pilotdocs.blob.core.windows.net' }]);

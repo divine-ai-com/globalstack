@@ -75,14 +75,22 @@ export function createDockerFunctionsProvisioner({ images, directory, preparePla
       while (Date.now() < deadline) {
         signal.throwIfAborted();
         try {
-          const keys = JSON.parse((await exec('docker', ['exec', name, 'node', '-e',
-            "const fs=require('fs');for(const p of ['/azure-functions-host/Secrets/host.json','/home/data/Functions/secrets/host.json']){if(fs.existsSync(p)){process.stdout.write(fs.readFileSync(p));process.exit(0)}}process.exit(1)"],
-          { signal, timeout: 5000 })).stdout.replace(/^\uFEFF/, ''));
-          assert.ok(keys.masterKey?.value && !keys.masterKey.encrypted);
-          const response = await fetch(`${origin}/admin/host/status`, { headers: { 'x-functions-key': keys.masterKey.value },
-            redirect: 'error', signal: AbortSignal.any([signal, AbortSignal.timeout(2000)]) });
-          if (response.status === 200 && (await response.json()).state === 'Running') { masterKey = keys.masterKey.value; break; }
-          await response.body?.cancel();
+          let fileKeys = [];
+          try {
+            const data = JSON.parse((await exec('docker', ['exec', name, 'node', '-e',
+              "const fs=require('fs');for(const p of ['/azure-functions-host/Secrets/host.json','/home/data/Functions/secrets/host.json']){if(fs.existsSync(p)){process.stdout.write(fs.readFileSync(p));process.exit(0)}}process.exit(1)"],
+            { signal, timeout: 5000 })).stdout.replace(/^\uFEFF/, ''));
+            if (data.masterKey?.value && !data.masterKey.encrypted) fileKeys = [data.masterKey.value];
+          } catch { signal.throwIfAborted(); }
+          const candidates = [...new Set([...fileKeys, ...(platform.readHostMasterKeys?.() ?? [])])];
+          for (const candidate of candidates) {
+            if (!/^[A-Za-z0-9_+/=-]{16,256}$/.test(candidate)) continue;
+            const response = await fetch(`${origin}/admin/host/status`, { headers: { 'x-functions-key': candidate },
+              redirect: 'error', signal: AbortSignal.any([signal, AbortSignal.timeout(2000)]) });
+            if (response.status === 200 && (await response.json()).state === 'Running') { masterKey = candidate; break; }
+            await response.body?.cancel();
+          }
+          if (masterKey) break;
         } catch { signal.throwIfAborted(); }
         await wait(500);
       }

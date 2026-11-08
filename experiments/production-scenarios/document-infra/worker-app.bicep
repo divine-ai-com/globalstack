@@ -34,7 +34,6 @@ resource app 'Microsoft.Web/sites@2024-11-01' = {
         { name: 'AzureWebJobsStorage__accountName', value: storage.name }
         { name: 'AzureWebJobsStorage__credential', value: 'managedidentity' }
         { name: 'AzureWebJobsStorage__clientId', value: identity.properties.clientId }
-        { name: 'AzureWebJobsSecretStorageType', value: 'files' }
         { name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE', value: 'false' }
       ], applicationSettings)
     }

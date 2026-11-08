@@ -10,6 +10,21 @@ import { resolveNativeContainerAppEndpoints } from './native-container-app-endpo
 
 const exec = promisify(execFile);
 
+export function blobHostMasterKeys(account) {
+  const keys = [];
+  for (const [name, blob] of account.blobs) {
+    if (!name.startsWith('azure-webjobs-secrets\0') || !name.endsWith('/host.json')
+      || !Buffer.isBuffer(blob.body) || blob.body.length > 65536) continue;
+    try {
+      const data = JSON.parse(blob.body.toString('utf8').replace(/^\uFEFF/, ''));
+      if (data.masterKey?.encrypted === false && /^[A-Za-z0-9_+/=-]{16,256}$/.test(data.masterKey.value)) {
+        keys.push(data.masterKey.value);
+      }
+    } catch { /* A partially written or unrelated blob is not a usable host key. */ }
+  }
+  return keys;
+}
+
 export function resolveNativeBlobEndpoints({ settings, names, router, subscriptionId }) {
   assert.ok(Array.isArray(names) && names.length <= 8 && new Set(names).size === names.length);
   return names.flatMap(setting => {
@@ -117,7 +132,8 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
         env[service.setting] = `https://${service.hostname}:${port}`;
       }
       signal.throwIfAborted();
-      return { network: name, env, extraHosts: hostnames.map(hostname => `${hostname}:${gateway}`),
+      return { network: name, env, readHostMasterKeys: () => blobHostMasterKeys(router.account(account)),
+        extraHosts: hostnames.map(hostname => `${hostname}:${gateway}`),
         mounts: [`${certificate}:/globalstack-platform-ca.pem:ro`], dispose };
     } catch {
       try { await dispose(); } catch { throw Object.assign(new Error('Native platform cleanup failed'), { cleanup: dispose }); }
