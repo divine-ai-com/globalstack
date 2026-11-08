@@ -25,9 +25,10 @@ export function workerPaths(m) {
   return { group, service, storage, registry, identity, app, plan, roles, resources, versions,
     deployments: ['host', 'app'].map(stage => id('Microsoft.Resources/deployments', `gs-worker-${stage}-${m.runId}`)) };
 }
-export function workerClient(m, observe = () => {}, exchange = httpExchange) {
+export function workerClient(m, observe = () => {}, exchange = httpExchange, refreshToken = azureToken) {
   const scope = workerPaths(m);
   const hostKeysPath = `${scope.app}/host/default/listkeys`;
+  let token = m.token;
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     const allowed = ['GET', 'PUT', 'DELETE'].includes(method) && [...scope.resources, ...scope.deployments].includes(url.pathname)
@@ -35,17 +36,36 @@ export function workerClient(m, observe = () => {}, exchange = httpExchange) {
       || method === 'POST' && url.pathname === hostKeysPath
       || method === 'POST' && scope.deployments.some(id => [`${id}/validate`, `${id}/cancel`].includes(url.pathname));
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed, 'Request escaped worker allowlist');
-    const startedAt = new Date().toISOString();
-    const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${m.token}` } });
-    // Host keys stay in the caller's memory and never reach evidence observers.
-    const recorded = url.pathname === hostKeysPath
-      ? { status: result.status, body: '<host-key response redacted>' } : result;
-    observe({ method, path, request: body, ...recorded, startedAt, completedAt: new Date().toISOString() }); return result;
+    const send = async attempt => {
+      const startedAt = new Date().toISOString();
+      const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${token}` } });
+      // Host keys stay in the caller's memory and never reach evidence observers.
+      const recorded = url.pathname === hostKeysPath
+        ? { status: result.status, body: '<host-key response redacted>' } : result;
+      observe({ method, path, request: body, ...recorded, attempt, startedAt, completedAt: new Date().toISOString() });
+      return result;
+    };
+    let result = await send(1);
+    if (result.status === 401 && result.body?.error?.code === 'ExpiredAuthenticationToken' && m.config) {
+      token = refreshToken(m.config);
+      result = await send(2);
+    }
+    return result;
   };
 }
 export async function cleanupWorker(m, request = workerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 600000, planOnly = false } = {}) {
   const s = workerPaths(m), deadline = Date.now() + timeoutMs, existing = [], deployments = [];
-  const get = id => request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`);
+  const get = async id => {
+    for (let attempt = 0; ; attempt++) {
+      assert.ok(Date.now() < deadline, 'Worker cleanup deadline exceeded');
+      let result;
+      try { result = await request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`); }
+      catch (error) { if (attempt >= 4) throw error; }
+      if (result && (![408, 429, 500, 502, 503, 504].includes(result.status) || attempt >= 4)) return result;
+      const seconds = Number(result?.headers?.['retry-after']);
+      await sleep(Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds * 1000, 30000) : 3000);
+    }
+  };
   const terminal = state => ['Succeeded', 'Failed', 'Canceled'].includes(state);
   for (const id of s.deployments) {
     let found = await get(id); if (found.status === 404) continue;
@@ -79,7 +99,15 @@ export async function cleanupWorker(m, request = workerClient(m), { sleep = ms =
   if (planOnly) return { ownershipVerified: true };
   // Complete each deletion before removing a dependency, such as the hosting plan.
   for (const id of [...existing, ...deployments.reverse()]) {
-    assert.ok([200, 202, 204, 404].includes((await request('DELETE', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`)).status));
+    while (true) {
+      assert.ok(Date.now() < deadline, 'Worker cleanup deadline exceeded');
+      const response = await request('DELETE', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`);
+      if ([200, 202, 204, 404].includes(response.status)) break;
+      assert.ok([408, 409, 429, 500, 502, 503, 504].includes(response.status), 'Worker deletion failed');
+      if ((await get(id)).status === 404) break;
+      const seconds = Number(response.headers?.['retry-after']);
+      await sleep(Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds * 1000, 30000) : 3000);
+    }
     while (true) {
       assert.ok(Date.now() < deadline, 'Worker cleanup deadline exceeded'); const found = await get(id);
       if (found.status === 404) break; assert.ok([200, 409].includes(found.status)); await sleep(3000);

@@ -44,6 +44,31 @@ test('one foreign role prevents all worker resource deletion', async () => {
   assert.deepEqual(f.mutations, []);
 });
 
+test('worker cleanup retries an uncertain 503 delete only while the owned resource remains', async () => {
+  const f = fixture(); let failures = 0;
+  const request = async (method, path) => {
+    if (method === 'DELETE' && path.startsWith(s.storage + '?') && failures++ === 0) return { status: 503, headers: { 'retry-after': '2' } };
+    return f.request(method, path);
+  };
+  const delays = [];
+  assert.equal((await cleanupWorker(m, request, { sleep: async ms => delays.push(ms) })).resourcesAbsent, true);
+  assert.equal(failures, 2);
+  assert.deepEqual(delays, [2000]);
+});
+
+test('worker client refreshes an expired token once without leaking it to observations', async () => {
+  const observations = [], headers = [];
+  const request = workerClient({ ...m, token: 'old-token', config: '/synthetic-config' }, event => observations.push(event),
+    async (_url, options) => {
+      headers.push(options.headers.authorization);
+      return headers.length === 1 ? { status: 401, body: { error: { code: 'ExpiredAuthenticationToken' } } } : { status: 200, body: {} };
+    }, () => 'new-token');
+  assert.equal((await request('GET', `${s.app}?api-version=2024-11-01`)).status, 200);
+  assert.deepEqual(headers, ['Bearer old-token', 'Bearer new-token']);
+  assert.deepEqual(observations.map(x => x.status), [401, 200]);
+  assert.ok(!JSON.stringify(observations).includes('new-token'));
+});
+
 test('only the owned host key operation is allowed and its response is never observed', async () => {
   const observations = [], secret = 'synthetic-host-master-key';
   const request = workerClient(m, event => observations.push(event), async () => ({ status: 200,

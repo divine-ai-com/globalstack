@@ -30,17 +30,26 @@ export function documentPaths(m) {
   return { group, service, account, blobService, containers, topic, eventSubscription, roles, deployments, resources, versions };
 }
 
-export function documentClient(m, observe = () => {}, exchange = httpExchange) {
+export function documentClient(m, observe = () => {}, exchange = httpExchange, refreshToken = azureToken) {
   const s = documentPaths(m);
   const workerIdentity = `${s.group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${s.service}-worker`;
+  let token = m.token;
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     const allowed = ['GET', 'PUT', 'DELETE'].includes(method) && [...s.resources, ...s.deployments].includes(url.pathname)
       || method === 'GET' && [s.group, `${s.group}/resources`, workerIdentity, ...s.deployments.map(id => `${id}/operations`)].includes(url.pathname)
       || method === 'POST' && s.deployments.some(id => [`${id}/validate`, `${id}/cancel`].includes(url.pathname));
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed, 'Request escaped document allowlist');
-    const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${m.token}` } });
-    observe({ method, path, request: body, ...result });
+    const send = async attempt => {
+      const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${token}` } });
+      observe({ method, path, request: body, ...result, attempt });
+      return result;
+    };
+    let result = await send(1);
+    if (result.status === 401 && result.body?.error?.code === 'ExpiredAuthenticationToken' && m.config) {
+      token = refreshToken(m.config);
+      result = await send(2);
+    }
     return result;
   };
 }

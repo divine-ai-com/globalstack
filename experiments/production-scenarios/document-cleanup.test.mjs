@@ -24,6 +24,17 @@ test('document client confines mutations to the owned account, topic and deploym
   await combined('GET', `${w.identity}?api-version=2023-01-31`);
 });
 
+test('document client refreshes an expired token once', async () => {
+  const d = documentPaths(m), headers = [];
+  const request = documentClient({ ...m, token: 'old-token', config: '/synthetic-config' }, () => {},
+    async (_url, options) => {
+      headers.push(options.headers.authorization);
+      return headers.length === 1 ? { status: 401, body: { error: { code: 'ExpiredAuthenticationToken' } } } : { status: 200, body: {} };
+    }, () => 'new-token');
+  assert.equal((await request('GET', `${d.account}?api-version=2023-05-01`)).status, 200);
+  assert.deepEqual(headers, ['Bearer old-token', 'Bearer new-token']);
+});
+
 test('foreign document resource prevents any cleanup mutation', async () => {
   const d = documentPaths(m), mutations = [];
   const request = async (method, path) => {

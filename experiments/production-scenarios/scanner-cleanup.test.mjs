@@ -39,6 +39,19 @@ test('scanner request boundary rejects external hosts and unowned resources', as
   await request('GET', `${scannerPaths(m).auth}?api-version=2025-01-01`); assert.equal(calls, 1);
 });
 
+test('scanner client refreshes an expired token during a long cleanup poll', async () => {
+  const observations = [], headers = [];
+  const request = scannerClient({ ...m, token: 'old-token', config: '/synthetic-config' }, event => observations.push(event),
+    async (_url, options) => {
+      headers.push(options.headers.authorization);
+      return headers.length === 1 ? { status: 401, body: { error: { code: 'ExpiredAuthenticationToken' } } } : { status: 200, body: {} };
+    }, () => 'new-token');
+  assert.equal((await request('GET', `${scannerPaths(m).environment}?api-version=2025-01-01`)).status, 200);
+  assert.deepEqual(headers, ['Bearer old-token', 'Bearer new-token']);
+  assert.deepEqual(observations.map(x => x.status), [401, 200]);
+  assert.ok(!JSON.stringify(observations).includes('new-token'));
+});
+
 test('slow environment deletion does not retain the registry and identities', async () => {
   const f = fixture(); let pending = false, observations = 0;
   const request = async (method, path) => {

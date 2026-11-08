@@ -20,17 +20,27 @@ export function scannerPaths(m) {
   const deployments = ['host', 'app', 'auth', 'public'].map(stage => id('Microsoft.Resources/deployments', `gs-scanner-${stage}-${m.runId}`));
   return { group, service, app, environment, registry, scanner, worker, roles, resources, versions, deployments, auth: `${app}/authConfigs/current` };
 }
-export function scannerClient(m, observe = () => {}, exchange = httpExchange) {
+export function scannerClient(m, observe = () => {}, exchange = httpExchange, refreshToken = azureToken) {
   const s = scannerPaths(m);
+  let token = m.token;
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     const allowed = ['GET', 'PUT', 'DELETE'].includes(method) && [...s.resources, ...s.deployments, s.auth].includes(url.pathname)
       || method === 'GET' && [s.group, `${s.group}/resources`, ...s.deployments.map(id => `${id}/operations`)].includes(url.pathname)
       || method === 'POST' && s.deployments.some(id => [`${id}/validate`, `${id}/cancel`].includes(url.pathname));
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed, 'Request escaped scanner allowlist');
-    const startedAt = new Date().toISOString();
-    const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${m.token}` } });
-    observe({ method, path, request: body, ...result, startedAt, completedAt: new Date().toISOString() }); return result;
+    const send = async attempt => {
+      const startedAt = new Date().toISOString();
+      const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${token}` } });
+      observe({ method, path, request: body, ...result, attempt, startedAt, completedAt: new Date().toISOString() });
+      return result;
+    };
+    let result = await send(1);
+    if (result.status === 401 && result.body?.error?.code === 'ExpiredAuthenticationToken' && m.config) {
+      token = refreshToken(m.config);
+      result = await send(2);
+    }
+    return result;
   };
 }
 export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 1800000, planOnly = false } = {}) {
