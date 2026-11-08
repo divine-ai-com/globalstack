@@ -127,7 +127,11 @@ try {
       const req = tlsRequest(`https://127.0.0.1:${facade.address().port}${path}`, { ca, method, signal: AbortSignal.timeout(20000),
         headers: { host: localHostname, ...(bearer ? { authorization: `Bearer ${bearer}` } : {}) } }, res => {
         const chunks = []; res.on('data', chunk => chunks.push(chunk)); res.on('error', fail);
-        res.on('end', () => done({ status: res.statusCode, body: JSON.parse(Buffer.concat(chunks).toString()) }));
+        res.on('end', () => {
+          const text = Buffer.concat(chunks).toString();
+          try { done({ status: res.statusCode, body: text ? JSON.parse(text) : null }); }
+          catch { fail(new Error('Scanner returned a non-JSON response')); }
+        });
       }); req.on('error', fail); req.end();
     });
   }
@@ -137,7 +141,7 @@ try {
     const response = await httpExchange(`https://${hostname}/scan`, { method: 'POST', body: { harmlessProbe: true }, headers: bearer ? { authorization: `Bearer ${bearer}` } : {}, timeoutMs: 20000 });
     observe('azure', { control: name, path: '/scan', ...response });
     const localResponse = await localIngress(bearer); observe('local', { control: name, path: '/scan', ...localResponse });
-    report[name] = { azure: response.status, local: localResponse.status, expected, expectedMatchedBoth: response.status === expected && localResponse.status === expected, statusMatched: response.status === localResponse.status };
+    report[name] = { azure: response.status, local: localResponse.status, expected, expectedMatchedBoth: response.status === expected && localResponse.status === expected, statusMatched: response.status === localResponse.status, bodyMatched: JSON.stringify(response.body) === JSON.stringify(localResponse.body) };
   }
   phase = 'authorized-scanner-component-probe';
   const permitted = structuredClone(config.body.properties);

@@ -68,13 +68,13 @@ test('Container Apps ARM lifecycle gates actual HTTP forwarding on live authenti
         defaultAuthorizationPolicy: { allowedApplications: [client], allowedPrincipals: { identities: [oid] } },
         jwtClaimChecks: { allowedClientApplications: [client] } } } } } };
   await put(`${id}/authConfigs/current`, config);
-  assert.equal((await send()).status, 401); assert.equal(calls, 0);
+  assert.deepEqual(await send(), { status: 401, body: '' }); assert.equal(calls, 0);
   assert.deepEqual(await send(token, { 'x-ms-client-principal': 'forged-platform-header' }), { status: 200, body: 'actual worker response' });
   assert.equal(receivedHeaders['x-ms-client-principal'], undefined);
   assert.equal(calls, 1);
   config.properties.identityProviders.azureActiveDirectory.validation.defaultAuthorizationPolicy.allowedApplications = [oid];
   await put(`${id}/authConfigs/current`, config);
-  assert.equal((await send(token)).status, 403); assert.equal(calls, 1);
+  assert.deepEqual(await send(token), { status: 403, body: '' }); assert.equal(calls, 1);
   await put(id, { ...body, tags: { changed: 'true' } }); await runtime.containerAppRouter.lifecycle.settle();
   assert.equal(starts, 1);
   body.properties.template.containers[0].image = 'second-approved-image';

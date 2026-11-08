@@ -44,7 +44,14 @@ export function createContainerAppRouter({ store, provision, trusts = [] }) {
           const configuration = store.resources.get(`${id}/authconfigs/current`);
           const denied = await authorize({ authorization: req.headers.authorization, configuration,
             subscription: pattern.exec(app.id)[1], secure: req.socket.encrypted === true });
-          if (denied) return send(res, denied.status, denied.code);
+          if (denied) {
+            // Captured Entra ingress denials carry no JSON error document.
+            if (denied.status === 401 || denied.status === 403) {
+              res.writeHead(denied.status, { 'content-length': '0', connection: 'close' });
+              return res.end();
+            }
+            return send(res, denied.status, denied.code);
+          }
           // Multi-revision routing and private-network admission need separate
           // implementation. Do not bypass those policies by forwarding directly.
           const ingress = app.properties.configuration.ingress;

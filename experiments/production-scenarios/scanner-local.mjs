@@ -84,7 +84,11 @@ try {
         host: hostname, 'content-type': 'text/plain', 'content-length': Buffer.byteLength(content), 'x-correlation-id': correlationId,
         ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
       } }, res => { const chunks = []; res.on('data', chunk => chunks.push(chunk)); res.on('error', fail);
-        res.on('end', () => done({ status: res.statusCode, body: JSON.parse(Buffer.concat(chunks).toString()) })); });
+        res.on('end', () => {
+          const text = Buffer.concat(chunks).toString();
+          try { done({ status: res.statusCode, body: text ? JSON.parse(text) : null }); }
+          catch { fail(new Error('Scanner returned a non-JSON response')); }
+        }); });
       req.on('error', fail); req.end(content);
     });
     report.checks.push({ label, correlationId, at: new Date().toISOString(), elapsedMs: Date.now() - started, ...result });
