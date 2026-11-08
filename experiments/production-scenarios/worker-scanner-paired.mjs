@@ -85,7 +85,7 @@ try {
   for (const id of new Set([...w.resources, ...s.resources, ...d.resources, ...w.deployments, ...s.deployments, ...d.deployments])) {
     assert.equal((await request('GET', `${id}?api-version=${w.versions[id] ?? s.versions[id] ?? d.versions[id] ?? '2025-04-01'}`)).status, 404);
   }
-  for (const name of ['worker-host', 'worker-app', 'scanner-host', 'scanner-app', 'scanner-auth', 'document-data', 'document-events']) {
+  for (const name of ['worker-host', 'worker-app', 'scanner-host', 'scanner-app', 'scanner-auth', 'document-data', 'document-events', 'document-diagnostic']) {
     const text = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${resolve('experiments/production-scenarios/document-infra')}:/fixture:ro`, '--entrypoint', '/root/.azure/bin/bicep',
       'globalstack/validation-runner:cli-pinned', 'build', `/fixture/${name}.bicep`, '--stdout'], { encoding: 'utf8', timeout: 60000 });
     compiled.set(name, { text, template: JSON.parse(text) }); report.templates.push({ name, sha256: createHash('sha256').update(text).digest('hex') });
@@ -138,7 +138,9 @@ try {
   assert.equal(data.local.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
   const documentSettings = (scannerHostname, blobEndpoint) => [...settings(scannerHostname),
     { name: 'STORAGE_ENDPOINT', value: blobEndpoint }, { name: 'LANDING_CONTAINER', value: 'landing' },
-    { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' }];
+    { name: 'STORAGE_RESOURCE_ID', value: d.account }, { name: 'EVENT_DIAGNOSTICS_CONTAINER', value: 'event-diagnostics' },
+    { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' },
+    { name: 'DOCUMENT_EVENT_DIAGNOSTIC_ENABLED', value: 'true' }];
   const worker = await deploy('worker-app', w.deployments[1], { ...base, imageReference: workerImage,
     applicationSettings: documentSettings(azureScanner, data.azure.properties.outputs.blobEndpoint.value) },
   { ...base, imageReference: workerImage,
@@ -170,7 +172,8 @@ try {
         const result = await httpExchange(endpoint + '/admin/functions', { headers, timeoutMs: 10000 });
         const names = Array.isArray(result.body) ? result.body.map(item => item.name) : [];
         observe(target, { method: 'GET', path: '/admin/functions', status: result.status, functionNames: names });
-        discovered = result.status === 200 && names.includes('uploadDiagnostic') && names.includes('documentUploaded');
+        discovered = result.status === 200 && ['uploadDiagnostic', 'documentUploaded', 'documentEventDiagnostic',
+          'documentEventDiagnosticStatus'].every(name => names.includes(name));
       } catch { observe(target, { method: 'GET', path: '/admin/functions', error: 'Function discovery transport failed' }); }
       if (discovered) break;
       await pause(5000);
@@ -180,6 +183,9 @@ try {
   await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
     topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
   report.documentEventSubscriptionDeployed = true;
+  await deploy('document-diagnostic', d.deployments[2], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
+    topicName: `${w.service}-documents` });
+  report.documentDiagnosticSubscriptionDeployed = true;
   await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
   phase = 'blob-upload';
@@ -196,22 +202,40 @@ try {
     return result.body;
   }
   report.uploads = { azure: await upload('azure'), local: await upload('local') };
-  const eventDeadline = Math.min(Date.now() + 60000, m.workDeadline - 60000);
-  while (Date.now() < eventDeadline) {
-    const matching = [...runtime.storageEventDelivery.pending.values()].find(item => item.event.subject.endsWith(report.uploads.local.blobName));
-    if (matching) { report.localBlobEvent = { eventId: matching.event.id, subjectMatches: true, attempts: matching.attempts }; break; }
-    await pause(1000);
+  phase = 'event-diagnostic';
+  report.eventDiagnostics = {};
+  for (const target of ['azure', 'local']) {
+    const endpoint = target === 'azure' ? `https://${hostname}` : `http://127.0.0.1:${facade.address().port}`;
+    const headers = { ...(target === 'local' ? { host: `${w.service}-worker.azurewebsites.net` } : {}),
+      'x-functions-key': target === 'azure' ? azureKey : localKey };
+    const input = { blobName: report.uploads[target].blobName, etag: report.uploads[target].etag };
+    const expected = createHash('sha256').update(JSON.stringify([input.blobName, input.etag.replace(/^"|"$/g, '')])).digest('hex');
+    const deadline = Math.min(Date.now() + 120000, m.workDeadline - 60000);
+    do {
+      const result = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST', body: input, headers, timeoutMs: 15000 });
+      observe(target, { method: 'POST', path: '/api/event-diagnostic-status', status: result.status,
+        sourceSha256: result.body?.sourceSha256 ?? null });
+      if (result.status === 200) {
+        assert.equal(result.body?.sourceSha256, expected);
+        assert.ok(result.body?.markerVersionId);
+        report.eventDiagnostics[target] = { status: 200, sourceSha256: expected, markerVersionIdPresent: true };
+        break;
+      }
+      assert.equal(result.status, 404, `${target} event diagnostic failed`);
+      await pause(5000);
+    } while (Date.now() < deadline);
+    assert.ok(report.eventDiagnostics[target], `${target} Event Grid diagnostic marker was not created`);
   }
-  assert.ok(report.localBlobEvent?.subjectMatches, 'Local Blob upload did not reach the deployed Event Grid subscription');
-  const localEventDeadline = Math.min(Date.now() + 15000, m.workDeadline - 60000);
-  while (Date.now() < localEventDeadline && !runtime.storageEventDelivery.diagnostics.some(item => item.eventId === report.localBlobEvent.eventId)) {
-    await pause(250);
-  }
+  const delivered = runtime.storageEventDelivery.diagnostics.find(item => item.subscriptionId.toLowerCase() === d.diagnosticSubscription.toLowerCase()
+    && item.state === 'delivered');
+  assert.ok(delivered, 'Local Blob event did not reach the diagnostic Function');
+  report.localBlobEvent = { eventId: delivered.eventId, diagnosticDelivered: true, sourceMarkerMatches: true };
   report.localEventDelivery = runtime.storageEventDelivery.diagnostics.filter(item => item.eventId === report.localBlobEvent.eventId);
-  assert.ok(report.localEventDelivery.length, 'Local Event Grid did not attempt native Function delivery');
+  assert.ok(report.localEventDelivery.some(item => item.subscriptionId.toLowerCase() === d.diagnosticSubscription.toLowerCase()
+    && item.state === 'delivered'), 'Local Event Grid did not deliver the diagnostic event');
   const readAzureEventMetrics = () => {
     try {
-      // Azure Monitor exposes these counters on the system topic. This pilot topic owns one subscription.
+      // Azure Monitor exposes these counters on the system topic. They aggregate both pilot subscriptions.
       const metrics = azureCli(m.config, ['monitor', 'metrics', 'list', '--resource', d.topic,
         '--namespace', 'Microsoft.EventGrid/systemTopics', '--metrics', 'MatchedEventCount',
         'DeliverySuccessCount', 'DeliveryAttemptFailCount', '--interval', 'PT1M', '--aggregation', 'Total']);

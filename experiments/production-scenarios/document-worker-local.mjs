@@ -62,7 +62,10 @@ try {
     ...(uploadProbe ? { applicationSettings: { value: [
       { name: 'STORAGE_ENDPOINT', value: data.blobEndpoint.value },
       { name: 'LANDING_CONTAINER', value: 'landing' },
+      { name: 'STORAGE_RESOURCE_ID', value: data.accountId.value },
+      { name: 'EVENT_DIAGNOSTICS_CONTAINER', value: 'event-diagnostics' },
       { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' },
+      { name: 'DOCUMENT_EVENT_DIAGNOSTIC_ENABLED', value: 'true' },
     ] } } : {}) });
   const siteId = `${group}/providers/Microsoft.Web/sites/${name}-worker`;
   await runtime.nativeFunctionsLifecycle.settle();
@@ -76,6 +79,11 @@ try {
     await deploy('events', 'document-events', { accountName: { value: `${name}docs` },
       workerName: { value: `${name}-worker` }, topicName: { value: `${name}-documents` },
       deadLetterRoleName: { value: randomUUID() }, location: common.location });
+    await deploy('diagnostic', 'document-diagnostic', { accountName: { value: `${name}docs` },
+      workerName: { value: `${name}-worker` }, topicName: { value: `${name}-documents` } });
+    const markerContainer = await request('GET', `${group}/providers/Microsoft.Storage/storageAccounts/${name}docs/blobServices/default/containers/event-diagnostics?api-version=2023-05-01`);
+    assert.equal(markerContainer.body.properties?.metadata?.run, name);
+    report.diagnosticContainerOwned = true;
     const key = (await readFile(runtime.functionsRouter.nativeWorkers.get(siteId.toLowerCase()).masterKeyFile, 'utf8')).trim();
     const endpoint = `http://127.0.0.1:${facade.address().port}`;
     const headers = { host: `${name}-worker.azurewebsites.net`, 'x-functions-key': key };
@@ -85,6 +93,8 @@ try {
     assert.ok(report.uploadFunctionDiscovered);
     report.eventFunctionDiscovered = discovered.body.some(item => item.name === 'documentUploaded');
     assert.ok(report.eventFunctionDiscovered);
+    report.diagnosticFunctionDiscovered = discovered.body.some(item => item.name === 'documentEventDiagnostic');
+    assert.ok(report.diagnosticFunctionDiscovered);
     const input = { tenant: 'pilot', text: 'Local document event diagnostic.' };
     const uploaded = await httpExchange(endpoint + '/api/upload-diagnostic', { method: 'POST', body: input, headers });
     report.upload = { status: uploaded.status, body: uploaded.body };
@@ -94,11 +104,17 @@ try {
     const event = [...runtime.storageEventDelivery.pending.values()].find(item => item.event.subject.endsWith(uploaded.body.blobName));
     assert.ok(event, 'BlobCreated did not match the deployed Event Grid subscription');
     const eventDeadline = Date.now() + 15000;
-    while (Date.now() < eventDeadline && !runtime.storageEventDelivery.diagnostics.some(item => item.eventId === event.event.id)) {
+    while (Date.now() < eventDeadline && !runtime.storageEventDelivery.diagnostics.some(item => item.eventId === event.event.id
+      && item.subscriptionId.endsWith('/document-diagnostic') && item.state === 'delivered')) {
       await new Promise(done => setTimeout(done, 250));
     }
     report.eventDelivery = runtime.storageEventDelivery.diagnostics.filter(item => item.eventId === event.event.id);
-    assert.ok(report.eventDelivery.length, 'Event Grid did not attempt the native Function delivery');
+    assert.ok(report.eventDelivery.some(item => item.subscriptionId.endsWith('/document-diagnostic') && item.state === 'delivered'),
+      'Event Grid did not deliver the diagnostic event');
+    const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',
+      body: { blobName: uploaded.body.blobName, etag: uploaded.body.etag }, headers });
+    report.eventMarker = { status: marker.status, sourceSha256: marker.body?.sourceSha256 };
+    assert.equal(marker.status, 200);
   }
   await request('DELETE', siteId + '?api-version=2023-12-01'); await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(siteId), 'stopped');

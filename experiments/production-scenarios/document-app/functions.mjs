@@ -5,12 +5,18 @@ import { applicationConfig, clients, drainOutbox, recordFailure, scanAndStore, s
 import { processingContext } from './repository.mjs';
 import { createScannerDiagnostic } from './scanner-diagnostic.mjs';
 import { createUploadDiagnostic } from './upload-diagnostic.mjs';
+import { createEventDiagnostic } from './event-diagnostic.mjs';
 
 if (process.env.SCANNER_DIAGNOSTIC_ENABLED === 'true') {
   app.http('scannerDiagnostic', { route: 'scanner-diagnostic', methods: ['POST'], authLevel: 'admin', handler: createScannerDiagnostic() });
 }
 if (process.env.DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED === 'true') {
   app.http('uploadDiagnostic', { route: 'upload-diagnostic', methods: ['POST'], authLevel: 'admin', handler: createUploadDiagnostic() });
+}
+if (process.env.DOCUMENT_EVENT_DIAGNOSTIC_ENABLED === 'true') {
+  const diagnostic = createEventDiagnostic();
+  app.eventGrid('documentEventDiagnostic', { handler: diagnostic.onEvent });
+  app.http('documentEventDiagnosticStatus', { route: 'event-diagnostic-status', methods: ['POST'], authLevel: 'admin', handler: diagnostic.status });
 }
 
 app.http('workerHealth', { route: 'health', methods: ['GET'], authLevel: 'anonymous',

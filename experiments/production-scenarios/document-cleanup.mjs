@@ -18,16 +18,18 @@ export function documentPaths(m) {
   const service = `gs${m.runId}`;
   const account = `${group}/providers/Microsoft.Storage/storageAccounts/${service}docs`;
   const blobService = `${account}/blobServices/default`;
-  const containers = ['landing', 'clean-projection', 'quarantine', 'event-deadletters'].map(name => `${blobService}/containers/${name}`);
+  const containers = ['landing', 'clean-projection', 'quarantine', 'event-deadletters', 'event-diagnostics'].map(name => `${blobService}/containers/${name}`);
+  const diagnosticContainer = `${blobService}/containers/event-diagnostics`;
   const topic = `${group}/providers/Microsoft.EventGrid/systemTopics/${service}-documents`;
   const eventSubscription = `${topic}/eventSubscriptions/document-revisions`;
+  const diagnosticSubscription = `${topic}/eventSubscriptions/document-diagnostic`;
   const roles = m.documentRoles.map(name => `${account}/providers/Microsoft.Authorization/roleAssignments/${name}`);
-  const deployments = ['data', 'events'].map(stage => `${group}/providers/Microsoft.Resources/deployments/gs-document-${stage}-${m.runId}`);
-  const resources = [eventSubscription, topic, ...roles, ...containers, blobService, account];
-  const versions = Object.fromEntries([[eventSubscription, '2025-02-15'], [topic, '2025-02-15'],
+  const deployments = ['data', 'events', 'diagnostic'].map(stage => `${group}/providers/Microsoft.Resources/deployments/gs-document-${stage}-${m.runId}`);
+  const resources = [eventSubscription, diagnosticSubscription, topic, ...roles, ...containers, blobService, account];
+  const versions = Object.fromEntries([[eventSubscription, '2025-02-15'], [diagnosticSubscription, '2025-02-15'], [topic, '2025-02-15'],
     ...roles.map(id => [id, '2022-04-01']), ...containers.map(id => [id, '2023-05-01']),
     [blobService, '2023-05-01'], [account, '2023-05-01']]);
-  return { group, service, account, blobService, containers, topic, eventSubscription, roles, deployments, resources, versions };
+  return { group, service, account, blobService, containers, diagnosticContainer, topic, eventSubscription, diagnosticSubscription, roles, deployments, resources, versions };
 }
 
 export function documentClient(m, observe = () => {}, exchange = httpExchange, refreshToken = azureToken) {
@@ -110,8 +112,13 @@ export async function cleanupDocument(m, request = documentClient(m), { sleep = 
       assert.equal(found.body.tags?.run, m.runId);
       assert.equal(found.body.tags?.project, project);
       if (id === s.topic) assert.equal(found.body.properties?.source?.toLowerCase(), s.account.toLowerCase());
-    } else if (id === s.eventSubscription) {
-      assert.equal(found.body.properties?.destination?.properties?.resourceId?.toLowerCase(), `${s.group}/providers/Microsoft.Web/sites/${s.service}-worker/functions/documentUploaded`.toLowerCase());
+    } else if (id === s.eventSubscription || id === s.diagnosticSubscription) {
+      const functionName = id === s.eventSubscription ? 'documentUploaded' : 'documentEventDiagnostic';
+      assert.equal(found.body.properties?.destination?.properties?.resourceId?.toLowerCase(), `${s.group}/providers/Microsoft.Web/sites/${s.service}-worker/functions/${functionName}`.toLowerCase());
+    } else if (id === s.diagnosticContainer) {
+      assert.equal(account.status, 200, 'Diagnostic container has no owned account');
+      assert.equal(found.body.properties?.metadata?.run, m.runId);
+      assert.equal(found.body.properties?.metadata?.project, project);
     } else {
       assert.equal(account.status, 200, 'Document child has no owned account');
     }
@@ -130,7 +137,7 @@ export async function cleanupDocument(m, request = documentClient(m), { sleep = 
   };
   // The account owns its blob service and containers. Delete it after the
   // subscription, topic and scoped assignments are absent.
-  for (const id of [s.eventSubscription, s.topic, ...s.roles, s.account, ...deployments.reverse()]) {
+  for (const id of [s.diagnosticSubscription, s.eventSubscription, s.topic, ...s.roles, s.account, ...deployments.reverse()]) {
     if (existing.includes(id) || deployments.includes(id)) await remove(id);
   }
   for (const id of s.resources) assert.equal((await get(id)).status, 404, `Document resource still exists: ${id}`);

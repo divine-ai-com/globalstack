@@ -47,6 +47,14 @@ the Functions admin key, accepts only the `pilot` tenant and returns the Blob
 name and content hash. It is a component probe for a future paired Event Grid
 run, not the document-ingress API or evidence of a completed workflow.
 
+When `DOCUMENT_EVENT_DIAGNOSTIC_ENABLED=true`, a separate Event Grid Function
+validates a landing BlobCreated event and writes a marker keyed by the source
+Blob name and ETag into `event-diagnostics`. An admin-key-protected status route
+reads the marker through the worker's managed identity. This tests an actual
+event-to-Function-to-Blob path without treating the still-incomplete production
+`documentUploaded` handler as successful. The marker contains a source hash,
+not document contents.
+
 The SQL file currently initializes a fresh experiment database. Upgrade
 migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows

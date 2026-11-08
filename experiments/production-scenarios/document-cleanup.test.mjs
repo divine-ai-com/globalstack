@@ -102,14 +102,17 @@ test('document cleanup removes only owned resources and retains the group', asyn
       roleDefinitionId: `/subscriptions/${m.subscription}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe` } } };
     if (id === d.topic) return { status: 200, body: { identity: { principalId: topicPrincipal },
       tags: { run: m.runId, project: 'globalstack-production-scenarios' }, properties: { source: d.account } } };
-    if (id === d.eventSubscription) return { status: 200, body: { properties: { destination: { properties: {
-      resourceId: `${d.group}/providers/Microsoft.Web/sites/${d.service}-worker/functions/documentUploaded` } } } } };
+    if (id === d.eventSubscription || id === d.diagnosticSubscription) return { status: 200, body: { properties: { destination: { properties: {
+      resourceId: `${d.group}/providers/Microsoft.Web/sites/${d.service}-worker/functions/${id === d.eventSubscription ? 'documentUploaded' : 'documentEventDiagnostic'}` } } } } };
+    if (id === d.diagnosticContainer) return { status: 200, body: { properties: { metadata: {
+      run: m.runId, project: 'globalstack-production-scenarios' } } } };
     return { status: 200, body: { tags: { run: m.runId, project: 'globalstack-production-scenarios' } } };
   };
   const result = await cleanupDocument(m, request, { sleep: async () => {} });
   assert.equal(result.resourcesAbsent, true);
   assert.equal(live.size, 0);
   assert.ok(deleted.indexOf(d.eventSubscription) < deleted.indexOf(d.topic));
+  assert.ok(deleted.indexOf(d.diagnosticSubscription) < deleted.indexOf(d.topic));
   assert.ok(deleted.indexOf(d.topic) < deleted.indexOf(d.account));
   assert.equal(inventoryReads, 2);
   assert.ok(!deleted.includes(d.group));
