@@ -14,16 +14,19 @@ def role_id(value):
     return str(uuid.uuid5(uuid.NAMESPACE_URL, "https://globalstack.dev/pilot/roles/" + value))
 
 
-def application_payload(name):
+def application_payload(name, api_kind="document"):
+    if api_kind not in ("document", "scanner"):
+        raise ValueError("Unsupported API kind")
+    values = ROLE_VALUES if api_kind == "document" else ()
     return {
         "displayName": name,
         "signInAudience": "AzureADMyOrg",
-        "tags": ["globalstack-document-pilot"],
+        "tags": ["globalstack-" + api_kind + "-pilot"],
         "api": {"requestedAccessTokenVersion": 2},
         "optionalClaims": {"accessToken": [{"name": "idtyp", "essential": False}]},
         "appRoles": [{"id": role_id(value), "allowedMemberTypes": ["Application"],
                       "displayName": value, "description": "Document pilot permission: " + value,
-                      "value": value, "isEnabled": True} for value in ROLE_VALUES],
+                      "value": value, "isEnabled": True} for value in values],
     }
 
 
@@ -65,14 +68,14 @@ def cleanup(state, request=graph):
 def provision(state, persist, request=graph):
     state["creationRequested"] = True
     persist()
-    application = request("POST", "applications", application_payload(state["displayName"]))
+    application = request("POST", "applications", application_payload(state["displayName"], state.get("apiKind", "document")))
     state.update(applicationId=str(uuid.UUID(application["id"])), apiClientId=str(uuid.UUID(application["appId"])))
     persist()
     request("PATCH", "applications/" + state["applicationId"], {"identifierUris": ["api://" + state["apiClientId"]]})
-    principal = request("POST", "servicePrincipals", {"appId": state["apiClientId"], "appRoleAssignmentRequired": True})
+    principal = request("POST", "servicePrincipals", {"appId": state["apiClientId"], "appRoleAssignmentRequired": state.get("apiKind", "document") == "document"})
     state["apiPrincipalId"] = str(uuid.UUID(principal["id"]))
     persist()
-    for value in ROLE_VALUES:
+    for value in ROLE_VALUES if state.get("apiKind", "document") == "document" else ():
         request("POST", "servicePrincipals/" + state["apiPrincipalId"] + "/appRoleAssignedTo", {
             "principalId": state["pilotPrincipalId"], "resourceId": state["apiPrincipalId"], "appRoleId": role_id(value),
         })
@@ -83,19 +86,21 @@ def provision(state, persist, request=graph):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=["plan", "apply", "cleanup"])
+    parser.add_argument("--api-kind", choices=["document", "scanner"], default="document")
     parser.add_argument("--tenant-id", required=True, type=uuid.UUID)
     parser.add_argument("--pilot-client-id", required=True, type=uuid.UUID)
     parser.add_argument("--state", default="globalstack-document-api-state.json")
     args = parser.parse_args()
     if args.mode == "plan":
-        print(json.dumps(application_payload("globalstack-document-api-<unique-suffix>"), indent=2))
+        print(json.dumps(application_payload("globalstack-" + args.api_kind + "-api-<unique-suffix>", args.api_kind), indent=2))
         return
     if az("account", "show")["tenantId"].lower() != str(args.tenant_id):
         raise RuntimeError("Azure CLI is signed into the wrong tenant")
     path = Path(args.state)
     if args.mode == "cleanup":
         state = json.loads(path.read_text())
-        if state["tenantId"] != str(args.tenant_id) or state["pilotClientId"] != str(args.pilot_client_id):
+        if (state["tenantId"] != str(args.tenant_id) or state["pilotClientId"] != str(args.pilot_client_id)
+                or state.get("apiKind", "document") != args.api_kind):
             raise RuntimeError("Journal does not match this pilot")
         try:
             cleanup(state)
@@ -107,7 +112,7 @@ def main():
     pilot = graph("GET", "servicePrincipals(appId='" + str(args.pilot_client_id) + "')?$select=id,appId")
     state = {"tenantId": str(args.tenant_id), "pilotClientId": str(args.pilot_client_id),
              "pilotPrincipalId": str(uuid.UUID(pilot["id"])),
-             "displayName": "globalstack-document-api-" + uuid.uuid4().hex[:12]}
+             "apiKind": args.api_kind, "displayName": "globalstack-" + args.api_kind + "-api-" + uuid.uuid4().hex[:12]}
     with open(path, "x", encoding="utf-8") as handle:
         os.chmod(path, 0o600)
         json.dump(state, handle)
@@ -119,9 +124,14 @@ def main():
         finally:
             save(path, state)
         raise
-    print(json.dumps({"ENTRA_TENANT_ID": state["tenantId"], "API_AUDIENCE": state["apiClientId"],
-                      "API_ALLOWED_CLIENTS": state["pilotClientId"], "tokenScope": "api://" + state["apiClientId"] + "/.default",
-                      "stateFile": str(path)}, indent=2))
+    result = {"ENTRA_TENANT_ID": state["tenantId"], "tokenScope": "api://" + state["apiClientId"] + "/.default",
+              "stateFile": str(path)}
+    if args.api_kind == "scanner":
+        result["SCANNER_API_AUDIENCE"] = state["apiClientId"]
+        result["requiredDeploymentControl"] = "Require authentication and allow only the worker client ID at scanner ingress"
+    else:
+        result.update(API_AUDIENCE=state["apiClientId"], API_ALLOWED_CLIENTS=state["pilotClientId"])
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":

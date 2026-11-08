@@ -139,3 +139,38 @@ operator setup and real API token validation have not yet run.
 
 References: [API application-role assignment](https://learn.microsoft.com/en-us/graph/api/serviceprincipal-post-approleassignedto),
 [optional token claims](https://learn.microsoft.com/en-us/entra/identity-platform/optional-claims-reference).
+
+## Scanner API audience
+
+The scanner uses a separate single-tenant API registration. Its deployment must
+require authenticated requests, validate the issuer and audience, and allow only
+the deployed worker's client ID. This follows the
+[client-ID access-control pattern](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-client-creds-grant-flow#access-control-lists).
+It lets short-lived worker identities change without granting the pilot directory
+administration or repeatedly editing directory role assignments.
+
+The helper's `scanner` mode creates an audience, not a permissive scanner
+endpoint. It creates no credentials, Graph permissions or app-role grants.
+Role-less tokens can be issued for this audience. The scanner ingress must reject
+unlisted callers even when their token is otherwise valid. Deployment and
+negative access tests remain required before exposing the scanner.
+
+Run once in the owner/operator Azure Cloud Shell session:
+
+```sh
+python3 document_api.py plan --api-kind scanner \
+  --tenant-id "$PILOT_TENANT_ID" --pilot-client-id "$PILOT_CLIENT_ID"
+python3 document_api.py apply --api-kind scanner \
+  --tenant-id "$PILOT_TENANT_ID" --pilot-client-id "$PILOT_CLIENT_ID" \
+  --state globalstack-scanner-api-state.json
+```
+
+Retain the journal and supply its `SCANNER_API_AUDIENCE` output to the deployment.
+This creates directory objects only, not paid compute or a paid subscription.
+At the end of the pilot, remove only these owned objects:
+
+```sh
+python3 document_api.py cleanup --api-kind scanner \
+  --tenant-id "$PILOT_TENANT_ID" --pilot-client-id "$PILOT_CLIENT_ID" \
+  --state globalstack-scanner-api-state.json
+```

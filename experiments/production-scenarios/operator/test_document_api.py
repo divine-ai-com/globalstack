@@ -11,6 +11,22 @@ class DirectorySetupTests(unittest.TestCase):
         for key in ['passwordCredentials', 'keyCredentials', 'requiredResourceAccess']:
             self.assertNotIn(key, payload)
 
+    def test_scanner_audience_creates_no_roles_or_grants(self):
+        app, client, principal = ['00000000-0000-4000-8000-' + str(i).zfill(12) for i in range(1, 4)]
+        state = {'displayName': 'scanner-owned', 'apiKind': 'scanner', 'pilotPrincipalId': 'existing-pilot'}
+        calls = []
+        def request(method, path, body=None):
+            calls.append((method, path, body))
+            if path == 'applications': return {'id': app, 'appId': client}
+            if path == 'servicePrincipals': return {'id': principal}
+        provision(state, lambda: None, request)
+        self.assertEqual(calls[0][2]['appRoles'], [])
+        self.assertFalse(calls[2][2]['appRoleAssignmentRequired'])
+        self.assertEqual(len(calls), 3)
+        self.assertTrue(state['configurationComplete'])
+        for key in ['passwordCredentials', 'keyCredentials', 'requiredResourceAccess']:
+            self.assertNotIn(key, calls[0][2])
+
     def test_partial_grant_failure_preserves_owned_ids_for_cleanup(self):
         app, client, principal = ['00000000-0000-4000-8000-' + str(i).zfill(12) for i in range(1, 4)]
         state = {'displayName': 'owned', 'pilotPrincipalId': 'unmodified-existing-pilot'}
