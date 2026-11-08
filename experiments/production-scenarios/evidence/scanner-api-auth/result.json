@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-08T09:39:34.995Z",
+  "scope": "Live Entra scanner audience token verification only. No scanner endpoint was deployed or called.",
+  "signatureVerified": true,
+  "applicationOnly": true,
+  "roleless": true,
+  "wrongAudienceRejected": true,
+  "alteredCallerRejected": true,
+  "scannerIngressTested": false,
+  "workerAccessTested": false,
+  "requiredNextCheck": "A real worker token must pass scanner ingress; the valid pilot token must be denied."
+}

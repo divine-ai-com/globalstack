@@ -87,3 +87,15 @@ Use the same resource/security limits as the baseline, increasing memory to
 4 GiB for official signatures. The probe runs the unmodified `/app/server.py`,
 keeps startup and warmed measurements separate, and deliberately kills only its
 own child engine for the failure test.
+
+The scanner audience registration has now issued a live Entra application token.
+The [token diagnostic](../../evidence/scanner-api-auth/result.json) verifies its
+signature and rejects a wrong audience and an altered caller claim. This does
+not establish scanner ingress authorization. The
+[auth module](../../document-infra/scanner-auth.bicep) requires HTTPS and Azure
+AD authentication, with both client and principal restricted to the deployed
+worker identity. It has compiled successfully but has not been deployed.
+Before accepting this control, test a worker token, a valid pilot token, a
+missing token and a wrong-audience token through the actual scanner endpoint
+on both targets. GlobalStack currently has no native Container Apps ingress
+implementation, so resource creation alone cannot satisfy those checks.
