@@ -1,3 +1,4 @@
+param runId string = ''
 param scannerName string
 param tenantId string
 param scannerAudience string
@@ -36,3 +37,5 @@ resource authentication 'Microsoft.App/containerApps/authConfigs@2025-01-01' = {
 }
 
 output authenticationId string = authentication.id
+
+output evidenceRunId string = runId

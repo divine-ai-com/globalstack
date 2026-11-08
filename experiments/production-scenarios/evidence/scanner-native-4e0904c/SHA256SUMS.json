@@ -1,0 +1,11 @@
+{
+  "scanner-auth.json": "78e10ffa6ab21a746100c2930f598c44b3cb490e00557e4c8e02c99f482da4f5",
+  "scanner-app.json": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b",
+  "result.json": "8d0bd8129636cdf30029882552929bd4e1bb5908bb833499de2a99d9b81e2dd7",
+  "signatureFiles": {
+    "bytecode.cvd": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb",
+    "daily.cvd": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b",
+    "main.cvd": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+  },
+  "scannerBaseImage": "sha256:97f2a5d34be67ce294a263470c9393cd6bab289b8ce88bf890d3a29b58c3d12d"
+}
