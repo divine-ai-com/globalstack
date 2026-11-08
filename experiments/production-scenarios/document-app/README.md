@@ -41,6 +41,12 @@ invoke the application and fail on missing service settings in this storage-only
 probe. No document workflow completed. Package import outside the host only checks module loading; the
 SDK's test mode is not a deployed worker test.
 
+The opt-in `DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED` route uses the worker's managed
+identity to write a bounded TXT fixture into the landing container. It requires
+the Functions admin key, accepts only the `pilot` tenant and returns the Blob
+name and content hash. It is a component probe for a future paired Event Grid
+run, not the document-ingress API or evidence of a completed workflow.
+
 The SQL file currently initializes a fresh experiment database. Upgrade
 migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows

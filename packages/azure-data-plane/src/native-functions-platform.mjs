@@ -10,10 +10,28 @@ import { resolveNativeContainerAppEndpoints } from './native-container-app-endpo
 
 const exec = promisify(execFile);
 
+export function resolveNativeBlobEndpoints({ settings, names, router, subscriptionId }) {
+  assert.ok(Array.isArray(names) && names.length <= 8 && new Set(names).size === names.length);
+  return names.flatMap(setting => {
+    assert.match(setting, /^[A-Z][A-Z0-9_]{0,79}$/);
+    if (settings[setting] === undefined) return [];
+    const endpoint = new URL(settings[setting]);
+    assert.ok(endpoint.protocol === 'https:' && !endpoint.username && !endpoint.password
+      && !endpoint.port && !endpoint.search && !endpoint.hash && endpoint.pathname === '/');
+    const match = /^([a-z0-9]{3,24})\.blob\.core\.windows\.net$/.exec(endpoint.hostname);
+    assert.ok(match, `${setting} must name an Azure Blob account endpoint`);
+    const deployed = router.account(match[1]);
+    assert.ok(deployed && /^\/subscriptions\/([^/]+)\//i.exec(deployed.resourceId)?.[1]?.toLowerCase() === subscriptionId,
+      `${setting} must refer to a deployed account in the workload subscription`);
+    return [{ setting, hostname: endpoint.hostname }];
+  });
+}
+
 // Resolve transport from deployed resources. Application code and the declared
 // identity credential remain unchanged; endpoint and CA wiring belongs to the
 // local platform. Additional service origins must resolve to deployed apps.
-export function createNativeFunctionsPlatform({ identityService, storageRouter, store, containerAppRouter, containerAppEndpoints = [], observe = () => {} }) {
+export function createNativeFunctionsPlatform({ identityService, storageRouter, store, containerAppRouter,
+  containerAppEndpoints = [], blobEndpoints = [], observe = () => {} }) {
   return async ({ resource, signal, directory }) => {
     const settings = Object.fromEntries((resource.properties?.siteConfig?.appSettings ?? []).map(item => [item.name, item.value]));
     assert.equal(settings.AzureWebJobsStorage__credential, 'managedidentity');
@@ -24,6 +42,7 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
     const deployed = router.account(account);
     const subscription = id => /^\/subscriptions\/([^/]+)\//i.exec(id ?? '')?.[1]?.toLowerCase();
     assert.ok(deployed && subscription(resource.id) && subscription(deployed.resourceId) === subscription(resource.id), 'Host storage must be deployed in the workload subscription');
+    const applicationBlobs = resolveNativeBlobEndpoints({ settings, names: blobEndpoints, router, subscriptionId: subscription(resource.id) });
     const services = resolveNativeContainerAppEndpoints({ resource, store, settings, names: containerAppEndpoints });
     const appHandler = services.length ? containerAppRouter().handler() : null;
     const name = `gs-functions-net-${randomUUID()}`, servers = [];
@@ -54,13 +73,15 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
       binding = identityService.bind(resource.id);
       const identityPort = await listen(createServer(binding.handler), gateway);
       const certificate = join(directory, 'platform-ca.pem'), keyFile = join(directory, 'platform-key.pem');
-      const hostnames = [...new Set([...['blob', 'queue', 'table'].map(surface => `${account}.${surface}.core.windows.net`), ...services.map(service => service.hostname)])];
+      const hostnames = [...new Set([...['blob', 'queue', 'table'].map(surface => `${account}.${surface}.core.windows.net`),
+        ...applicationBlobs.map(item => item.hostname), ...services.map(service => service.hostname)])];
       await exec('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certificate,
         '-days', '1', '-subj', '/CN=GlobalStack local storage', '-addext', `subjectAltName=${hostnames.map(hostname => `DNS:${hostname}`).join(',')}`], { signal, timeout: 10000 });
       const tls = { key: await readFile(keyFile), cert: await readFile(certificate) };
       const env = { IDENTITY_ENDPOINT: `http://${gateway}:${identityPort}/MSI/token`, IDENTITY_HEADER: binding.identityHeader,
         SSL_CERT_FILE: '/globalstack-platform-ca.pem', NODE_EXTRA_CA_CERTS: '/globalstack-platform-ca.pem',
         WEBSITE_HOSTNAME: resource.properties.defaultHostName ?? `${resource.name}.azurewebsites.net` };
+      const blobPorts = new Map();
       for (const surface of ['blob', 'queue', 'table']) {
         const handler = router[`${surface}Handler`]();
         const port = await listen(createTlsServer(tls, (req, res) => {
@@ -69,6 +90,21 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
           Promise.resolve(handler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
         }), gateway);
         env[`AzureWebJobsStorage__${surface}ServiceUri`] = `https://${account}.${surface}.core.windows.net:${port}`;
+        if (surface === 'blob') blobPorts.set(`${account}.blob.core.windows.net`, port);
+      }
+      for (const item of applicationBlobs) {
+        let port = blobPorts.get(item.hostname);
+        if (!port) {
+          port = await listen(createTlsServer(tls, (req, res) => {
+            if (String(req.headers.host ?? '').split(':')[0].toLowerCase() !== item.hostname) { res.writeHead(404); res.end(); return; }
+            res.once('finish', () => observe({ surface: 'blob-app', method: req.method,
+              path: new URL(req.url, 'https://localhost').pathname,
+              bearer: /^Bearer /i.test(req.headers.authorization ?? ''), status: res.statusCode }));
+            Promise.resolve(router.blobHandler()(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
+          }), gateway);
+          blobPorts.set(item.hostname, port);
+        }
+        env[item.setting] = `https://${item.hostname}:${port}`;
       }
       for (const service of services) {
         const port = await listen(createTlsServer(tls, (req, res) => {

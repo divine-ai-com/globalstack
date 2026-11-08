@@ -58,6 +58,14 @@ through the Container App's deployed authentication policy. Unknown, foreign,
 ambiguous, credential-bearing and non-HTTPS targets are rejected. This does not
 implement Azure private-network isolation or bypass the ingress mode checks.
 
+The same platform can map selected `blobEndpoints` settings for additional
+ARM-deployed Storage accounts in the workload subscription. It retains the
+canonical Blob hostname, supplies a local TLS port and rejects unknown accounts,
+non-HTTPS URLs, credentials, paths and query strings. The application receives
+the routed endpoint from the platform and has no emulator branch. This mapping
+has a local TLS transport test; live paired document-event delivery has not yet
+been measured.
+
 `node experiments/production-scenarios/worker-scanner-local.mjs` deploys the native
 Functions worker and scanner, then executes Azure SDK client commands inside the
 worker container. It checks managed-identity acquisition, real scanning, policy

@@ -24,3 +24,12 @@ test('wrong account/container and mismatched subjects cannot become processing i
   assert.throws(() => documentEvent({ ...event, data: { ...event.data, url: event.data.url.replace('report.txt', 'other.txt') } }, config));
   assert.throws(() => documentEvent({ ...event, data: { ...event.data, sequencer: 'not-hex' } }, config));
 });
+
+test('canonical event URL matches a platform-routed storage endpoint without accepting alternate source ports', () => {
+  const routed = { ...config, storageEndpoint: 'https://documents.blob.core.windows.net:44321' };
+  assert.equal(documentEvent(event, routed).blobName, 'tenant_alpha/report.txt');
+  assert.throws(() => documentEvent({ ...event,
+    data: { ...event.data, url: 'https://documents.blob.core.windows.net:44321/landing/tenant_alpha/report.txt' } }, routed));
+  assert.throws(() => documentEvent({ ...event,
+    data: { ...event.data, url: 'http://documents.blob.core.windows.net/landing/tenant_alpha/report.txt' } }, routed));
+});

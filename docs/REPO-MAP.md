@@ -181,6 +181,7 @@ flowchart TD
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/managed-identity.test.mjs`
 - `packages/conformance/src/native-container-app-endpoints.test.mjs`
+- `packages/conformance/src/native-functions-blob-endpoints.test.mjs`
 - `packages/conformance/src/native-functions-lifecycle.test.mjs`
 - `packages/conformance/src/native-functions-worker.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
@@ -190,6 +191,7 @@ flowchart TD
 - `packages/conformance/src/search-token-auth.test.mjs`
 - `packages/conformance/src/security-boundaries.test.mjs`
 - `packages/conformance/src/storage-client-observation.test.mjs`
+- `packages/conformance/src/storage-event-deadletter.test.mjs`
 - `packages/conformance/src/storage-event-delivery.test.mjs`
 - `packages/conformance/src/storage-function-events.test.mjs`
 - `packages/conformance/src/storage-lease.test.mjs`

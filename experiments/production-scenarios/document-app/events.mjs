@@ -10,7 +10,8 @@ export function documentEvent(event, { storageEndpoint, storageResourceId, landi
   if (!event.subject?.startsWith(prefix)) return null;
   const endpoint = new URL(storageEndpoint), source = new URL(event.data?.url);
   assert.ok(!source.username && !source.password && !source.search && !source.hash, 'Event blob URL must not contain credentials or query data');
-  assert.equal(source.origin, endpoint.origin, 'Event must reference the configured storage account');
+  assert.ok(source.protocol === 'https:' && !source.port && source.hostname === endpoint.hostname,
+    'Event must reference the configured storage account');
   const [container, ...segments] = source.pathname.slice(1).split('/').map(decodeURIComponent);
   assert.equal(container, landingContainer);
   const blobName = segments.join('/');
