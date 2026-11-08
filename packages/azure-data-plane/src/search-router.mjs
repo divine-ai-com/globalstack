@@ -145,6 +145,10 @@ export class SearchRouter {
       }
       const service = this.serviceForHost(requestHost(req));
       if (!service) return sendError(res, 404, 'SearchServiceNotFound', 'The Azure AI Search service host was not found.');
+      const deployed = service.resourceId && this.store?.resources.get(service.resourceId.toLowerCase());
+      if (deployed?.properties?.disableLocalAuth === true && !this.workloadAuthorization) {
+        return sendError(res, 501, 'NotImplemented', 'This Search service requires workload-token verification, but no token trust is configured.');
+      }
       const indexName = indexNameFromPath(url.pathname);
       const authError = this.workloadAuthorization
         ? await this.workloadAuthorization({ req, url, service, indexName }) : requireAuth(req);

@@ -108,6 +108,9 @@ The document ingress also emits multiword fuzzy queries as an all-`AND` Lucene
 chain. The local evaluator previously rejected that valid application shape;
 the bounded parser now returns the expected authorized hit and rejects other
 Boolean forms explicitly. Live Azure comparison remains pending.
+Key-disabled deployed Search services now refuse local requests when no
+workload-token verifier is configured. A synthetic API key cannot authorize
+the service in that configuration.
 Native Service Bus AMQP message delivery remains missing ([#71](https://github.com/divine-ai-com/globalstack/issues/71)).
 
 An [Azure-first Entra-only PostgreSQL validation](evidence/document-postgres-validation-3ee3c25/)

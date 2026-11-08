@@ -6,10 +6,35 @@ import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runti
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { createManagedIdentityService } from '../../azure-data-plane/src/managed-identity-service.mjs';
 import { searchRoles } from '../../azure-data-plane/src/search-token-auth.mjs';
+import { createSearchRouter, createSearchRouterServer } from '../../azure-data-plane/src/search-router.mjs';
 
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/search-identity`;
 const serviceId = `${group}/providers/Microsoft.Search/searchServices/workload-search`;
 const definition = name => ({ name, fields: [{ name: 'id', type: 'Edm.String', key: true }, { name: 'content', type: 'Edm.String', searchable: true }] });
+
+test('Search refuses a key-disabled deployed service without workload-token verification', async t => {
+  const store = new ResourceStore();
+  store.resources.set(serviceId.toLowerCase(), { id: serviceId, name: 'workload-search', type: 'Microsoft.Search/searchServices',
+    properties: { disableLocalAuth: true } });
+  const router = createSearchRouter({ store });
+  router.registerService({ serviceName: 'workload-search', resourceId: serviceId });
+  const server = createSearchRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const response = await new Promise((resolve, reject) => {
+    const call = request(`http://127.0.0.1:${server.address().port}/indexes?api-version=2024-07-01`, {
+      headers: { host: 'workload-search.search.windows.net', 'api-key': 'synthetic-key' },
+    }, result => {
+      const chunks = [];
+      result.on('data', chunk => chunks.push(chunk));
+      result.on('end', () => resolve({ status: result.statusCode, body: JSON.parse(Buffer.concat(chunks).toString()) }));
+    });
+    call.on('error', reject);
+    call.end();
+  });
+  assert.equal(response.status, 501);
+  assert.equal(response.body.error.code, 'NotImplemented');
+});
 async function fixture(t) {
   const store = new ResourceStore();
   const identity = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub], audiences: ['https://search.azure.com', 'https://storage.azure.com'] });
