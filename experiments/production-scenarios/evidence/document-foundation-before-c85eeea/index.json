@@ -9,6 +9,10 @@
     "result.json": {
       "sha256": "f4014d1e8c398a3102e7f6fae7f849ba7aaab5e17a69e089c28353737bd7822e",
       "bytes": 79392
+    },
+    "events.ndjson": {
+      "sha256": "21682f2371b24375647bcf844870bd29f080158d322cf87831b98fa52380fffd",
+      "bytes": 79102
     }
   }
 }

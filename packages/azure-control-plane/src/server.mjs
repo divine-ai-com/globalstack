@@ -580,6 +580,11 @@ export function createArmRequestHandler({
     } catch (error) {
       return failed({ status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message } } });
     }
+    // Match observed ARM response casing without changing template evaluation.
+    for (const output of Object.values(outputs)) {
+      if (String(output.type).toLowerCase() === 'string') output.type = 'String';
+      if (String(output.type).toLowerCase() === 'array') output.type = 'Array';
+    }
     return { status: 201, body: saveDeployment({ outputs }) };
   }
 

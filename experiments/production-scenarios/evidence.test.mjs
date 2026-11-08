@@ -474,3 +474,21 @@ test('paired workload role catalog retains six original gaps and 13 clean reruns
     }
   }
 });
+
+test('foundation evidence retains the false success and cleanup independently of later fixes', async () => {
+  const prefix = 'document-foundation-before-c85eeea/';
+  const index = await load(`${prefix}index.json`);
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(`${prefix}result.json`);
+  assert.equal(report.revision, index.sourceRevision);
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.localDeploymentState, 'Succeeded');
+  assert.deepEqual(report.comparisons.map(item => item.localStatus), [404, 404, 404, 200]);
+  assert.ok(report.comparisons.every(item => item.azureStatus === 200));
+  assert.deepEqual(report.cleanup, { resourcesAbsent: true, deploymentAbsent: true, groupPreserved: true });
+  assert.equal(report.businessWorkflowCompleted, false);
+});

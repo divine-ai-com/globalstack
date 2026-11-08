@@ -69,7 +69,7 @@ remain outstanding.
    authorization or directory application-registration permissions.
 3. The operator completed the document API registration and role grants after
    the [directory preflight](evidence/directory-prerequisite/) rejected application
-   creation by the pilot. A live API token passed the unchanged application's
+   creation by the pilot. A [live API token check](evidence/document-api-auth/) passed the unchanged application's
    read, upload and delete role checks. Wrong-audience and ungranted-role checks
    were rejected. This is authentication evidence, not a deployed HTTP workflow.
    Scanner identity and delegated-user cases still need separate setup.
@@ -124,6 +124,9 @@ all three identity reads returned 404. Selected VNet fields matched. The
 false-success observation and confirmed Azure cleanup. Resource and output copy
 loops now have independent regression tests. Serial loops remain explicitly
 unsupported, and the validation endpoint still reports copy validation as
-unsupported. A fresh paired run is required before claiming the correction
-passes against Azure. No application traffic or effective network isolation is
+unsupported. The [fresh paired run](evidence/document-foundation-after-53b8218/)
+passes all four selected resource checks and confirms Azure cleanup. Deployment
+output type casing differed (Azure capitalizes types). The serializer now
+matches the observed String and Array types, with a regression test against
+the retained Azure response. This latter correction has not had a fresh live run. No application traffic or effective network isolation is
 established by this foundation test.

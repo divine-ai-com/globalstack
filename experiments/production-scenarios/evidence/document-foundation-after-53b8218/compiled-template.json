@@ -1,0 +1,138 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "10744410944132176510"
+    }
+  },
+  "parameters": {
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "tags": {
+      "project": "globalstack-production-scenarios",
+      "run": "[parameters('runId')]"
+    }
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "identities",
+        "count": "[length(createArray('ingress', 'worker', 'scanner'))]"
+      },
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]"
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-network', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.72.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "ingress-integration",
+            "properties": {
+              "addressPrefix": "10.72.0.0/26",
+              "delegations": [
+                {
+                  "name": "app-service",
+                  "properties": {
+                    "serviceName": "Microsoft.Web/serverFarms"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "worker-integration",
+            "properties": {
+              "addressPrefix": "10.72.0.64/26",
+              "delegations": [
+                {
+                  "name": "functions",
+                  "properties": {
+                    "serviceName": "Microsoft.Web/serverFarms"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "scanner-environment",
+            "properties": {
+              "addressPrefix": "10.72.1.0/27",
+              "delegations": [
+                {
+                  "name": "container-apps",
+                  "properties": {
+                    "serviceName": "Microsoft.App/environments"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "database",
+            "properties": {
+              "addressPrefix": "10.72.2.0/27",
+              "delegations": [
+                {
+                  "name": "postgres",
+                  "properties": {
+                    "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "private-endpoints",
+            "properties": {
+              "addressPrefix": "10.72.3.0/26",
+              "privateEndpointNetworkPolicies": "Disabled"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "networkId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-network', parameters('serviceName')))]"
+    },
+    "workloadIdentities": {
+      "type": "array",
+      "copy": {
+        "count": "[length(createArray('ingress', 'worker', 'scanner'))]",
+        "input": {
+          "name": "[createArray('ingress', 'worker', 'scanner')[copyIndex()]]",
+          "resourceId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()]))]",
+          "clientId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])), '2023-01-31').clientId]",
+          "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])), '2023-01-31').principalId]"
+        }
+      }
+    }
+  }
+}

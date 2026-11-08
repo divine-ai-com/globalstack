@@ -133,3 +133,21 @@ test('unwrapped provider errors retain failed history instead of reporting succe
   assert.equal(records[0].properties.provisioningState, 'Failed');
   assert.deepEqual(records[0].properties.statusMessage.error, result.body);
 });
+
+test('deployment output type casing matches retained Azure responses on create and read', async t => {
+  const capture = JSON.parse(await readFile(new URL('../../../experiments/production-scenarios/evidence/document-foundation-after-53b8218/result.json', import.meta.url)));
+  const outputs = capture.exchanges.find(item => item.target === 'azure' && item.command)?.body.properties.outputs;
+  assert.ok(outputs);
+  const { request } = await fixture(t);
+  const result = await request('PUT', deployment, { properties: { template: { resources: [], outputs: {
+    text: { type: 'string', value: 'independent-output' },
+    items: { type: 'array', value: ['first', 'second'] },
+  } } } });
+  assert.equal(result.status, 201);
+  for (const response of [result, await request('GET', deployment)]) {
+    assert.equal(response.body.properties.outputs.text.type, outputs.networkId.type);
+    assert.equal(response.body.properties.outputs.items.type, outputs.workloadIdentities.type);
+    assert.equal(response.body.properties.outputs.text.value, 'independent-output');
+    assert.deepEqual(response.body.properties.outputs.items.value, ['first', 'second']);
+  }
+});
