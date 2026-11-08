@@ -155,15 +155,10 @@ try {
   assert.ok(ready, 'Azure Functions host did not become ready');
   await runtime.containerAppRouter.lifecycle.settle(); await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
-  await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
-    topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
-  report.documentEventSubscriptionDeployed = true;
-  await runtime.nativeFunctionsLifecycle.settle();
-  assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
   const keys = await request('POST', `${w.app}/host/default/listkeys?api-version=2024-11-01`); assert.equal(keys.status, 200);
   const azureKey = keys.body.masterKey; assert.ok(typeof azureKey === 'string' && azureKey.length > 20); replacements.push([azureKey, '<redacted>']);
   const localKey = (await readFile(runtime.functionsRouter.nativeWorkers.get(w.app.toLowerCase()).masterKeyFile, 'utf8')).trim(); replacements.push([localKey, '<redacted>']);
-  phase = 'blob-upload';
+  phase = 'worker-function-discovery';
   for (const target of ['azure', 'local']) {
     const endpoint = target === 'azure' ? `https://${hostname}` : `http://127.0.0.1:${facade.address().port}`;
     const headers = { ...(target === 'local' ? { host: `${w.service}-worker.azurewebsites.net` } : {}),
@@ -175,13 +170,19 @@ try {
         const result = await httpExchange(endpoint + '/admin/functions', { headers, timeoutMs: 10000 });
         const names = Array.isArray(result.body) ? result.body.map(item => item.name) : [];
         observe(target, { method: 'GET', path: '/admin/functions', status: result.status, functionNames: names });
-        discovered = result.status === 200 && names.includes('uploadDiagnostic');
+        discovered = result.status === 200 && names.includes('uploadDiagnostic') && names.includes('documentUploaded');
       } catch { observe(target, { method: 'GET', path: '/admin/functions', error: 'Function discovery transport failed' }); }
       if (discovered) break;
       await pause(5000);
     } while (Date.now() < deadline);
-    assert.ok(discovered, `${target} upload diagnostic did not become available`);
+    assert.ok(discovered, `${target} document functions did not become available`);
   }
+  await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
+    topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
+  report.documentEventSubscriptionDeployed = true;
+  await runtime.nativeFunctionsLifecycle.settle();
+  assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
+  phase = 'blob-upload';
   async function upload(target) {
     const endpoint = target === 'azure' ? `https://${hostname}` : `http://127.0.0.1:${facade.address().port}`;
     const headers = { ...(target === 'local' ? { host: `${w.service}-worker.azurewebsites.net` } : {}),

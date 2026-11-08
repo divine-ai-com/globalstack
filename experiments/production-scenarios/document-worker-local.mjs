@@ -83,6 +83,8 @@ try {
     report.uploadFunctionDiscovered = discovered.status === 200 && Array.isArray(discovered.body)
       && discovered.body.some(item => item.name === 'uploadDiagnostic');
     assert.ok(report.uploadFunctionDiscovered);
+    report.eventFunctionDiscovered = discovered.body.some(item => item.name === 'documentUploaded');
+    assert.ok(report.eventFunctionDiscovered);
     const input = { tenant: 'pilot', text: 'Local document event diagnostic.' };
     const uploaded = await httpExchange(endpoint + '/api/upload-diagnostic', { method: 'POST', body: input, headers });
     report.upload = { status: uploaded.status, body: uploaded.body };
