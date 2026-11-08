@@ -1366,12 +1366,27 @@ export function deploymentResourceId(subscriptionId, resourceGroupName, name) {
     : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${name}`;
 }
 
+function copyContexts(copy, context, requireName = false) {
+  const fail = message => { const error = new Error(message); error.code = 'InvalidTemplate'; error.status = 400; throw error; };
+  if (!copy || typeof copy !== 'object' || Array.isArray(copy)) fail('A copy loop requires an object.');
+  if (requireName && (typeof copy.name !== 'string' || !copy.name)) fail('A resource copy loop requires a name.');
+  if (copy.mode !== undefined && copy.mode !== 'parallel') {
+    const error = new Error('Serial resource copy execution is not implemented.');
+    error.code = 'GlobalStackCopyNotImplemented'; error.status = 501; throw error;
+  }
+  const count = evaluateArmValue(copy.count, context);
+  if (!Number.isInteger(count) || count < 0 || count > 800) fail('Copy count must be an integer between 0 and 800.');
+  return Array.from({ length: count }, (_, index) => ({ ...context, __copyIndex: index,
+    __copyIndices: { ...context.__copyIndices, ...(copy.name ? { [copy.name]: index } : {}) } }));
+}
+
 export function templateOutputs(template, context) {
   return Object.fromEntries(Object.entries(template.outputs ?? {}).map(([name, output]) => [
     name,
     {
       type: output.type ?? 'string',
-      value: evaluateArmValue(output.value, context),
+      value: output.copy === undefined ? evaluateArmValue(output.value, context)
+        : copyContexts(output.copy, context).map(iteration => evaluateArmValue(output.copy.input, iteration)),
     },
   ]));
 }
@@ -1403,9 +1418,45 @@ function validationExpressionValue(value, parameters) {
   return value;
 }
 
+function evaluateArmArgument(value, context) {
+  return /^-?\d+$/.test(value.trim()) ? Number(value) : evaluateArmValue(value, context);
+}
+
 export function evaluateArmExpression(expression, parameters) {
   const text = expression.trim();
-  if (parameters.__deferResourceReferences && /\breference\(/.test(text)) return `[${text}]`;
+  if (parameters.__deferResourceReferences && /\breference\(/.test(text)) {
+    // Retain the loop index when references are resolved after resource creation.
+    return `[${text.replace(/\bcopyIndex\(([^()]*)\)/g, expression => String(evaluateArmExpression(expression, { ...parameters, __deferResourceReferences: false })))}]`;
+  }
+  if (/^-?\d+$/.test(text)) return Number(text);
+  const indexMatch = text.match(/^(.*\))\[(.*)\]$/s);
+  if (indexMatch) {
+    const array = evaluateArmExpression(indexMatch[1], parameters);
+    const index = evaluateArmArgument(indexMatch[2], parameters);
+    if (!Array.isArray(array) || !Number.isInteger(index) || index < 0 || index >= array.length) {
+      const error = new Error('ARM array index is out of bounds or is not an integer.'); error.code = 'InvalidTemplate'; throw error;
+    }
+    return array[index];
+  }
+  const arrayMatch = text.match(/^createArray\((.*)\)$/s);
+  if (arrayMatch) return splitArmArgs(arrayMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+  const lengthMatch = text.match(/^length\((.*)\)$/s);
+  if (lengthMatch) {
+    const value = evaluateArmValue(lengthMatch[1], parameters);
+    if (!Array.isArray(value) && typeof value !== 'string') throw new Error('ARM length requires an array or string.');
+    return value.length;
+  }
+  const copyMatch = text.match(/^copyIndex\((.*)\)$/s);
+  if (copyMatch) {
+    const args = splitArmArgs(copyMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    const named = typeof args[0] === 'string';
+    const index = named ? parameters.__copyIndices?.[args[0]] : parameters.__copyIndex;
+    const offset = args[named ? 1 : 0] ?? 0;
+    if (args.length > (named ? 2 : 1) || !Number.isInteger(index) || !Number.isInteger(offset)) {
+      const error = new Error('copyIndex requires an active loop and an integer offset.'); error.code = 'InvalidTemplate'; throw error;
+    }
+    return index + offset;
+  }
   const parameterMatch = text.match(/^parameters\('([^']+)'\)$/);
   if (parameterMatch) return validationExpressionValue(parameters[parameterMatch[1]], parameters);
 
@@ -1422,17 +1473,17 @@ export function evaluateArmExpression(expression, parameters) {
   if (formatMatch) {
     const [formatString, ...args] = splitArmArgs(formatMatch[1]);
     return args.reduce(
-      (acc, arg, index) => acc.replaceAll(`{${index}}`, String(evaluateArmValue(arg, parameters))),
+      (acc, arg, index) => acc.replaceAll(`{${index}}`, String(evaluateArmArgument(arg, parameters))),
       unquoteArm(formatString),
     );
   }
 
   const concatMatch = text.match(/^concat\((.*)\)$/s);
-  if (concatMatch) return splitArmArgs(concatMatch[1]).map(arg => evaluateArmValue(arg, parameters)).join('');
+  if (concatMatch) return splitArmArgs(concatMatch[1]).map(arg => evaluateArmArgument(arg, parameters)).join('');
 
   const resourceIdMatch = text.match(/^(subscriptionResourceId|resourceId)\((.*)\)$/s);
   if (resourceIdMatch) {
-    const args = splitArmArgs(resourceIdMatch[2]).map(arg => evaluateArmValue(arg, parameters));
+    const args = splitArmArgs(resourceIdMatch[2]).map(arg => evaluateArmArgument(arg, parameters));
     const typeIndex = args.findIndex(arg => typeof arg === 'string' && /^[^/]+\.[^/]+\//.test(arg));
     if (typeIndex < 0 || typeIndex > 2) throw new Error('Unsupported ARM resource ID arguments.');
     const path = armResourcePath(args[typeIndex], args.slice(typeIndex + 1));
@@ -1450,7 +1501,7 @@ export function evaluateArmExpression(expression, parameters) {
 
   const extensionResourceIdMatch = text.match(/^extensionResourceId\((.*)\)$/s);
   if (extensionResourceIdMatch) {
-    const [base, type, ...names] = splitArmArgs(extensionResourceIdMatch[1]).map(arg => evaluateArmValue(arg, parameters));
+    const [base, type, ...names] = splitArmArgs(extensionResourceIdMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
     return `${String(base).replace(/\/$/, '')}/providers/${armResourcePath(type, names)}`;
   }
 
@@ -1470,7 +1521,7 @@ export function evaluateArmExpression(expression, parameters) {
 
   const referenceMatch = text.match(/^reference\((.*)\)(?:\.([A-Za-z_][A-Za-z0-9_.]*))?$/s);
   if (referenceMatch && typeof parameters.__resourceLookup === 'function') {
-    const [id, , mode] = splitArmArgs(referenceMatch[1]).map(arg => evaluateArmValue(arg, parameters));
+    const [id, , mode] = splitArmArgs(referenceMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
     const resource = parameters.__resourceLookup(id);
     if (!resource) {
       const error = new Error(`The referenced resource '${id}' was not found.`);
@@ -1505,7 +1556,7 @@ export function evaluateArmValue(value, parameters) {
   const trimmed = value.trim();
   if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) return unquoteArm(trimmed);
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) return evaluateArmExpression(trimmed.slice(1, -1), parameters);
-  if (/^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
+  if (/^copyIndex\(|^createArray\(|^length\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
   return value;
 }
 
@@ -1579,7 +1630,13 @@ export function expandDeploymentTemplate({
   }
   const operations = [];
   const symbolicResourceNames = new Map();
-  function emitResource(rawResource, symbolicName = null, parentResource = null) {
+  const deploymentContext = context;
+  function emitResource(rawResource, symbolicName = null, parentResource = null, context = deploymentContext) {
+    if (rawResource.copy !== undefined) {
+      const { copy, ...resource } = rawResource;
+      for (const iteration of copyContexts(copy, context, true)) emitResource(resource, symbolicName, parentResource, iteration);
+      return;
+    }
     if (rawResource.type === 'Microsoft.Resources/resourceGroups') {
       const resource = evaluateArmValue(rawResource, context);
       if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
@@ -1674,7 +1731,7 @@ export function expandDeploymentTemplate({
     });
     if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
     for (const { symbolicName: childSymbolicName, rawResource: childRawResource } of armTemplateResourceEntries(rawResource)) {
-      emitResource(childRawResource, childSymbolicName, resource);
+      emitResource(childRawResource, childSymbolicName, resource, context);
     }
   }
 

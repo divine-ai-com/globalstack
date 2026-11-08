@@ -1,0 +1,14 @@
+{
+  "sourceRevision": "c85eeea0b40058eaefa339946b79403307b59898",
+  "scope": "Foundation only: native Azure CLI versus local ARM with identical compiled template. Azure identities exist; local deployment claims success but reads return 404. VNet selected fields match. Cleanup verified. No application traffic or effective isolation tested.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "0954c17ceb1c860427ee666a71f0849026472472a7a08018d301bb51889e7c50",
+      "bytes": 4375
+    },
+    "result.json": {
+      "sha256": "f4014d1e8c398a3102e7f6fae7f849ba7aaab5e17a69e089c28353737bd7822e",
+      "bytes": 79392
+    }
+  }
+}

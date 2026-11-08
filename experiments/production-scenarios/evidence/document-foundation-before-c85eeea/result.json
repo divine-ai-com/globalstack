@@ -1,0 +1,1954 @@
+{
+  "revision": "c85eeea0b40058eaefa339946b79403307b59898",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T07:53:53.094Z",
+  "scope": "Three managed identities and five delegated/private-endpoint subnets. No application runtime, private endpoints or effective network isolation tested.",
+  "azureTransport": "Native Azure CLI group deployment of the compiled Bicep template",
+  "localTransport": "Direct ARM submission of the same compiled template and parameters",
+  "businessWorkflowCompleted": false,
+  "portalEvidenceComplete": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a6869b13-456a-4e8f-97cf-ec251cea7c67",
+        "x-ms-correlation-request-id": "a6869b13-456a-4e8f-97cf-ec251cea7c67"
+      },
+      "startedAt": "2026-11-08T07:53:53.095Z",
+      "completedAt": "2026-11-08T07:53:53.967Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": []
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "805d69e0-4fff-4289-beff-d9f9db78cf51",
+        "x-ms-correlation-request-id": "805d69e0-4fff-4289-beff-d9f9db78cf51"
+      },
+      "startedAt": "2026-11-08T07:53:53.968Z",
+      "completedAt": "2026-11-08T07:53:54.230Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-foundation-9e7d2a94c5a9' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "95e1e109-5173-4747-8f07-4e32193e80e4",
+        "x-ms-correlation-request-id": "95e1e109-5173-4747-8f07-4e32193e80e4"
+      },
+      "startedAt": "2026-11-08T07:53:54.232Z",
+      "completedAt": "2026-11-08T07:53:54.646Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "081552e1-b37d-435b-b201-4281746182fa",
+        "x-ms-correlation-request-id": "081552e1-b37d-435b-b201-4281746182fa"
+      },
+      "startedAt": "2026-11-08T07:53:54.647Z",
+      "completedAt": "2026-11-08T07:53:54.893Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "2b3ebc05-3a88-4979-b7ba-7a470782b532",
+        "x-ms-correlation-request-id": "2b3ebc05-3a88-4979-b7ba-7a470782b532"
+      },
+      "startedAt": "2026-11-08T07:53:54.894Z",
+      "completedAt": "2026-11-08T07:53:55.878Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "5efb938f-1a3f-4a5a-950a-db6a83b88d61",
+        "x-ms-correlation-request-id": "5efb938f-1a3f-4a5a-950a-db6a83b88d61"
+      },
+      "startedAt": "2026-11-08T07:53:55.878Z",
+      "completedAt": "2026-11-08T07:53:56.924Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network?api-version=2024-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "b003221b-decf-4bfa-9475-da80e4c550a9",
+        "x-ms-correlation-request-id": "b003221b-decf-4bfa-9475-da80e4c550a9"
+      },
+      "startedAt": "2026-11-08T07:53:56.925Z",
+      "completedAt": "2026-11-08T07:53:57.163Z"
+    },
+    {
+      "target": "azure",
+      "phase": "provider-validation",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9/validate?api-version=2025-04-01",
+      "request": {
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "10744410944132176510"
+              }
+            },
+            "parameters": {
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              }
+            },
+            "variables": {
+              "tags": {
+                "project": "globalstack-production-scenarios",
+                "run": "[parameters('runId')]"
+              }
+            },
+            "resources": [
+              {
+                "copy": {
+                  "name": "identities",
+                  "count": "[length(createArray('ingress', 'worker', 'scanner'))]"
+                },
+                "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                "apiVersion": "2023-01-31",
+                "name": "[format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]"
+              },
+              {
+                "type": "Microsoft.Network/virtualNetworks",
+                "apiVersion": "2024-05-01",
+                "name": "[format('{0}-network', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "properties": {
+                  "addressSpace": {
+                    "addressPrefixes": [
+                      "10.72.0.0/16"
+                    ]
+                  },
+                  "subnets": [
+                    {
+                      "name": "ingress-integration",
+                      "properties": {
+                        "addressPrefix": "10.72.0.0/26",
+                        "delegations": [
+                          {
+                            "name": "app-service",
+                            "properties": {
+                              "serviceName": "Microsoft.Web/serverFarms"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "worker-integration",
+                      "properties": {
+                        "addressPrefix": "10.72.0.64/26",
+                        "delegations": [
+                          {
+                            "name": "functions",
+                            "properties": {
+                              "serviceName": "Microsoft.Web/serverFarms"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "scanner-environment",
+                      "properties": {
+                        "addressPrefix": "10.72.1.0/27",
+                        "delegations": [
+                          {
+                            "name": "container-apps",
+                            "properties": {
+                              "serviceName": "Microsoft.App/environments"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "database",
+                      "properties": {
+                        "addressPrefix": "10.72.2.0/27",
+                        "delegations": [
+                          {
+                            "name": "postgres",
+                            "properties": {
+                              "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "private-endpoints",
+                      "properties": {
+                        "addressPrefix": "10.72.3.0/26",
+                        "privateEndpointNetworkPolicies": "Disabled"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "outputs": {
+              "networkId": {
+                "type": "string",
+                "value": "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-network', parameters('serviceName')))]"
+              },
+              "workloadIdentities": {
+                "type": "array",
+                "copy": {
+                  "count": "[length(createArray('ingress', 'worker', 'scanner'))]",
+                  "input": {
+                    "name": "[createArray('ingress', 'worker', 'scanner')[copyIndex()]]",
+                    "resourceId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()]))]",
+                    "clientId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])), '2023-01-31').clientId]",
+                    "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])), '2023-01-31').principalId]"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": {
+            "serviceName": {
+              "value": "gs9e7d2a94c5a9"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "9e7d2a94c5a9"
+            }
+          },
+          "validationLevel": "Provider"
+        }
+      },
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9",
+        "name": "gs-foundation-9e7d2a94c5a9",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "10744410944132176510",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs9e7d2a94c5a9"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "9e7d2a94c5a9"
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2026-11-08T07:54:00.3174202Z",
+          "duration": "PT0S",
+          "correlationId": "b5f4a65f-68db-403c-9ced-d9b92a92c174",
+          "providers": [
+            {
+              "namespace": "Microsoft.Network",
+              "resourceTypes": [
+                {
+                  "resourceType": "virtualNetworks",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.ManagedIdentity",
+              "resourceTypes": [
+                {
+                  "resourceType": "userAssignedIdentities",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [],
+          "validatedResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network"
+            }
+          ],
+          "validationLevel": "Provider"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "b5f4a65f-68db-403c-9ced-d9b92a92c174",
+        "x-ms-correlation-request-id": "b5f4a65f-68db-403c-9ced-d9b92a92c174"
+      },
+      "startedAt": "2026-11-08T07:53:59.745Z",
+      "completedAt": "2026-11-08T07:54:00.624Z"
+    },
+    {
+      "target": "azure",
+      "phase": "deployment",
+      "command": [
+        "az",
+        "deployment",
+        "group",
+        "create"
+      ],
+      "exitCode": 0,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9",
+        "location": null,
+        "name": "gs-foundation-9e7d2a94c5a9",
+        "properties": {
+          "correlationId": "f3dad35c-cde1-4221-b561-072f857f3b0a",
+          "debugSetting": null,
+          "dependencies": [],
+          "diagnostics": null,
+          "duration": "PT4.9691437S",
+          "error": null,
+          "extensions": [],
+          "mode": "Incremental",
+          "onErrorDeployment": null,
+          "outputResources": [
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Network/virtualNetworks"
+            }
+          ],
+          "outputs": {
+            "networkId": {
+              "type": "String",
+              "value": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network"
+            },
+            "workloadIdentities": {
+              "type": "Array",
+              "value": [
+                {
+                  "clientId": "fb7d9c4e-617f-4085-9702-4a12b65006be",
+                  "name": "ingress",
+                  "principalId": "0d1acbc9-182b-42a1-a37d-a23d5153d1a0",
+                  "resourceId": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress"
+                },
+                {
+                  "clientId": "a74541c6-1e6b-43bb-ad98-5a2d94bd3626",
+                  "name": "worker",
+                  "principalId": "6e24f3ae-c77a-4ab4-9c54-bd4a652109e4",
+                  "resourceId": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker"
+                },
+                {
+                  "clientId": "c7ed7400-6870-4e9a-b9c2-717c86e8b9ed",
+                  "name": "scanner",
+                  "principalId": "45a0293e-65f7-4e57-9925-8995063d769b",
+                  "resourceId": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner"
+                }
+              ]
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "9e7d2a94c5a9"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "gs9e7d2a94c5a9"
+            }
+          },
+          "parametersLink": null,
+          "providers": [
+            {
+              "id": null,
+              "namespace": "Microsoft.Network",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    "westus2"
+                  ],
+                  "properties": null,
+                  "resourceType": "virtualNetworks",
+                  "zoneMappings": null
+                }
+              ]
+            },
+            {
+              "id": null,
+              "namespace": "Microsoft.ManagedIdentity",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    "westus2"
+                  ],
+                  "properties": null,
+                  "resourceType": "userAssignedIdentities",
+                  "zoneMappings": null
+                }
+              ]
+            }
+          ],
+          "provisioningState": "Succeeded",
+          "templateHash": "10744410944132176510",
+          "templateLink": null,
+          "timestamp": "2026-11-08T07:54:10.979037+00:00",
+          "validatedResources": null,
+          "validationLevel": null
+        },
+        "resourceGroup": "<group>",
+        "tags": null,
+        "type": "Microsoft.Resources/deployments"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "deployment",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "request": {
+        "location": "westus2"
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "deployment",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9?api-version=2025-04-01",
+      "request": {
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "10744410944132176510"
+              }
+            },
+            "parameters": {
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              }
+            },
+            "variables": {
+              "tags": {
+                "project": "globalstack-production-scenarios",
+                "run": "[parameters('runId')]"
+              }
+            },
+            "resources": [
+              {
+                "copy": {
+                  "name": "identities",
+                  "count": "[length(createArray('ingress', 'worker', 'scanner'))]"
+                },
+                "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                "apiVersion": "2023-01-31",
+                "name": "[format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]"
+              },
+              {
+                "type": "Microsoft.Network/virtualNetworks",
+                "apiVersion": "2024-05-01",
+                "name": "[format('{0}-network', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "properties": {
+                  "addressSpace": {
+                    "addressPrefixes": [
+                      "10.72.0.0/16"
+                    ]
+                  },
+                  "subnets": [
+                    {
+                      "name": "ingress-integration",
+                      "properties": {
+                        "addressPrefix": "10.72.0.0/26",
+                        "delegations": [
+                          {
+                            "name": "app-service",
+                            "properties": {
+                              "serviceName": "Microsoft.Web/serverFarms"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "worker-integration",
+                      "properties": {
+                        "addressPrefix": "10.72.0.64/26",
+                        "delegations": [
+                          {
+                            "name": "functions",
+                            "properties": {
+                              "serviceName": "Microsoft.Web/serverFarms"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "scanner-environment",
+                      "properties": {
+                        "addressPrefix": "10.72.1.0/27",
+                        "delegations": [
+                          {
+                            "name": "container-apps",
+                            "properties": {
+                              "serviceName": "Microsoft.App/environments"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "database",
+                      "properties": {
+                        "addressPrefix": "10.72.2.0/27",
+                        "delegations": [
+                          {
+                            "name": "postgres",
+                            "properties": {
+                              "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "private-endpoints",
+                      "properties": {
+                        "addressPrefix": "10.72.3.0/26",
+                        "privateEndpointNetworkPolicies": "Disabled"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "outputs": {
+              "networkId": {
+                "type": "string",
+                "value": "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-network', parameters('serviceName')))]"
+              },
+              "workloadIdentities": {
+                "type": "array",
+                "copy": {
+                  "count": "[length(createArray('ingress', 'worker', 'scanner'))]",
+                  "input": {
+                    "name": "[createArray('ingress', 'worker', 'scanner')[copyIndex()]]",
+                    "resourceId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()]))]",
+                    "clientId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])), '2023-01-31').clientId]",
+                    "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-{1}', parameters('serviceName'), createArray('ingress', 'worker', 'scanner')[copyIndex()])), '2023-01-31').principalId]"
+                  }
+                }
+              }
+            }
+          },
+          "parameters": {
+            "serviceName": {
+              "value": "gs9e7d2a94c5a9"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "9e7d2a94c5a9"
+            }
+          }
+        }
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9",
+        "name": "gs-foundation-9e7d2a94c5a9",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T07:54:38.496Z",
+          "duration": "PT0.01S",
+          "outputs": {
+            "networkId": {
+              "type": "string",
+              "value": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network"
+            },
+            "workloadIdentities": {
+              "type": "array"
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-createArray('ingress', 'worker', 'scanner')[copyIndex()]",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress",
+        "name": "gs9e7d2a94c5a9-ingress",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "0d1acbc9-182b-42a1-a37d-a23d5153d1a0",
+          "clientId": "fb7d9c4e-617f-4085-9702-4a12b65006be"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "93d85498-e3d4-4246-b1d4-4760c267b778",
+        "x-ms-correlation-request-id": "93d85498-e3d4-4246-b1d4-4760c267b778"
+      },
+      "startedAt": "2026-11-08T07:54:38.498Z",
+      "completedAt": "2026-11-08T07:54:39.036Z"
+    },
+    {
+      "target": "local",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'userAssignedIdentities/gs9e7d2a94c5a9-ingress' under resource group '<group>' was not found.",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker",
+        "name": "gs9e7d2a94c5a9-worker",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "6e24f3ae-c77a-4ab4-9c54-bd4a652109e4",
+          "clientId": "a74541c6-1e6b-43bb-ad98-5a2d94bd3626"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3ccfde4e-d123-48cc-87d0-9e4c4a26331e",
+        "x-ms-correlation-request-id": "3ccfde4e-d123-48cc-87d0-9e4c4a26331e"
+      },
+      "startedAt": "2026-11-08T07:54:39.042Z",
+      "completedAt": "2026-11-08T07:54:39.658Z"
+    },
+    {
+      "target": "local",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'userAssignedIdentities/gs9e7d2a94c5a9-worker' under resource group '<group>' was not found.",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner",
+        "name": "gs9e7d2a94c5a9-scanner",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "45a0293e-65f7-4e57-9925-8995063d769b",
+          "clientId": "c7ed7400-6870-4e9a-b9c2-717c86e8b9ed"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a2cbaa4f-9e01-4220-b264-223ed62e6aac",
+        "x-ms-correlation-request-id": "a2cbaa4f-9e01-4220-b264-223ed62e6aac"
+      },
+      "startedAt": "2026-11-08T07:54:39.661Z",
+      "completedAt": "2026-11-08T07:54:39.933Z"
+    },
+    {
+      "target": "local",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'userAssignedIdentities/gs9e7d2a94c5a9-scanner' under resource group '<group>' was not found.",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network?api-version=2024-05-01",
+      "status": 200,
+      "body": {
+        "name": "gs9e7d2a94c5a9-network",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network",
+        "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+        "type": "Microsoft.Network/virtualNetworks",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "properties": {
+          "provisioningState": "Succeeded",
+          "resourceGuid": "e6dfd975-0636-48c1-a4c5-0dc9b6bddad0",
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.72.0.0/16"
+            ]
+          },
+          "privateEndpointVNetPolicies": "Disabled",
+          "subnets": [
+            {
+              "name": "ingress-integration",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/ingress-integration",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.0.0/26",
+                "delegations": [
+                  {
+                    "name": "app-service",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/ingress-integration/delegations/app-service",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.Web/serverFarms",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "worker-integration",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/worker-integration",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.0.64/26",
+                "delegations": [
+                  {
+                    "name": "functions",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/worker-integration/delegations/functions",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.Web/serverFarms",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "scanner-environment",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/scanner-environment",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.1.0/27",
+                "delegations": [
+                  {
+                    "name": "container-apps",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/scanner-environment/delegations/container-apps",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.App/environments",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/join/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "database",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/database",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.2.0/27",
+                "delegations": [
+                  {
+                    "name": "postgres",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/database/delegations/postgres",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/join/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "private-endpoints",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/private-endpoints",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.3.0/26",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            }
+          ],
+          "virtualNetworkPeerings": [],
+          "enableDdosProtection": false
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "94fb5623-b7b5-4fce-b30e-f37fca517480",
+        "x-ms-correlation-request-id": "5724ab0c-d997-4c56-9023-bf081df7f019"
+      },
+      "startedAt": "2026-11-08T07:54:39.936Z",
+      "completedAt": "2026-11-08T07:54:40.215Z"
+    },
+    {
+      "target": "local",
+      "phase": "readback",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network?api-version=2024-05-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network",
+        "name": "gs9e7d2a94c5a9-network",
+        "type": "Microsoft.Network/virtualNetworks",
+        "resourceGroupName": "<group>",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.72.0.0/16"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "ingress-integration",
+              "properties": {
+                "addressPrefix": "10.72.0.0/26",
+                "delegations": [
+                  {
+                    "name": "app-service",
+                    "properties": {
+                      "serviceName": "Microsoft.Web/serverFarms"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "worker-integration",
+              "properties": {
+                "addressPrefix": "10.72.0.64/26",
+                "delegations": [
+                  {
+                    "name": "functions",
+                    "properties": {
+                      "serviceName": "Microsoft.Web/serverFarms"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "scanner-environment",
+              "properties": {
+                "addressPrefix": "10.72.1.0/27",
+                "delegations": [
+                  {
+                    "name": "container-apps",
+                    "properties": {
+                      "serviceName": "Microsoft.App/environments"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "database",
+              "properties": {
+                "addressPrefix": "10.72.2.0/27",
+                "delegations": [
+                  {
+                    "name": "postgres",
+                    "properties": {
+                      "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "private-endpoints",
+              "properties": {
+                "addressPrefix": "10.72.3.0/26",
+                "privateEndpointNetworkPolicies": "Disabled"
+              }
+            }
+          ],
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2024-05-01",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "virtual-network",
+          "backingEngines": [
+            "globalstack-network-model"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "GlobalStack models bounded private endpoint DNS zone-group behavior, not full Azure private networking.",
+            "No packet-level networking, NSG enforcement, NAT, route table, service endpoint, approval workflow, or full private endpoint DNS parity."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9",
+        "name": "gs-foundation-9e7d2a94c5a9",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "10744410944132176510",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs9e7d2a94c5a9"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "9e7d2a94c5a9"
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2026-11-08T07:54:10.9790377Z",
+          "duration": "PT4.9691437S",
+          "correlationId": "f3dad35c-cde1-4221-b561-072f857f3b0a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Network",
+              "resourceTypes": [
+                {
+                  "resourceType": "virtualNetworks",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.ManagedIdentity",
+              "resourceTypes": [
+                {
+                  "resourceType": "userAssignedIdentities",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [],
+          "outputs": {
+            "networkId": {
+              "type": "String",
+              "value": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network"
+            },
+            "workloadIdentities": {
+              "type": "Array",
+              "value": [
+                {
+                  "name": "ingress",
+                  "resourceId": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress",
+                  "clientId": "fb7d9c4e-617f-4085-9702-4a12b65006be",
+                  "principalId": "0d1acbc9-182b-42a1-a37d-a23d5153d1a0"
+                },
+                {
+                  "name": "worker",
+                  "resourceId": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker",
+                  "clientId": "a74541c6-1e6b-43bb-ad98-5a2d94bd3626",
+                  "principalId": "6e24f3ae-c77a-4ab4-9c54-bd4a652109e4"
+                },
+                {
+                  "name": "scanner",
+                  "resourceId": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner",
+                  "clientId": "c7ed7400-6870-4e9a-b9c2-717c86e8b9ed",
+                  "principalId": "45a0293e-65f7-4e57-9925-8995063d769b"
+                }
+              ]
+            }
+          },
+          "outputResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network",
+              "resourceType": "Microsoft.Network/virtualNetworks"
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "e34261f5-047a-440f-b195-e7360cf1efb4",
+        "x-ms-correlation-request-id": "e34261f5-047a-440f-b195-e7360cf1efb4"
+      },
+      "startedAt": "2026-11-08T07:54:41.392Z",
+      "completedAt": "2026-11-08T07:54:41.805Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress",
+        "name": "gs9e7d2a94c5a9-ingress",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "0d1acbc9-182b-42a1-a37d-a23d5153d1a0",
+          "clientId": "fb7d9c4e-617f-4085-9702-4a12b65006be"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "65258042-91d1-4b21-a858-188e61874c36",
+        "x-ms-correlation-request-id": "65258042-91d1-4b21-a858-188e61874c36"
+      },
+      "startedAt": "2026-11-08T07:54:41.806Z",
+      "completedAt": "2026-11-08T07:54:42.071Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker",
+        "name": "gs9e7d2a94c5a9-worker",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "6e24f3ae-c77a-4ab4-9c54-bd4a652109e4",
+          "clientId": "a74541c6-1e6b-43bb-ad98-5a2d94bd3626"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "546b32f7-3032-4a3a-9162-4993829e436b",
+        "x-ms-correlation-request-id": "546b32f7-3032-4a3a-9162-4993829e436b"
+      },
+      "startedAt": "2026-11-08T07:54:42.072Z",
+      "completedAt": "2026-11-08T07:54:42.335Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner",
+        "name": "gs9e7d2a94c5a9-scanner",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "45a0293e-65f7-4e57-9925-8995063d769b",
+          "clientId": "c7ed7400-6870-4e9a-b9c2-717c86e8b9ed"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "23caa077-6131-4c5b-bc5a-9fdd0a8dd5d4",
+        "x-ms-correlation-request-id": "23caa077-6131-4c5b-bc5a-9fdd0a8dd5d4"
+      },
+      "startedAt": "2026-11-08T07:54:42.336Z",
+      "completedAt": "2026-11-08T07:54:42.595Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network?api-version=2024-05-01",
+      "status": 200,
+      "body": {
+        "name": "gs9e7d2a94c5a9-network",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network",
+        "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+        "type": "Microsoft.Network/virtualNetworks",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "9e7d2a94c5a9"
+        },
+        "properties": {
+          "provisioningState": "Succeeded",
+          "resourceGuid": "e6dfd975-0636-48c1-a4c5-0dc9b6bddad0",
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.72.0.0/16"
+            ]
+          },
+          "privateEndpointVNetPolicies": "Disabled",
+          "subnets": [
+            {
+              "name": "ingress-integration",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/ingress-integration",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.0.0/26",
+                "delegations": [
+                  {
+                    "name": "app-service",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/ingress-integration/delegations/app-service",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.Web/serverFarms",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "worker-integration",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/worker-integration",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.0.64/26",
+                "delegations": [
+                  {
+                    "name": "functions",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/worker-integration/delegations/functions",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.Web/serverFarms",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "scanner-environment",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/scanner-environment",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.1.0/27",
+                "delegations": [
+                  {
+                    "name": "container-apps",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/scanner-environment/delegations/container-apps",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.App/environments",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/join/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "database",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/database",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.2.0/27",
+                "delegations": [
+                  {
+                    "name": "postgres",
+                    "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/database/delegations/postgres",
+                    "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers",
+                      "actions": [
+                        "Microsoft.Network/virtualNetworks/subnets/join/action"
+                      ]
+                    },
+                    "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                  }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "name": "private-endpoints",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network/subnets/private-endpoints",
+              "etag": "W/\"99df7613-024e-4731-b83d-a12dcd382163\"",
+              "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.72.3.0/26",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            }
+          ],
+          "virtualNetworkPeerings": [],
+          "enableDdosProtection": false
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "523ac1df-c45f-4b64-8d58-96440781af34",
+        "x-ms-correlation-request-id": "4b0e34c7-a9a4-46cc-a30d-a0fde0e77ab3"
+      },
+      "startedAt": "2026-11-08T07:54:42.596Z",
+      "completedAt": "2026-11-08T07:54:42.869Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress?api-version=2023-01-31",
+      "status": 200,
+      "body": null,
+      "headers": {
+        "x-ms-request-id": "68a29993-a738-4137-946c-b069f7779f3f",
+        "x-ms-correlation-request-id": "68a29993-a738-4137-946c-b069f7779f3f"
+      },
+      "startedAt": "2026-11-08T07:54:42.870Z",
+      "completedAt": "2026-11-08T07:54:47.783Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker?api-version=2023-01-31",
+      "status": 200,
+      "body": null,
+      "headers": {
+        "x-ms-request-id": "44466d91-564e-475c-b8d6-e25c508d8fd8",
+        "x-ms-correlation-request-id": "44466d91-564e-475c-b8d6-e25c508d8fd8"
+      },
+      "startedAt": "2026-11-08T07:54:47.784Z",
+      "completedAt": "2026-11-08T07:54:51.609Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner?api-version=2023-01-31",
+      "status": 200,
+      "body": null,
+      "headers": {
+        "x-ms-request-id": "716b43a5-5a34-4227-a4e5-7440a305d454",
+        "x-ms-correlation-request-id": "716b43a5-5a34-4227-a4e5-7440a305d454"
+      },
+      "startedAt": "2026-11-08T07:54:51.610Z",
+      "completedAt": "2026-11-08T07:55:11.611Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network?api-version=2024-05-01",
+      "status": 202,
+      "body": null,
+      "headers": {
+        "retry-after": "10",
+        "x-ms-request-id": "77d25393-37b5-47c0-9d97-d757baf3542c",
+        "x-ms-correlation-request-id": "be786c8c-2475-4892-b59c-5551374a9619",
+        "azure-asyncoperation": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Network/locations/westus2/operations/77d25393-37b5-47c0-9d97-d757baf3542c?api-version=2024-05-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>",
+        "location": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Network/locations/westus2/operationResults/<operation>?api-version=2024-05-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+      },
+      "startedAt": "2026-11-08T07:55:11.611Z",
+      "completedAt": "2026-11-08T07:55:12.000Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-ingress' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d98dbbf4-3f82-4f7a-b845-377f854c20bc",
+        "x-ms-correlation-request-id": "d98dbbf4-3f82-4f7a-b845-377f854c20bc"
+      },
+      "startedAt": "2026-11-08T07:55:12.001Z",
+      "completedAt": "2026-11-08T07:55:12.259Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "ebcfb0e0-905c-44ed-90ea-15e561386493",
+        "x-ms-correlation-request-id": "ebcfb0e0-905c-44ed-90ea-15e561386493"
+      },
+      "startedAt": "2026-11-08T07:55:12.260Z",
+      "completedAt": "2026-11-08T07:55:12.563Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs9e7d2a94c5a9-scanner' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "0ca82ba4-512d-4edc-bd6e-524d16199a4c",
+        "x-ms-correlation-request-id": "0ca82ba4-512d-4edc-bd6e-524d16199a4c"
+      },
+      "startedAt": "2026-11-08T07:55:12.564Z",
+      "completedAt": "2026-11-08T07:55:12.808Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network?api-version=2024-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Network/virtualNetworks/gs9e7d2a94c5a9-network' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "189dd53d-5f8d-42e2-ab19-aed6865131fa",
+        "x-ms-correlation-request-id": "189dd53d-5f8d-42e2-ab19-aed6865131fa"
+      },
+      "startedAt": "2026-11-08T07:55:12.808Z",
+      "completedAt": "2026-11-08T07:55:13.087Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9?api-version=2025-04-01",
+      "status": 202,
+      "body": null,
+      "headers": {
+        "retry-after": "15",
+        "x-ms-request-id": "6ae3a326-f677-47a5-8050-146524b895ce",
+        "x-ms-correlation-request-id": "6ae3a326-f677-47a5-8050-146524b895ce",
+        "location": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2025-04-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+      },
+      "startedAt": "2026-11-08T07:55:13.088Z",
+      "completedAt": "2026-11-08T07:55:14.039Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9",
+        "name": "gs-foundation-9e7d2a94c5a9",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "10744410944132176510",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs9e7d2a94c5a9"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "9e7d2a94c5a9"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Deleting",
+          "timestamp": "2026-11-08T07:54:10.9790377Z",
+          "duration": "PT4.9691437S",
+          "correlationId": "f3dad35c-cde1-4221-b561-072f857f3b0a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Network",
+              "resourceTypes": [
+                {
+                  "resourceType": "virtualNetworks",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.ManagedIdentity",
+              "resourceTypes": [
+                {
+                  "resourceType": "userAssignedIdentities",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "5",
+        "x-ms-request-id": "45481d65-2072-4d2d-8dc1-402f9d65a17e",
+        "x-ms-correlation-request-id": "45481d65-2072-4d2d-8dc1-402f9d65a17e"
+      },
+      "startedAt": "2026-11-08T07:55:14.039Z",
+      "completedAt": "2026-11-08T07:55:14.454Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-foundation-9e7d2a94c5a9?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-foundation-9e7d2a94c5a9' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9b2ac47f-c47f-4b6c-bda4-b64e0631349b",
+        "x-ms-correlation-request-id": "9b2ac47f-c47f-4b6c-bda4-b64e0631349b"
+      },
+      "startedAt": "2026-11-08T07:55:17.455Z",
+      "completedAt": "2026-11-08T07:55:17.907Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "2fd605d6-e513-415b-a734-5b50370bcbe7",
+        "x-ms-correlation-request-id": "2fd605d6-e513-415b-a734-5b50370bcbe7"
+      },
+      "startedAt": "2026-11-08T07:55:17.908Z",
+      "completedAt": "2026-11-08T07:55:18.168Z"
+    }
+  ],
+  "comparisons": [
+    {
+      "resource": "gs9e7d2a94c5a9-ingress",
+      "azureStatus": 200,
+      "localStatus": 404,
+      "azure": {
+        "principalIdPresent": true,
+        "clientIdPresent": true
+      },
+      "local": {
+        "principalIdPresent": false,
+        "clientIdPresent": false
+      },
+      "selectedFieldsMatch": false
+    },
+    {
+      "resource": "gs9e7d2a94c5a9-worker",
+      "azureStatus": 200,
+      "localStatus": 404,
+      "azure": {
+        "principalIdPresent": true,
+        "clientIdPresent": true
+      },
+      "local": {
+        "principalIdPresent": false,
+        "clientIdPresent": false
+      },
+      "selectedFieldsMatch": false
+    },
+    {
+      "resource": "gs9e7d2a94c5a9-scanner",
+      "azureStatus": 200,
+      "localStatus": 404,
+      "azure": {
+        "principalIdPresent": true,
+        "clientIdPresent": true
+      },
+      "local": {
+        "principalIdPresent": false,
+        "clientIdPresent": false
+      },
+      "selectedFieldsMatch": false
+    },
+    {
+      "resource": "gs9e7d2a94c5a9-network",
+      "azureStatus": 200,
+      "localStatus": 200,
+      "azure": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.72.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "ingress-integration",
+            "prefix": "10.72.0.0/26",
+            "delegations": [
+              "Microsoft.Web/serverFarms"
+            ]
+          },
+          {
+            "name": "worker-integration",
+            "prefix": "10.72.0.64/26",
+            "delegations": [
+              "Microsoft.Web/serverFarms"
+            ]
+          },
+          {
+            "name": "scanner-environment",
+            "prefix": "10.72.1.0/27",
+            "delegations": [
+              "Microsoft.App/environments"
+            ]
+          },
+          {
+            "name": "database",
+            "prefix": "10.72.2.0/27",
+            "delegations": [
+              "Microsoft.DBforPostgreSQL/flexibleServers"
+            ]
+          },
+          {
+            "name": "private-endpoints",
+            "prefix": "10.72.3.0/26",
+            "delegations": []
+          }
+        ]
+      },
+      "local": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.72.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "ingress-integration",
+            "prefix": "10.72.0.0/26",
+            "delegations": [
+              "Microsoft.Web/serverFarms"
+            ]
+          },
+          {
+            "name": "worker-integration",
+            "prefix": "10.72.0.64/26",
+            "delegations": [
+              "Microsoft.Web/serverFarms"
+            ]
+          },
+          {
+            "name": "scanner-environment",
+            "prefix": "10.72.1.0/27",
+            "delegations": [
+              "Microsoft.App/environments"
+            ]
+          },
+          {
+            "name": "database",
+            "prefix": "10.72.2.0/27",
+            "delegations": [
+              "Microsoft.DBforPostgreSQL/flexibleServers"
+            ]
+          },
+          {
+            "name": "private-endpoints",
+            "prefix": "10.72.3.0/26",
+            "delegations": []
+          }
+        ]
+      },
+      "selectedFieldsMatch": true
+    }
+  ],
+  "cleanup": {
+    "resourcesAbsent": true,
+    "deploymentAbsent": true,
+    "groupPreserved": true
+  },
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "templateSha256": "0954c17ceb1c860427ee666a71f0849026472472a7a08018d301bb51889e7c50",
+  "budget": {
+    "totalAuthorizedUsd": 150,
+    "allocatedUsd": 36,
+    "remainingUnallocatedUsd": 114
+  },
+  "localDeploymentState": "Succeeded",
+  "observationsComplete": true,
+  "completedAt": "2026-11-08T07:55:18.174Z"
+}

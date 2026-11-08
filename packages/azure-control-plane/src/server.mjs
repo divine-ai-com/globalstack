@@ -464,7 +464,8 @@ export function createArmRequestHandler({
         },
       };
     }
-    const expanded = expandDeploymentTemplate({
+    let expanded;
+    try { expanded = expandDeploymentTemplate({
       template,
       parameters: body.properties?.parameters ?? {},
       subscriptionId,
@@ -473,6 +474,11 @@ export function createArmRequestHandler({
       resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
       resourceGroupLocations: Object.fromEntries(store.listResourceGroups(subscriptionId).map(group => [group.name.toLowerCase(), group.location])),
     });
+    } catch (error) {
+      return { status: error.status ?? 400, body: { error: {
+        code: error.code ?? 'InvalidTemplate', message: error.message, details: [],
+      } } };
+    }
     const operations = expanded.operations;
     const steps = [];
     const operationRecords = [];

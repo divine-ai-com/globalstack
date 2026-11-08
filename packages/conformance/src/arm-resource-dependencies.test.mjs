@@ -100,3 +100,47 @@ test('a missing output reference produces a structured deployment error', async 
   assert.equal(result.status, 404);
   assert.equal(result.body.error.code, 'ResourceNotFound');
 });
+
+test('resource and output loops deploy distinct identities and resolve each output reference', async t => {
+  const { request } = await fixture(t);
+  const template = { resources: [{
+    copy: { name: 'identities', count: "[length(createArray('alpha', 'beta'))]" },
+    type: 'Microsoft.ManagedIdentity/userAssignedIdentities', apiVersion: '2023-01-31',
+    name: "[format('independent-{0}', createArray('alpha', 'beta')[copyIndex()])]",
+    location: 'westus2', tags: { sequence: "[format('{0}', copyIndex('identities', 5))]", numericString: '123' },
+  }], outputs: { principals: { type: 'array', copy: { count: 2,
+    input: "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('independent-{0}', createArray('alpha', 'beta')[copyIndex()])), '2023-01-31').principalId]",
+  } } } };
+  const deployed = await request('PUT', deployment, { properties: { template } });
+  assert.equal(deployed.status, 201, JSON.stringify(deployed.body));
+  const principals = [];
+  for (const [index, name] of ['alpha', 'beta'].entries()) {
+    const resource = await request('GET', `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/independent-${name}?api-version=2023-01-31`);
+    assert.equal(resource.status, 200);
+    assert.equal(resource.body.tags.sequence, String(index + 5));
+    assert.equal(resource.body.tags.numericString, '123');
+    assert.match(resource.body.properties.principalId, /^[0-9a-f-]{36}$/i);
+    principals.push(resource.body.properties.principalId);
+  }
+  assert.notEqual(principals[0], principals[1]);
+  assert.deepEqual(deployed.body.properties.outputs.principals.value, principals);
+});
+
+test('copy loops reject invalid counts and unsupported serial execution before writes', async t => {
+  const { request } = await fixture(t);
+  for (const count of [-1, 801, 1.5, '2']) {
+    const response = await request('PUT', deployment, { properties: { template: { resources: [{
+      type: 'Microsoft.ManagedIdentity/userAssignedIdentities', apiVersion: '2023-01-31', name: 'must-not-exist',
+      location: 'westus2', copy: { name: 'invalid', count },
+    }] } } });
+    assert.equal(response.status, 400);
+    assert.equal(response.body.error.code, 'InvalidTemplate');
+  }
+  const empty = expandDeploymentTemplate({ template: { resources: [{ copy: { name: 'empty', count: 0 } }],
+    outputs: { empty: { type: 'array', copy: { count: 0, input: '[copyIndex()]' } } } }, subscriptionId: subscription, resourceGroupName: 'dependency-check' });
+  assert.deepEqual(empty.operations, []);
+  assert.deepEqual(empty.outputs.empty.value, []);
+  assert.throws(() => expandDeploymentTemplate({ template: { resources: [{ copy: { name: 'serial', count: 2, mode: 'serial' } }] } }), { code: 'GlobalStackCopyNotImplemented' });
+  assert.throws(() => evaluateArmValue('[copyIndex()]', {}), { code: 'InvalidTemplate' });
+  assert.equal((await request('GET', `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/must-not-exist?api-version=2023-01-31`)).status, 404);
+});

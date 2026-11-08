@@ -67,13 +67,12 @@ remain outstanding.
    too. A separate group-role GET bug is fixed with independent-name tests.
    This clears the assignment prerequisite, not downstream data-plane
    authorization or directory application-registration permissions.
-3. The [directory preflight](evidence/directory-prerequisite/) returned Graph
-   `403 Authorization_RequestDenied` when creating an API application. The pilot
-   application has no configured API audience or app roles. An operator with
-   directory permissions must run the [API setup helper](operator/README.md#document-api-registration)
-   or configure equivalent API registration and role grants. No broad Graph
-   permissions are requested for the pilot. Scanner identity and delegated-user
-   cases still need separate setup.
+3. The operator completed the document API registration and role grants after
+   the [directory preflight](evidence/directory-prerequisite/) rejected application
+   creation by the pilot. A live API token passed the unchanged application's
+   read, upload and delete role checks. Wrong-audience and ungranted-role checks
+   were rejected. This is authentication evidence, not a deployed HTTP workflow.
+   Scanner identity and delegated-user cases still need separate setup.
 4. Establish a usable authenticated Portal capture channel. A logged-in tab URL
    is not a screenshot or browser-control capability. None of this session's
    HTTP replays is Portal evidence.
@@ -115,3 +114,16 @@ operator's empty group is intentionally retained for subsequent scoped runs.
 The workspace had approximately 64 GiB free at the last check, above the 40 GiB
 minimum. Diagnostic containers, internal networks and temporary private TLS files
 are removed after each probe. Shared caches and unrelated workloads are retained.
+
+## Document foundation comparison
+
+The first native Azure CLI deployment created three managed identities and the
+VNet with five subnets. The same compiled template returned local success but
+all three identity reads returned 404. Selected VNet fields matched. The
+[first comparison](evidence/document-foundation-before-c85eeea/) retains this
+false-success observation and confirmed Azure cleanup. Resource and output copy
+loops now have independent regression tests. Serial loops remain explicitly
+unsupported, and the validation endpoint still reports copy validation as
+unsupported. A fresh paired run is required before claiming the correction
+passes against Azure. No application traffic or effective network isolation is
+established by this foundation test.
