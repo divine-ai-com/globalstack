@@ -35,7 +35,8 @@ Functions event invocation or an Azure worker-to-scanner result.
 Final Azure cleanup is verified in the separate scanner recovery trace. The
 original 503 failure, watchdog timeout and provider/inventory inconsistency
 remain visible. All budget allocations are cleanup-verified; the conservative
-allocated total is USD 75 of USD 150, not measured billing. The live component
+allocated total before the corrected worker/scanner retry is USD 86 of USD 150,
+not measured billing. Subsequent reservations remain bounded by the shared ledger. The live component
 video remains in the operator workspace, with its hash published alongside the
 trace. Public video distribution and Azure Portal screenshots remain outstanding.
 
@@ -43,6 +44,14 @@ The [local handler capture](evidence/function-scanner-08aabdd/) now also verifie
 four actual Functions HTTP calls: unauthenticated denial, successful scanning
 with matching input hashes, downstream denial, and access restoration. Cleanup
 passed. This adds no full-workflow assertions.
+
+The [first paired handler capture](evidence/worker-scanner-azure-8707add/) records
+Azure scan success and local failure caused by inconsistent external tenant
+configuration. The interrupted recording and separate verified cleanup remain
+visible. The [non-default-tenant regression](evidence/function-scanner-df5b4fe/)
+passes with the same application image after correcting that configuration.
+Issue #62 remains open for a fresh paired result. Observation checkpoints and
+early local cleanup now protect against long cloud teardown interruptions.
 
 Next: repeat the real Functions handler with its managed identity on Azure,
 then complete the document pipeline and its failure controls. The 101 full

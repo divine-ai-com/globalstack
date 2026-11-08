@@ -4,6 +4,14 @@
     "sha256": "6cec370cfca741a672aaa6e4991517e14473c934940814934a564cd981ab1a38"
   },
   {
+    "file": "RECOVERY.md",
+    "sha256": "9f7390495de1c16b6ec262f5cc1641977334f951a0fcad4dda9d5c2ef5625260"
+  },
+  {
+    "file": "cleanup-final-verification.json",
+    "sha256": "37dee150f776f8a0c0e6318e5d1c979d43a4cef037ed4de498c38c1af8a8bd3b"
+  },
+  {
     "file": "cleanup-readback-pending.json",
     "sha256": "a196f694e3bdc8a741dc8cdc8d5a80de2780fe89fee6746f11ea649dc0df32d4"
   },
@@ -38,6 +46,10 @@
   {
     "file": "scanner-host.json",
     "sha256": "02fb8b1d21975a281a5ce2c4ebaa7f639fd1de7728b8f276ac2f0a82ab170690"
+  },
+  {
+    "file": "watchdog.json",
+    "sha256": "687ae3d941b37a2ab22603303ae9bc8a1967519a3f010dc0f7725d911e0d57d5"
   },
   {
     "file": "worker-app.json",

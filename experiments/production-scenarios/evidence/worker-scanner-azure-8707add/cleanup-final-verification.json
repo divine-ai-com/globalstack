@@ -1,0 +1,944 @@
+{
+  "completedAt": "2026-11-08T12:08:14.552Z",
+  "worker": {
+    "resourcesAbsent": true,
+    "rolesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "scanner": {
+    "resourcesAbsent": true,
+    "rolesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupEmpty": true,
+    "groupPreserved": true
+  },
+  "resourcesAbsent": true,
+  "groupEmpty": true,
+  "groupPreserved": true,
+  "observations": [
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-worker-host-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-host-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "2da38984-1377-4623-9642-9641a24d31ed",
+        "x-ms-correlation-request-id": "2da38984-1377-4623-9642-9641a24d31ed"
+      },
+      "startedAt": "2026-11-08T12:07:48.247Z",
+      "completedAt": "2026-11-08T12:07:48.764Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-worker-app-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-app-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "70c353e6-da25-4a70-aeb3-a017c3ed1e60",
+        "x-ms-correlation-request-id": "70c353e6-da25-4a70-aeb3-a017c3ed1e60"
+      },
+      "startedAt": "2026-11-08T12:07:48.765Z",
+      "completedAt": "2026-11-08T12:07:49.249Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "110f8e43-4cf7-4ed8-bcc6-93661ab7ca54",
+        "x-ms-correlation-request-id": "110f8e43-4cf7-4ed8-bcc6-93661ab7ca54"
+      },
+      "startedAt": "2026-11-08T12:07:49.249Z",
+      "completedAt": "2026-11-08T12:07:49.829Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Web/sites/gse2ab9c2b4c10-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/sites/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "fd266088-3c29-44f7-9175-c54317ebcdea",
+        "x-ms-correlation-request-id": "fd266088-3c29-44f7-9175-c54317ebcdea"
+      },
+      "startedAt": "2026-11-08T12:07:49.830Z",
+      "completedAt": "2026-11-08T12:07:50.146Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/4eff3fd4-906b-4811-a0ab-f7192a9d8670?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3a85a1f4-505f-458a-bdb3-7f383145fced",
+        "x-ms-correlation-request-id": "3a85a1f4-505f-458a-bdb3-7f383145fced"
+      },
+      "startedAt": "2026-11-08T12:07:50.146Z",
+      "completedAt": "2026-11-08T12:07:50.431Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/2a817698-4d03-43f0-86af-c8e2ebf22f9a?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9739c585-f3fc-49a2-bd85-39a50288e510",
+        "x-ms-correlation-request-id": "9739c585-f3fc-49a2-bd85-39a50288e510"
+      },
+      "startedAt": "2026-11-08T12:07:50.431Z",
+      "completedAt": "2026-11-08T12:07:50.975Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/a9db718b-e692-4abc-b2db-b66cea505d27?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "e0c90335-e5b1-44bb-b6b5-0d13e4d210df",
+        "x-ms-correlation-request-id": "e0c90335-e5b1-44bb-b6b5-0d13e4d210df"
+      },
+      "startedAt": "2026-11-08T12:07:50.976Z",
+      "completedAt": "2026-11-08T12:07:51.276Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/a1f222d8-8e1e-41fb-b5ff-30be50d4c86d?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "0c600c94-e781-42d7-8a63-47923f009fab",
+        "x-ms-correlation-request-id": "0c600c94-e781-42d7-8a63-47923f009fab"
+      },
+      "startedAt": "2026-11-08T12:07:51.277Z",
+      "completedAt": "2026-11-08T12:07:51.605Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/da329299-06dc-4c0c-9924-0185e801a545?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "bdf06658-6424-4b67-92e6-f17dcd2f6618",
+        "x-ms-correlation-request-id": "bdf06658-6424-4b67-92e6-f17dcd2f6618"
+      },
+      "startedAt": "2026-11-08T12:07:51.606Z",
+      "completedAt": "2026-11-08T12:07:52.350Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/bff86924-8ac1-46c1-b234-b390abe21aec?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "6365b4b6-b4e3-4f34-bdf2-35fd3343e462",
+        "x-ms-correlation-request-id": "6365b4b6-b4e3-4f34-bdf2-35fd3343e462"
+      },
+      "startedAt": "2026-11-08T12:07:52.350Z",
+      "completedAt": "2026-11-08T12:07:52.669Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Web/serverfarms/gse2ab9c2b4c10-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/serverFarms/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "1405e1a4-7803-4341-b6c4-28b1ecde0d77",
+        "x-ms-correlation-request-id": "1405e1a4-7803-4341-b6c4-28b1ecde0d77"
+      },
+      "startedAt": "2026-11-08T12:07:52.669Z",
+      "completedAt": "2026-11-08T12:07:52.961Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images?api-version=2023-07-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "ef9da3c3-afa8-47a2-8b5e-bf958674ee33",
+        "x-ms-correlation-request-id": "ef9da3c3-afa8-47a2-8b5e-bf958674ee33"
+      },
+      "startedAt": "2026-11-08T12:07:52.961Z",
+      "completedAt": "2026-11-08T12:07:53.485Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host?api-version=2023-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "1c14ffe9-1a88-471d-854d-0ee83f859307",
+        "x-ms-correlation-request-id": "1c14ffe9-1a88-471d-854d-0ee83f859307"
+      },
+      "startedAt": "2026-11-08T12:07:53.485Z",
+      "completedAt": "2026-11-08T12:07:53.768Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-host-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-host-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "8cc757eb-c074-4248-93df-9386f41a3dfe",
+        "x-ms-correlation-request-id": "8cc757eb-c074-4248-93df-9386f41a3dfe"
+      },
+      "startedAt": "2026-11-08T12:07:53.769Z",
+      "completedAt": "2026-11-08T12:07:55.164Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-app-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-app-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "7df55eec-8d00-4bb1-8bac-11dcad9829f9",
+        "x-ms-correlation-request-id": "7df55eec-8d00-4bb1-8bac-11dcad9829f9"
+      },
+      "startedAt": "2026-11-08T12:07:55.165Z",
+      "completedAt": "2026-11-08T12:07:55.636Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-auth-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-auth-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "da2a5573-7ca7-452b-8ba1-0564c83900e8",
+        "x-ms-correlation-request-id": "da2a5573-7ca7-452b-8ba1-0564c83900e8"
+      },
+      "startedAt": "2026-11-08T12:07:55.637Z",
+      "completedAt": "2026-11-08T12:07:56.448Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-public-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-public-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "76b2682e-3d6d-4a2a-a16b-e7f454492af9",
+        "x-ms-correlation-request-id": "76b2682e-3d6d-4a2a-a16b-e7f454492af9"
+      },
+      "startedAt": "2026-11-08T12:07:56.448Z",
+      "completedAt": "2026-11-08T12:07:57.194Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-scanner?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-scanner' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "acc2694b-dcdc-451a-8c98-92dc8cdb9701",
+        "x-ms-correlation-request-id": "acc2694b-dcdc-451a-8c98-92dc8cdb9701"
+      },
+      "startedAt": "2026-11-08T12:07:57.194Z",
+      "completedAt": "2026-11-08T12:07:57.835Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/containerApps/gse2ab9c2b4c10-scanner?api-version=2025-01-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.App/containerApps/gse2ab9c2b4c10-scanner' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3025a01b-31cd-4095-866c-cce99e509fac",
+        "x-ms-correlation-request-id": "3025a01b-31cd-4095-866c-cce99e509fac"
+      },
+      "startedAt": "2026-11-08T12:07:57.835Z",
+      "completedAt": "2026-11-08T12:07:58.134Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/46a3277c-78de-44b6-9a77-308835a81745?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "431b8a49-aa59-4f03-a515-8eb7f659b9c0",
+        "x-ms-correlation-request-id": "431b8a49-aa59-4f03-a515-8eb7f659b9c0"
+      },
+      "startedAt": "2026-11-08T12:07:58.134Z",
+      "completedAt": "2026-11-08T12:07:58.810Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/bff86924-8ac1-46c1-b234-b390abe21aec?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a6a70816-a218-44ac-b696-7576ab0c699b",
+        "x-ms-correlation-request-id": "a6a70816-a218-44ac-b696-7576ab0c699b"
+      },
+      "startedAt": "2026-11-08T12:07:58.810Z",
+      "completedAt": "2026-11-08T12:07:59.098Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner?api-version=2025-01-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "35e0652c-fe3b-4b72-b311-398a5fdd7b9b",
+        "x-ms-correlation-request-id": "35e0652c-fe3b-4b72-b311-398a5fdd7b9b"
+      },
+      "startedAt": "2026-11-08T12:07:59.099Z",
+      "completedAt": "2026-11-08T12:07:59.380Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images?api-version=2023-07-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "011b1f0c-b835-4ca8-ab7b-78fc5ee46594",
+        "x-ms-correlation-request-id": "011b1f0c-b835-4ca8-ab7b-78fc5ee46594"
+      },
+      "startedAt": "2026-11-08T12:07:59.380Z",
+      "completedAt": "2026-11-08T12:07:59.666Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "00e112cd-009a-4574-a42d-041afd738324",
+        "x-ms-correlation-request-id": "00e112cd-009a-4574-a42d-041afd738324"
+      },
+      "startedAt": "2026-11-08T12:07:59.666Z",
+      "completedAt": "2026-11-08T12:07:59.952Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-worker-host-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-host-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d4e2c7a2-7ab0-4435-8bff-95a573a189bf",
+        "x-ms-correlation-request-id": "d4e2c7a2-7ab0-4435-8bff-95a573a189bf"
+      },
+      "startedAt": "2026-11-08T12:07:59.953Z",
+      "completedAt": "2026-11-08T12:08:00.794Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-worker-app-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-app-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "78a93e9e-c4ee-47f4-836a-5e7f3314f916",
+        "x-ms-correlation-request-id": "78a93e9e-c4ee-47f4-836a-5e7f3314f916"
+      },
+      "startedAt": "2026-11-08T12:08:00.795Z",
+      "completedAt": "2026-11-08T12:08:01.657Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3c066e8a-ece0-4f8e-bd0e-8c79259bf81c",
+        "x-ms-correlation-request-id": "3c066e8a-ece0-4f8e-bd0e-8c79259bf81c"
+      },
+      "startedAt": "2026-11-08T12:08:01.658Z",
+      "completedAt": "2026-11-08T12:08:02.736Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Web/sites/gse2ab9c2b4c10-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/sites/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "592695da-ff0b-4a57-b213-5064ed0dfa24",
+        "x-ms-correlation-request-id": "592695da-ff0b-4a57-b213-5064ed0dfa24"
+      },
+      "startedAt": "2026-11-08T12:08:02.736Z",
+      "completedAt": "2026-11-08T12:08:03.031Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/4eff3fd4-906b-4811-a0ab-f7192a9d8670?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d5c08127-9f11-49b0-9ec4-3f9560b66ad1",
+        "x-ms-correlation-request-id": "d5c08127-9f11-49b0-9ec4-3f9560b66ad1"
+      },
+      "startedAt": "2026-11-08T12:08:03.031Z",
+      "completedAt": "2026-11-08T12:08:03.327Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/2a817698-4d03-43f0-86af-c8e2ebf22f9a?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "34bdb68b-77f5-408f-a2c6-51934a9613d1",
+        "x-ms-correlation-request-id": "34bdb68b-77f5-408f-a2c6-51934a9613d1"
+      },
+      "startedAt": "2026-11-08T12:08:03.327Z",
+      "completedAt": "2026-11-08T12:08:03.612Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/a9db718b-e692-4abc-b2db-b66cea505d27?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d606a9c5-6e6f-4cd7-a256-23f677a079c4",
+        "x-ms-correlation-request-id": "d606a9c5-6e6f-4cd7-a256-23f677a079c4"
+      },
+      "startedAt": "2026-11-08T12:08:03.612Z",
+      "completedAt": "2026-11-08T12:08:03.895Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host/providers/Microsoft.Authorization/roleAssignments/a1f222d8-8e1e-41fb-b5ff-30be50d4c86d?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "645be5a8-7664-49c4-a867-6397c9da55eb",
+        "x-ms-correlation-request-id": "645be5a8-7664-49c4-a867-6397c9da55eb"
+      },
+      "startedAt": "2026-11-08T12:08:03.895Z",
+      "completedAt": "2026-11-08T12:08:04.202Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/da329299-06dc-4c0c-9924-0185e801a545?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "800eb5c6-2015-4a52-8016-8328bd773126",
+        "x-ms-correlation-request-id": "800eb5c6-2015-4a52-8016-8328bd773126"
+      },
+      "startedAt": "2026-11-08T12:08:04.202Z",
+      "completedAt": "2026-11-08T12:08:04.498Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/bff86924-8ac1-46c1-b234-b390abe21aec?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9d4765fa-5494-4598-8dd0-162e0800c2c0",
+        "x-ms-correlation-request-id": "9d4765fa-5494-4598-8dd0-162e0800c2c0"
+      },
+      "startedAt": "2026-11-08T12:08:04.498Z",
+      "completedAt": "2026-11-08T12:08:04.799Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Web/serverfarms/gse2ab9c2b4c10-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/serverFarms/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "2d8a55f4-a32a-42e2-b9a9-fcc5b02c50fc",
+        "x-ms-correlation-request-id": "2d8a55f4-a32a-42e2-b9a9-fcc5b02c50fc"
+      },
+      "startedAt": "2026-11-08T12:08:04.800Z",
+      "completedAt": "2026-11-08T12:08:06.414Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images?api-version=2023-07-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3380e391-c6ac-457d-96ee-d899df79527b",
+        "x-ms-correlation-request-id": "3380e391-c6ac-457d-96ee-d899df79527b"
+      },
+      "startedAt": "2026-11-08T12:08:06.414Z",
+      "completedAt": "2026-11-08T12:08:07.133Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host?api-version=2023-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gse2ab9c2b4c10host' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "744650d0-c27a-4375-8f0e-2f46157928ab",
+        "x-ms-correlation-request-id": "744650d0-c27a-4375-8f0e-2f46157928ab"
+      },
+      "startedAt": "2026-11-08T12:08:07.133Z",
+      "completedAt": "2026-11-08T12:08:07.844Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot",
+        "name": "gs-conformance-pilot",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "cec28a83-4c5a-4d94-8f6a-538f9a70fb24",
+        "x-ms-correlation-request-id": "cec28a83-4c5a-4d94-8f6a-538f9a70fb24"
+      },
+      "startedAt": "2026-11-08T12:08:07.844Z",
+      "completedAt": "2026-11-08T12:08:08.189Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-host-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-host-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "4138be36-db33-4a1d-8bd9-465217480e76",
+        "x-ms-correlation-request-id": "4138be36-db33-4a1d-8bd9-465217480e76"
+      },
+      "startedAt": "2026-11-08T12:08:08.189Z",
+      "completedAt": "2026-11-08T12:08:09.118Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-app-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-app-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "33ad6b84-05f5-4834-8d62-a747f5a7671c",
+        "x-ms-correlation-request-id": "33ad6b84-05f5-4834-8d62-a747f5a7671c"
+      },
+      "startedAt": "2026-11-08T12:08:09.118Z",
+      "completedAt": "2026-11-08T12:08:10.243Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-auth-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-auth-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "cf255027-4670-4e95-b8d7-ce8f3d18ef1d",
+        "x-ms-correlation-request-id": "cf255027-4670-4e95-b8d7-ce8f3d18ef1d"
+      },
+      "startedAt": "2026-11-08T12:08:10.243Z",
+      "completedAt": "2026-11-08T12:08:10.703Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.Resources/deployments/gs-scanner-public-e2ab9c2b4c10?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-scanner-public-e2ab9c2b4c10' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "c8241b06-c186-46e3-9156-e8cdaaabdc3e",
+        "x-ms-correlation-request-id": "c8241b06-c186-46e3-9156-e8cdaaabdc3e"
+      },
+      "startedAt": "2026-11-08T12:08:10.703Z",
+      "completedAt": "2026-11-08T12:08:11.224Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-scanner?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-scanner' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "fdd3a999-9b38-4a63-b422-d350ba1ffff7",
+        "x-ms-correlation-request-id": "fdd3a999-9b38-4a63-b422-d350ba1ffff7"
+      },
+      "startedAt": "2026-11-08T12:08:11.224Z",
+      "completedAt": "2026-11-08T12:08:11.794Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/containerApps/gse2ab9c2b4c10-scanner?api-version=2025-01-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.App/containerApps/gse2ab9c2b4c10-scanner' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d245072b-6d80-4600-8a11-47cb5ac26733",
+        "x-ms-correlation-request-id": "d245072b-6d80-4600-8a11-47cb5ac26733"
+      },
+      "startedAt": "2026-11-08T12:08:11.794Z",
+      "completedAt": "2026-11-08T12:08:12.080Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/46a3277c-78de-44b6-9a77-308835a81745?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "c9f62be8-4036-4e61-afac-088d4a7bf730",
+        "x-ms-correlation-request-id": "c9f62be8-4036-4e61-afac-088d4a7bf730"
+      },
+      "startedAt": "2026-11-08T12:08:12.080Z",
+      "completedAt": "2026-11-08T12:08:12.374Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images/providers/Microsoft.Authorization/roleAssignments/bff86924-8ac1-46c1-b234-b390abe21aec?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "6484bdd9-22a3-4f10-b3c2-285e1659beb4",
+        "x-ms-correlation-request-id": "6484bdd9-22a3-4f10-b3c2-285e1659beb4"
+      },
+      "startedAt": "2026-11-08T12:08:12.374Z",
+      "completedAt": "2026-11-08T12:08:12.668Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner?api-version=2025-01-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a4c4dc44-dbe3-4c87-bcdf-742e8b4898a9",
+        "x-ms-correlation-request-id": "a4c4dc44-dbe3-4c87-bcdf-742e8b4898a9"
+      },
+      "startedAt": "2026-11-08T12:08:12.668Z",
+      "completedAt": "2026-11-08T12:08:12.959Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images?api-version=2023-07-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gse2ab9c2b4c10images' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "04724298-f9d8-40f7-8abc-d8dce2d09dd5",
+        "x-ms-correlation-request-id": "04724298-f9d8-40f7-8abc-d8dce2d09dd5"
+      },
+      "startedAt": "2026-11-08T12:08:12.959Z",
+      "completedAt": "2026-11-08T12:08:13.255Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gse2ab9c2b4c10-worker' under resource group 'gs-conformance-pilot' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "404afacb-28d4-4689-9005-001914718e27",
+        "x-ms-correlation-request-id": "404afacb-28d4-4689-9005-001914718e27"
+      },
+      "startedAt": "2026-11-08T12:08:13.255Z",
+      "completedAt": "2026-11-08T12:08:13.555Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot",
+        "name": "gs-conformance-pilot",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "5bd55a26-f7e0-44fe-bb4a-054998cc3f31",
+        "x-ms-correlation-request-id": "5bd55a26-f7e0-44fe-bb4a-054998cc3f31"
+      },
+      "startedAt": "2026-11-08T12:08:13.556Z",
+      "completedAt": "2026-11-08T12:08:13.864Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": []
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "ea034b8a-9bd3-4ebc-bdbb-94fb92a1a52b",
+        "x-ms-correlation-request-id": "ea034b8a-9bd3-4ebc-bdbb-94fb92a1a52b"
+      },
+      "startedAt": "2026-11-08T12:08:13.864Z",
+      "completedAt": "2026-11-08T12:08:14.552Z"
+    }
+  ]
+}
