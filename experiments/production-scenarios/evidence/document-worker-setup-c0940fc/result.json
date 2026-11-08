@@ -1,0 +1,3138 @@
+{
+  "revision": "c0940fc810a503319b5e329247781de2839cb7fb",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T08:13:44.732Z",
+  "scope": "Containerized document Functions package, identity-based host storage and health. Downstream services are not yet configured; no complete document workflow.",
+  "businessWorkflowCompleted": false,
+  "portalEvidenceComplete": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "0e99eb7a-2cfa-4af4-aff0-ff122909a8a4",
+        "x-ms-correlation-request-id": "0e99eb7a-2cfa-4af4-aff0-ff122909a8a4"
+      },
+      "startedAt": "2026-11-08T08:13:44.732Z",
+      "completedAt": "2026-11-08T08:13:45.719Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": []
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "f4da5def-4481-4b5b-b064-7316cfd1e6b6",
+        "x-ms-correlation-request-id": "f4da5def-4481-4b5b-b064-7316cfd1e6b6"
+      },
+      "startedAt": "2026-11-08T08:13:45.720Z",
+      "completedAt": "2026-11-08T08:13:46.770Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-host-31ec8a534623' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "6d6ae573-4d02-476d-b1ca-5166c7424e15",
+        "x-ms-correlation-request-id": "6d6ae573-4d02-476d-b1ca-5166c7424e15"
+      },
+      "startedAt": "2026-11-08T08:13:46.772Z",
+      "completedAt": "2026-11-08T08:13:47.558Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-app-31ec8a534623?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-app-31ec8a534623' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "37cf8e45-7417-4fb8-8731-0b4be42ebdb1",
+        "x-ms-correlation-request-id": "37cf8e45-7417-4fb8-8731-0b4be42ebdb1"
+      },
+      "startedAt": "2026-11-08T08:13:47.559Z",
+      "completedAt": "2026-11-08T08:13:47.970Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/sites/gs31ec8a534623-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/sites/gs31ec8a534623-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "eeb9d8f5-4837-4acc-a419-472c4f8adb57",
+        "x-ms-correlation-request-id": "eeb9d8f5-4837-4acc-a419-472c4f8adb57"
+      },
+      "startedAt": "2026-11-08T08:13:47.970Z",
+      "completedAt": "2026-11-08T08:13:48.217Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gs31ec8a534623host' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "e4a32a00-0b1a-40de-8d91-6d2e0ba392a7",
+        "x-ms-correlation-request-id": "e4a32a00-0b1a-40de-8d91-6d2e0ba392a7"
+      },
+      "startedAt": "2026-11-08T08:13:48.217Z",
+      "completedAt": "2026-11-08T08:13:48.468Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gs31ec8a534623host' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "49a5358f-a9ca-4836-9630-1df8d35491e2",
+        "x-ms-correlation-request-id": "49a5358f-a9ca-4836-9630-1df8d35491e2"
+      },
+      "startedAt": "2026-11-08T08:13:48.469Z",
+      "completedAt": "2026-11-08T08:13:48.717Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gs31ec8a534623host' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "f63d2f8d-6d47-4960-8c88-f943a9e667e3",
+        "x-ms-correlation-request-id": "f63d2f8d-6d47-4960-8c88-f943a9e667e3"
+      },
+      "startedAt": "2026-11-08T08:13:48.718Z",
+      "completedAt": "2026-11-08T08:13:48.962Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gs31ec8a534623host' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "aa977564-c241-46f1-a545-4c50ac3486b2",
+        "x-ms-correlation-request-id": "aa977564-c241-46f1-a545-4c50ac3486b2"
+      },
+      "startedAt": "2026-11-08T08:13:48.962Z",
+      "completedAt": "2026-11-08T08:13:49.654Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gs31ec8a534623images' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3d620835-3f74-4896-8571-28c1502719b8",
+        "x-ms-correlation-request-id": "3d620835-3f74-4896-8571-28c1502719b8"
+      },
+      "startedAt": "2026-11-08T08:13:49.654Z",
+      "completedAt": "2026-11-08T08:13:49.901Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gs31ec8a534623images' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "c1c11d0b-cd81-4687-8385-2b1946376637",
+        "x-ms-correlation-request-id": "c1c11d0b-cd81-4687-8385-2b1946376637"
+      },
+      "startedAt": "2026-11-08T08:13:49.902Z",
+      "completedAt": "2026-11-08T08:13:50.149Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/serverFarms/gs31ec8a534623-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "8c8460df-f5c7-459e-b685-063e7008fa06",
+        "x-ms-correlation-request-id": "8c8460df-f5c7-459e-b685-063e7008fa06"
+      },
+      "startedAt": "2026-11-08T08:13:50.149Z",
+      "completedAt": "2026-11-08T08:13:50.380Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images?api-version=2023-07-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ContainerRegistry/registries/gs31ec8a534623images' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a204769a-faff-4ddb-ac9d-01157871330f",
+        "x-ms-correlation-request-id": "a204769a-faff-4ddb-ac9d-01157871330f"
+      },
+      "startedAt": "2026-11-08T08:13:50.380Z",
+      "completedAt": "2026-11-08T08:13:50.621Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host?api-version=2023-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gs31ec8a534623host' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "387bb9b4-f835-451c-85d2-8de3c0fe3db6",
+        "x-ms-correlation-request-id": "387bb9b4-f835-451c-85d2-8de3c0fe3db6"
+      },
+      "startedAt": "2026-11-08T08:13:50.621Z",
+      "completedAt": "2026-11-08T08:13:50.855Z"
+    },
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "bc7a2a69-41f3-4e6b-a387-9bc60fe42105",
+        "x-ms-correlation-request-id": "bc7a2a69-41f3-4e6b-a387-9bc60fe42105"
+      },
+      "startedAt": "2026-11-08T08:13:50.855Z",
+      "completedAt": "2026-11-08T08:13:51.376Z"
+    },
+    {
+      "target": "local",
+      "phase": "preflight",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "request": {
+        "location": "westus2"
+      },
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "AuthorizationFailed",
+          "message": "The client '11111111-1111-1111-1111-111111111111' with object id '11111111-1111-1111-1111-111111111111' does not have authorization to perform this action over scope '/subscriptions/<subscription>' or the scope is invalid.",
+          "details": [
+            {
+              "code": "GlobalStackSubscriptionMismatch",
+              "message": "GlobalStack Azure accepts only local subscription 00000000-0000-0000-0000-000000000000 unless GLOBALSTACK_AZURE_SUBSCRIPTION_ID is changed."
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "host-validation",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623/validate?api-version=2025-04-01",
+      "request": {
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "522109748934184285"
+              }
+            },
+            "parameters": {
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "publisherPrincipalId": {
+                "type": "string"
+              },
+              "roleAssignmentNames": {
+                "type": "array"
+              }
+            },
+            "variables": {
+              "tags": {
+                "project": "globalstack-production-scenarios",
+                "run": "[parameters('runId')]"
+              },
+              "storageRoles": [
+                "b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
+                "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+                "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+                "17d1049b-9a84-46fb-8f53-869881c3d3ab"
+              ]
+            },
+            "resources": [
+              {
+                "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                "apiVersion": "2023-01-31",
+                "name": "[format('{0}-worker', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]"
+              },
+              {
+                "type": "Microsoft.Storage/storageAccounts",
+                "apiVersion": "2023-05-01",
+                "name": "[format('{0}host', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "kind": "StorageV2",
+                "sku": {
+                  "name": "Standard_LRS"
+                },
+                "properties": {
+                  "minimumTlsVersion": "TLS1_2",
+                  "supportsHttpsTrafficOnly": true,
+                  "allowBlobPublicAccess": false,
+                  "allowSharedKeyAccess": false
+                }
+              },
+              {
+                "type": "Microsoft.ContainerRegistry/registries",
+                "apiVersion": "2023-07-01",
+                "name": "[format('{0}images', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "sku": {
+                  "name": "Basic"
+                },
+                "properties": {
+                  "adminUserEnabled": false
+                }
+              },
+              {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2024-11-01",
+                "name": "[format('{0}-worker', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "kind": "elastic",
+                "sku": {
+                  "name": "EP1",
+                  "tier": "ElasticPremium",
+                  "capacity": 1
+                },
+                "properties": {
+                  "reserved": true,
+                  "maximumElasticWorkerCount": 1
+                }
+              },
+              {
+                "copy": {
+                  "name": "storageGrants",
+                  "count": "[length(variables('storageRoles'))]"
+                },
+                "type": "Microsoft.Authorization/roleAssignments",
+                "apiVersion": "2022-04-01",
+                "scope": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}host', parameters('serviceName')))]",
+                "name": "[parameters('roleAssignmentNames')[copyIndex()]]",
+                "properties": {
+                  "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('storageRoles')[copyIndex()])]",
+                  "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').principalId]",
+                  "principalType": "ServicePrincipal",
+                  "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName')))]",
+                  "[resourceId('Microsoft.Storage/storageAccounts', format('{0}host', parameters('serviceName')))]"
+                ]
+              },
+              {
+                "type": "Microsoft.Authorization/roleAssignments",
+                "apiVersion": "2022-04-01",
+                "scope": "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+                "name": "[parameters('roleAssignmentNames')[4]]",
+                "properties": {
+                  "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]",
+                  "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').principalId]",
+                  "principalType": "ServicePrincipal",
+                  "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName')))]",
+                  "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]"
+                ]
+              },
+              {
+                "type": "Microsoft.Authorization/roleAssignments",
+                "apiVersion": "2022-04-01",
+                "scope": "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+                "name": "[parameters('roleAssignmentNames')[5]]",
+                "properties": {
+                  "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')]",
+                  "principalId": "[parameters('publisherPrincipalId')]",
+                  "principalType": "ServicePrincipal",
+                  "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]"
+                ]
+              }
+            ],
+            "outputs": {
+              "registryHost": {
+                "type": "string",
+                "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName'))), '2023-07-01').loginServer]"
+              },
+              "workerClientId": {
+                "type": "string",
+                "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').clientId]"
+              }
+            }
+          },
+          "parameters": {
+            "serviceName": {
+              "value": "gs31ec8a534623"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "31ec8a534623"
+            },
+            "publisherPrincipalId": {
+              "value": "<publisher>"
+            },
+            "roleAssignmentNames": {
+              "value": [
+                "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+                "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+                "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+                "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+                "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+                "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+              ]
+            }
+          }
+        }
+      },
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623",
+        "name": "gs-worker-host-31ec8a534623",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "522109748934184285",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs31ec8a534623"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "31ec8a534623"
+            },
+            "publisherPrincipalId": {
+              "type": "String",
+              "value": "<publisher>"
+            },
+            "roleAssignmentNames": {
+              "type": "Array",
+              "value": [
+                "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+                "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+                "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+                "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+                "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+                "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+              ]
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2026-11-08T08:13:59.2121746Z",
+          "duration": "PT0S",
+          "correlationId": "887de28c-ad11-4538-8e12-05518b9c5356",
+          "providers": [
+            {
+              "namespace": "Microsoft.ManagedIdentity",
+              "resourceTypes": [
+                {
+                  "resourceType": "userAssignedIdentities",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Storage",
+              "resourceTypes": [
+                {
+                  "resourceType": "storageAccounts",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.ContainerRegistry",
+              "resourceTypes": [
+                {
+                  "resourceType": "registries",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Web",
+              "resourceTypes": [
+                {
+                  "resourceType": "serverfarms",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Authorization",
+              "resourceTypes": [
+                {
+                  "resourceType": "roleAssignments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "gs31ec8a534623images"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "22fe2b35-1bf0-4516-95f9-6c24784eff7f"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "gs31ec8a534623images"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "fa077c8d-76de-46f0-852d-d4946d7bfba1"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "e1ff570c-dfb3-447f-9c4a-59f50e069217"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "ec9f7b12-506d-4a9f-ba38-dd7952cc877e"
+            }
+          ],
+          "validatedResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker"
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "887de28c-ad11-4538-8e12-05518b9c5356",
+        "x-ms-correlation-request-id": "887de28c-ad11-4538-8e12-05518b9c5356"
+      },
+      "startedAt": "2026-11-08T08:13:58.176Z",
+      "completedAt": "2026-11-08T08:14:00.012Z"
+    },
+    {
+      "target": "local",
+      "phase": "host-validation",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623/validate?api-version=2025-04-01",
+      "request": {
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "522109748934184285"
+              }
+            },
+            "parameters": {
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "publisherPrincipalId": {
+                "type": "string"
+              },
+              "roleAssignmentNames": {
+                "type": "array"
+              }
+            },
+            "variables": {
+              "tags": {
+                "project": "globalstack-production-scenarios",
+                "run": "[parameters('runId')]"
+              },
+              "storageRoles": [
+                "b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
+                "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+                "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+                "17d1049b-9a84-46fb-8f53-869881c3d3ab"
+              ]
+            },
+            "resources": [
+              {
+                "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                "apiVersion": "2023-01-31",
+                "name": "[format('{0}-worker', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]"
+              },
+              {
+                "type": "Microsoft.Storage/storageAccounts",
+                "apiVersion": "2023-05-01",
+                "name": "[format('{0}host', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "kind": "StorageV2",
+                "sku": {
+                  "name": "Standard_LRS"
+                },
+                "properties": {
+                  "minimumTlsVersion": "TLS1_2",
+                  "supportsHttpsTrafficOnly": true,
+                  "allowBlobPublicAccess": false,
+                  "allowSharedKeyAccess": false
+                }
+              },
+              {
+                "type": "Microsoft.ContainerRegistry/registries",
+                "apiVersion": "2023-07-01",
+                "name": "[format('{0}images', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "sku": {
+                  "name": "Basic"
+                },
+                "properties": {
+                  "adminUserEnabled": false
+                }
+              },
+              {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2024-11-01",
+                "name": "[format('{0}-worker', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "tags": "[variables('tags')]",
+                "kind": "elastic",
+                "sku": {
+                  "name": "EP1",
+                  "tier": "ElasticPremium",
+                  "capacity": 1
+                },
+                "properties": {
+                  "reserved": true,
+                  "maximumElasticWorkerCount": 1
+                }
+              },
+              {
+                "copy": {
+                  "name": "storageGrants",
+                  "count": "[length(variables('storageRoles'))]"
+                },
+                "type": "Microsoft.Authorization/roleAssignments",
+                "apiVersion": "2022-04-01",
+                "scope": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}host', parameters('serviceName')))]",
+                "name": "[parameters('roleAssignmentNames')[copyIndex()]]",
+                "properties": {
+                  "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('storageRoles')[copyIndex()])]",
+                  "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').principalId]",
+                  "principalType": "ServicePrincipal",
+                  "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName')))]",
+                  "[resourceId('Microsoft.Storage/storageAccounts', format('{0}host', parameters('serviceName')))]"
+                ]
+              },
+              {
+                "type": "Microsoft.Authorization/roleAssignments",
+                "apiVersion": "2022-04-01",
+                "scope": "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+                "name": "[parameters('roleAssignmentNames')[4]]",
+                "properties": {
+                  "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]",
+                  "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').principalId]",
+                  "principalType": "ServicePrincipal",
+                  "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName')))]",
+                  "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]"
+                ]
+              },
+              {
+                "type": "Microsoft.Authorization/roleAssignments",
+                "apiVersion": "2022-04-01",
+                "scope": "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+                "name": "[parameters('roleAssignmentNames')[5]]",
+                "properties": {
+                  "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')]",
+                  "principalId": "[parameters('publisherPrincipalId')]",
+                  "principalType": "ServicePrincipal",
+                  "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]"
+                ]
+              }
+            ],
+            "outputs": {
+              "registryHost": {
+                "type": "string",
+                "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName'))), '2023-07-01').loginServer]"
+              },
+              "workerClientId": {
+                "type": "string",
+                "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').clientId]"
+              }
+            }
+          },
+          "parameters": {
+            "serviceName": {
+              "value": "gs31ec8a534623"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "31ec8a534623"
+            },
+            "publisherPrincipalId": {
+              "value": "<publisher>"
+            },
+            "roleAssignmentNames": {
+              "value": [
+                "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+                "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+                "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+                "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+                "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+                "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+              ]
+            }
+          }
+        }
+      },
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "AuthorizationFailed",
+          "message": "The client '11111111-1111-1111-1111-111111111111' with object id '11111111-1111-1111-1111-111111111111' does not have authorization to perform this action over scope '/subscriptions/<subscription>' or the scope is invalid.",
+          "details": [
+            {
+              "code": "GlobalStackSubscriptionMismatch",
+              "message": "GlobalStack Azure accepts only local subscription 00000000-0000-0000-0000-000000000000 unless GLOBALSTACK_AZURE_SUBSCRIPTION_ID is changed."
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "host-deployment",
+      "command": [
+        "az",
+        "deployment",
+        "group",
+        "create"
+      ],
+      "exitCode": 0,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623",
+        "location": null,
+        "name": "gs-worker-host-31ec8a534623",
+        "properties": {
+          "correlationId": "0462d010-d7a3-4fbc-983e-ba7e78f02fd8",
+          "debugSetting": null,
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries"
+                },
+                {
+                  "apiVersion": "2023-01-31",
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "resourceGroup": "<group>",
+              "resourceName": "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "resourceGroup": "<group>",
+              "resourceName": "2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts"
+                },
+                {
+                  "apiVersion": "2023-01-31",
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "resourceGroup": "<group>",
+              "resourceName": "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts"
+                },
+                {
+                  "apiVersion": "2023-01-31",
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "resourceGroup": "<group>",
+              "resourceName": "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts"
+                },
+                {
+                  "apiVersion": "2023-01-31",
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "resourceGroup": "<group>",
+              "resourceName": "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts"
+                },
+                {
+                  "apiVersion": "2023-01-31",
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceGroup": "<group>",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "resourceGroup": "<group>",
+              "resourceName": "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            }
+          ],
+          "diagnostics": null,
+          "duration": "PT24.9124661S",
+          "error": null,
+          "extensions": [],
+          "mode": "Incremental",
+          "onErrorDeployment": null,
+          "outputResources": [
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.ContainerRegistry/registries"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Storage/storageAccounts"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "apiVersion": null,
+              "extension": null,
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker",
+              "identifiers": null,
+              "resourceGroup": "<group>",
+              "resourceType": "Microsoft.Web/serverfarms"
+            }
+          ],
+          "outputs": {
+            "registryHost": {
+              "type": "String",
+              "value": "gs31ec8a534623images.azurecr.io"
+            },
+            "workerClientId": {
+              "type": "String",
+              "value": "69ab883f-f0d0-4165-aeb1-934329340908"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "publisherPrincipalId": {
+              "type": "String",
+              "value": "<publisher>"
+            },
+            "roleAssignmentNames": {
+              "type": "Array",
+              "value": [
+                "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+                "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+                "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+                "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+                "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+                "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+              ]
+            },
+            "runId": {
+              "type": "String",
+              "value": "31ec8a534623"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "gs31ec8a534623"
+            }
+          },
+          "parametersLink": null,
+          "providers": [
+            {
+              "id": null,
+              "namespace": "Microsoft.ManagedIdentity",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    "westus2"
+                  ],
+                  "properties": null,
+                  "resourceType": "userAssignedIdentities",
+                  "zoneMappings": null
+                }
+              ]
+            },
+            {
+              "id": null,
+              "namespace": "Microsoft.Storage",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    "westus2"
+                  ],
+                  "properties": null,
+                  "resourceType": "storageAccounts",
+                  "zoneMappings": null
+                }
+              ]
+            },
+            {
+              "id": null,
+              "namespace": "Microsoft.ContainerRegistry",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    "westus2"
+                  ],
+                  "properties": null,
+                  "resourceType": "registries",
+                  "zoneMappings": null
+                }
+              ]
+            },
+            {
+              "id": null,
+              "namespace": "Microsoft.Web",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    "westus2"
+                  ],
+                  "properties": null,
+                  "resourceType": "serverfarms",
+                  "zoneMappings": null
+                }
+              ]
+            },
+            {
+              "id": null,
+              "namespace": "Microsoft.Authorization",
+              "providerAuthorizationConsentState": null,
+              "registrationPolicy": null,
+              "registrationState": null,
+              "resourceTypes": [
+                {
+                  "aliases": null,
+                  "apiProfiles": null,
+                  "apiVersions": null,
+                  "capabilities": null,
+                  "defaultApiVersion": null,
+                  "locationMappings": null,
+                  "locations": [
+                    null
+                  ],
+                  "properties": null,
+                  "resourceType": "roleAssignments",
+                  "zoneMappings": null
+                }
+              ]
+            }
+          ],
+          "provisioningState": "Succeeded",
+          "templateHash": "522109748934184285",
+          "templateLink": null,
+          "timestamp": "2026-11-08T08:14:29.467944+00:00",
+          "validatedResources": null,
+          "validationLevel": null
+        },
+        "resourceGroup": "<group>",
+        "tags": null,
+        "type": "Microsoft.Resources/deployments"
+      },
+      "templateSha256": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623",
+        "name": "gs-worker-host-31ec8a534623",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "522109748934184285",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs31ec8a534623"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "31ec8a534623"
+            },
+            "publisherPrincipalId": {
+              "type": "String",
+              "value": "<publisher>"
+            },
+            "roleAssignmentNames": {
+              "type": "Array",
+              "value": [
+                "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+                "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+                "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+                "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+                "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+                "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+              ]
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2026-11-08T08:14:29.4679444Z",
+          "duration": "PT24.9124661S",
+          "correlationId": "0462d010-d7a3-4fbc-983e-ba7e78f02fd8",
+          "providers": [
+            {
+              "namespace": "Microsoft.ManagedIdentity",
+              "resourceTypes": [
+                {
+                  "resourceType": "userAssignedIdentities",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Storage",
+              "resourceTypes": [
+                {
+                  "resourceType": "storageAccounts",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.ContainerRegistry",
+              "resourceTypes": [
+                {
+                  "resourceType": "registries",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Web",
+              "resourceTypes": [
+                {
+                  "resourceType": "serverfarms",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Authorization",
+              "resourceTypes": [
+                {
+                  "resourceType": "roleAssignments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "gs31ec8a534623images"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "22fe2b35-1bf0-4516-95f9-6c24784eff7f"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "gs31ec8a534623images"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "fa077c8d-76de-46f0-852d-d4946d7bfba1"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "e1ff570c-dfb3-447f-9c4a-59f50e069217"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "ec9f7b12-506d-4a9f-ba38-dd7952cc877e"
+            }
+          ],
+          "outputs": {
+            "registryHost": {
+              "type": "String",
+              "value": "gs31ec8a534623images.azurecr.io"
+            },
+            "workerClientId": {
+              "type": "String",
+              "value": "69ab883f-f0d0-4165-aeb1-934329340908"
+            }
+          },
+          "outputResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+              "resourceType": "Microsoft.ContainerRegistry/registries"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+              "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+              "resourceType": "Microsoft.Storage/storageAccounts"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "resourceType": "Microsoft.Authorization/roleAssignments"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker",
+              "resourceType": "Microsoft.Web/serverfarms"
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "de68361b-32d8-4ee0-a97a-c4246ca8ecae",
+        "x-ms-correlation-request-id": "de68361b-32d8-4ee0-a97a-c4246ca8ecae"
+      },
+      "startedAt": "2026-11-08T08:14:38.824Z",
+      "completedAt": "2026-11-08T08:14:40.609Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-app-31ec8a534623?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-app-31ec8a534623' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "7b562a46-fc0b-428d-8d2e-57ed005d1e2d",
+        "x-ms-correlation-request-id": "7b562a46-fc0b-428d-8d2e-57ed005d1e2d"
+      },
+      "startedAt": "2026-11-08T08:14:40.611Z",
+      "completedAt": "2026-11-08T08:14:41.074Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker?api-version=2023-01-31",
+      "status": 200,
+      "body": {
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+        "name": "gs31ec8a534623-worker",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "properties": {
+          "tenantId": "e76c88bd-2809-4f88-9393-1811efa6e052",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "clientId": "69ab883f-f0d0-4165-aeb1-934329340908"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d27cedb9-4c36-47b2-ba97-c06c1bf1a249",
+        "x-ms-correlation-request-id": "d27cedb9-4c36-47b2-ba97-c06c1bf1a249"
+      },
+      "startedAt": "2026-11-08T08:14:41.074Z",
+      "completedAt": "2026-11-08T08:14:41.335Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/sites/gs31ec8a534623-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/sites/gs31ec8a534623-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3b7c1b26-3333-49fd-ae14-60d9e01ba26d",
+        "x-ms-correlation-request-id": "3b7c1b26-3333-49fd-ae14-60d9e01ba26d"
+      },
+      "startedAt": "2026-11-08T08:14:41.336Z",
+      "completedAt": "2026-11-08T08:14:41.579Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.6581546Z",
+          "updatedOn": "2026-11-08T08:14:26.6581546Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "fa077c8d-76de-46f0-852d-d4946d7bfba1"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "602bd35f-4de9-48ca-bc13-2c1db7ac9c77",
+        "x-ms-correlation-request-id": "706e7333-f740-4304-9198-e28393dbcfcb"
+      },
+      "startedAt": "2026-11-08T08:14:41.579Z",
+      "completedAt": "2026-11-08T08:14:41.853Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.7122687Z",
+          "updatedOn": "2026-11-08T08:14:26.7122687Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9554e79d-ac10-433d-bb4c-a668e2613986",
+        "x-ms-correlation-request-id": "6290ece1-8a19-4c3c-8ac6-0063e5c4266c"
+      },
+      "startedAt": "2026-11-08T08:14:41.853Z",
+      "completedAt": "2026-11-08T08:14:42.992Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.7230120Z",
+          "updatedOn": "2026-11-08T08:14:26.7230120Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "e1ff570c-dfb3-447f-9c4a-59f50e069217"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "7331c9e5-48b2-4ff1-a9ee-b5d203c3cc85",
+        "x-ms-correlation-request-id": "571280a3-0d5e-4236-ad00-a52540fec57c"
+      },
+      "startedAt": "2026-11-08T08:14:42.992Z",
+      "completedAt": "2026-11-08T08:14:43.362Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.6761377Z",
+          "updatedOn": "2026-11-08T08:14:26.6761377Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "ec9f7b12-506d-4a9f-ba38-dd7952cc877e"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "59f44479-53e2-4312-ae99-c1a2e75b2c0a",
+        "x-ms-correlation-request-id": "eedaa81b-7119-4d25-8b9d-4ed26bcc22f0"
+      },
+      "startedAt": "2026-11-08T08:14:43.362Z",
+      "completedAt": "2026-11-08T08:14:43.631Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:13.5309232Z",
+          "updatedOn": "2026-11-08T08:14:13.5309232Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "22fe2b35-1bf0-4516-95f9-6c24784eff7f"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "561ad925-0671-4188-a90b-b640972e45e4",
+        "x-ms-correlation-request-id": "7e6896ba-b986-4c8e-b9db-e83a4ca8551f"
+      },
+      "startedAt": "2026-11-08T08:14:43.631Z",
+      "completedAt": "2026-11-08T08:14:43.906Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/8311e382-0749-4cb8-b61a-304f252e45ec",
+          "principalId": "<publisher>",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:14.2377603Z",
+          "updatedOn": "2026-11-08T08:14:14.2377603Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "4a4fb7e5-f5df-44ed-8b9c-87b288299280",
+        "x-ms-correlation-request-id": "8de8872e-de5c-4e8e-a3c2-9392ffafceef"
+      },
+      "startedAt": "2026-11-08T08:14:43.907Z",
+      "completedAt": "2026-11-08T08:14:44.174Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker?api-version=2024-11-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker",
+        "name": "gs31ec8a534623-worker",
+        "type": "Microsoft.Web/serverfarms",
+        "kind": "elastic",
+        "location": "West US 2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "31ec8a534623"
+        },
+        "properties": {
+          "serverFarmId": 52688,
+          "name": "gs31ec8a534623-worker",
+          "workerSize": "XSmallV3",
+          "workerSizeId": 18,
+          "workerTierName": null,
+          "numberOfWorkers": 1,
+          "currentWorkerSize": "XSmallV3",
+          "currentWorkerSizeId": 18,
+          "currentNumberOfWorkers": 1,
+          "status": "Ready",
+          "webSpace": "<group>-WestUS2webspace-Linux",
+          "subscription": "<subscription>",
+          "adminSiteName": null,
+          "hostingEnvironment": null,
+          "hostingEnvironmentProfile": null,
+          "maximumNumberOfWorkers": 20,
+          "planName": "VirtualDedicatedPlan",
+          "adminRuntimeSiteName": null,
+          "computeMode": "Dedicated",
+          "siteMode": null,
+          "geoRegion": "West US 2",
+          "perSiteScaling": false,
+          "elasticScaleEnabled": true,
+          "maximumElasticWorkerCount": 1,
+          "numberOfSites": 0,
+          "hostingEnvironmentId": null,
+          "isSpot": false,
+          "spotExpirationTime": null,
+          "freeOfferExpirationTime": null,
+          "tags": {
+            "project": "globalstack-production-scenarios",
+            "run": "31ec8a534623"
+          },
+          "kind": "elastic",
+          "resourceGroup": "<group>",
+          "reserved": true,
+          "isXenon": false,
+          "hyperV": false,
+          "mdmId": "waws-prod-mwh-125_52688",
+          "targetWorkerCount": 0,
+          "targetWorkerSizeId": 0,
+          "targetWorkerSku": null,
+          "provisioningState": "Succeeded",
+          "webSiteId": null,
+          "existingServerFarmIds": null,
+          "kubeEnvironmentProfile": null,
+          "zoneRedundant": false,
+          "maximumNumberOfZones": 1,
+          "currentNumberOfZonesUtilized": 1,
+          "migrateToVMSS": null,
+          "vnetConnectionsUsed": 0,
+          "vnetConnectionsMax": 2,
+          "createdTime": "2026-11-08T08:14:08.36",
+          "asyncScalingEnabled": false,
+          "isCustomMode": false,
+          "powerState": "Running",
+          "eligibleLogCategories": "",
+          "activeBackupHomeServerFarmName": null,
+          "allowEquivalentSku": false,
+          "roamingEnabled": false,
+          "roamingStatus": "Stable"
+        },
+        "sku": {
+          "name": "EP1",
+          "tier": "ElasticPremium",
+          "size": "EP1",
+          "family": "EP",
+          "capacity": 1
+        }
+      },
+      "headers": {
+        "content-type": "application/json",
+        "x-ms-request-id": "e31a9ce9-5e11-445b-95ba-d6b8aa8f6726",
+        "x-ms-correlation-request-id": "50e7d88a-0024-4935-8fc1-ae808e56ae2f"
+      },
+      "startedAt": "2026-11-08T08:14:44.174Z",
+      "completedAt": "2026-11-08T08:14:44.506Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images?api-version=2023-07-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "type": "Microsoft.ContainerRegistry/registries",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+        "name": "gs31ec8a534623images",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "31ec8a534623"
+        },
+        "systemData": {
+          "createdBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "createdByType": "Application",
+          "createdAt": "2026-11-08T08:14:05.7797749+00:00",
+          "lastModifiedBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2026-11-08T08:14:05.7797749+00:00"
+        },
+        "properties": {
+          "loginServer": "gs31ec8a534623images.azurecr.io",
+          "creationDate": "2026-11-08T08:14:05.7797749Z",
+          "provisioningState": "Succeeded",
+          "adminUserEnabled": false,
+          "policies": {
+            "quarantinePolicy": {
+              "status": "disabled"
+            },
+            "trustPolicy": {
+              "type": "Notary",
+              "status": "disabled"
+            },
+            "retentionPolicy": {
+              "days": 7,
+              "lastUpdatedTime": "2026-11-08T08:14:12.7281673+00:00",
+              "status": "disabled"
+            },
+            "exportPolicy": {
+              "status": "enabled"
+            },
+            "azureADAuthenticationAsArmPolicy": {
+              "status": "enabled"
+            }
+          },
+          "encryption": {
+            "status": "disabled"
+          },
+          "dataEndpointEnabled": false,
+          "dataEndpointHostNames": [],
+          "privateEndpointConnections": [],
+          "publicNetworkAccess": "Enabled",
+          "networkRuleBypassOptions": "AzureServices",
+          "zoneRedundancy": "Disabled",
+          "anonymousPullEnabled": false
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "821bd67d-1b92-4a09-896d-81d16583269b",
+        "x-ms-correlation-request-id": "821bd67d-1b92-4a09-896d-81d16583269b"
+      },
+      "startedAt": "2026-11-08T08:14:44.507Z",
+      "completedAt": "2026-11-08T08:14:44.759Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host?api-version=2023-05-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+        "name": "gs31ec8a534623host",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "31ec8a534623"
+        },
+        "properties": {
+          "keyCreationTime": {
+            "key1": "2026-11-08T08:14:06.1794021Z",
+            "key2": "2026-11-08T08:14:06.1794021Z"
+          },
+          "allowCrossTenantReplication": false,
+          "privateEndpointConnections": [],
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": false,
+          "networkAcls": {
+            "ipv6Rules": [],
+            "bypass": "None",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-08T08:14:06.1939596Z"
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true,
+                "lastEnabledTime": "2026-11-08T08:14:06.1939596Z"
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "provisioningState": "Succeeded",
+          "creationTime": "2026-11-08T08:14:05.8563123Z",
+          "primaryEndpoints": {
+            "dfs": "https://gs31ec8a534623host.dfs.core.windows.net/",
+            "web": "https://gs31ec8a534623host.z5.web.core.windows.net/",
+            "blob": "https://gs31ec8a534623host.blob.core.windows.net/",
+            "queue": "https://gs31ec8a534623host.queue.core.windows.net/",
+            "table": "https://gs31ec8a534623host.table.core.windows.net/",
+            "file": "https://gs31ec8a534623host.file.core.windows.net/"
+          },
+          "primaryLocation": "westus2",
+          "statusOfPrimary": "available"
+        }
+      },
+      "headers": {
+        "content-type": "application/json",
+        "x-ms-request-id": "13cbcce9-ad82-476e-af0c-fa052194c69f",
+        "x-ms-correlation-request-id": "1e5d2b45-f7c9-475c-a79e-cc8f220077fc"
+      },
+      "startedAt": "2026-11-08T08:14:44.760Z",
+      "completedAt": "2026-11-08T08:14:45.098Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.6581546Z",
+          "updatedOn": "2026-11-08T08:14:45.4324710Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "fa077c8d-76de-46f0-852d-d4946d7bfba1"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "fffda4c2-7aac-46bb-bed3-37aeaebb7ede",
+        "x-ms-correlation-request-id": "06381987-92ea-4051-afe1-70ba92ec597f"
+      },
+      "startedAt": "2026-11-08T08:14:45.098Z",
+      "completedAt": "2026-11-08T08:14:51.538Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment 'fa077c8d-76de-46f0-852d-d4946d7bfba1' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "ffb73f5a-d1c6-42c2-a8be-94e8bd40f751",
+        "x-ms-correlation-request-id": "a2e595fd-fc5d-43c3-9904-5f7b42ede7ec"
+      },
+      "startedAt": "2026-11-08T08:14:51.539Z",
+      "completedAt": "2026-11-08T08:14:52.266Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.7122687Z",
+          "updatedOn": "2026-11-08T08:14:52.5496940Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "197b0be8-5b6a-4392-9673-74f7aaa0e9c1",
+        "x-ms-correlation-request-id": "e111a890-b086-45a8-8f60-c58d7060e810"
+      },
+      "startedAt": "2026-11-08T08:14:52.267Z",
+      "completedAt": "2026-11-08T08:14:54.097Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment '62379ac9-4ea1-4f97-88d9-f6d4e341f7a0' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3251a02a-888f-4d6e-be9b-38dc7823e314",
+        "x-ms-correlation-request-id": "57f32234-8652-4c7f-a83d-caf3b6bf4a6a"
+      },
+      "startedAt": "2026-11-08T08:14:54.098Z",
+      "completedAt": "2026-11-08T08:14:54.406Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.7230120Z",
+          "updatedOn": "2026-11-08T08:14:54.9550757Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "e1ff570c-dfb3-447f-9c4a-59f50e069217"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "c3e37a9e-6364-4c89-939a-6d2debe695a3",
+        "x-ms-correlation-request-id": "e50c8bcb-9b0e-4a76-a351-a4362e96886a"
+      },
+      "startedAt": "2026-11-08T08:14:54.406Z",
+      "completedAt": "2026-11-08T08:14:56.071Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment 'e1ff570c-dfb3-447f-9c4a-59f50e069217' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3f689706-f7bc-4e00-87a4-cd1d48888d9f",
+        "x-ms-correlation-request-id": "95c4dc1d-d2bc-4275-8a80-fb406f5a2f3c"
+      },
+      "startedAt": "2026-11-08T08:14:56.071Z",
+      "completedAt": "2026-11-08T08:14:56.680Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:26.6761377Z",
+          "updatedOn": "2026-11-08T08:14:57.4252796Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "ec9f7b12-506d-4a9f-ba38-dd7952cc877e"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "6cbfe1b8-be7f-4b4e-83fc-220ce756886d",
+        "x-ms-correlation-request-id": "2991460f-6ea0-4b03-8c69-5efbde292c15"
+      },
+      "startedAt": "2026-11-08T08:14:56.680Z",
+      "completedAt": "2026-11-08T08:14:59.999Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment 'ec9f7b12-506d-4a9f-ba38-dd7952cc877e' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a45e087d-7f1c-40bb-ad70-4b39847c3e1b",
+        "x-ms-correlation-request-id": "4669310b-8d87-4f56-bd3e-ccdb78121d7a"
+      },
+      "startedAt": "2026-11-08T08:14:59.999Z",
+      "completedAt": "2026-11-08T08:15:00.277Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d",
+          "principalId": "0a7618a0-55e3-4db5-8df0-5361a2a3d250",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:13.5309232Z",
+          "updatedOn": "2026-11-08T08:15:00.6123894Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "22fe2b35-1bf0-4516-95f9-6c24784eff7f"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "0cc7deab-0b78-482c-9dc1-e590e1b595f2",
+        "x-ms-correlation-request-id": "eb3076c0-875b-451d-a2af-2912841993f9"
+      },
+      "startedAt": "2026-11-08T08:15:00.278Z",
+      "completedAt": "2026-11-08T08:15:01.763Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment '22fe2b35-1bf0-4516-95f9-6c24784eff7f' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9d708792-4a38-44c1-9826-e41e61134190",
+        "x-ms-correlation-request-id": "ab314b34-07af-42ea-8a7e-29ca42aaf05a"
+      },
+      "startedAt": "2026-11-08T08:15:01.763Z",
+      "completedAt": "2026-11-08T08:15:02.474Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/8311e382-0749-4cb8-b61a-304f252e45ec",
+          "principalId": "<publisher>",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T08:14:14.2377603Z",
+          "updatedOn": "2026-11-08T08:15:02.9695522Z",
+          "createdBy": "<publisher>",
+          "updatedBy": "<publisher>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "globalstack-production-scenarios:31ec8a534623"
+        },
+        "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "c6e48018-37f1-4c91-acfe-0205f3345ae4",
+        "x-ms-correlation-request-id": "d50865b7-5840-45a1-960f-7bc381deb2b3"
+      },
+      "startedAt": "2026-11-08T08:15:02.474Z",
+      "completedAt": "2026-11-08T08:15:07.362Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment '2a8e5298-f1f0-4e35-ae42-6447cf4754f3' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "127406fa-d81f-45ab-ab2b-8eb5a5656dc9",
+        "x-ms-correlation-request-id": "0c795bc9-ab9e-4c0e-bfc9-939a27d0d7d8"
+      },
+      "startedAt": "2026-11-08T08:15:07.363Z",
+      "completedAt": "2026-11-08T08:15:07.621Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker?api-version=2024-11-01",
+      "status": 200,
+      "body": null,
+      "headers": {
+        "x-ms-request-id": "996b6c79-fe61-4e48-9020-4053c73ffbfe",
+        "x-ms-correlation-request-id": "e040ef32-34df-4675-b3e1-bdf2731ef8c7"
+      },
+      "startedAt": "2026-11-08T08:15:07.621Z",
+      "completedAt": "2026-11-08T08:15:14.267Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs31ec8a534623-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/serverFarms/gs31ec8a534623-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "84b68766-33bb-419f-9245-2d654b7fba3d",
+        "x-ms-correlation-request-id": "84b68766-33bb-419f-9245-2d654b7fba3d"
+      },
+      "startedAt": "2026-11-08T08:15:14.268Z",
+      "completedAt": "2026-11-08T08:15:14.517Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images?api-version=2023-07-01",
+      "status": 202,
+      "body": {
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "type": "Microsoft.ContainerRegistry/registries",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+        "name": "gs31ec8a534623images",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "31ec8a534623"
+        },
+        "systemData": {
+          "createdBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "createdByType": "Application",
+          "createdAt": "2026-11-08T08:14:05.7797749+00:00",
+          "lastModifiedBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2026-11-08T08:14:05.7797749+00:00"
+        },
+        "properties": {
+          "loginServer": "gs31ec8a534623images.azurecr.io",
+          "creationDate": "2026-11-08T08:14:05.7797749Z",
+          "provisioningState": "Deleting",
+          "adminUserEnabled": false,
+          "policies": {
+            "quarantinePolicy": {
+              "status": "disabled"
+            },
+            "trustPolicy": {
+              "type": "Notary",
+              "status": "disabled"
+            },
+            "retentionPolicy": {
+              "days": 7,
+              "lastUpdatedTime": "2026-11-08T08:14:12.7281673+00:00",
+              "status": "disabled"
+            },
+            "exportPolicy": {
+              "status": "enabled"
+            },
+            "azureADAuthenticationAsArmPolicy": {
+              "status": "enabled"
+            }
+          },
+          "encryption": {
+            "status": "disabled"
+          },
+          "dataEndpointEnabled": false,
+          "dataEndpointHostNames": [],
+          "privateEndpointConnections": [],
+          "publicNetworkAccess": "Enabled",
+          "networkRuleBypassOptions": "AzureServices",
+          "zoneRedundancy": "Disabled",
+          "anonymousPullEnabled": false
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "10",
+        "x-ms-request-id": "8b303477-4b10-48e2-8560-7c1b348bd2e7",
+        "x-ms-correlation-request-id": "8b303477-4b10-48e2-8560-7c1b348bd2e7",
+        "location": "https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.ContainerRegistry/locations/westus2/operationResults/<operation>?api-version=2023-07-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+      },
+      "startedAt": "2026-11-08T08:15:14.518Z",
+      "completedAt": "2026-11-08T08:15:15.130Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images?api-version=2023-07-01",
+      "status": 200,
+      "body": {
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "type": "Microsoft.ContainerRegistry/registries",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+        "name": "gs31ec8a534623images",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "31ec8a534623"
+        },
+        "systemData": {
+          "createdBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "createdByType": "Application",
+          "createdAt": "2026-11-08T08:14:05.7797749+00:00",
+          "lastModifiedBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2026-11-08T08:14:05.7797749+00:00"
+        },
+        "properties": {
+          "loginServer": "gs31ec8a534623images.azurecr.io",
+          "creationDate": "2026-11-08T08:14:05.7797749Z",
+          "provisioningState": "Deleting",
+          "adminUserEnabled": false,
+          "policies": {
+            "quarantinePolicy": {
+              "status": "disabled"
+            },
+            "trustPolicy": {
+              "type": "Notary",
+              "status": "disabled"
+            },
+            "retentionPolicy": {
+              "days": 7,
+              "lastUpdatedTime": "2026-11-08T08:14:12.7281673+00:00",
+              "status": "disabled"
+            },
+            "exportPolicy": {
+              "status": "enabled"
+            },
+            "azureADAuthenticationAsArmPolicy": {
+              "status": "enabled"
+            }
+          },
+          "encryption": {
+            "status": "disabled"
+          },
+          "dataEndpointEnabled": false,
+          "dataEndpointHostNames": [],
+          "privateEndpointConnections": [],
+          "publicNetworkAccess": "Enabled",
+          "networkRuleBypassOptions": "AzureServices",
+          "zoneRedundancy": "Disabled",
+          "anonymousPullEnabled": false
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "87cf8df9-0507-4e26-a9c6-aaff3bb28f04",
+        "x-ms-correlation-request-id": "87cf8df9-0507-4e26-a9c6-aaff3bb28f04"
+      },
+      "startedAt": "2026-11-08T08:15:15.131Z",
+      "completedAt": "2026-11-08T08:15:15.381Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images?api-version=2023-07-01",
+      "status": 404,
+      "body": null,
+      "headers": {
+        "x-ms-request-id": "363ce517-14fe-414a-9736-9fd548b99d50",
+        "x-ms-correlation-request-id": "363ce517-14fe-414a-9736-9fd548b99d50"
+      },
+      "startedAt": "2026-11-08T08:15:18.385Z",
+      "completedAt": "2026-11-08T08:15:18.634Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host?api-version=2023-05-01",
+      "status": 200,
+      "body": null,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "x-ms-request-id": "d3a1ebc7-3c04-4b2f-b877-ec565f6fc6eb",
+        "x-ms-correlation-request-id": "e5e68007-8050-4cb2-8823-7d0967a2df84"
+      },
+      "startedAt": "2026-11-08T08:15:18.634Z",
+      "completedAt": "2026-11-08T08:15:20.557Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host?api-version=2023-05-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Storage/storageAccounts/gs31ec8a534623host' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "f1bb8e4a-3ca1-451a-bef9-3c3cbf8be8d2",
+        "x-ms-correlation-request-id": "f1bb8e4a-3ca1-451a-bef9-3c3cbf8be8d2"
+      },
+      "startedAt": "2026-11-08T08:15:20.558Z",
+      "completedAt": "2026-11-08T08:15:20.791Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker?api-version=2023-01-31",
+      "status": 200,
+      "body": null,
+      "headers": {
+        "x-ms-request-id": "8d9dc9aa-d50d-48a9-a6bf-e4d56fd05162",
+        "x-ms-correlation-request-id": "8d9dc9aa-d50d-48a9-a6bf-e4d56fd05162"
+      },
+      "startedAt": "2026-11-08T08:15:20.791Z",
+      "completedAt": "2026-11-08T08:15:25.930Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker?api-version=2023-01-31",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "202985ee-2d2a-47be-a689-05444d0bc782",
+        "x-ms-correlation-request-id": "202985ee-2d2a-47be-a689-05444d0bc782"
+      },
+      "startedAt": "2026-11-08T08:15:25.931Z",
+      "completedAt": "2026-11-08T08:15:26.194Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623?api-version=2025-04-01",
+      "status": 202,
+      "body": null,
+      "headers": {
+        "retry-after": "15",
+        "x-ms-request-id": "6f0e8fe6-04ab-4a50-bec6-92589a7bd207",
+        "x-ms-correlation-request-id": "6f0e8fe6-04ab-4a50-bec6-92589a7bd207",
+        "location": "https://management.azure.com/subscriptions/<subscription>/operationresults/<operation>?api-version=2025-04-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>"
+      },
+      "startedAt": "2026-11-08T08:15:26.194Z",
+      "completedAt": "2026-11-08T08:15:27.400Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623",
+        "name": "gs-worker-host-31ec8a534623",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "522109748934184285",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs31ec8a534623"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "31ec8a534623"
+            },
+            "publisherPrincipalId": {
+              "type": "String",
+              "value": "<publisher>"
+            },
+            "roleAssignmentNames": {
+              "type": "Array",
+              "value": [
+                "fa077c8d-76de-46f0-852d-d4946d7bfba1",
+                "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+                "e1ff570c-dfb3-447f-9c4a-59f50e069217",
+                "ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+                "22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+                "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+              ]
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Deleting",
+          "timestamp": "2026-11-08T08:14:29.4679444Z",
+          "duration": "PT24.9124661S",
+          "correlationId": "0462d010-d7a3-4fbc-983e-ba7e78f02fd8",
+          "providers": [
+            {
+              "namespace": "Microsoft.ManagedIdentity",
+              "resourceTypes": [
+                {
+                  "resourceType": "userAssignedIdentities",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Storage",
+              "resourceTypes": [
+                {
+                  "resourceType": "storageAccounts",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.ContainerRegistry",
+              "resourceTypes": [
+                {
+                  "resourceType": "registries",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Web",
+              "resourceTypes": [
+                {
+                  "resourceType": "serverfarms",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Authorization",
+              "resourceTypes": [
+                {
+                  "resourceType": "roleAssignments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "gs31ec8a534623images"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/22fe2b35-1bf0-4516-95f9-6c24784eff7f",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "22fe2b35-1bf0-4516-95f9-6c24784eff7f"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "gs31ec8a534623images"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ContainerRegistry/registries/gs31ec8a534623images/providers/Microsoft.Authorization/roleAssignments/2a8e5298-f1f0-4e35-ae42-6447cf4754f3",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "2a8e5298-f1f0-4e35-ae42-6447cf4754f3"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/fa077c8d-76de-46f0-852d-d4946d7bfba1",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "fa077c8d-76de-46f0-852d-d4946d7bfba1"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/62379ac9-4ea1-4f97-88d9-f6d4e341f7a0",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "62379ac9-4ea1-4f97-88d9-f6d4e341f7a0"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/e1ff570c-dfb3-447f-9c4a-59f50e069217",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "e1ff570c-dfb3-447f-9c4a-59f50e069217"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "gs31ec8a534623host"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs31ec8a534623-worker",
+                  "resourceType": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                  "resourceName": "gs31ec8a534623-worker",
+                  "apiVersion": "2023-01-31"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Storage/storageAccounts/gs31ec8a534623host/providers/Microsoft.Authorization/roleAssignments/ec9f7b12-506d-4a9f-ba38-dd7952cc877e",
+              "resourceType": "Microsoft.Authorization/roleAssignments",
+              "resourceName": "ec9f7b12-506d-4a9f-ba38-dd7952cc877e"
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "5",
+        "x-ms-request-id": "98d8dfb4-5b02-483c-bf7f-82141539ed41",
+        "x-ms-correlation-request-id": "98d8dfb4-5b02-483c-bf7f-82141539ed41"
+      },
+      "startedAt": "2026-11-08T08:15:27.401Z",
+      "completedAt": "2026-11-08T08:15:27.884Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-worker-host-31ec8a534623?api-version=2025-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment 'gs-worker-host-31ec8a534623' could not be found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "fb0e7070-b3ae-415f-8fc2-c64801308157",
+        "x-ms-correlation-request-id": "fb0e7070-b3ae-415f-8fc2-c64801308157"
+      },
+      "startedAt": "2026-11-08T08:15:30.889Z",
+      "completedAt": "2026-11-08T08:15:31.296Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "94b63a7b-23b8-4767-b14e-beff9be07fb4",
+        "x-ms-correlation-request-id": "94b63a7b-23b8-4767-b14e-beff9be07fb4"
+      },
+      "startedAt": "2026-11-08T08:15:31.296Z",
+      "completedAt": "2026-11-08T08:15:31.555Z"
+    }
+  ],
+  "cleanup": {
+    "resourcesAbsent": true,
+    "rolesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "localNativeRuntimeVerified": false,
+  "templates": {
+    "host": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+    "app": "a90e79e1d7e397e7bc6b3941e2c2d7ffdc91b0ca17929ffaffcc1817272aa547"
+  },
+  "budget": {
+    "totalAuthorizedUsd": 150,
+    "allocatedUsd": 42,
+    "remainingUnallocatedUsd": 108
+  },
+  "error": "read ECONNRESET",
+  "completedAt": "2026-11-08T08:15:31.560Z"
+}

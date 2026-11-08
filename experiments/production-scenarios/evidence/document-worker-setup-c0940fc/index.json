@@ -1,0 +1,14 @@
+{
+  "sourceRevision": "c0940fc810a503319b5e329247781de2839cb7fb",
+  "scope": "Azure hosting resources created and removed. Local setup used the wrong subscription and the later request ended with ECONNRESET. This attempt is a harness failure, not runtime parity evidence. No image publication or application health result.",
+  "files": {
+    "result.json": {
+      "sha256": "c2578b5e54944bd874bf9383a2ed0178e3ce38dfec4f88dc43c8fe5a1ef6d95b",
+      "bytes": 146870
+    },
+    "events.ndjson": {
+      "sha256": "3099f678174f0a2af4cc56d9899d3ffd5e29e89d73760b1a5d98eeb9e2f6b893",
+      "bytes": 152096
+    }
+  }
+}

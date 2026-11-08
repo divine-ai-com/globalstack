@@ -24,3 +24,14 @@ test('capture transport preserves virtual host, body and response metadata witho
   assert.equal(redirect.headers['set-cookie'], undefined);
   assert.equal(calls.length, 2);
 });
+
+test('capture calls use fresh sockets across blocking deployment commands', async t => {
+  const sockets = new Set();
+  const server = createServer((req, res) => { sockets.add(req.socket); res.end('{"ok":true}'); });
+  await new Promise(done => server.listen(0, '127.0.0.1', done));
+  t.after(() => new Promise(done => { server.closeAllConnections(); server.close(done); }));
+  const url = `http://127.0.0.1:${server.address().port}/capture`;
+  assert.equal((await httpExchange(url)).status, 200);
+  assert.equal((await httpExchange(url, { method: 'PUT', body: { revision: 'next' } })).status, 200);
+  assert.equal(sockets.size, 2, 'A pooled socket may expire while a native CLI command blocks the event loop');
+});
