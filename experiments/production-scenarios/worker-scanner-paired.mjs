@@ -31,12 +31,12 @@ const disk = await statfs(out); assert.ok(disk.bavail * disk.bsize >= 40 * 1024 
 const m = { subscription: process.env.PAIRED_SUBSCRIPTION_ID, group: process.env.PAIRED_RESOURCE_GROUP,
   publisher: process.env.PAIRED_PUBLISHER_OBJECT_ID, config: process.env.PAIRED_AZURE_CONFIG_DIR,
   runId: randomBytes(6).toString('hex'), roles: Array.from({ length: 7 }, randomUUID), documentRoles: Array.from({ length: 3 }, randomUUID),
-  parentPid: process.pid, workDeadline: Date.now() + 18 * 60000, deadline: Date.now() + 45 * 60000 };
+  parentPid: process.pid, workDeadline: Date.now() + 20 * 60000, deadline: Date.now() + 49 * 60000 };
 const manifests = pairedComponentManifests(m), w = workerPaths(manifests.worker), s = scannerPaths(manifests.scanner);
 const d = documentPaths(m);
 const token = azureToken(m.config), replacements = [[token, '<redacted>'], [m.subscription, '<subscription>'], [m.publisher, '<publisher>']];
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
-  scope: 'Actual Functions HTTP handler, managed identity, native ClamAV/YARA scanner, and document data/Event Grid deployment on both targets. No full document workflow.',
+  scope: 'Actual Functions HTTP handler, managed identity, native ClamAV/YARA scanner, document data/Event Grid deployment and diagnostic Blob upload on both targets. No full document workflow.',
   fullWorkflowCompleted: false, portalEvidenceComplete: false, exchanges: [], calls: [], templates: [], cleanup: null };
 const emit = createRecording(out, { platform: 'Functions to scanner: Azure and GlobalStack', revision, sourceDirty: false,
   image: process.env.WORKER_IMAGE_ID, scannerImage: process.env.SCANNER_IMAGE_ID });
@@ -99,7 +99,8 @@ try {
   const store = new ResourceStore(), tenant = process.env.ENTRA_TENANT_ID, audience = process.env.SCANNER_API_AUDIENCE;
   identity = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [m.subscription], applicationAudiences: [audience] });
   const preparePlatform = createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter, store,
-    containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'], observe: event => observe('local-transport', event) });
+    containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'],
+    blobEndpoints: ['STORAGE_ENDPOINT'], observe: event => observe('local-transport', event) });
   runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
     containerAppTokenTrusts: [{ ...identity.trust, configurationIssuer: `https://login.microsoftonline.com/${tenant}/v2.0` }],
     nativeFunctionsProvisioner: input => createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'), preparePlatform })(input),
@@ -151,9 +152,66 @@ try {
   await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
     topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
   report.documentEventSubscriptionDeployed = true;
+  const documentSettings = (scannerHostname, blobEndpoint) => [...settings(scannerHostname),
+    { name: 'STORAGE_ENDPOINT', value: blobEndpoint }, { name: 'LANDING_CONTAINER', value: 'landing' },
+    { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' }];
+  await deploy('worker-app', w.deployments[1], { ...base, imageReference: workerImage,
+    applicationSettings: documentSettings(azureScanner, data.azure.properties.outputs.blobEndpoint.value) },
+  { ...base, imageReference: workerImage,
+    applicationSettings: documentSettings(localScanner, data.local.properties.outputs.blobEndpoint.value) });
+  await runtime.nativeFunctionsLifecycle.settle();
+  assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
   const keys = await request('POST', `${w.app}/host/default/listkeys?api-version=2024-11-01`); assert.equal(keys.status, 200);
   const azureKey = keys.body.masterKey; assert.ok(typeof azureKey === 'string' && azureKey.length > 20); replacements.push([azureKey, '<redacted>']);
   const localKey = (await readFile(runtime.functionsRouter.nativeWorkers.get(w.app.toLowerCase()).masterKeyFile, 'utf8')).trim(); replacements.push([localKey, '<redacted>']);
+  phase = 'blob-upload';
+  for (const target of ['azure', 'local']) {
+    const endpoint = target === 'azure' ? `https://${hostname}` : `http://127.0.0.1:${facade.address().port}`;
+    const headers = { ...(target === 'local' ? { host: `${w.service}-worker.azurewebsites.net` } : {}),
+      'x-functions-key': target === 'azure' ? azureKey : localKey };
+    const deadline = Math.min(Date.now() + 120000, m.workDeadline - 60000);
+    let discovered = false;
+    do {
+      try {
+        const result = await httpExchange(endpoint + '/admin/functions', { headers, timeoutMs: 10000 });
+        const names = Array.isArray(result.body) ? result.body.map(item => item.name) : [];
+        observe(target, { method: 'GET', path: '/admin/functions', status: result.status, functionNames: names });
+        discovered = result.status === 200 && names.includes('uploadDiagnostic');
+      } catch { observe(target, { method: 'GET', path: '/admin/functions', error: 'Function discovery transport failed' }); }
+      if (discovered) break;
+      await pause(5000);
+    } while (Date.now() < deadline);
+    assert.ok(discovered, `${target} upload diagnostic did not become available`);
+  }
+  async function upload(target) {
+    const endpoint = target === 'azure' ? `https://${hostname}` : `http://127.0.0.1:${facade.address().port}`;
+    const headers = { ...(target === 'local' ? { host: `${w.service}-worker.azurewebsites.net` } : {}),
+      'x-functions-key': target === 'azure' ? azureKey : localKey };
+    const input = { tenant: 'pilot', text: 'Paired document event diagnostic.' };
+    const result = await httpExchange(endpoint + '/api/upload-diagnostic', { method: 'POST', body: input, headers, timeoutMs: 45000 });
+    observe(target, { method: 'POST', path: '/api/upload-diagnostic', inputSha256: createHash('sha256').update(input.text).digest('hex'), ...result });
+    assert.equal(result.status, 201, `${target} managed-identity Blob upload failed`);
+    assert.match(result.body?.blobName ?? '', /^pilot\/[a-f0-9-]{36}\.txt$/);
+    assert.equal(result.body.inputSha256, createHash('sha256').update(input.text).digest('hex'));
+    return result.body;
+  }
+  report.uploads = { azure: await upload('azure'), local: await upload('local') };
+  const eventDeadline = Math.min(Date.now() + 60000, m.workDeadline - 60000);
+  while (Date.now() < eventDeadline) {
+    const matching = [...runtime.storageEventDelivery.pending.values()].find(item => item.event.subject.endsWith(report.uploads.local.blobName));
+    if (matching) { report.localBlobEvent = { eventId: matching.event.id, subjectMatches: true, attempts: matching.attempts }; break; }
+    await pause(1000);
+  }
+  assert.ok(report.localBlobEvent?.subjectMatches, 'Local Blob upload did not reach the deployed Event Grid subscription');
+  const readAzureEventMetrics = () => {
+    try {
+      const metrics = azureCli(m.config, ['monitor', 'metrics', 'list', '--resource', d.eventSubscription,
+        '--metric', 'MatchedEventCount', 'DeliveryAttemptFailCount', '--interval', 'PT1M', '--aggregation', 'Total']);
+      return { status: 'read', totals: Object.fromEntries((metrics.value ?? []).map(series => [series.name?.value,
+        (series.timeseries ?? []).flatMap(item => item.data ?? []).reduce((sum, item) => sum + (item.total ?? 0), 0)])) };
+    } catch { return { status: 'query-unavailable' }; }
+  };
+  report.azureEventMetrics = [readAzureEventMetrics()];
   async function invoke(target, text, authenticated = true) {
     const endpoint = target === 'azure' ? `https://${hostname}` : `http://127.0.0.1:${facade.address().port}`;
     const headers = { ...(target === 'local' ? { host: `${w.service}-worker.azurewebsites.net` } : {}),
@@ -209,6 +267,7 @@ try {
     }
   }
   report.componentChecksPassed = true;
+  report.azureEventMetrics.push(readAzureEventMetrics());
 } catch (error) { report.error = sanitize(error.message, replacements); }
 finally {
   // Preserve measured outcomes before a potentially long cloud deletion.
