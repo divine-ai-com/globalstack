@@ -1,0 +1,14 @@
+[
+  {
+    "path": "result.json",
+    "sha256": "5d9d47a7c4ffe9e2e7787b29f3427edbf295c6160cac00a7347774cb27c05d09"
+  },
+  {
+    "path": "worker-host.json",
+    "sha256": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36"
+  },
+  {
+    "path": "worker-app.json",
+    "sha256": "a90e79e1d7e397e7bc6b3941e2c2d7ffdc91b0ca17929ffaffcc1817272aa547"
+  }
+]

@@ -1,0 +1,684 @@
+{
+  "sourceRevision": "4cb7a2e5bb05f31f5fefa3abcdece32e488c39fe",
+  "sourceDirty": false,
+  "scope": "Local execution of the worker host/app Bicep templates previously used on Azure. New generated parameters, no fresh Azure comparison or complete business workflow.",
+  "startedAt": "2026-11-08T09:24:03.753Z",
+  "image": "sha256:9f06f0a7a3c4a6c839c00b30f159ae239d8ad2a5e491db992715bf23ea2690d2",
+  "exchanges": [
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template?api-version=2022-09-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template",
+        "name": "worker-template",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-host?api-version=2025-04-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-host",
+        "name": "worker-host",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T09:24:07.389Z",
+          "duration": "PT0.026S",
+          "outputs": {
+            "registryHost": {
+              "type": "String",
+              "value": "gs1109c6d5b7images.azurecr.io"
+            },
+            "workerClientId": {
+              "type": "String",
+              "value": "692452b8-4956-4d56-40ca-54b6337ba97d"
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs1109c6d5b7-worker",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gs1109c6d5b7host",
+              "status": 202
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ContainerRegistry/registries/gs1109c6d5b7images",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/serverfarms/gs1109c6d5b7-worker",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gs1109c6d5b7host/providers/Microsoft.Authorization/roleAssignments/1d69ad6c-612d-40ac-9879-c003cdc50abe",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gs1109c6d5b7host/providers/Microsoft.Authorization/roleAssignments/64eba2bc-dee3-4723-98ff-b42d35d5e173",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gs1109c6d5b7host/providers/Microsoft.Authorization/roleAssignments/bfd1e517-9efa-4a48-bb16-c239cef70e74",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gs1109c6d5b7host/providers/Microsoft.Authorization/roleAssignments/405c18e0-f145-4356-abb1-caa72b3fb9e2",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ContainerRegistry/registries/gs1109c6d5b7images/providers/Microsoft.Authorization/roleAssignments/d0dbe905-9c3f-4a9c-8b17-d821ae92801e",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ContainerRegistry/registries/gs1109c6d5b7images/providers/Microsoft.Authorization/roleAssignments/d381a34f-2897-4369-a493-aef435ad7fb1",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-app?api-version=2025-04-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-app",
+        "name": "worker-app",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T09:24:10.659Z",
+          "duration": "PT0.003S",
+          "outputs": {
+            "hostname": {
+              "type": "String",
+              "value": "gs1109c6d5b7-worker.azurewebsites.net"
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/sites/gs1109c6d5b7-worker",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/sites/gs1109c6d5b7-worker?api-version=2023-12-01",
+      "status": 200,
+      "body": {
+        "status": "Deleted",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/sites/gs1109c6d5b7-worker"
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    }
+  ],
+  "storage": [
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts",
+      "bearer": true,
+      "status": 409
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/43e5e926bcf8-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-workitems",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-01",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-02",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-03",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-00",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-00",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-01",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-02",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-03",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    }
+  ],
+  "cleanup": true,
+  "templates": {
+    "host": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+    "app": "a90e79e1d7e397e7bc6b3941e2c2d7ffdc91b0ca17929ffaffcc1817272aa547"
+  },
+  "nativeWorkerState": "running",
+  "health": {
+    "status": 200,
+    "body": {
+      "worker": "ready"
+    },
+    "headers": {
+      "content-type": "application/json"
+    }
+  },
+  "discoveredEventGridFunctions": [
+    "documentuploaded"
+  ],
+  "completedAt": "2026-11-08T09:24:22.227Z"
+}

@@ -54,6 +54,27 @@ remain outstanding.
   comparison. No security threshold was reduced. Every pushed change remains
   subject to the PR's current checks.
 
+## Fresh paired native worker result
+
+The [paired worker run](evidence/document-worker-paired-4cb7a2e/) at revision
+`4cb7a2e` deployed identical compiled host/app templates and the same application
+image digest to Azure and GlobalStack. Both returned 200 with `worker: ready`
+from the actual Functions application. GlobalStack resolved the ARM-created
+user-assigned identity, storage and role assignments and provisioned its native
+worker. The trace includes 156 local storage requests from the native host.
+
+Azure cleanup verified resources, six scoped role assignments and both deployment
+histories absent, while preserving the operator resource group. Local container,
+network and private credential cleanup also completed. The conservative
+cumulative budget envelopes are USD 57, all marked cleanup-verified. These are
+not measured Azure billing totals.
+
+The [local template diagnostic](evidence/worker-template-4cb7a2e/) independently
+checks the deployment-driven identity/storage adapter. The paired result closes
+the earlier Azure-200/GlobalStack-404 health mismatch. It does not establish
+registry authentication fidelity, downstream service behavior, private-network
+isolation, Portal screenshots or a completed business workflow.
+
 ## Native worker lifecycle evidence
 
 At revision `75a2a62`, two clean-source local diagnostics passed:

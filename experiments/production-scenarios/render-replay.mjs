@@ -9,7 +9,8 @@ const [directory] = process.argv.slice(2);
 assert.ok(directory, 'Pass the directory containing result.json and events.ndjson');
 const root = resolve(directory);
 const raw = await readFile(resolve(root, 'events.ndjson'), 'utf8');
-const events = raw.split('\n').filter(Boolean).map(line => JSON.parse(line));
+const events = raw.split('\n').filter(Boolean).map(line => JSON.parse(line))
+  .map(event => event.target === 'local-storage' ? { ...event, target: 'local' } : event);
 const report = JSON.parse(await readFile(resolve(root, 'result.json'), 'utf8'));
 assert.ok(events.length && events[0].type === 'run-start');
 assert.equal(events[0].revision, report.revision);
