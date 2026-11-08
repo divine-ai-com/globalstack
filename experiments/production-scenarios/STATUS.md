@@ -37,6 +37,19 @@ settings and downstream infrastructure remain unconnected. The corrected
 dead-letter path has local role and persistence tests, but no Azure runtime
 capture of dead-letter blob contents or timing.
 
+The subsequent [paired document-infrastructure run](evidence/document-event-azure-ada3cf8/)
+used the same frozen document template hashes with the actual native Functions
+worker and scanner. Azure and GlobalStack both reached `Succeeded` for the
+document data and Event Grid modules. The clean, harmless YARA and harmless
+EICAR scanner calls matched. Azure scanner-policy changes took 42 and 37 seconds
+to propagate; GlobalStack reflected each on the first check. Automatic teardown
+and an independent Azure readback found the preserved group empty. This closes
+the observed deployment 501 for that configuration, while actual Blob delivery,
+dead-letter timing and the full document workflow remain untested. The next
+paired runner revision adds a bounded, admin-key-protected Blob upload diagnostic
+and platform routing for the document storage endpoint. It has passed local
+tests and image import checks but has not yet been run against Azure.
+
 ## Latest scanner and worker checkpoint
 
 The [completed paired Functions-to-scanner capture](evidence/worker-scanner-azure-ead706e/)

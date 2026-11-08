@@ -162,6 +162,21 @@ test('all 101 application assertions remain required and unexecuted', async () =
   }
 });
 
+test('paired document infrastructure evidence separates deployment success from full workflow completion', async () => {
+  const report = await load('document-event-azure-ada3cf8/summary.json');
+  assert.equal(report.sourceRevision, 'ada3cf8e828bd3aadb04fd2af2131fd71eca3529');
+  assert.equal(report.templates.find(item => item.name === 'document-events').sha256,
+    'd5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09');
+  assert.equal(report.stages.length, 7);
+  assert.ok(report.stages.every(item => item.azure.state === 'Succeeded' && item.local.state === 'Succeeded'));
+  assert.deepEqual(report.scannerCalls.map(item => [item.azureDecision, item.globalstackDecision]),
+    [['clean', 'clean'], ['detected', 'detected'], ['detected', 'detected']]);
+  assert.deepEqual(report.automaticCleanup, { resourcesAbsent: true, groupEmpty: true, localCleanupComplete: true });
+  assert.deepEqual(report.independentAzureReadback, { resources: 0, deploymentRecords: 0 });
+  assert.equal(report.fullWorkflowCompleted, false);
+  assert.equal(report.portalEvidenceComplete, false);
+});
+
 test('partial fixes retain the initial-status difference and remaining local failures', async () => {
   const prefix = 'validation-after-4b40af6/';
   const index = await load(`${prefix}index.json`);
