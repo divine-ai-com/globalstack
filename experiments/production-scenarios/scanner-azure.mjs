@@ -25,7 +25,9 @@ const m = { subscription: process.env.PAIRED_SUBSCRIPTION_ID, group: process.env
   publisher: process.env.PAIRED_PUBLISHER_OBJECT_ID, config: process.env.PAIRED_AZURE_CONFIG_DIR,
   runId: randomBytes(6).toString('hex'), roles: [randomUUID(), randomUUID()], parentPid: process.pid, deadline: Date.now() + 20 * 60000 };
 const s = scannerPaths(m), token = azureToken(m.config), replacements = [[token, '<redacted>'], [m.subscription, '<subscription>'], [m.publisher, '<publisher>']];
-const emit = createRecording(out, { platform: 'Scanner ingress: Azure and local ARM', revision, sourceDirty: false });
+const source = await Promise.all(['scanner-host', 'scanner-app', 'scanner-auth'].map(async name =>
+  ({ name, sha256: createHash('sha256').update(await readFile(resolve('experiments/production-scenarios/document-infra', `${name}.bicep`))).digest('hex') })));
+const emit = createRecording(out, { platform: 'Scanner ingress: Azure and local ARM', revision, sourceDirty: false, image: process.env.SCANNER_IMAGE_ID, source });
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
   scope: 'Native scanner deployment, denied callers, and real scans under a temporary explicit pilot-client allowlist. The worker-only policy is restored. Valid worker execution on Azure is not tested in this stage.',
   workerAccessTestedOnAzure: false, fullWorkflowCompleted: false, portalEvidenceComplete: false, exchanges: [], cleanup: null };
@@ -239,7 +241,7 @@ finally {
   await rm(dockerConfig, { recursive: true, force: true });
   await rm(resolve(out, 'private-tls'), { recursive: true, force: true });
   if (imageTag) try { execFileSync('docker', ['image', 'rm', imageTag], { stdio: 'ignore' }); } catch {}
-  report.completedAt = new Date().toISOString(); emit('run-end', { summary: report.error ?? 'Ingress observations recorded; full pipeline remains untested.' });
+  report.completedAt = new Date().toISOString(); emit('run-end', { summary: report.error ?? (report.cleanup?.resourcesAbsent && report.localCleanup ? 'Ingress observations and cleanup recorded; full pipeline remains untested.' : 'Cleanup incomplete; ingress observations retained.') });
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n');
 }
 console.log(JSON.stringify({ out, error: report.error, observationsComplete: report.observationsComplete, cleanup: report.cleanup }));
