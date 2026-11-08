@@ -1438,6 +1438,14 @@ export function evaluateArmExpression(expression, parameters) {
     }
     return array[index];
   }
+  const objectMatch = text.match(/^createObject\((.*)\)$/s);
+  if (objectMatch) {
+    const args = splitArmArgs(objectMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    if (args.length % 2 || args.some((arg, index) => index % 2 === 0 && typeof arg !== 'string')) {
+      const error = new Error('ARM createObject requires string keys paired with values.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
+    }
+    return Object.fromEntries(Array.from({ length: args.length / 2 }, (_, index) => [args[index * 2], args[index * 2 + 1]]));
+  }
   const arrayMatch = text.match(/^createArray\((.*)\)$/s);
   if (arrayMatch) return splitArmArgs(arrayMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
   const lengthMatch = text.match(/^length\((.*)\)$/s);
@@ -1492,7 +1500,12 @@ export function evaluateArmExpression(expression, parameters) {
   }
 
   const concatMatch = text.match(/^concat\((.*)\)$/s);
-  if (concatMatch) return splitArmArgs(concatMatch[1]).map(arg => evaluateArmArgument(arg, parameters)).join('');
+  if (concatMatch) {
+    const args = splitArmArgs(concatMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    if (args.length && args.every(Array.isArray)) return args.flat(1);
+    if (args.length && args.every(arg => typeof arg === 'string')) return args.join('');
+    const error = new Error('ARM concat requires arrays only or strings only.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
+  }
 
   const resourceIdMatch = text.match(/^(subscriptionResourceId|resourceId)\((.*)\)$/s);
   if (resourceIdMatch) {
@@ -1577,7 +1590,7 @@ export function evaluateArmValue(value, parameters) {
   const trimmed = value.trim();
   if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) return unquoteArm(trimmed);
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) return evaluateArmExpression(trimmed.slice(1, -1), parameters);
-  if (/^uri\(|^environment\(\)\.|^copyIndex\(|^createArray\(|^length\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
+  if (/^uri\(|^environment\(\)\.|^copyIndex\(|^createArray\(|^createObject\(|^length\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
   return value;
 }
 
