@@ -281,6 +281,14 @@ export function createArmRequestHandler({
         }
       }
     }
+    if (resourceType === 'Microsoft.Authorization/roleAssignments' && !providerRoute.scopeId && body.properties) {
+      const scope = `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}`;
+      body = { ...body, properties: { ...body.properties, scope } };
+      const existing = store.getResource(providerRoute);
+      if (existing && ['principalId', 'roleDefinitionId'].some(name => String(existing.properties?.[name]).toLowerCase() !== String(body.properties?.[name]).toLowerCase())) {
+        return { status: 400, body: { error: { code: 'RoleAssignmentUpdateNotPermitted', message: 'The principal, role and scope of an existing role assignment cannot be changed.' } } };
+      }
+    }
     if (!apiVersion) {
       return {
         status: 400,
@@ -2051,6 +2059,15 @@ export function createArmRequestHandler({
           if (webAppConfig) {
             return sendJson(res, 200, webAppConfig);
           }
+          // A captured missing-role response must not hide an assignment that
+          // exists in the store, or turn the collection into a missing resource.
+          if (resourceType === 'Microsoft.Authorization/roleAssignments') {
+            if (isCollectionRoute(providerRoute)) return sendJson(res, 200, { value: store.listResourcesByType(providerRoute) });
+            const assignment = store.getResource(providerRoute);
+            if (assignment) return sendJson(res, 200, assignment);
+            const name = providerRoute.typePath.split('/').at(-1);
+            return sendJson(res, 404, { error: { code: 'RoleAssignmentNotFound', message: `The role assignment '${name}' is not found.` } });
+          }
           const validation = capturedProviderValidation({ method, resourceType, providerRoute });
           if (validation) return sendJson(res, validation.status, validation.body);
           const storageParent = storageAccountParentRoute(providerRoute);
@@ -2144,6 +2161,7 @@ export function createArmRequestHandler({
               'retry-after': '0',
             });
           }
+          if (resourceType === 'Microsoft.Authorization/roleAssignments') return sendJson(res, 200, deletedResource);
           if (resourceType === 'Microsoft.Storage/storageAccounts') return sendJson(res, 200);
           if (resourceType.startsWith('Microsoft.Storage/storageAccounts/')) {
             const storageDeleteNoContentTypes = new Set([

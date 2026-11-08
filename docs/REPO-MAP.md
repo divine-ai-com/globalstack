@@ -139,6 +139,7 @@ flowchart TD
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
 - `packages/conformance/src/arm-deployment-history.test.mjs`
 - `packages/conformance/src/arm-deployment-validation.test.mjs`
+- `packages/conformance/src/arm-group-role-lifecycle.test.mjs`
 - `packages/conformance/src/arm-resource-dependencies.test.mjs`
 - `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
