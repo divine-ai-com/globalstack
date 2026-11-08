@@ -63,13 +63,19 @@ export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms
     }
     resources.push(id);
   }
-  for (const id of [...resources, ...deployments.reverse()]) {
-    assert.ok([200, 202, 204, 404].includes((await request('DELETE', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`)).status));
+  const awaitAbsent = async id => {
     while (true) {
       assert.ok(Date.now() < deadline, 'Scanner cleanup deadline exceeded'); const found = await get(id);
       if (found.status === 404) break; assert.ok([200, 409].includes(found.status)); await sleep(3000);
     }
+  };
+  for (const id of [...resources, ...deployments.reverse()]) {
+    assert.ok([200, 202, 204, 404].includes((await request('DELETE', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`)).status));
+    // The app is already absent. Environment teardown must not retain the
+    // independent registry and identities while Azure schedules its deletion.
+    if (id !== s.environment) await awaitAbsent(id);
   }
+  if (resources.includes(s.environment)) await awaitAbsent(s.environment);
   assert.equal((await request('GET', `${s.group}?api-version=2022-09-01`)).status, 200);
   const inventory = await request('GET', `${s.group}/resources?api-version=2021-04-01`);
   assert.equal(inventory.status, 200); assert.ok(!inventory.body.nextLink); assert.deepEqual(inventory.body.value, []);

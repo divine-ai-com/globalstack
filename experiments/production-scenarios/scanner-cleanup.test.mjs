@@ -38,3 +38,23 @@ test('scanner request boundary rejects external hosts and unowned resources', as
   assert.equal(calls, 0);
   await request('GET', `${scannerPaths(m).auth}?api-version=2025-01-01`); assert.equal(calls, 1);
 });
+
+test('slow environment deletion does not retain the registry and identities', async () => {
+  const f = fixture(); let pending = false, observations = 0;
+  const request = async (method, path) => {
+    const id = new URL(path, 'https://management.azure.com').pathname;
+    if (id === f.s.environment && method === 'DELETE') {
+      pending = true; f.deleted.push(id); return { status: 202 };
+    }
+    if (id === f.s.environment && method === 'GET' && pending) {
+      assert.ok(f.deleted.includes(f.s.registry));
+      assert.ok(f.deleted.includes(f.s.scanner));
+      assert.ok(f.deleted.includes(f.s.worker));
+      if (observations++ === 0) return { status: 200, body: { properties: { provisioningState: 'ScheduledForDelete' } } };
+      f.resources.delete(id); return { status: 404 };
+    }
+    return f.request(method, path);
+  };
+  assert.equal((await cleanupScanner(m, request, { sleep: async () => {} })).groupEmpty, true);
+  assert.equal(observations, 2);
+});
