@@ -45,10 +45,10 @@ export function documentClient(m, observe = () => {}, exchange = httpExchange) {
   };
 }
 
-export async function cleanupDocument(m, request = documentClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 600000, planOnly = false } = {}) {
+export async function cleanupDocument(m, request = documentClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 1800000, planOnly = false } = {}) {
   const s = documentPaths(m), deadline = Date.now() + timeoutMs;
   const get = async id => {
-    const path = `${id}?api-version=${id === s.group ? '2022-09-01' : s.versions[id] ?? '2025-04-01'}`;
+    const path = `${id}?api-version=${id === s.group ? '2022-09-01' : id === `${s.group}/resources` ? '2021-04-01' : s.versions[id] ?? '2025-04-01'}`;
     for (let attempt = 0; ; attempt++) {
       assert.ok(Date.now() < deadline, 'Document cleanup deadline exceeded');
       let result;
@@ -126,6 +126,16 @@ export async function cleanupDocument(m, request = documentClient(m), { sleep = 
   }
   for (const id of s.resources) assert.equal((await get(id)).status, 404, `Document resource still exists: ${id}`);
   assert.equal((await get(s.group)).status, 200);
+  while (true) {
+    assert.ok(Date.now() < deadline, 'Document inventory convergence deadline exceeded');
+    const inventory = await get(`${s.group}/resources`);
+    assert.equal(inventory.status, 200);
+    assert.ok(!inventory.body.nextLink && Array.isArray(inventory.body.value), 'Incomplete document cleanup inventory');
+    const remaining = inventory.body.value.filter(resource => s.resources.some(id => id.toLowerCase() === resource.id?.toLowerCase()));
+    if (remaining.length === 0) break;
+    assert.ok(remaining.every(resource => resource.tags?.run === m.runId && resource.tags?.project === project), 'Foreign document resource in inventory');
+    await sleep(3000);
+  }
   return { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true };
 }
 

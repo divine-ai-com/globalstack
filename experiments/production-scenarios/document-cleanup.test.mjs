@@ -52,6 +52,7 @@ test('document cleanup retries a transient ownership read without submitting a m
   let accountReads = 0;
   const request = async (method, path) => {
     if (method !== 'GET') mutations.push(path);
+    if (path.split('?')[0] === `${d.group}/resources`) return { status: 200, body: { value: [] } };
     if (path.split('?')[0] === d.group) return { status: 200 };
     if (path.split('?')[0] === d.account && accountReads++ === 0) return { status: 429, headers: { 'retry-after': '0' } };
     return { status: 404 };
@@ -65,12 +66,15 @@ test('document cleanup retries a transient ownership read without submitting a m
 test('document cleanup removes only owned resources and retains the group', async () => {
   const d = documentPaths(m), w = workerPaths({ ...m, roles: m.roles.slice(0, 6) });
   const live = new Set([...d.resources, ...d.deployments]);
+  let inventoryReads = 0;
   const workerPrincipal = '44444444-4444-4444-8444-444444444444';
   const topicPrincipal = '55555555-5555-4555-8555-555555555555';
   const deleted = [];
   const request = async (method, path) => {
     const id = path.split('?')[0];
     if (id === d.group) return { status: 200 };
+    if (id === `${d.group}/resources`) return { status: 200, body: { value: inventoryReads++ === 0
+      ? [{ id: d.account, tags: { run: m.runId, project: 'globalstack-production-scenarios' } }] : [] } };
     if (id === w.identity) return { status: 200, body: { properties: { principalId: workerPrincipal } } };
     if (method === 'DELETE') {
       deleted.push(id);
@@ -96,5 +100,6 @@ test('document cleanup removes only owned resources and retains the group', asyn
   assert.equal(live.size, 0);
   assert.ok(deleted.indexOf(d.eventSubscription) < deleted.indexOf(d.topic));
   assert.ok(deleted.indexOf(d.topic) < deleted.indexOf(d.account));
+  assert.equal(inventoryReads, 2);
   assert.ok(!deleted.includes(d.group));
 });
