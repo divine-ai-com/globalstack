@@ -2588,7 +2588,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     if (['c6a89b2d-59bc-44d0-9896-0f6e12d7b80a', '974c5e8b-45b9-4653-ba55-5f855dd0fb88',
       '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b',
       '4633458b-17de-408a-b874-0445c86b69e6', '7ca78c08-252a-4471-8644-bb5ff32d4ba0',
-      '8ebe5a00-799e-43f5-93ac-243d3dce84a7', '1407120a-92aa-4202-b7e9-c0e197c71c8f'].includes(role)) {
+      '8ebe5a00-799e-43f5-93ac-243d3dce84a7', '1407120a-92aa-4202-b7e9-c0e197c71c8f',
+      // Assignment metadata observed in Azure. Data-plane enforcement is separate.
+      '7f951dda-4ed3-4680-a7ca-43fe172d538d', '8311e382-0749-4cb8-b61a-304f252e45ec',
+      '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0', '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39',
+      '17d1049b-9a84-46fb-8f53-869881c3d3ab', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'].includes(role)) {
       if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.properties.principalId)) return invalidRequestContent('principalId');
       return null;
     }

@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFile } from 'node:fs/promises';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
 
-test('group role assignment remains readable and immutable until deletion', async t => {
+const catalog = JSON.parse(await readFile(new URL('../../../experiments/production-scenarios/operator/document-role-catalog.json', import.meta.url)));
+for (const role of catalog.roles) test(`group ${role.name} assignment remains readable and immutable until deletion`, async t => {
   const subscription = '00000000-0000-0000-0000-000000000000';
   const group = `/subscriptions/${subscription}/resourceGroups/independent-role-group`;
   const store = new ResourceStore();
@@ -23,7 +25,7 @@ test('group role assignment remains readable and immutable until deletion', asyn
   const name = '12345678-1234-4234-8234-123456789012';
   const path = `${collection}/${name}`;
   const properties = { principalId: '87654321-4321-4321-8321-210987654321', principalType: 'ServicePrincipal',
-    roleDefinitionId: `/subscriptions/${subscription}/providers/Microsoft.Authorization/roleDefinitions/1407120a-92aa-4202-b7e9-c0e197c71c8f` };
+    roleDefinitionId: `/subscriptions/${subscription}/providers/Microsoft.Authorization/roleDefinitions/${role.id}` };
   const missing = await request('GET', path);
   assert.equal(missing.status, 404);
   assert.equal(missing.body.error.message, `The role assignment '${name}' is not found.`);
