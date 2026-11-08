@@ -223,3 +223,20 @@ local regression coverage. They do not implement automatic worker provisioning o
 establish a live paired pass. Container lifecycle, native function discovery,
 managed host-storage execution, event traversal and downstream services remain
 required. No full-workflow assertion has been promoted from `not-run`.
+
+## Scanner ingress comparison and cleanup recovery
+
+The [scanner run at revision 2738c71](evidence/scanner-azure-2738c71/) deployed the
+same compiled templates and frozen image to Azure and the native local runtime.
+Missing tokens and wrong audiences returned 401 in both. The unlisted pilot
+returned 403 in both. After an accepted policy update allowing the pilot client
+and principal, Azure returned 403 for all three scanner requests while local
+returned 200. This remains an unresolved mismatch tracked in
+[#58](https://github.com/divine-ai-com/globalstack/issues/58).
+
+Azure environment deletion exceeded the original 15-minute cleanup window.
+The original report retains that failure. An ownership-checked recovery pass
+removed the registry, identities and deployment records while waiting for the
+remaining environment. A new paid run is prohibited until absence is verified.
+The cumulative conservative allocations are USD 69, not measured Azure charges.
+The full-workflow ledger remains unchanged.

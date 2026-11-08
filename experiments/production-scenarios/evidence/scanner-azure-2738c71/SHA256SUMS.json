@@ -1,0 +1,30 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "0151bdf3b0810b93052b0289e2eb0105d6247e9a190bf6ddfb6f48ade5934f2f"
+  },
+  {
+    "path": "app-template.json",
+    "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+  },
+  {
+    "path": "auth-template.json",
+    "sha256": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe"
+  },
+  {
+    "path": "events.ndjson",
+    "sha256": "404cc3399998bc2fd62f78931a63007f7aeba203e443e945f75b67a62cbb06e6"
+  },
+  {
+    "path": "host-template.json",
+    "sha256": "02fb8b1d21975a281a5ce2c4ebaa7f639fd1de7728b8f276ac2f0a82ab170690"
+  },
+  {
+    "path": "public-template.json",
+    "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+  },
+  {
+    "path": "result.json",
+    "sha256": "8fe966a28e3c1b6e3132c15f55ca09082a6894d420234c23263b5abdcc506204"
+  }
+]
