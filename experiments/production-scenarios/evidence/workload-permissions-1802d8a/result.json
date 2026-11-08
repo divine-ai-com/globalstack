@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "revision": "1802d8aac971a19c92d3e4d83df0169e70169d5e",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T07:07:52.044Z",
+  "scope": "Read-only resource-group access and provider validation. No cloud deployment, resource deletion, or business workflow.",
+  "cloudResourcesProvisioned": false,
+  "portalEvidenceComplete": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "d4f099fa-1698-418d-b0df-f2206719a758",
+        "x-ms-correlation-request-id": "d4f099fa-1698-418d-b0df-f2206719a758"
+      },
+      "startedAt": "2026-11-08T07:07:52.046Z",
+      "completedAt": "2026-11-08T07:07:53.266Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": []
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "7a2009b2-0316-430c-b8f9-0491f3cf2b89",
+        "x-ms-correlation-request-id": "7a2009b2-0316-430c-b8f9-0491f3cf2b89"
+      },
+      "startedAt": "2026-11-08T07:07:53.267Z",
+      "completedAt": "2026-11-08T07:07:53.951Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/permissions?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "value": [
+          {
+            "actions": [
+              "*"
+            ],
+            "notActions": [
+              "Microsoft.Authorization/*/Delete",
+              "Microsoft.Authorization/*/Write",
+              "Microsoft.Authorization/elevateAccess/Action",
+              "Microsoft.Blueprint/blueprintAssignments/write",
+              "Microsoft.Blueprint/blueprintAssignments/delete",
+              "Microsoft.Compute/galleries/share/action",
+              "Microsoft.Purview/consents/write",
+              "Microsoft.Purview/consents/delete",
+              "Microsoft.Resources/deploymentStacks/manageDenySetting/action",
+              "Microsoft.Subscription/cancel/action",
+              "Microsoft.Subscription/enable/action"
+            ],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ]
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "b6469cf4-fb83-4b99-b671-e6b1fb7dc5c8",
+        "x-ms-correlation-request-id": "e0ae8152-578d-4870-9d06-d5b53168cdd7"
+      },
+      "startedAt": "2026-11-08T07:07:53.951Z",
+      "completedAt": "2026-11-08T07:07:54.246Z"
+    }
+  ],
+  "region": "westus2",
+  "resourceCountBefore": 0,
+  "workloadRolePermissions": {
+    "status": "missing-permission",
+    "actions": [
+      {
+        "action": "Microsoft.Authorization/roleAssignments/write",
+        "listedGrant": false
+      },
+      {
+        "action": "Microsoft.Authorization/roleAssignments/delete",
+        "listedGrant": false
+      }
+    ]
+  },
+  "error": "Workload role creation and cleanup permissions are not established; do not provision the full stack\n+ actual - expected\n\n+ 'missing-permission'\n- 'requires-live-validation'\n",
+  "completedAt": "2026-11-08T07:07:54.249Z"
+}

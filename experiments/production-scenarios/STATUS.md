@@ -59,10 +59,14 @@ remain outstanding.
 1. Hosting creation succeeded in the latest authorized retry. Earlier 429
    observations remain retained. Availability for other SKUs, regions and future
    attempts is not established by this bounded result.
-2. Before full-stack deployment, establish restricted permission to create and
-   delete the required workload role assignments inside the test group. Do not
-   elevate this service principal to subscription Owner. Contributor alone is
-   insufficient for the intended managed-identity deployment.
+2. The [fresh permission capture](evidence/workload-permissions-1802d8a/) confirms
+   Contributor explicitly excludes role-assignment writes and deletes. The
+   preflight now checks both before full-stack provisioning when
+   `PAIRED_REQUIRE_WORKLOAD_ROLES=1`. An operator must apply the
+   [conditional group-scoped delegation](operator/README.md), or supply equivalent
+   restricted permissions. The template compiles locally; live delegated writes
+   and cleanup remain untested until the operator applies it. Do not elevate
+   this service principal to subscription Owner.
 3. Establish a usable authenticated Portal capture channel. A logged-in tab URL
    is not a screenshot or browser-control capability. None of this session's
    HTTP replays is Portal evidence.

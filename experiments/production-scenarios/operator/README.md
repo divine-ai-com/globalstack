@@ -30,6 +30,27 @@ that need it. Secret creation through the Key Vault data plane is not authorized
 by this catalog and needs an operator-controlled initialization or a separately
 reviewed design. Directory application registrations are also outside this grant.
 
+### Azure Portal alternative
+
+Open the dedicated resource group, then **Access control (IAM) > Add > Add role
+assignment**. Select **Role Based Access Control Administrator** under privileged
+administrator roles. On **Members**, select the pilot enterprise application as
+**User, group, or service principal**.
+
+On **Conditions**, choose **Allow user to only assign selected roles to selected
+principals (fewer privileges)**, then **Select roles and principals**. Configure
+**Constrain roles and principal types**, add exactly the roles in
+`document-role-catalog.json`, and allow only **Service principals**. Save, review
+the group scope, selected application and condition, then assign. Keep the
+existing Contributor role. This is an alternative to deploying the Bicep
+operator template, not an additional grant.
+
+For a Portal-created assignment, remove that exact conditional assignment from
+the group's IAM page after pilot cleanup. The Bicep output and deployment-history
+cleanup commands below apply only to the CLI/template path.
+
+### Azure CLI alternative
+
 Use an authenticated Azure CLI session with role-assignment authority, with this
 checkout available. Set the actual values locally; do not put credentials into
 these files. Verify the subscription and group before executing:

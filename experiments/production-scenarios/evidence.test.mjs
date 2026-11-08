@@ -425,3 +425,23 @@ test('successful scoped hosting retry retains rejection parity and cleanup', asy
     }
   }
 });
+
+test('workload permission evidence stops before deployment or paid allocation', async () => {
+  const prefix = 'workload-permissions-1802d8a/';
+  const index = await load(prefix + 'index.json');
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(prefix + 'result.json');
+  assert.equal(report.revision, index.sourceRevision);
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.cloudResourcesProvisioned, false);
+  assert.equal(report.resourceCountBefore, 0);
+  assert.equal(report.workloadRolePermissions.status, 'missing-permission');
+  assert.equal(report.workloadRolePermissions.actions.length, 2);
+  assert.ok(report.workloadRolePermissions.actions.every(item => item.listedGrant === false));
+  assert.match(report.error, /do not provision the full stack/);
+  assert.ok(report.exchanges.every(item => item.target === 'azure' && item.method === 'GET' && item.status === 200));
+});
