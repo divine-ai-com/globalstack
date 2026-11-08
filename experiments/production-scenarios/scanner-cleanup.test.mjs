@@ -76,3 +76,18 @@ test('cleanup stops on persistent read failure without claiming absence', async 
   await assert.rejects(cleanupScanner(m, async () => { requests++; return { status: 503 }; }, { sleep: async () => {} }));
   assert.equal(requests, 5);
 });
+
+test('cleanup waits for owned inventory lag after provider absence and rejects foreign inventory', async () => {
+  for (const foreign of [false, true]) {
+    const f = fixture(); let reads = 0;
+    const request = async (method, path) => {
+      if (path.startsWith(`${f.s.group}/resources?`) && reads++ === 0) return { status: 200, body: { value: [{
+        id: foreign ? `${f.s.group}/providers/Microsoft.App/managedEnvironments/unrelated` : f.s.environment,
+        tags: { project: 'globalstack-production-scenarios', run: m.runId },
+      }] } };
+      return f.request(method, path);
+    };
+    if (foreign) await assert.rejects(cleanupScanner(m, request, { sleep: async () => {} }), /Unexpected resource/);
+    else { assert.equal((await cleanupScanner(m, request, { sleep: async () => {} })).groupEmpty, true); assert.equal(reads, 2); }
+  }
+});

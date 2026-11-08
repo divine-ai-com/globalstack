@@ -35,11 +35,11 @@ export function scannerClient(m, observe = () => {}, exchange = httpExchange) {
 }
 export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 1800000 } = {}) {
   const s = scannerPaths(m), deadline = Date.now() + timeoutMs, deployments = [], resources = [];
-  const get = async id => {
+  const get = async (id, version = s.versions[id] ?? '2025-04-01') => {
     for (let attempt = 0; ; attempt++) {
       assert.ok(Date.now() < deadline, 'Scanner cleanup deadline exceeded');
       let result;
-      try { result = await request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`); }
+      try { result = await request('GET', `${id}?api-version=${version}`); }
       catch (error) { if (attempt >= 4) throw error; }
       if (result && (![408, 429, 500, 502, 503, 504].includes(result.status) || attempt >= 4)) return result;
       const seconds = Number(result?.headers?.['retry-after']);
@@ -86,9 +86,17 @@ export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms
     if (id !== s.environment) await awaitAbsent(id);
   }
   if (resources.includes(s.environment)) await awaitAbsent(s.environment);
-  assert.equal((await request('GET', `${s.group}?api-version=2022-09-01`)).status, 200);
-  const inventory = await request('GET', `${s.group}/resources?api-version=2021-04-01`);
-  assert.equal(inventory.status, 200); assert.ok(!inventory.body.nextLink); assert.deepEqual(inventory.body.value, []);
+  assert.equal((await get(s.group, '2022-09-01')).status, 200);
+  while (true) {
+    const inventory = await get(`${s.group}/resources`, '2021-04-01');
+    assert.equal(inventory.status, 200); assert.ok(!inventory.body.nextLink); assert.ok(Array.isArray(inventory.body.value));
+    if (inventory.body.value.length === 0) break;
+    // Provider GET can return 404 before ARM's group inventory converges.
+    // Wait only for this run's known resources; never delete an unexpected item.
+    assert.ok(inventory.body.value.every(item => s.resources.some(id => id.toLowerCase() === item.id?.toLowerCase())
+      && item.tags?.run === m.runId && item.tags?.project === 'globalstack-production-scenarios'), 'Unexpected resource in cleanup inventory');
+    await sleep(3000);
+  }
   return { resourcesAbsent: true, rolesAbsent: true, deploymentsAbsent: true, groupEmpty: true, groupPreserved: true };
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
