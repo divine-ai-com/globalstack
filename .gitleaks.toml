@@ -6,6 +6,14 @@ useDefault = true
 [[rules]]
 id = "generic-api-key"
 
+# Exact compiled Bicep template digest in the reviewed paired-run summary.
+[[rules.allowlists]]
+description = "Scanner auth template SHA-256 in paired document evidence"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''^experiments/production-scenarios/evidence/document-upload-azure-9a3a78a/summary\.json$''']
+regexes = ['''^f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe$''']
+
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
 [[rules.allowlists]]
 description = "Synthetic event row identifiers in ci-reproduction.json"
