@@ -38,7 +38,7 @@ async function request(target, method, path, body) {
     || method === 'GET' && [scope, `${scope}/providers/Microsoft.Authorization/roleAssignments`].includes(url.pathname));
   const origin = target === 'azure' ? url.origin : `http://127.0.0.1:${arm.address().port}`;
   const result = await httpExchange(origin + url.pathname + url.search, { method, body,
-    headers: { authorization: `Bearer ${target === 'azure' ? token : 'local-fixture'}` } });
+    headers: { authorization: `Bearer ${target === 'azure' ? token : 'globalstack-local-token'}` } });
   report.exchanges.push(sanitize({ target, method, path, request: body, ...result, at: new Date().toISOString() }, replacements));
   return result;
 }
@@ -60,8 +60,9 @@ try {
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription;
   arm = createArmServer({ store: new ResourceStore() });
   await new Promise(done => arm.listen(0, '127.0.0.1', done));
-  const setup = await httpExchange(`http://127.0.0.1:${arm.address().port}${scope}?api-version=2022-09-01`, { method: 'PUT', body: { location: existing.body.location }, headers: { authorization: 'Bearer local-fixture' } });
-  assert.ok([200, 201].includes(setup.status));
+  const setup = await httpExchange(`http://127.0.0.1:${arm.address().port}${scope}?api-version=2022-09-01`, { method: 'PUT', body: { location: existing.body.location }, headers: { authorization: 'Bearer globalstack-local-token' } });
+  report.localSetup = sanitize(setup, replacements);
+  assert.ok([200, 201].includes(setup.status), `Local group setup returned ${setup.status}`);
   await writeFile(journal, JSON.stringify({ assignment, properties }), { mode: 0o600, flag: 'wx' });
   submitted = true;
   for (const target of ['azure', 'local']) {
