@@ -1,0 +1,70 @@
+# Operator prerequisites for document deployment
+
+The current pilot service principal has Contributor on the dedicated test group.
+The live permissions response excludes role assignment writes and deletes.
+Creating compute does not grant workloads access to Blob, Key Vault, Search or
+Service Bus. The full-stack runner must check both creation and cleanup rights
+before reserving resources.
+
+## Scoped delegation
+
+An operator with role-assignment authority can deploy `workload-delegation.bicep`
+inside the existing test resource group. It adds one conditional Role Based
+Access Control Administrator assignment to the pilot service principal. It does
+not grant subscription Owner or change the existing Contributor assignment.
+
+The condition restricts both assignment creation and deletion to the 13 built-in
+roles in `document-role-catalog.json`, and to service principals (including
+managed identities). It does not permit granting Owner, Contributor, User Access
+Administrator or Role Based Access Control Administrator. The grant applies only
+inside this resource group. It can grant the listed roles to any service
+principal, including the pilot itself, within that group. Use a dedicated empty
+experiment group; this is not a principal-ID-specific delegation.
+
+The roles support Blob/document access, Durable host Blob/Queue/Table access,
+host storage management, read-only secret access, Search schema and document
+operations, Service Bus send/receive, and image push/pull. The catalog lists the
+maximum delegated set, not the permissions every workload should receive.
+Application templates must assign each role only to the identity and resource
+that need it. Secret creation through the Key Vault data plane is not authorized
+by this catalog and needs an operator-controlled initialization or a separately
+reviewed design. Directory application registrations are also outside this grant.
+
+Use an authenticated Azure CLI session with role-assignment authority, with this
+checkout available. Set the actual values locally; do not put credentials into
+these files. Verify the subscription and group before executing:
+
+```sh
+az account set --subscription "$PILOT_SUBSCRIPTION_ID"
+PILOT_PRINCIPAL_ID=$(az ad sp show --id "$PILOT_CLIENT_ID" --query id -o tsv)
+az deployment group create \
+  --resource-group "$PILOT_RESOURCE_GROUP" \
+  --name globalstack-workload-delegation \
+  --template-file experiments/production-scenarios/operator/workload-delegation.bicep \
+  --parameters pilotPrincipalId="$PILOT_PRINCIPAL_ID" \
+  --query properties.outputs.delegationId.value -o tsv
+```
+
+The directory lookup uses the operator's session, not the limited pilot session.
+If directory lookup is unavailable, obtain the enterprise application's Object
+ID from Entra and set `PILOT_PRINCIPAL_ID` explicitly. Do not use the app
+registration Object ID or client ID instead.
+
+Retain the returned role-assignment resource ID. After all task-owned workload
+role assignments and resources have been removed, revoke just this delegation:
+
+```sh
+az role assignment delete --ids "$PILOT_DELEGATION_ID"
+az deployment group delete --resource-group "$PILOT_RESOURCE_GROUP" \
+  --name globalstack-workload-delegation
+```
+
+Deleting deployment history alone does not revoke the role assignment. The
+operator grant is a prerequisite, not task-owned application infrastructure.
+Keep it separate from application cleanup, then remove it when the pilot ends.
+The template is compiled locally before use; Azure acceptance of the condition
+and actual delegated operations must still be tested after operator deployment.
+A permissions listing alone cannot prove conditions, policy or deny assignments
+will allow a particular request.
+
+Reference: [Microsoft's conditional role delegation guidance](https://learn.microsoft.com/en-us/azure/role-based-access-control/delegate-role-assignments-overview).

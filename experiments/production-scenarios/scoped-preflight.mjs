@@ -5,6 +5,7 @@ import { mkdir, statfs, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { azureToken } from './azure-session.mjs';
+import { assessWorkloadPermissions, requireWorkloadPermissions } from './permission-preflight.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
@@ -53,6 +54,8 @@ try {
   assert.equal(report.resourceCountBefore, 0, 'Resolve existing resources before a new deployment');
   const permissions = await request('azure', 'GET', `${groupPath}/providers/Microsoft.Authorization/permissions?api-version=2022-04-01`);
   assert.equal(permissions.status, 200);
+  report.workloadRolePermissions = assessWorkloadPermissions(permissions.body);
+  if (process.env.PAIRED_REQUIRE_WORKLOAD_ROLES === '1') requireWorkloadPermissions(permissions.body);
   const compiled = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${here}/fixtures:/fixture:ro`,
     '--entrypoint', '/root/.azure/bin/bicep', 'globalstack/validation-runner:cli-pinned', 'build', '/fixture/web-plans.bicep', '--stdout'], { encoding: 'utf8', timeout: 60000 });
   report.templateSha256 = createHash('sha256').update(compiled).digest('hex');
