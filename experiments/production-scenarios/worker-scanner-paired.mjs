@@ -211,9 +211,11 @@ try {
   assert.ok(report.localEventDelivery.length, 'Local Event Grid did not attempt native Function delivery');
   const readAzureEventMetrics = () => {
     try {
-      const metrics = azureCli(m.config, ['monitor', 'metrics', 'list', '--resource', d.eventSubscription,
-        '--metric', 'MatchedEventCount', 'DeliveryAttemptFailCount', '--interval', 'PT1M', '--aggregation', 'Total']);
-      return { status: 'read', totals: Object.fromEntries((metrics.value ?? []).map(series => [series.name?.value,
+      // Azure Monitor exposes these counters on the system topic. This pilot topic owns one subscription.
+      const metrics = azureCli(m.config, ['monitor', 'metrics', 'list', '--resource', d.topic,
+        '--namespace', 'Microsoft.EventGrid/systemTopics', '--metrics', 'MatchedEventCount',
+        'DeliverySuccessCount', 'DeliveryAttemptFailCount', '--interval', 'PT1M', '--aggregation', 'Total']);
+      return { status: 'read', resourceType: 'Microsoft.EventGrid/systemTopics', totals: Object.fromEntries((metrics.value ?? []).map(series => [series.name?.value,
         (series.timeseries ?? []).flatMap(item => item.data ?? []).reduce((sum, item) => sum + (item.total ?? 0), 0)])) };
     } catch { return { status: 'query-unavailable' }; }
   };
