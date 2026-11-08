@@ -18,3 +18,12 @@ test('invalid ARM collection arguments fail instead of silently producing string
     assert.throws(() => evaluateArmValue(expression, {}), { code: 'InvalidTemplate' });
   }
 });
+
+test('nested ARM functions retain scalar types and reject unknown functions', () => {
+  assert.deepEqual(evaluateArmValue("[createObject('enabled', true(), 'disabled', false(), 'empty', null())]", {}),
+    { enabled: true, disabled: false, empty: null });
+  assert.deepEqual(evaluateArmValue("[createObject('literal', 'futureFunction()')]", {}), { literal: 'futureFunction()' });
+  for (const expression of ["[concat('prefix', futureFunction())]", "[createObject('value', futureFunction())]"]) {
+    assert.throws(() => evaluateArmValue(expression, {}), { code: 'GlobalStackTemplateExpressionNotImplemented' });
+  }
+});

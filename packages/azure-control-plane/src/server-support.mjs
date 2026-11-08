@@ -1419,7 +1419,10 @@ function validationExpressionValue(value, parameters) {
 }
 
 function evaluateArmArgument(value, context) {
-  return /^-?\d+$/.test(value.trim()) ? Number(value) : evaluateArmValue(value, context);
+  const text = value.trim();
+  if (/^-?\d+$/.test(text)) return Number(text);
+  if (/^[A-Za-z_][A-Za-z0-9_]*\(/.test(text)) return evaluateArmExpression(text, context);
+  return evaluateArmValue(value, context);
 }
 
 export function evaluateArmExpression(expression, parameters) {
@@ -1429,6 +1432,9 @@ export function evaluateArmExpression(expression, parameters) {
     return `[${text.replace(/\bcopyIndex\(([^()]*)\)/g, expression => String(evaluateArmExpression(expression, { ...parameters, __deferResourceReferences: false })))}]`;
   }
   if (/^-?\d+$/.test(text)) return Number(text);
+  if (text === 'true()') return true;
+  if (text === 'false()') return false;
+  if (text === 'null()') return null;
   const indexMatch = text.match(/^(.*\))\[(.*)\]$/s);
   if (indexMatch) {
     const array = evaluateArmExpression(indexMatch[1], parameters);
