@@ -19,7 +19,10 @@ OpenTofu, Pulumi TypeScript/Python/YAML, Ansible, Azure CLI, Bicep and ARM JSON
 remain outstanding.
 
 The first document data and eventing Bicep modules now compile with the pinned
-CLI image. They have not been submitted to Azure or GlobalStack. The local
+CLI image. The data module now includes scoped pilot and worker Blob grants.
+The paired runner has an ownership-checked watchdog for the document account,
+topic, subscription, roles and deployments, with a USD 12 envelope. The modules
+have not yet been submitted to Azure or GlobalStack. The local
 [native Event Grid probe](evidence/native-event-discovery-d61025d/) discovered
 the deployed Function without a manually written Function child resource and
 observed its expected application failure. The complete document application

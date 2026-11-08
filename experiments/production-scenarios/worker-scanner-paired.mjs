@@ -7,7 +7,9 @@ import { resolve } from 'node:path';
 import { azureToken, azureCli } from './azure-session.mjs';
 import { workerPaths } from './worker-cleanup.mjs';
 import { scannerPaths } from './scanner-cleanup.mjs';
-import { pairedComponentManifests, pairedComponentClient, cleanupPairedComponent } from './worker-scanner-cleanup.mjs';
+import { pairedComponentManifests } from './worker-scanner-cleanup.mjs';
+import { documentPaths } from './document-cleanup.mjs';
+import { documentPairedClient, cleanupDocumentPaired } from './document-paired-cleanup.mjs';
 import { reserveBudget, confirmBudgetCleanup, productionBudgetPath } from './budget-ledger.mjs';
 import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
@@ -28,11 +30,12 @@ const out = resolve(process.env.PAIRED_RUN_DIR); await mkdir(out, { mode: 0o700 
 const disk = await statfs(out); assert.ok(disk.bavail * disk.bsize >= 40 * 1024 ** 3);
 const m = { subscription: process.env.PAIRED_SUBSCRIPTION_ID, group: process.env.PAIRED_RESOURCE_GROUP,
   publisher: process.env.PAIRED_PUBLISHER_OBJECT_ID, config: process.env.PAIRED_AZURE_CONFIG_DIR,
-  runId: randomBytes(6).toString('hex'), roles: Array.from({ length: 7 }, randomUUID), parentPid: process.pid, deadline: Date.now() + 25 * 60000 };
+  runId: randomBytes(6).toString('hex'), roles: Array.from({ length: 7 }, randomUUID), documentRoles: Array.from({ length: 3 }, randomUUID), parentPid: process.pid, deadline: Date.now() + 25 * 60000 };
 const manifests = pairedComponentManifests(m), w = workerPaths(manifests.worker), s = scannerPaths(manifests.scanner);
+const d = documentPaths(m);
 const token = azureToken(m.config), replacements = [[token, '<redacted>'], [m.subscription, '<subscription>'], [m.publisher, '<publisher>']];
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
-  scope: 'Actual Functions HTTP handler, managed identity, and native ClamAV/YARA scanner on both targets. No Event Grid or full document workflow.',
+  scope: 'Actual Functions HTTP handler, managed identity, native ClamAV/YARA scanner, and document data/Event Grid deployment on both targets. No full document workflow.',
   fullWorkflowCompleted: false, portalEvidenceComplete: false, exchanges: [], calls: [], templates: [], cleanup: null };
 const emit = createRecording(out, { platform: 'Functions to scanner: Azure and GlobalStack', revision, sourceDirty: false,
   image: process.env.WORKER_IMAGE_ID, scannerImage: process.env.SCANNER_IMAGE_ID });
@@ -40,7 +43,7 @@ let phase = 'preflight', allocated = false, watchdog, arm, facade, runtime, iden
 const images = new Map(), tags = [], compiled = new Map(), dockerConfig = resolve(out, 'private-docker');
 const manifestPath = resolve(out, 'private-cleanup.json'), donePath = resolve(out, 'cleanup.done');
 const observe = (target, event) => { const safe = sanitize({ target, phase, ...event }, replacements); report.exchanges.push(safe); emit('output', { target, phase, text: JSON.stringify(safe) + '\n' }); };
-const request = pairedComponentClient({ ...m, token }, event => observe('azure', event));
+const request = documentPairedClient({ ...m, token }, event => observe('azure', event));
 const pause = ms => new Promise(done => setTimeout(done, ms));
 async function local(method, path, body) {
   const result = await httpExchange(`http://127.0.0.1:${arm.address().port}${path}`, { method, body, headers: { authorization: 'Bearer globalstack-local-token' } });
@@ -78,10 +81,10 @@ async function publish(name, imageId, registry) {
 try {
   const group = await request('GET', `${w.group}?api-version=2022-09-01`); assert.equal(group.status, 200); assert.equal(group.body.location, 'westus2');
   const inventory = await request('GET', `${w.group}/resources?api-version=2021-04-01`); assert.equal(inventory.status, 200); assert.ok(!inventory.body.nextLink); assert.deepEqual(inventory.body.value, []);
-  for (const id of new Set([...w.resources, ...s.resources, ...w.deployments, ...s.deployments])) {
-    assert.equal((await request('GET', `${id}?api-version=${w.versions[id] ?? s.versions[id] ?? '2025-04-01'}`)).status, 404);
+  for (const id of new Set([...w.resources, ...s.resources, ...d.resources, ...w.deployments, ...s.deployments, ...d.deployments])) {
+    assert.equal((await request('GET', `${id}?api-version=${w.versions[id] ?? s.versions[id] ?? d.versions[id] ?? '2025-04-01'}`)).status, 404);
   }
-  for (const name of ['worker-host', 'worker-app', 'scanner-host', 'scanner-app', 'scanner-auth']) {
+  for (const name of ['worker-host', 'worker-app', 'scanner-host', 'scanner-app', 'scanner-auth', 'document-data', 'document-events']) {
     const text = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${resolve('experiments/production-scenarios/document-infra')}:/fixture:ro`, '--entrypoint', '/root/.azure/bin/bicep',
       'globalstack/validation-runner:cli-pinned', 'build', `/fixture/${name}.bicep`, '--stdout'], { encoding: 'utf8', timeout: 60000 });
     compiled.set(name, { text, template: JSON.parse(text) }); report.templates.push({ name, sha256: createHash('sha256').update(text).digest('hex') });
@@ -104,9 +107,9 @@ try {
   facade = createFunctionsRouterServer(runtime.functionsRouter);
   for (const server of [arm, facade]) await new Promise(done => server.listen(0, '127.0.0.1', done));
   assert.equal((await local('PUT', `${w.group}?api-version=2022-09-01`, { location: 'westus2' })).status, 201);
-  report.budget = await reserveBudget(productionBudgetPath, { runId: m.runId, envelopeUsd: 11, purpose: 'Paired actual Functions managed-identity scanner calls' }); allocated = true;
+  report.budget = await reserveBudget(productionBudgetPath, { runId: m.runId, envelopeUsd: 12, purpose: 'Paired native document worker, scanner, data and Event Grid deployment' }); allocated = true;
   await writeFile(manifestPath, JSON.stringify(m), { mode: 0o600, flag: 'wx' });
-  watchdog = spawn(process.execPath, [resolve('experiments/production-scenarios/worker-scanner-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
+  watchdog = spawn(process.execPath, [resolve('experiments/production-scenarios/document-paired-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
   await new Promise((done, fail) => { watchdog.once('spawn', done); watchdog.once('error', fail); }); watchdog.unref();
   const base = { serviceName: w.service, location: 'westus2' };
   await deploy('worker-host', w.deployments[0], { ...base, publisherPrincipalId: m.publisher, roleAssignmentNames: manifests.worker.roles });
@@ -197,6 +200,14 @@ try {
     }
   }
   report.componentChecksPassed = true;
+  const data = await deploy('document-data', d.deployments[0], { accountName: `${w.service}docs`, workerIdentityName: `${w.service}-worker`, publisherPrincipalId: m.publisher,
+    roleAssignmentNames: m.documentRoles.slice(0, 2), location: 'westus2' });
+  report.documentDataDeployed = true;
+  assert.equal(data.azure.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
+  assert.equal(data.local.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
+  await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
+    topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
+  report.documentEventSubscriptionDeployed = true;
 } catch (error) { report.error = sanitize(error.message, replacements); }
 finally {
   // Preserve measured outcomes before a potentially long cloud deletion.
@@ -212,7 +223,7 @@ finally {
   if (allocated) {
     try {
       const refreshed = azureToken(m.config); replacements.push([refreshed, '<redacted>']);
-      report.cleanup = await cleanupPairedComponent(m, pairedComponentClient({ ...m, token: refreshed }, event => observe('azure', event)));
+      report.cleanup = await cleanupDocumentPaired(m, documentPairedClient({ ...m, token: refreshed }, event => observe('azure', event)));
       await writeFile(donePath, 'verified\n', { mode: 0o600 }); watchdog?.kill('SIGTERM'); await rm(manifestPath, { force: true }); await confirmBudgetCleanup(productionBudgetPath, m.runId);
     } catch (error) { report.cleanup = { cleanupComplete: false, recoveryRequired: true, error: sanitize(error.message, replacements) }; }
   }
