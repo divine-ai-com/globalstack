@@ -14,9 +14,10 @@ const searchComponent = args.includes('--search-component');
 const storageComponent = args.includes('--storage-component');
 const webComponent = args.includes('--web-component');
 const scannerComponent = args.includes('--scanner-component');
-assert.ok([validationOnly, searchComponent, storageComponent, webComponent, scannerComponent].filter(Boolean).length <= 1, 'Select only one scenario runner');
-const platform = validationOnly ? `document-${process.env.VALIDATION_COMPONENT ?? 'search'}-validation` : searchComponent ? 'search-component' : storageComponent ? 'storage-component' : webComponent ? 'web-component' : scannerComponent ? 'scanner-component' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
-assert.ok(validationOnly || searchComponent || storageComponent || webComponent || scannerComponent || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
+const workerScanner = args.includes('--worker-scanner');
+assert.ok([validationOnly, searchComponent, storageComponent, webComponent, scannerComponent, workerScanner].filter(Boolean).length <= 1, 'Select only one scenario runner');
+const platform = validationOnly ? `document-${process.env.VALIDATION_COMPONENT ?? 'search'}-validation` : searchComponent ? 'search-component' : storageComponent ? 'storage-component' : webComponent ? 'web-component' : scannerComponent ? 'scanner-component' : workerScanner ? 'worker-scanner' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
+assert.ok(validationOnly || searchComponent || storageComponent || webComponent || scannerComponent || workerScanner || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
 const modulePath = process.env.PAIRED_PLAYWRIGHT_MODULE;
 assert.ok(modulePath?.startsWith('/'), 'Absolute path to installed playwright-core/index.mjs required');
 const { chromium } = await import(pathToFileURL(modulePath).href);
@@ -31,6 +32,7 @@ if (searchComponent) template = template.replace('Same fixture hashes and tool i
 if (storageComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'Azure-first Storage API contract requests, then identical local requests.').replace('Empty resource group only.', 'Storage component diagnostics. Not a native IaC deployment or Portal recording.');
 if (webComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep template; Azure-first Linux hosting plan lifecycle.').replace('Empty resource group only.', 'P0v3 and EP1 plans only. No application runtime or Portal evidence.');
 if (scannerComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'Identical compiled templates and scanner image; Azure-first ingress observations.').replace('Empty resource group only.', 'Scanner component only. Worker traversal, full applications and Portal evidence remain pending.');
+if (workerScanner) template = template.replace('Same fixture hashes and tool image for both targets.', 'Identical compiled templates and images; generated endpoints are external configuration.').replace('Empty resource group only.', 'Actual Functions handler and scanner component. Event Grid, full applications and Portal evidence remain pending.');
 const events = async () => {
   try { return (await readFile(resolve(runDir, 'events.ndjson'), 'utf8')).split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line)]; } catch { return []; } }); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
@@ -56,7 +58,7 @@ try {
   exitCode = await new Promise((done, fail) => {
     const runner = validationOnly ? resolve(here, '../production-scenarios/validate-search.mjs')
       : searchComponent ? resolve(here, '../production-scenarios/search-component.mjs')
-      : storageComponent ? resolve(here, '../production-scenarios/storage-component.mjs') : webComponent ? resolve(here, '../production-scenarios/web-component.mjs') : scannerComponent ? resolve(here, '../production-scenarios/scanner-azure.mjs') : resolve(here, 'run.mjs');
+      : storageComponent ? resolve(here, '../production-scenarios/storage-component.mjs') : webComponent ? resolve(here, '../production-scenarios/web-component.mjs') : scannerComponent ? resolve(here, '../production-scenarios/scanner-azure.mjs') : workerScanner ? resolve(here, '../production-scenarios/worker-scanner-paired.mjs') : resolve(here, 'run.mjs');
     const child = spawn(process.execPath, [runner, ...args], { env: { ...process.env, PAIRED_RUN_DIR: runDir }, stdio: 'inherit' });
     child.on('error', fail); child.on('exit', code => done(code ?? 1));
   });

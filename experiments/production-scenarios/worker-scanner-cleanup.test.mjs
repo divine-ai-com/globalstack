@@ -36,3 +36,28 @@ test('a foreign scanner prevents deleting shared worker resources', async () => 
   await assert.rejects(cleanupPairedComponent(m, request));
   assert.deepEqual(mutations, []);
 });
+
+test('paired cleanup removes shared resources, both role sets, and both deployments', async () => {
+  const { cleanupPairedComponent } = await import('./worker-scanner-cleanup.mjs');
+  const { workerRoles } = await import('./worker-cleanup.mjs');
+  const { worker, scanner } = pairedComponentManifests(m), w = workerPaths(worker), s = scannerPaths(scanner);
+  const live = new Set([...w.resources, ...s.resources]);
+  const workerPrincipal = '33333333-3333-4333-8333-333333333333', scannerPrincipal = '44444444-4444-4444-8444-444444444444';
+  const request = async (method, path) => {
+    const id = path.split('?')[0];
+    if (id === w.group) return { status: 200 };
+    if (id === `${w.group}/resources`) return { status: 200, body: { value: [...live].filter(id => !id.includes('/roleAssignments/')).map(id => ({ id })) } };
+    if (method === 'DELETE') { live.delete(id); return { status: 202 }; }
+    if (!live.has(id)) return { status: 404 };
+    const wi = w.roles.indexOf(id), si = s.roles.indexOf(id);
+    if (wi >= 0 || si >= 0) return { status: 200, body: { properties: {
+      description: `globalstack-production-scenarios:${m.runId}`, scope: wi >= 0 && wi < 4 ? w.storage : w.registry,
+      principalId: wi === 5 ? m.publisher : wi >= 0 ? workerPrincipal : scannerPrincipal,
+      roleDefinitionId: `/subscriptions/${m.subscription}/providers/Microsoft.Authorization/roleDefinitions/${wi >= 0 ? workerRoles[wi] : workerRoles[4]}`,
+    } } };
+    return { status: 200, body: { tags: { run: m.runId, project: 'globalstack-production-scenarios' },
+      properties: { principalId: id === s.scanner ? scannerPrincipal : workerPrincipal } } };
+  };
+  const result = await cleanupPairedComponent(m, request);
+  assert.equal(result.resourcesAbsent, true); assert.equal(result.groupEmpty, true); assert.equal(live.size, 0);
+});
