@@ -73,7 +73,7 @@ been measured.
 The `LOCAL_UPLOAD_DIAGNOSTIC=true` mode of `document-worker-local.mjs` deploys
 the document account before the worker, deploys the Event Grid subscription,
 and records an actual managed-identity Blob write and delivery attempt. The
-current component probe lacks the downstream application settings and records
+current component probe lacks the downstream application settings. It records
 the Function's HTTP 500 as a failed delivery attempt, not an application pass.
 
 `node experiments/production-scenarios/worker-scanner-local.mjs` deploys the native

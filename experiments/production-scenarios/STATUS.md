@@ -56,8 +56,8 @@ settings at first creation. The worker template uses Blob-backed Functions keys,
 and the local provisioner verifies those keys against the native host. A
 [clean-source local capture](evidence/document-upload-local-77d7294/) proved
 the revised deployment order, managed-identity Blob upload, Event Grid match
-and Function delivery attempt. The Function returned HTTP 500 because the
-component fixture lacks downstream application settings. This is not a paired
+and Function delivery attempt. The Function returned HTTP 500; the component
+fixture lacks downstream application settings. This is not a paired
 Azure runtime result or a full document workflow pass.
 
 ## Latest scanner and worker checkpoint
