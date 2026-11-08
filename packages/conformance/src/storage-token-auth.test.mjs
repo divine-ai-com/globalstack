@@ -3,7 +3,8 @@ import { createServer, request } from 'node:http';
 import { test } from 'node:test';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import { createEmulatorRuntime } from '../../azure-data-plane/src/emulator-runtime.mjs';
-import { storageTokenAuthorizer, blobDataRoles } from '../../azure-data-plane/src/storage-token-auth.mjs';
+import { storageTokenAuthorizer, blobDataRoles, queueDataContributor, tableDataContributor } from '../../azure-data-plane/src/storage-token-auth.mjs';
+import { storageExchange } from '../../../experiments/production-scenarios/storage-http.mjs';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
 import { createArmServer } from '../../azure-control-plane/src/server.mjs';
 
@@ -29,7 +30,8 @@ async function fixture(t) {
     t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
     return `http://127.0.0.1:${server.address().port}`;
   }
-  const endpoint = await listen(createServer(runtime.storageRouter.blobHandler()));
+  const endpoints = {};
+  for (const service of ['blob', 'queue', 'table']) endpoints[service] = await listen(createServer(runtime.storageRouter[`${service}Handler`]()));
   const arm = await listen(createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource }));
   async function management(method, path, body) {
     const res = await fetch(arm + path, { method, headers: { authorization: 'Bearer globalstack-local-token', 'content-type': 'application/json' },
@@ -55,17 +57,17 @@ async function fixture(t) {
     assert.ok([200, 201].includes(result.status), JSON.stringify(result));
     return id;
   }
-  async function send(method, path, credential, body = '', account = 'tokenaccount') {
+  async function send(method, path, credential, body = '', account = 'tokenaccount', service = 'blob') {
     return new Promise((resolve, reject) => {
-      const req = request(endpoint + path, { method, headers: { host: `${account}.blob.core.windows.net`,
-        authorization: `Bearer ${credential}`, 'x-ms-version': '2023-11-03', 'x-ms-blob-type': 'BlockBlob', 'content-length': Buffer.byteLength(body) } }, res => {
+      const req = request(endpoints[service] + path, { method, headers: { host: `${account}.${service}.core.windows.net`,
+        accept: 'application/json;odata=nometadata', 'content-type': service === 'table' ? 'application/json' : 'application/xml', authorization: `Bearer ${credential}`, 'x-ms-version': '2023-11-03', 'x-ms-blob-type': 'BlockBlob', 'content-length': Buffer.byteLength(body) } }, res => {
         const chunks = []; res.on('data', chunk => chunks.push(chunk)); res.on('error', reject);
         res.on('end', () => resolve({ status: res.statusCode, code: res.headers['x-ms-error-code'], body: Buffer.concat(chunks).toString() }));
       });
       req.on('error', reject); req.end(body);
     });
   }
-  return { runtime, store, role, management, send };
+  return { runtime, store, role, management, send, endpoints };
 }
 
 test('operator trusts reject unsafe keys and malformed configuration', async () => {
@@ -128,5 +130,68 @@ test('conditional assignments fail closed and account roles permit sibling conta
   for (const container of ['landing', 'quarantine']) {
     assert.equal((await f.send('PUT', `/${container}/file.txt`, signed, container)).status, 201);
     assert.equal((await f.send('DELETE', `/${container}/file.txt`, signed)).status, 202);
+  }
+});
+
+for (const [service, dataRole, path, body] of [
+  ['queue', queueDataContributor, '/work-items', ''],
+  ['table', tableDataContributor, '/Tables', JSON.stringify({ TableName: 'WorkItems' })],
+]) test(`${service} bearer operations enforce service roles, account isolation and revocation`, async t => {
+  const f = await fixture(t), signed = await token();
+  const method = service === 'queue' ? 'PUT' : 'POST';
+  const send = (verb, route, credential = signed, payload = '', account = 'tokenaccount') => f.send(verb, route, credential, payload, account, service);
+  await f.role('33333333-3333-4333-8333-333333333333', accountId('tokenaccount'), blobDataRoles.owner);
+  assert.equal((await send(method, path, signed, body)).status, 403);
+  const role = await f.role('44444444-4444-4444-8444-444444444444', accountId('tokenaccount'), dataRole);
+  assert.equal((await send(method, path, 'forged', body)).status, 401);
+  assert.equal((await send(method, path, await token({ aud: 'https://vault.azure.net' }), body)).status, 401);
+  assert.equal((await send(method, path, signed, body, 'otheraccount')).status, 403);
+  assert.equal((await send(method, path, signed, body)).status, 201);
+  const readPath = service === 'queue' ? '/work-items/messages?peekonly=true' : '/WorkItems';
+  if (service === 'queue') {
+    assert.equal((await send('POST', '/work-items/messages', signed, '<QueueMessage><MessageText>payload</MessageText></QueueMessage>')).status, 201);
+    assert.match((await send('GET', readPath)).body, /payload/);
+  } else {
+    assert.equal((await send('POST', '/WorkItems', signed, JSON.stringify({ PartitionKey: 'p', RowKey: 'r', Value: 'payload' }))).status, 201);
+    assert.match((await send('GET', readPath)).body, /payload/);
+  }
+  await f.management('DELETE', `${role}?api-version=2022-04-01`);
+  assert.equal((await send('GET', readPath)).status, 403);
+  await f.role('55555555-5555-4555-8555-555555555555', accountId('tokenaccount'), dataRole, { condition: 'unsupported', conditionVersion: '2.0' });
+  assert.equal((await send('GET', readPath)).status, 403);
+});
+
+test('queue grants cannot reach sibling queues and table-scoped grants cannot authorize unparsed batch bodies', async t => {
+  const f = await fixture(t), signed = await token();
+  for (const path of ['queueServices/default/queues/work-items', 'tableServices/default/tables/WorkItems']) {
+    assert.ok([200, 201].includes((await f.management('PUT', `${accountId('tokenaccount')}/${path}?api-version=2023-05-01`, { properties: {} })).status));
+  }
+  await f.role('33333333-3333-4333-8333-333333333333', `${accountId('tokenaccount')}/queueServices/default/queues/work-items`, queueDataContributor);
+  assert.equal((await f.send('PUT', '/work-items', signed, '', 'tokenaccount', 'queue')).status, 204);
+  assert.equal((await f.send('PUT', '/other-items', signed, '', 'tokenaccount', 'queue')).status, 403);
+  await f.role('44444444-4444-4444-8444-444444444444', `${accountId('tokenaccount')}/tableServices/default/tables/WorkItems`, tableDataContributor);
+  assert.equal((await f.send('POST', '/$batch', signed, '', 'tokenaccount', 'table')).status, 403);
+});
+
+test('ARM shared-key setting blocks signed storage requests without disabling bearer access', async t => {
+  const f = await fixture(t), account = 'tokenaccount', signed = await token();
+  const operations = [
+    { surface: 'blob', method: 'PUT', path: '/landing/key.txt', body: 'key bytes', headers: { 'x-ms-blob-type': 'BlockBlob' } },
+    { surface: 'queue', method: 'PUT', path: '/key-items' },
+    { surface: 'table', method: 'POST', path: '/Tables', body: JSON.stringify({ TableName: 'KeyItems' }), headers: { accept: 'application/json', 'content-type': 'application/json' } },
+  ];
+  for (const allowed of [false, true]) {
+    const update = await f.management('PUT', `${accountId(account)}?api-version=2023-05-01`, { location: 'westus2', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: { allowSharedKeyAccess: allowed } });
+    assert.ok([200, 201, 202].includes(update.status), JSON.stringify(update));
+    const key = f.runtime.storageRouter.account(account).accountKey;
+    for (const operation of operations) {
+      const result = await storageExchange({ account, key, origin: f.endpoints[operation.surface], ...operation });
+      assert.equal(result.status, allowed ? 201 : 403, JSON.stringify(result));
+      if (!allowed) assert.match(result.body, /KeyBasedAuthenticationNotPermitted/);
+    }
+    if (!allowed) {
+      await f.role('33333333-3333-4333-8333-333333333333', accountId(account), blobDataRoles.contributor);
+      assert.equal((await f.send('PUT', '/landing/identity.txt', signed, 'identity bytes')).status, 201);
+    }
   }
 });

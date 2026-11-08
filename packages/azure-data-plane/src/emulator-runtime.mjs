@@ -578,6 +578,7 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
       storageRouter.registerStorageAccount({
         accountName: resource.name,
         accountKey: registeredStorageAccountKey(resourceStore, providerRoute),
+        allowSharedKeyAccess: resource.properties?.allowSharedKeyAccess,
         resourceId: resource.id,
       });
       return;

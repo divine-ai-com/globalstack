@@ -285,13 +285,14 @@ export class StorageDataPlaneRouter {
     return this.accounts.get(lower(accountName)) ?? null;
   }
 
-  registerStorageAccount({ accountName, accountKey, resourceId }) {
+  registerStorageAccount({ accountName, accountKey, resourceId, allowSharedKeyAccess }) {
     const key = lower(accountName);
     const existing = this.accounts.get(key);
     this.accounts.set(key, {
       accountName,
       accountKey,
       resourceId: resourceId ?? existing?.resourceId,
+      allowSharedKeyAccess: allowSharedKeyAccess ?? existing?.allowSharedKeyAccess ?? true,
       containers: existing?.containers ?? new Map(),
       blobs: existing?.blobs ?? new Map(),
       blobVersions: existing?.blobVersions ?? new Map(),
@@ -390,6 +391,7 @@ export class StorageDataPlaneRouter {
       const [containerName, ...blobParts] = segments;
       const containerRequest = segments.length === 1 && url.searchParams.get('restype') === 'container';
       const bearer = /^Bearer(?:\s|$)/i.test(String(req.headers.authorization ?? ''));
+      if (!bearer && account.allowSharedKeyAccess === false && (parseAuthorization(req) || url.searchParams.has('sig'))) return sendXmlError(res, 403, 'KeyBasedAuthenticationNotPermitted', 'Key based authentication is not permitted on this storage account.', requestId);
       if (containerRequest && !parseAuthorization(req) && !bearer) return sendXmlError(res, 501, 'NotImplemented', 'Container SAS authorization is not implemented.', requestId);
       const auth = bearer ? await this.authorizeToken({ req, url, account, containerName, containerRequest })
         : String(req.headers.authorization ?? '').trim() !== ''
@@ -591,7 +593,10 @@ export class StorageDataPlaneRouter {
       if (!accountName) return sendXmlError(res, 404, 'ResourceNotFound', 'The storage account host was not found.', requestId);
       const account = this.account(accountName);
       if (!account) return sendXmlError(res, 404, 'ResourceNotFound', `The storage account '${accountName}' was not found.`, requestId);
-      const auth = validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKey');
+      if (account.allowSharedKeyAccess === false && parseAuthorization(req)) return sendXmlError(res, 403, 'KeyBasedAuthenticationNotPermitted', 'Key based authentication is not permitted on this storage account.', requestId);
+      const auth = /^Bearer /i.test(req.headers.authorization ?? '')
+        ? await this.authorizeToken({ req, url, account, service: 'queue' })
+        : validateSharedKey(req, url, account, Number(req.headers['content-length'] ?? 0), 'SharedKey');
       if (!auth.ok) return sendXmlError(res, auth.status, auth.code, auth.message, requestId);
 
       const segments = url.pathname.split('/').filter(Boolean).map(decodeURIComponent);
@@ -714,7 +719,11 @@ export class StorageDataPlaneRouter {
       const common = { 'content-type': format.startsWith('application/json') ? format : 'application/json;odata=nometadata', 'x-ms-request-id': requestId, 'x-ms-version': '2023-11-03', date: nowUtc() };
       const failure = (status, code, message) => send(res, status, JSON.stringify({ 'odata.error': { code,
         message: { lang: 'en-US', value: `${message}\nRequestId:${requestId}\nTime:${isoNow()}` } } }), common);
-      if (!validateTableKey(req, url, account)) return failure(403, 'AuthenticationFailed', 'Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.');
+      if (account.allowSharedKeyAccess === false && parseAuthorization(req)) return failure(403, 'KeyBasedAuthenticationNotPermitted', 'Key based authentication is not permitted on this storage account.');
+      if (/^Bearer /i.test(req.headers.authorization ?? '')) {
+        const auth = await this.authorizeToken({ req, url, account, service: 'table' });
+        if (!auth.ok) return failure(auth.status, auth.code, auth.message);
+      } else if (!validateTableKey(req, url, account)) return failure(403, 'AuthenticationFailed', 'Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.');
       const entityBody = entity => Object.fromEntries(Object.entries(entity).filter(([key]) => !format.includes('odata=nometadata') || !key.startsWith('odata.')));
       const path = url.pathname.replace(/^\/+/, '');
       if (req.method === 'POST' && path === '$batch') {

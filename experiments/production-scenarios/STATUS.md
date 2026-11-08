@@ -54,6 +54,30 @@ remain outstanding.
   comparison. No security threshold was reduced. Every pushed change remains
   subject to the PR's current checks.
 
+## Native worker storage authentication follow-up
+
+Local regression tests now cover signed workload tokens for the implemented
+Queue operations and Table operations. Queue Data Contributor is evaluated at
+queue scope or an ancestor. Table Data Contributor currently requires service
+scope or an ancestor, including for batches. Table-scoped grants and additional
+Queue/Table data roles remain unsupported. Blob permissions do not grant Queue
+or Table access. Tests exercise wrong signatures/audiences, wrong roles,
+cross-account denial, conditional grants and immediate role revocation.
+
+Storage account PUTs now propagate `allowSharedKeyAccess` to the data plane.
+When false, signed Shared Key requests to Blob, Queue and Table return 403
+`KeyBasedAuthenticationNotPermitted`; supported bearer access remains usable.
+Blob account-key SAS is also rejected. User-delegation SAS is not implemented.
+This follows the [Azure authorization setting](https://learn.microsoft.com/en-us/azure/storage/common/shared-key-authorization-prevent).
+The regression checks disable and re-enable key access through ARM PUTs.
+Storage account PATCH still returns `GlobalStackRouteNotImplemented` and needs
+separate control-plane work.
+
+These are local authorization results. They do not establish native Functions
+host startup with identity-based host storage, automatic worker provisioning,
+or either completed business workflow. No additional Azure deployment was run
+for this change.
+
 ## External prerequisites
 
 1. Hosting creation succeeded in the latest authorized retry. Earlier 429
