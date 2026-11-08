@@ -29,7 +29,10 @@ test('fuzzy matching handles deletion, insertion, replacement and transposition 
   assert.deepEqual(keys(evaluateSearch(source, { search: 'financ', queryType: 'full' })), []);
   assert.deepEqual(keys(evaluateSearch(source, { search: 'financial report', searchMode: 'all' })), ['exact']);
   assert.equal(evaluateSearch(source, { search: 'financal~1' }).error.status, 501);
-  assert.equal(evaluateSearch(source, { search: 'financial AND report', queryType: 'full' }).error.status, 501);
+  assert.deepEqual(keys(evaluateSearch(source, { search: 'financal~1 AND report~1', queryType: 'full' })), ['exact']);
+  for (const malformed of ['AND report~1', 'financial~1 AND', 'financial~1 AND AND report~1', 'financial~1 OR report~1']) {
+    assert.equal(evaluateSearch(source, { search: malformed, queryType: 'full' }).error.status, 501);
+  }
 });
 
 test('cosine query uses vector similarity, k, and Azure score transformation', () => {

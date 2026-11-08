@@ -125,12 +125,18 @@ function textCandidates(index, documents, request) {
     if (names.some(name => !fields.some(field => field.name === name))) return invalid('A requested search field is missing or is not searchable.');
     fields = fields.filter(field => names.includes(field.name));
   }
-  // Limit this first implementation to terms and fuzzy terms. Fielded, phrase,
-  // wildcard and Boolean expressions need their own parser and Azure captures.
-  const parts = text.trim().split(/\s+/u);
+  // The document application emits an all-AND chain of fuzzy terms. Other
+  // Boolean forms, fielded queries, phrases and wildcards need Azure captures.
+  const rawParts = text.trim().split(/\s+/u);
+  const explicitAnd = rawParts.includes('AND');
+  if (explicitAnd && (queryType !== 'full' || rawParts.length % 2 === 0
+    || rawParts.some((part, index) => index % 2 === 1 ? part !== 'AND' : part === 'AND'))) {
+    return unsupported('Only an all-AND full-query term chain is implemented.');
+  }
+  const parts = explicitAnd ? rawParts.filter((_, index) => index % 2 === 0) : rawParts;
   if (parts.length > 32 || parts.some(part => [...part].length > 258)) return unsupported('The local query limit is 32 terms of at most 255 characters each.');
   if (parts.some(part => !/^[\p{L}\p{N}]+(?:~[012]?)?$/u.test(part) || ['AND', 'OR', 'NOT'].includes(part))) {
-    return unsupported('This local evaluator supports plain terms and full-query fuzzy terms only.');
+    return unsupported('This local evaluator supports plain terms and all-AND full-query fuzzy terms only.');
   }
   if (queryType !== 'full' && parts.some(part => part.includes('~'))) return unsupported('Fuzzy syntax requires the full query parser.');
   const tokenized = documents.map(document => ({ document, words: new Set(fields.flatMap(field => {
@@ -150,7 +156,7 @@ function textCandidates(index, documents, request) {
   });
   return { documents: tokenized.filter(item => {
     const matched = expansions.map(set => [...set].some(word => item.words.has(word)));
-    return searchMode === 'all' ? matched.every(Boolean) : matched.some(Boolean);
+    return explicitAnd || searchMode === 'all' ? matched.every(Boolean) : matched.some(Boolean);
   }).map(item => item.document) };
 }
 

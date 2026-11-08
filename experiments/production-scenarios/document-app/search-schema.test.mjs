@@ -5,6 +5,7 @@ import { httpExchange } from '../http-exchange.mjs';
 import { searchAccessFilter } from './access.mjs';
 import { documentIndex } from './search-schema.mjs';
 import { projectionBlob, projectionDataSource, projectionIndex, projectionIndexer } from './search-projection.mjs';
+import { fuzzyQuery } from './ingress.mjs';
 
 test('clean projection and tombstone match the separate Blob indexer contract', () => {
   const storageId = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-pilot/providers/Microsoft.Storage/storageAccounts/gsdocstorage';
@@ -52,6 +53,18 @@ test('document push index accepts the application payload and enforces tenant an
   });
   assert.equal(visible.status, 200, JSON.stringify(visible.body));
   assert.deepEqual(visible.body.value.map(hit => hit.document_id), ['6aebd853-51cb-423e-809b-5a1c3586d2c4']);
+  const fuzzy = await call('POST', "/indexes('documents')/docs/search", {
+    search: fuzzyQuery('anual report'), queryType: 'full', searchMode: 'all', top: 20,
+    select: 'document_id,revision_id', filter: searchAccessFilter({ tenant: 'school', subject: reader, groups: [group] }),
+  });
+  assert.equal(fuzzy.status, 200, JSON.stringify(fuzzy.body));
+  assert.deepEqual(fuzzy.body.value.map(hit => hit.document_id), ['6aebd853-51cb-423e-809b-5a1c3586d2c4']);
+  const absent = await call('POST', "/indexes('documents')/docs/search", {
+    search: fuzzyQuery('anual missing'), queryType: 'full', searchMode: 'all',
+    filter: searchAccessFilter({ tenant: 'school', subject: reader, groups: [group] }),
+  });
+  assert.equal(absent.status, 200);
+  assert.deepEqual(absent.body.value, []);
   const hidden = await call('POST', "/indexes('documents')/docs/search", {
     search: 'school', queryType: 'full', searchMode: 'all', top: 20, select: 'document_id,revision_id',
     filter: searchAccessFilter({ tenant: 'school', subject: reader, groups: [] }),
@@ -63,4 +76,6 @@ test('document push index accepts the application payload and enforces tenant an
   });
   assert.equal(unsupported.status, 501);
   assert.equal(unsupported.body.error.code, 'GlobalStackQueryNotImplemented');
+  const otherBoolean = await call('POST', "/indexes('documents')/docs/search", { search: 'annual~1 OR report~1', queryType: 'full' });
+  assert.equal(otherBoolean.status, 501);
 });
