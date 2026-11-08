@@ -48,8 +48,14 @@ export function validateStorageSystemSubscription(store, providerRoute, body, fu
     const functionId = destination.resourceId;
     const match = typeof functionId === 'string' && /^(.*\/providers\/Microsoft\.Web\/sites\/[^/]+)\/functions\/[^/]+$/i.exec(functionId);
     const fn = match && storedResource(store, functionId), site = match && storedResource(store, match[1]);
-    if (!fn || !site || !fn.properties?.config?.bindings?.some(binding => lower(binding.type) === 'eventgridtrigger')) return error(400, 'InvalidRequest', 'The destination must be an existing Event Grid function.');
+    if (!site) {
+      return error(400, 'InvalidRequest', 'The destination must be an existing Event Grid function.');
+    }
     if (!functionsRouter?.hasNativeWorker(site.id)) return unsupported('The destination function needs a configured native worker.');
+    if (!functionsRouter.hasNativeEventGridFunction(functionId)
+      || (fn && !fn.properties?.config?.bindings?.some(binding => lower(binding.type) === 'eventgridtrigger'))) {
+      return error(400, 'InvalidRequest', 'The destination must be an existing Event Grid function.');
+    }
     return null;
   }
   const { delivery, destination, account, queue, principal } = systemTopicDestination(store, topic, properties);

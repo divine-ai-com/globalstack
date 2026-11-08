@@ -319,13 +319,21 @@ export class FunctionsRouter {
     return this.nativeWorkers.has(String(resourceId ?? '').toLowerCase());
   }
 
+  hasNativeEventGridFunction(functionId) {
+    const match = /^(.*\/providers\/Microsoft\.Web\/sites\/([^/]+))\/functions\/([^/]+)$/i.exec(functionId ?? '');
+    const app = match && this.apps.get(match[2].toLowerCase());
+    const binding = match && this.nativeWorkers.get(match[1].toLowerCase());
+    if (!app || !binding || app.resourceId?.toLowerCase() !== match[1].toLowerCase()) return false;
+    return binding.eventGridFunctions ? binding.eventGridFunctions.has(match[3].toLowerCase())
+      : app.triggers.get(match[3].toLowerCase())?.type === 'eventGridTrigger';
+  }
+
   async deliverEventGrid(functionId, event, options) {
     const match = /^(.*\/providers\/Microsoft\.Web\/sites\/([^/]+))\/functions\/([^/]+)$/i.exec(functionId ?? '');
     const app = match && this.apps.get(match[2].toLowerCase());
     const binding = match && this.nativeWorkers.get(match[1].toLowerCase());
     if (!app || !binding || app.resourceId?.toLowerCase() !== match[1].toLowerCase()) return { reason: 'NativeFunctionDestinationUnavailable' };
-    if (binding.eventGridFunctions ? !binding.eventGridFunctions.has(match[3].toLowerCase())
-      : app.triggers.get(match[3].toLowerCase())?.type !== 'eventGridTrigger') return { reason: 'NativeEventGridTriggerNotRegistered' };
+    if (!this.hasNativeEventGridFunction(functionId)) return { reason: 'NativeEventGridTriggerNotRegistered' };
     return deliverNativeEventGrid(binding, match[3], event, options);
   }
 

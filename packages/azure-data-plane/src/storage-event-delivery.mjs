@@ -56,8 +56,9 @@ export class StorageEventDelivery {
         item.attempts++;
         const functionId = subscription.properties.destination.properties?.resourceId;
         const siteId = /^(.*)\/functions\/[^/]+$/i.exec(functionId ?? '')?.[1];
-        const fn = storedResource(this.store, functionId), site = storedResource(this.store, siteId);
-        if (!fn || !site || site.properties?.publicNetworkAccess === 'Disabled' || !this.functionsRouter) {
+        const site = storedResource(this.store, siteId);
+        if (!site || site.properties?.publicNetworkAccess === 'Disabled'
+          || !this.functionsRouter?.hasNativeEventGridFunction(functionId)) {
           this.complete(key, item, 'NativeFunctionDestinationUnavailable'); continue;
         }
         const controller = new AbortController(); this.inFlight.set(key, controller);

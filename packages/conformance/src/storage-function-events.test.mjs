@@ -19,7 +19,7 @@ async function until(predicate) {
   const deadline = Date.now() + 3000;
   while (!predicate()) { assert.ok(Date.now() < deadline, 'Expected event observation did not arrive'); await new Promise(resolve => setTimeout(resolve, 10)); }
 }
-async function fixture(t) {
+async function fixture(t, { discoveredFunction = false } = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'globalstack-events-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const master = randomBytes(32).toString('base64'), eventKey = randomBytes(32).toString('base64');
@@ -59,7 +59,8 @@ async function fixture(t) {
   const plan = `${group}/providers/Microsoft.Web/serverfarms/worker-plan`;
   await put(plan, { location: 'westus2', sku: { name: 'Y1', tier: 'Dynamic' }, properties: {} });
   await put(site, { location: 'westus2', kind: 'functionapp,linux', properties: { serverFarmId: plan } });
-  await put(fn, { properties: { config: { bindings: [{ name: 'event', type: 'eventGridTrigger', direction: 'in' }] } } });
+  if (discoveredFunction) runtime.functionsRouter.nativeWorkers.get(site.toLowerCase()).eventGridFunctions = new Set(['observeblob']);
+  else await put(fn, { properties: { config: { bindings: [{ name: 'event', type: 'eventGridTrigger', direction: 'in' }] } } });
   await put(account, { location: 'westus2', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {} }, '2023-05-01');
   for (let i = 0; i < 6; i++) await management('GET', account, undefined, '2023-05-01');
   await put(topic, { location: 'westus2', properties: { source: account, topicType: 'Microsoft.Storage.StorageAccounts' } }, '2025-02-15');
@@ -73,6 +74,20 @@ async function fixture(t) {
   const upload = path => exchange('PUT', path, 'actual uploaded document', { 'x-ms-blob-type': 'BlockBlob', 'x-ms-client-request-id': 'document-correlation' });
   return { runtime, observed, state, upload, management, subscriptionBody, advance: ms => { now += ms; runtime.storageEventDelivery.drain(); } };
 }
+
+test('discovered native Function receives Blob events without a manually written ARM child', async t => {
+  const f = await fixture(t, { discoveredFunction: true });
+  assert.equal((await f.management('GET', fn)).status, 404);
+  const missing = structuredClone(f.subscriptionBody);
+  missing.properties.destination.properties.resourceId = `${site}/functions/notDeployed`;
+  assert.equal((await f.management('PUT', subscription, missing, '2025-02-15')).status, 400);
+  f.state.status = 200;
+  const uploaded = await f.upload('/landing/native.txt');
+  assert.equal(uploaded.status, 201);
+  await until(() => f.runtime.storageEventDelivery.diagnostics.at(-1)?.state === 'delivered');
+  assert.equal(f.observed.length, 1);
+  assert.equal(f.observed[0][0].subject, '/blobServices/default/containers/landing/blobs/native.txt');
+});
 
 test('Blob events invoke the bound worker and retry failed delivery with the same event', async t => {
   const f = await fixture(t);
