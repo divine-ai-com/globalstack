@@ -47,6 +47,21 @@ test('paired cleanup checks document ownership before touching worker resources'
   assert.deepEqual(mutations, []);
 });
 
+test('document cleanup retries a transient ownership read without submitting a mutation', async () => {
+  const d = documentPaths(m), mutations = [];
+  let accountReads = 0;
+  const request = async (method, path) => {
+    if (method !== 'GET') mutations.push(path);
+    if (path.split('?')[0] === d.group) return { status: 200 };
+    if (path.split('?')[0] === d.account && accountReads++ === 0) return { status: 429, headers: { 'retry-after': '0' } };
+    return { status: 404 };
+  };
+  const result = await cleanupDocument(m, request, { sleep: async () => {} });
+  assert.equal(result.resourcesAbsent, true);
+  assert.equal(accountReads, 3);
+  assert.deepEqual(mutations, []);
+});
+
 test('document cleanup removes only owned resources and retains the group', async () => {
   const d = documentPaths(m), w = workerPaths({ ...m, roles: m.roles.slice(0, 6) });
   const live = new Set([...d.resources, ...d.deployments]);

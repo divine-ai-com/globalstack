@@ -47,7 +47,18 @@ export function documentClient(m, observe = () => {}, exchange = httpExchange) {
 
 export async function cleanupDocument(m, request = documentClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 600000, planOnly = false } = {}) {
   const s = documentPaths(m), deadline = Date.now() + timeoutMs;
-  const get = id => request('GET', `${id}?api-version=${id === s.group ? '2022-09-01' : s.versions[id] ?? '2025-04-01'}`);
+  const get = async id => {
+    const path = `${id}?api-version=${id === s.group ? '2022-09-01' : s.versions[id] ?? '2025-04-01'}`;
+    for (let attempt = 0; ; attempt++) {
+      assert.ok(Date.now() < deadline, 'Document cleanup deadline exceeded');
+      let result;
+      try { result = await request('GET', path); }
+      catch (error) { if (attempt >= 4) throw error; }
+      if (result && (![408, 429, 500, 502, 503, 504].includes(result.status) || attempt >= 4)) return result;
+      const seconds = Number(result?.headers?.['retry-after']);
+      await sleep(Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds * 1000, 30000) : 3000);
+    }
+  };
   const existing = [], deployments = [];
   for (const id of s.deployments) {
     let found = await get(id);
