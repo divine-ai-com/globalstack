@@ -21,14 +21,20 @@ remain outstanding.
 The first document data and eventing Bicep modules now compile with the pinned
 CLI image. The data module now includes scoped pilot and worker Blob grants.
 The paired runner has an ownership-checked watchdog for the document account,
-topic, subscription, roles and deployments, with a USD 12 envelope. The modules
-have not yet been submitted to Azure or GlobalStack. The local
+topic, subscription, roles and deployments, with a USD 12 envelope. In the first
+document-module deployment attempt, Azure accepted both modules; GlobalStack accepted
+the data module but returned 501 for identity-based Event Grid dead lettering.
+The [redacted comparison](evidence/document-event-azure-40e5521/) retains the
+same compiled template hash. After the local fix, a clean-source replay with a
+synthetic Function discovery adapter accepted both modules. The paired run is
+still cleaning up Azure resources, and actual Blob delivery on the corrected
+revision remains untested. The local
 [native Event Grid probe](evidence/native-event-discovery-d61025d/) discovered
 the deployed Function without a manually written Function child resource and
 observed its expected application failure. The complete document application
-settings and downstream infrastructure remain unconnected. GlobalStack also
-rejects the required Event Grid dead-letter configuration; this must be paired
-against Azure and implemented before the eventing module can pass locally.
+settings and downstream infrastructure remain unconnected. The corrected
+dead-letter path has local role and persistence tests, but no Azure runtime
+capture of dead-letter blob contents or timing.
 
 ## Latest scanner and worker checkpoint
 
