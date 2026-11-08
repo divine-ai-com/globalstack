@@ -84,8 +84,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      - name: Fetch the verified CodeQL javascript bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/repository/fetch-codeql.sh javascript "$RUNNER_TEMP/codeql-javascript.tar.zst"
       - uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4
         with:
+          tools: ${{ runner.temp }}/codeql-javascript.tar.zst
           languages: javascript-typescript
           build-mode: none
           queries: security-extended
@@ -117,8 +122,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      - name: Fetch the verified CodeQL python bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/repository/fetch-codeql.sh python "$RUNNER_TEMP/codeql-python.tar.zst"
       - uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4
         with:
+          tools: ${{ runner.temp }}/codeql-python.tar.zst
           languages: python
           build-mode: none
           queries: security-extended
