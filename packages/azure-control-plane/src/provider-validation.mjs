@@ -1795,21 +1795,33 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
         "Parameter 'Sku.Tier' must be specified. This parameter cannot be NULL or empty.",
       );
     }
-    if (!isNonEmptyString(body.properties?.administratorLogin)) {
+    const entraOnly = body.properties?.authConfig?.activeDirectoryAuth === 'Enabled'
+      && body.properties?.authConfig?.passwordAuth === 'Disabled';
+    if (!entraOnly && !isNonEmptyString(body.properties?.administratorLogin)) {
       return envelopedError(400, 'MissingRequiredParameter', "Parameter 'AdministratorLogin' must be specified. This parameter cannot be NULL or empty.");
     }
-    if (!isNonEmptyString(body.properties?.administratorLoginPassword)) {
+    if (!entraOnly && !isNonEmptyString(body.properties?.administratorLoginPassword)) {
       return envelopedError(
         400,
         'MissingRequiredParameter',
         "Parameter 'AdministratorLoginPassword' must be specified. This parameter cannot be NULL or empty.",
       );
     }
-    if (String(body.properties.administratorLoginPassword).length < 8) {
+    if (!entraOnly && String(body.properties.administratorLoginPassword).length < 8) {
       return envelopedError(400, 'InvalidParameterValue', 'The password validation failed. Please retry using a valid password.');
     }
     if (body.properties?.version && !['11', '12', '13', '14', '15', '16'].includes(String(body.properties.version))) {
       return envelopedError(400, 'InvalidParameterValue', 'Invalid value given for parameter Version. Specify a valid parameter value.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/administrators') {
+    const name = providerRoute?.typePath?.split('/').at(-1) ?? '';
+    if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(name)
+      || body.properties?.principalType !== 'ServicePrincipal'
+      || !isNonEmptyString(body.properties?.principalName)
+      || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.properties?.tenantId ?? '')) {
+      return envelopedError(400, 'InvalidParameterValue', 'The PostgreSQL Entra administrator requires a service principal, object ID, name and tenant ID.');
     }
   }
 

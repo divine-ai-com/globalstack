@@ -29,15 +29,20 @@ test('foreign PostgreSQL server tags prevent deletion', async () => {
 
 test('owned PostgreSQL server is removed and pilot group retained', async () => {
   let exists = true;
+  let staleInventoryReads = 1;
   const request = async (method, path) => {
     const id = new URL(path, 'https://management.azure.com').pathname;
     if (id === scope.deployment) return { status: 404 };
     if (id === scope.group) return { status: 200, body: {} };
-    if (id === `${scope.group}/resources`) return { status: 200, body: { value: exists ? [{ id: scope.server }] : [] } };
+    if (id === `${scope.group}/resources`) {
+      const stale = !exists && staleInventoryReads-- > 0;
+      return { status: 200, body: { value: exists || stale ? [{ id: scope.server }] : [] } };
+    }
     if (id === scope.server && method === 'DELETE') { exists = false; return { status: 202 }; }
     if (id === scope.server) return exists ? { status: 200, body: { tags } } : { status: 404 };
     throw new Error('Unexpected cleanup request');
   };
   assert.deepEqual(await cleanupPostgres(manifest, request, { sleep: async () => {} }),
     { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true });
+  assert.equal(staleInventoryReads, -1, 'Cleanup must retry a stale child inventory after server deletion');
 });

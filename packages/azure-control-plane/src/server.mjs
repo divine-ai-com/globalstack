@@ -1852,6 +1852,7 @@ export function createArmRequestHandler({
           providerRoute.providerNamespace === 'Microsoft.DBforPostgreSQL'
           && resourceType.startsWith('Microsoft.DBforPostgreSQL/flexibleServers/')
           && resourceType !== 'Microsoft.DBforPostgreSQL/flexibleServers/databases'
+          && resourceType !== 'Microsoft.DBforPostgreSQL/flexibleServers/administrators'
           && !exactCapabilityForResourceType(resourceType)
         ) {
           return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [

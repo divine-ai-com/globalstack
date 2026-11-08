@@ -98,11 +98,15 @@ export async function cleanupPostgres(manifest, request = postgresClient(manifes
       await sleep(3000);
     }
   }
-  const after = await get(`${scope.group}/resources`, '2021-04-01');
-  assert.equal(after.status, 200);
-  assert.ok(!after.body.nextLink && Array.isArray(after.body.value));
-  assert.ok(!after.body.value.some(item => item.id?.toLowerCase() === scope.server.toLowerCase()
-    || item.id?.toLowerCase().startsWith(`${scope.server.toLowerCase()}/`)), 'PostgreSQL children remain after cleanup');
+  while (true) {
+    const after = await get(`${scope.group}/resources`, '2021-04-01');
+    assert.equal(after.status, 200);
+    assert.ok(!after.body.nextLink && Array.isArray(after.body.value));
+    if (!after.body.value.some(item => item.id?.toLowerCase() === scope.server.toLowerCase()
+      || item.id?.toLowerCase().startsWith(`${scope.server.toLowerCase()}/`))) break;
+    assert.ok(Date.now() < deadline, 'PostgreSQL inventory did not converge before cleanup deadline');
+    await sleep(3000);
+  }
   assert.equal((await get(scope.group, '2022-09-01')).status, 200, 'Pilot group was removed');
   return { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true };
 }

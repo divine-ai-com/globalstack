@@ -3,7 +3,6 @@ import { createHash, randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
-import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { httpExchange } from './http-exchange.mjs';
 
@@ -13,6 +12,7 @@ const fixture = new URL('./document-infra/', import.meta.url);
 const templateHashes = {
   'document-search': { source: '67035e06c5030979672447319395b5a23c81ef7d790ceab0388013e6f5693d8d', compiled: '3183d0eeda00b77fc2f121eb16e7c493e410429326ab690a95110cbd38f8285a' },
   'document-failures': { source: '625a9049cf275bd6a299ac8a157064e57abe3bc69b2f5cf1428107bf41f57eb3', compiled: '3219de7e24875bea97bf758567ea5b23ff1bff25217ec9c49e0a1d60f5f255d6' },
+  'document-postgres': { source: '8168db6da3382f9e442b9bf282d8972117423cead3da59d429ea18329f710280', compiled: '47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9' },
 };
 
 async function compiled(name) {
@@ -26,15 +26,13 @@ async function compiled(name) {
   return JSON.parse(output);
 }
 
-test('document Search and failure-queue ARM modules deploy locally with scoped identity roles', async t => {
+test('document Search, failure queue and Entra-only PostgreSQL modules deploy locally', async t => {
   const store = new ResourceStore();
-  const runtime = createEmulatorRuntime({ store });
-  const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource });
+  const arm = createArmServer({ store });
   await new Promise(resolve => arm.listen(0, '127.0.0.1', resolve));
   t.after(async () => {
     arm.closeAllConnections();
     await new Promise(resolve => arm.close(resolve));
-    await runtime.dispose();
   });
   const request = (method, path, body) => httpExchange(`http://127.0.0.1:${arm.address().port}${path}`, {
     method, body, headers: { authorization: 'Bearer globalstack-local-token' },
@@ -46,11 +44,14 @@ test('document Search and failure-queue ARM modules deploy locally with scoped i
     store.resources.set(id.toLowerCase(), { id, name: `gsdoc-${name}`, type: 'Microsoft.ManagedIdentity/userAssignedIdentities',
       location: 'westus2', properties: { principalId: randomUUID() } });
   }
+  const postgresAdminId = randomUUID();
   const cases = [
     ['document-search', { serviceName: 'gsdoc', publisherPrincipalId: randomUUID(),
       workerIdentityName: 'gsdoc-worker', ingressIdentityName: 'gsdoc-ingress', roleAssignmentNames: Array.from({ length: 3 }, randomUUID) }],
     ['document-failures', { namespaceName: 'gsdoc-failures', workerIdentityName: 'gsdoc-worker',
       roleAssignmentNames: Array.from({ length: 2 }, randomUUID) }],
+    ['document-postgres', { serviceName: 'gsdoc', tenantId: '11111111-1111-4111-8111-111111111111',
+      administratorObjectId: postgresAdminId, administratorName: 'pilot-service-principal' }],
   ];
   for (const [name, parameters] of cases) {
     const deployment = `${group}/providers/Microsoft.Resources/deployments/${name}`;
@@ -67,5 +68,10 @@ test('document Search and failure-queue ARM modules deploy locally with scoped i
   const queue = await request('GET', `${group}/providers/Microsoft.ServiceBus/namespaces/gsdoc-failures/queues/document-failures?api-version=2024-01-01`);
   assert.equal(queue.status, 200);
   assert.equal(queue.body.properties.deadLetteringOnMessageExpiration, true);
+  const postgres = await request('GET', `${group}/providers/Microsoft.DBforPostgreSQL/flexibleServers/gsdoc-db?api-version=2024-08-01`);
+  assert.equal(postgres.status, 200);
+  assert.equal(postgres.body.properties.authConfig.passwordAuth, 'Disabled');
+  assert.equal((await request('GET', `${group}/providers/Microsoft.DBforPostgreSQL/flexibleServers/gsdoc-db/administrators/${postgresAdminId}?api-version=2024-08-01`)).status, 200);
+  assert.equal((await request('GET', `${group}/providers/Microsoft.DBforPostgreSQL/flexibleServers/gsdoc-db/databases/documents?api-version=2024-08-01`)).status, 200);
   assert.equal((await request('DELETE', `${group}?api-version=2022-09-01`)).status, 200);
 });
