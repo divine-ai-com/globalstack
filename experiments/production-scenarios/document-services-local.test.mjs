@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
@@ -9,12 +9,21 @@ import { httpExchange } from './http-exchange.mjs';
 
 const subscription = '00000000-0000-0000-0000-000000000000';
 const group = `/subscriptions/${subscription}/resourceGroups/gs-document-services-test`;
-const fixture = new URL('./document-infra/', import.meta.url).pathname;
+const fixture = new URL('./document-infra/', import.meta.url);
+const templateHashes = {
+  'document-search': { source: '67035e06c5030979672447319395b5a23c81ef7d790ceab0388013e6f5693d8d', compiled: '3183d0eeda00b77fc2f121eb16e7c493e410429326ab690a95110cbd38f8285a' },
+  'document-failures': { source: '625a9049cf275bd6a299ac8a157064e57abe3bc69b2f5cf1428107bf41f57eb3', compiled: '3219de7e24875bea97bf758567ea5b23ff1bff25217ec9c49e0a1d60f5f255d6' },
+};
 
-function compile(name) {
-  return JSON.parse(execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${fixture}:/fixture:ro`,
-    '--entrypoint', '/root/.azure/bin/bicep', 'globalstack/validation-runner:cli-pinned',
-    'build', `/fixture/${name}.bicep`, '--stdout'], { encoding: 'utf8', timeout: 60000 }));
+async function compiled(name) {
+  const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+  const [source, output] = await Promise.all([
+    readFile(new URL(`${name}.bicep`, fixture)),
+    readFile(new URL(`compiled/${name}.json`, fixture)),
+  ]);
+  assert.equal(hash(source), templateHashes[name].source, 'Bicep source changed without recompiling the local fixture');
+  assert.equal(hash(output), templateHashes[name].compiled, 'Compiled ARM fixture changed without review');
+  return JSON.parse(output);
 }
 
 test('document Search and failure-queue ARM modules deploy locally with scoped identity roles', async t => {
@@ -46,7 +55,7 @@ test('document Search and failure-queue ARM modules deploy locally with scoped i
   for (const [name, parameters] of cases) {
     const deployment = `${group}/providers/Microsoft.Resources/deployments/${name}`;
     const result = await request('PUT', `${deployment}?api-version=2025-04-01`, { properties: {
-      mode: 'Incremental', template: compile(name), parameters: Object.fromEntries(
+      mode: 'Incremental', template: await compiled(name), parameters: Object.fromEntries(
         Object.entries({ ...parameters, location: 'westus2', runId: 'a1b2c3d4e5f6' }).map(([key, value]) => [key, { value }])
       ),
     } });
