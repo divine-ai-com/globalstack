@@ -44,6 +44,10 @@ function request(url, options = {}) {
   });
 }
 try {
+  if (process.env.FUNCTIONS_PROBE_NATIVE_EVENTS === '1') {
+    assert.equal(process.env.FUNCTIONS_PROBE_ORCHESTRATION, '1', 'Native event probe requires orchestration mode');
+    assert.equal(process.env.FUNCTIONS_PROBE_NATIVE_ROUTING, '1', 'Native event probe requires native routing');
+  }
   if (hostStorageIdentity) assert.equal(process.env.FUNCTIONS_PROBE_IDENTITY, '1', 'Host identity requires the identity fixture');
   report.imageId = (await exec('docker', ['image', 'inspect', 'globalstack/document-functions:pilot', '--format', '{{.Id}}'])).stdout.trim();
   await exec('docker', ['network', 'create', '--internal', '--label', 'globalstack.experiment=functions-storage', name]);
@@ -159,7 +163,16 @@ try {
       const subscriptionId = `${topicId}/eventSubscriptions/document-uploaded`;
       await arm('PUT', sourceId, { location: 'westus2', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: {} }, '2023-05-01');
       for (let i = 0; i < 6; i++) await arm('GET', sourceId, undefined, '2023-05-01');
-      await arm('PUT', `${siteId}/functions/documentUploaded`, { properties: { config: { bindings: [{ name: 'event', type: 'eventGridTrigger', direction: 'in' }] } } });
+      const discovered = await workerRequest('/admin/functions', { headers: { 'x-functions-key': secrets.masterKey.value }, signal: AbortSignal.timeout(10000) });
+      assert.equal(discovered.status, 200, 'Native function discovery failed');
+      const functions = await discovered.json();
+      assert.ok(Array.isArray(functions) && functions.length <= 1000, 'Invalid native function inventory');
+      const eventGridFunctions = functions.filter(item => item.config?.bindings?.some(binding => String(binding.type).toLowerCase() === 'eventgridtrigger'))
+        .map(item => item.name);
+      assert.ok(eventGridFunctions.every(value => typeof value === 'string' && /^[A-Za-z][A-Za-z0-9_-]{0,127}$/.test(value)));
+      assert.ok(eventGridFunctions.includes('documentUploaded'), 'The document Event Grid trigger was not discovered');
+      nativeRuntime.functionsRouter.nativeWorkers.get(siteId.toLowerCase()).eventGridFunctions = new Set(eventGridFunctions.map(value => value.toLowerCase()));
+      report.nativeRouting.discoveredEventGridFunctions = eventGridFunctions;
       await arm('PUT', topicId, { location: 'westus2', properties: { source: sourceId, topicType: 'Microsoft.Storage.StorageAccounts' } }, '2025-02-15');
       await arm('PUT', subscriptionId, { properties: {
         destination: { endpointType: 'AzureFunction', properties: { resourceId: `${siteId}/functions/documentUploaded` } },
