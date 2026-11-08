@@ -61,3 +61,10 @@ with the scanner runner's external configuration and the existing
 `PAIRED_PLAYWRIGHT_MODULE` / `PAIRED_CHROMIUM_EXECUTABLE` settings to record the
 live sanitized HTTP stream side by side. The video retains actual waiting time
 and failures. It is a live experiment-output recording, not Azure Portal footage.
+
+The scanner cleanup reserve is 30 minutes after an observed Azure managed
+environment deletion took about 24 minutes. The application, scoped roles,
+registry and identities are removed before waiting for environment absence.
+The mutation deadline remains 20 minutes, and the runner blocks a new paid
+attempt until inventory and budget cleanup are verified. The watchdog remains
+independent of the primary process.

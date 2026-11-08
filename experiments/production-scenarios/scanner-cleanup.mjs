@@ -33,7 +33,7 @@ export function scannerClient(m, observe = () => {}, exchange = httpExchange) {
     observe({ method, path, request: body, ...result, startedAt, completedAt: new Date().toISOString() }); return result;
   };
 }
-export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 900000 } = {}) {
+export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 1800000 } = {}) {
   const s = scannerPaths(m), deadline = Date.now() + timeoutMs, deployments = [], resources = [];
   const get = id => request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`);
   for (const id of s.deployments) {
