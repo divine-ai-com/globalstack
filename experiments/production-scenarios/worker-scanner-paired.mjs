@@ -142,6 +142,14 @@ try {
   assert.ok(ready, 'Azure Functions host did not become ready');
   await runtime.containerAppRouter.lifecycle.settle(); await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
+  const data = await deploy('document-data', d.deployments[0], { accountName: `${w.service}docs`, workerIdentityName: `${w.service}-worker`, publisherPrincipalId: m.publisher,
+    roleAssignmentNames: m.documentRoles.slice(0, 2), location: 'westus2' });
+  report.documentDataDeployed = true;
+  assert.equal(data.azure.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
+  assert.equal(data.local.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
+  await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
+    topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
+  report.documentEventSubscriptionDeployed = true;
   const keys = await request('POST', `${w.app}/host/default/listkeys?api-version=2024-11-01`); assert.equal(keys.status, 200);
   const azureKey = keys.body.masterKey; assert.ok(typeof azureKey === 'string' && azureKey.length > 20); replacements.push([azureKey, '<redacted>']);
   const localKey = (await readFile(runtime.functionsRouter.nativeWorkers.get(w.app.toLowerCase()).masterKeyFile, 'utf8')).trim(); replacements.push([localKey, '<redacted>']);
@@ -200,14 +208,6 @@ try {
     }
   }
   report.componentChecksPassed = true;
-  const data = await deploy('document-data', d.deployments[0], { accountName: `${w.service}docs`, workerIdentityName: `${w.service}-worker`, publisherPrincipalId: m.publisher,
-    roleAssignmentNames: m.documentRoles.slice(0, 2), location: 'westus2' });
-  report.documentDataDeployed = true;
-  assert.equal(data.azure.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
-  assert.equal(data.local.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
-  await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
-    topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
-  report.documentEventSubscriptionDeployed = true;
 } catch (error) { report.error = sanitize(error.message, replacements); }
 finally {
   // Preserve measured outcomes before a potentially long cloud deletion.
