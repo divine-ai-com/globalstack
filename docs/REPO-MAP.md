@@ -324,6 +324,8 @@ flowchart TD
 - `scripts/repository/check-research-secret-scan.mjs`
 - `scripts/repository/check-sarif.mjs`
 - `scripts/repository/check-sarif.test.mjs`
+- `scripts/repository/fetch-codeql.sh`
+- `scripts/repository/fetch-codeql.test.mjs`
 - `scripts/repository/package-check.test.mjs`
 - `scripts/repository/pr-policy.mjs`
 - `scripts/repository/pr-policy.test.mjs`
