@@ -250,6 +250,29 @@ test('local event diagnostic evidence requires a delivered native marker and pre
   assert.equal(report.localCleanupComplete, true);
 });
 
+test('paired event diagnostic evidence separates marker delivery from the incomplete workflow', async () => {
+  const report = await load('document-event-paired-a21fb51/summary.json');
+  assert.equal(report.sourceRevision, 'a21fb51173252003e51e7addf85a3e5d761b9c53');
+  assert.equal(report.sourceDirty, false);
+  assert.deepEqual(report.targets, ['Azure', 'GlobalStack']);
+  assert.equal(report.templateSha256['document-data'], 'ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e');
+  assert.equal(report.templateSha256['document-events'], 'd5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09');
+  assert.equal(report.blobUpload.azure.status, 201);
+  assert.equal(report.blobUpload.local.status, 201);
+  assert.equal(report.diagnosticMarker.azure.status, 200);
+  assert.equal(report.diagnosticMarker.local.status, 200);
+  assert.equal(report.azureSystemTopicMetricTotals.aggregatesSubscriptions, true);
+  assert.equal(report.azureSystemTopicMetricTotals.DeliverySuccessCount, 1);
+  assert.equal(report.azureSystemTopicMetricTotals.DeliveryAttemptFailCount, 1);
+  assert.ok(report.globalstackEventDelivery.some(item => item.subscription === 'document-diagnostic' && item.state === 'delivered'));
+  assert.ok(report.globalstackEventDelivery.some(item => item.subscription === 'document-revisions' && item.reason === 'NativeEventGridHttp500'));
+  assert.equal(report.fullDocumentWorkflowCompleted, false);
+  assert.equal(report.runnerFinalResultWritten, false);
+  assert.deepEqual(report.independentAzureReadback, { resources: 0, deploymentRecords: 0 });
+  assert.equal(report.cleanupReconciledManually, true);
+  assert.equal(report.budget.actualAzureSpendMeasured, false);
+});
+
 test('partial fixes retain the initial-status difference and remaining local failures', async () => {
   const prefix = 'validation-after-4b40af6/';
   const index = await load(`${prefix}index.json`);

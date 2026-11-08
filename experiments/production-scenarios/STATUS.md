@@ -74,10 +74,20 @@ The next [clean local capture](evidence/document-event-diagnostic-b64dcfd/)
 kept the production subscription and added a separate diagnostic subscription.
 It observed BlobCreated delivery to a native Function and an ETag-correlated
 marker written through managed-identity Blob access. The production handler
-still returned HTTP 500. The diagnostic module has not yet been replayed on
-Azure, and no full-workflow assertion is promoted from `not-run`.
+still returned HTTP 500. The subsequent [paired capture](evidence/document-event-paired-a21fb51/)
+replayed the same diagnostic module on Azure and GlobalStack. Both targets
+accepted the managed-identity Blob upload and recorded a diagnostic marker through
+the native Event Grid Function. Azure system-topic metrics reported two matched
+deliveries, one success and one failed attempt. Those metrics aggregate both
+subscriptions and do not identify the failing endpoint. GlobalStack recorded
+delivery to the diagnostic subscription and an HTTP 500 retry on the unchanged
+production subscription. The production workflow remains incomplete, and no
+full-workflow assertion is promoted from `not-run`. The detached runner stopped
+while Azure deleted its managed environment, before writing its final result.
+Independent Azure inventory later found zero resources and deployment records;
+local managed containers were absent. The cleanup ledger was reconciled manually.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
-allocation ledger now totals USD 157, leaving USD 43 unallocated. A read-only Cost Management query for the pilot group returned no current
+allocation ledger now totals USD 169, leaving USD 31 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
@@ -288,11 +298,11 @@ for this change.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 157 in conservative envelopes
+The private cumulative ledger currently records USD 169 in conservative envelopes
 against the USD 200 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
-allocations have verified cleanup, including the latest paired document component
-run. USD 43 remains unallocated under this conservative ledger.
+allocations have verified cleanup, including independent reconciliation after the
+interrupted paired event run. USD 31 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 
