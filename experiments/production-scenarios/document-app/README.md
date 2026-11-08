@@ -25,6 +25,12 @@ work pending, so downstream writes must be idempotent. This is at-least-once
 delivery, not an exactly-once claim. Delivery has a five-second default deadline
 and propagates an abort signal to the transport. An uncertain remote outcome
 still requires idempotent replay and reconciliation.
+`search-provision.mjs` prepares two separate Search indexes. The Blob projection
+data source uses the Search service's managed identity and a custom metadata
+deletion policy; its scheduled indexer is a five-minute reconciliation path.
+The outbox push path is separate. Projection tombstones contain only the
+document ID and deletion marker. Local tests stop at the unimplemented Search
+data-source route, so neither indexer execution nor Azure parity is claimed.
 `currentSearchResults` checks current tenant, owner/group access, clean state and revision in
 PostgreSQL before returning authoritative content. An access row registered by ingress is required; a processed document with no access row is not returned. This prevents stale search
 results from becoming current application answers; it is not a replacement for
