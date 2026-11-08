@@ -47,3 +47,22 @@ The second records ARM-triggered startup, native trigger discovery, the expected
 real handler failure, unchanged and changed configurations, rejection of an
 unapproved image, recovery and deletion. An application health response or an
 expected negative handler result is not a completed business workflow.
+
+## Worker-to-Container-App transport
+
+`createNativeFunctionsPlatform` accepts operator-selected `containerAppEndpoints`
+setting names. Each configured HTTPS origin must resolve to exactly one
+ARM-deployed Container App in the workload subscription. The platform supplies
+local DNS, verified certificate trust and a transport port. Requests still pass
+through the Container App's deployed authentication policy. Unknown, foreign,
+ambiguous, credential-bearing and non-HTTPS targets are rejected. This does not
+implement Azure private-network isolation or bypass the ingress mode checks.
+
+`node experiments/production-scenarios/worker-scanner-local.mjs` deploys the native
+Functions worker and scanner, then executes Azure SDK client commands inside the
+worker container. It checks managed-identity acquisition, real scanning, policy
+revocation/restoration and rejection of untrusted TLS certificates. These are
+container-level SDK calls, not an Event Grid invocation or full document workflow.
+The application image contains no emulator branch. The worker template supplies
+its user-assigned client ID through `AZURE_CLIENT_ID` and accepts downstream
+application settings through a separate array parameter.

@@ -116,6 +116,7 @@ flowchart TD
 - `packages/azure-data-plane/src/managed-identity-service.mjs`
 - `packages/azure-data-plane/src/metric-store.mjs`
 - `packages/azure-data-plane/src/migration-plan-runner.mjs`
+- `packages/azure-data-plane/src/native-container-app-endpoints.mjs`
 - `packages/azure-data-plane/src/native-functions-lifecycle.mjs`
 - `packages/azure-data-plane/src/native-functions-platform.mjs`
 - `packages/azure-data-plane/src/native-functions-worker.mjs`
@@ -145,6 +146,7 @@ flowchart TD
 - `packages/azure-data-plane/src/workload-token-auth.mjs`
 - `packages/conformance/src/api-management-forwarding.test.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
+- `packages/conformance/src/arm-collection-expressions.test.mjs`
 - `packages/conformance/src/arm-deployment-history.test.mjs`
 - `packages/conformance/src/arm-deployment-validation.test.mjs`
 - `packages/conformance/src/arm-group-role-lifecycle.test.mjs`
@@ -176,6 +178,7 @@ flowchart TD
 - `packages/conformance/src/key-vault-token-auth.test.mjs`
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/managed-identity.test.mjs`
+- `packages/conformance/src/native-container-app-endpoints.test.mjs`
 - `packages/conformance/src/native-functions-lifecycle.test.mjs`
 - `packages/conformance/src/native-functions-worker.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
