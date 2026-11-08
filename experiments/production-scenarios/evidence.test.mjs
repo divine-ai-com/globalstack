@@ -217,6 +217,23 @@ test('paired upload attempt retains Azure route failure and verified teardown', 
   assert.equal(report.budget.actualAzureSpendMeasured, false);
 });
 
+test('paired Blob upload evidence preserves the event-delivery and full-workflow limits', async () => {
+  const report = await load('document-upload-azure-9a3a78a/summary.json');
+  assert.equal(report.sourceRevision, '9a3a78a111cebbd3557806c58f54d913d7637644');
+  assert.equal(report.sourceDirty, false);
+  assert.deepEqual(report.blobUpload.azure.status, 201);
+  assert.deepEqual(report.blobUpload.local.status, 201);
+  assert.equal(report.blobUpload.azure.inputSha256, report.blobUpload.local.inputSha256);
+  assert.equal(report.localEventGrid.nativeFunctionDeliveryAttempted, true);
+  assert.equal(report.localEventGrid.deliveryFailureReason, 'NativeEventGridHttp500');
+  assert.equal(report.azureEventGrid.deliveryObserved, false);
+  assert.equal(report.componentChecksPassed, true);
+  assert.equal(report.fullDocumentWorkflowCompleted, false);
+  assert.equal(report.portalEvidenceComplete, false);
+  assert.deepEqual(report.independentAzureReadback, { resources: 0, deploymentRecords: 0 });
+  assert.equal(report.budget.actualAzureSpendMeasured, false);
+});
+
 test('partial fixes retain the initial-status difference and remaining local failures', async () => {
   const prefix = 'validation-after-4b40af6/';
   const index = await load(`${prefix}index.json`);

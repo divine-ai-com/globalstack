@@ -1,0 +1,115 @@
+{
+  "sourceRevision": "9a3a78a111cebbd3557806c58f54d913d7637644",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T16:26:14.239Z",
+  "completedAt": "2026-11-08T17:01:51.408Z",
+  "targets": [
+    "Azure",
+    "GlobalStack"
+  ],
+  "templateSha256": {
+    "worker-host": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+    "worker-app": "0a9b65e63376a4b6a0e213f80d7e49586d0f8b5d28e7ae04c87fe9c28d255589",
+    "scanner-host": "02fb8b1d21975a281a5ce2c4ebaa7f639fd1de7728b8f276ac2f0a82ab170690",
+    "scanner-app": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b",
+    "scanner-auth": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe",
+    "document-data": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+    "document-events": "d5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09"
+  },
+  "functionDiscovery": {
+    "azure": {
+      "status": 200,
+      "documentUploaded": true,
+      "uploadDiagnostic": true
+    },
+    "local": {
+      "status": 200,
+      "documentUploaded": true,
+      "uploadDiagnostic": true
+    }
+  },
+  "blobUpload": {
+    "azure": {
+      "status": 201,
+      "inputSha256": "b5ae43ec537a82d3d7affb65095cc1acf621ffe6616adb49198f48edbe50533b",
+      "versionIdPresent": true
+    },
+    "local": {
+      "status": 201,
+      "inputSha256": "b5ae43ec537a82d3d7affb65095cc1acf621ffe6616adb49198f48edbe50533b",
+      "versionIdPresent": true
+    }
+  },
+  "localEventGrid": {
+    "blobCreatedMatched": true,
+    "nativeFunctionDeliveryAttempted": true,
+    "deliveryState": "retrying",
+    "deliveryFailureReason": "NativeEventGridHttp500"
+  },
+  "azureEventGrid": {
+    "subscriptionDeployed": true,
+    "deliveryObserved": false,
+    "metricQueries": [
+      "query-unavailable",
+      "query-unavailable"
+    ]
+  },
+  "scanner": {
+    "unauthenticatedStatuses": {
+      "azure": 401,
+      "local": 401
+    },
+    "cases": [
+      {
+        "case": "clean",
+        "azureStatus": 200,
+        "globalstackStatus": 200,
+        "decision": "clean"
+      },
+      {
+        "case": "yara",
+        "azureStatus": 200,
+        "globalstackStatus": 200,
+        "decision": "detected"
+      },
+      {
+        "case": "clamav-harmless-marker",
+        "azureStatus": 200,
+        "globalstackStatus": 200,
+        "decision": "detected"
+      }
+    ]
+  },
+  "scannerPolicy": [
+    {
+      "transition": "worker-policy-revoked",
+      "globalstackStatus": 403,
+      "azureFinalStatus": 403,
+      "azurePropagationMs": 42471
+    },
+    {
+      "transition": "worker-policy-restored",
+      "globalstackStatus": 200,
+      "azureFinalStatus": 200,
+      "azurePropagationMs": 41921
+    }
+  ],
+  "componentChecksPassed": true,
+  "fullDocumentWorkflowCompleted": false,
+  "portalEvidenceComplete": false,
+  "automaticCleanup": {
+    "resourcesAbsent": true,
+    "groupEmpty": true,
+    "localCleanupComplete": true
+  },
+  "independentAzureReadback": {
+    "resources": 0,
+    "deploymentRecords": 0
+  },
+  "budget": {
+    "runEnvelopeUsd": 12,
+    "cumulativeConservativeAllowanceUsd": 157,
+    "authorizedCeilingUsd": 200,
+    "actualAzureSpendMeasured": false
+  }
+}

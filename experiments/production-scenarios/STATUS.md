@@ -60,10 +60,18 @@ and the local provisioner verifies those keys against the native host. A
 the revised deployment order, managed-identity Blob upload, Event Grid match
 and Function delivery attempt. The Function returned HTTP 500; the component
 fixture lacks downstream application settings. This is not a paired
-Azure runtime result or a full document workflow pass.
-The authorized total was raised to USD 200 on 2026-11-08. Before the next paid
-run, the conservative allocation ledger totaled USD 145, leaving USD 55
-unallocated. A read-only Cost Management query for the pilot group returned no current
+Azure runtime result or a full document workflow pass. The subsequent
+[paired run](evidence/document-upload-azure-9a3a78a/) passed component checks
+on the revised deployment order. Azure and GlobalStack both discovered the
+document Functions and returned HTTP 201 for managed-identity Blob uploads.
+GlobalStack matched the BlobCreated event and attempted native Function delivery,
+which returned HTTP 500. Azure event metrics were unavailable, so actual Azure
+event delivery was not established. Both targets matched the scanner decisions,
+host-key denial, and scanner-policy revoke and restore outcomes. Automatic
+cleanup and an independent Azure readback found zero resources and deployment
+records. The full document workflow remains untested.
+The authorized total was raised to USD 200 on 2026-11-08. The conservative
+allocation ledger now totals USD 157, leaving USD 43 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
@@ -274,11 +282,11 @@ for this change.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 121 in conservative envelopes
-against the USD 150 authorization, including the initial allowance for earlier
+The private cumulative ledger currently records USD 157 in conservative envelopes
+against the USD 200 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
-allocations have verified cleanup after manual recovery of the latest document
-deployment attempt. USD 29 remains unallocated under this conservative ledger.
+allocations have verified cleanup, including the latest paired document component
+run. USD 43 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 
