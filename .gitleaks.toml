@@ -8,10 +8,10 @@ id = "generic-api-key"
 
 # Exact compiled Bicep template digest in the reviewed paired-run summary.
 [[rules.allowlists]]
-description = "Scanner auth template SHA-256 in paired document evidence"
+description = "Scanner auth template SHA-256 in two paired document evidence summaries"
 condition = "AND"
 regexTarget = "secret"
-paths = ['''^experiments/production-scenarios/evidence/document-upload-azure-9a3a78a/summary\.json$''']
+paths = ['''^experiments/production-scenarios/evidence/(?:document-upload-azure-9a3a78a|document-event-paired-a21fb51)/summary\.json$''']
 regexes = ['''^f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe$''']
 
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
