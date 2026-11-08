@@ -10,6 +10,11 @@ test('captured Azure PostgreSQL validation accepts the Entra-only document shape
   assert.equal(capture.noResourcesCreated, true);
   assert.equal(capture.azureResourceCountAfter, 0);
   assert.equal(capture.deploymentRecordStatus, 404);
+  const followup = JSON.parse(await readFile(new URL('./evidence/document-postgres-validation-38e1f19/result.json', import.meta.url)));
+  assert.deepEqual(['azure', 'local'].map(target => followup.targets[target].observations[0].status), [200, 200]);
+  assert.equal(followup.noResourcesCreated, true);
+  assert.equal(followup.azureResourceCountAfter, 0);
+  assert.equal(followup.deploymentRecordStatus, 404);
   const template = JSON.parse(await readFile(new URL('./document-infra/compiled/document-postgres.json', import.meta.url)));
   const subscriptionId = '00000000-0000-0000-0000-000000000000';
   const parameters = { serviceName: 'gs123456789abc', location: 'westus2', runId: '123456789abc',
