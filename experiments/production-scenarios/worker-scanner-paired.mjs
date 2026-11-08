@@ -26,7 +26,7 @@ import { createFunctionsRouterServer } from '../../packages/azure-data-plane/src
 for (const key of ['PAIRED_RUN_DIR', 'WORKER_IMAGE_ID', 'SCANNER_IMAGE_ID', 'SCANNER_API_AUDIENCE', 'ENTRA_TENANT_ID']) assert.ok(process.env[key], `${key} required`);
 assert.equal(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(), '');
 const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-const out = resolve(process.env.PAIRED_RUN_DIR); await mkdir(out, { mode: 0o700 });
+const out = resolve(process.env.PAIRED_RUN_DIR); await mkdir(out, { recursive: true, mode: 0o700 });
 const disk = await statfs(out); assert.ok(disk.bavail * disk.bsize >= 40 * 1024 ** 3);
 const m = { subscription: process.env.PAIRED_SUBSCRIPTION_ID, group: process.env.PAIRED_RESOURCE_GROUP,
   publisher: process.env.PAIRED_PUBLISHER_OBJECT_ID, config: process.env.PAIRED_AZURE_CONFIG_DIR,
