@@ -18,6 +18,15 @@ runs are separate experiments. The complete scenario ports for Terraform,
 OpenTofu, Pulumi TypeScript/Python/YAML, Ansible, Azure CLI, Bicep and ARM JSON
 remain outstanding.
 
+The first document data and eventing Bicep modules now compile with the pinned
+CLI image. They have not been submitted to Azure or GlobalStack. The local
+[native Event Grid probe](evidence/native-event-discovery-d61025d/) discovered
+the deployed Function without a manually written Function child resource and
+observed its expected application failure. The complete document application
+settings and downstream infrastructure remain unconnected. GlobalStack also
+rejects the required Event Grid dead-letter configuration; this must be paired
+against Azure and implemented before the eventing module can pass locally.
+
 ## Latest scanner and worker checkpoint
 
 The [completed paired Functions-to-scanner capture](evidence/worker-scanner-azure-ead706e/)
