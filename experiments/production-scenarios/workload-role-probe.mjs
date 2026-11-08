@@ -22,12 +22,15 @@ const token = azureToken(process.env.PAIRED_AZURE_CONFIG_DIR);
 const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url'));
 const scope = `/subscriptions/${subscription}/resourceGroups/${group}`;
 const assignment = `${scope}/providers/Microsoft.Authorization/roleAssignments/${randomUUID()}`;
-const roleId = '1407120a-92aa-4202-b7e9-c0e197c71c8f';
+const catalog = JSON.parse(await readFile(new URL('./operator/document-role-catalog.json', import.meta.url)));
+const roleName = process.env.PAIRED_ROLE_NAME ?? 'Search Index Data Reader';
+const roleId = catalog.roles.find(role => role.name === roleName)?.id;
+assert.ok(roleId, 'Only a listed pilot role may be probed');
 const properties = { roleDefinitionId: `/subscriptions/${subscription}/providers/Microsoft.Authorization/roleDefinitions/${roleId}`,
   principalId: claims.oid, principalType: 'ServicePrincipal', description: 'Disposable GlobalStack delegation probe. Remove after read verification.' };
 const replacements = [[token, '<redacted>'], [subscription, '<subscription>'], [group, '<group>'], [claims.oid, '<pilot-principal>']];
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
-  scope: 'Temporary Search Index Data Reader grant to the existing pilot identity in its dedicated group. No paid resources or data access tested.',
+  roleName, roleId, scope: 'Temporary listed workload grant to the existing pilot identity in its dedicated group. No paid resources or data access tested.',
   businessWorkflowCompleted: false, exchanges: [], cleanup: false };
 const journal = resolve(out, 'private-cleanup.json');
 let arm, submitted = false;
@@ -48,14 +51,13 @@ try {
   assert.equal(existing.status, 200);
   const roles = await request('azure', 'GET', `${scope}/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01`);
   assert.equal(roles.status, 200); assert.ok(!roles.body.nextLink);
-  const catalog = JSON.parse(await readFile(new URL('./operator/document-role-catalog.json', import.meta.url)));
   const expected = (await readFile(new URL('./operator/workload-delegation.condition', import.meta.url), 'utf8'))
     .replaceAll('__ROLE_IDS__', catalog.roles.map(role => role.id).join(', '));
   const normalize = value => value.replace(/\s+/g, '').toLowerCase();
   const delegated = roles.body.value.find(item => item.properties.principalId === claims.oid
     && item.properties.roleDefinitionId.endsWith('/f58310d9-a9f6-439a-9e8d-f62e7b41a168'));
   assert.ok(delegated && normalize(delegated.properties.condition ?? '') === normalize(expected), 'Restricted delegation must match before testing');
-  assert.ok(!roles.body.value.some(item => item.properties.principalId === claims.oid && item.properties.roleDefinitionId.endsWith('/' + roleId)), 'Do not collide with an existing Reader grant');
+  assert.ok(!roles.body.value.some(item => item.properties.principalId === claims.oid && item.properties.roleDefinitionId.endsWith('/' + roleId)), 'Do not collide with an existing workload grant');
   assert.equal((await request('azure', 'GET', apiPath)).status, 404);
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription;
   arm = createArmServer({ store: new ResourceStore() });
