@@ -59,15 +59,22 @@ remain outstanding.
 1. Hosting creation succeeded in the latest authorized retry. Earlier 429
    observations remain retained. Availability for other SKUs, regions and future
    attempts is not established by this bounded result.
-2. The [fresh permission capture](evidence/workload-permissions-1802d8a/) confirms
-   Contributor explicitly excludes role-assignment writes and deletes. The
-   preflight now checks both before full-stack provisioning when
-   `PAIRED_REQUIRE_WORKLOAD_ROLES=1`. An operator must apply the
-   [conditional group-scoped delegation](operator/README.md), or supply equivalent
-   restricted permissions. The template compiles locally; live delegated writes
-   and cleanup remain untested until the operator applies it. Do not elevate
-   this service principal to subscription Owner.
-3. Establish a usable authenticated Portal capture channel. A logged-in tab URL
+2. The operator applied the conditional resource-group delegation. The live
+   condition matches the approved 13-role/service-principal restriction. The
+   [paired role catalog](evidence/workload-role-catalog/) verifies Azure creation,
+   readback and cleanup for all 13 roles. GlobalStack initially rejected six
+   valid role IDs; after correction, all 13 assignment round trips pass locally
+   too. A separate group-role GET bug is fixed with independent-name tests.
+   This clears the assignment prerequisite, not downstream data-plane
+   authorization or directory application-registration permissions.
+3. The [directory preflight](evidence/directory-prerequisite/) returned Graph
+   `403 Authorization_RequestDenied` when creating an API application. The pilot
+   application has no configured API audience or app roles. An operator with
+   directory permissions must run the [API setup helper](operator/README.md#document-api-registration)
+   or configure equivalent API registration and role grants. No broad Graph
+   permissions are requested for the pilot. Scanner identity and delegated-user
+   cases still need separate setup.
+4. Establish a usable authenticated Portal capture channel. A logged-in tab URL
    is not a screenshot or browser-control capability. None of this session's
    HTTP replays is Portal evidence.
 

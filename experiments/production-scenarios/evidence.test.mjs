@@ -445,3 +445,32 @@ test('workload permission evidence stops before deployment or paid allocation', 
   assert.match(report.error, /do not provision the full stack/);
   assert.ok(report.exchanges.every(item => item.target === 'azure' && item.method === 'GET' && item.status === 200));
 });
+
+test('paired workload role catalog retains six original gaps and 13 clean reruns', async () => {
+  const prefix = 'workload-role-catalog/';
+  const index = await load(prefix + 'index.json');
+  assert.equal(index.attempts.length, 26);
+  assert.equal(index.attempts.filter(item => item.phase === 'before' && !item.passed).length, 6);
+  assert.equal(new Set(index.attempts.map(item => item.role)).size, 13);
+  for (const attempt of index.attempts) {
+    const metadata = index.files[attempt.file];
+    const bytes = await readFile(new URL(prefix + attempt.file, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+    const report = JSON.parse(bytes);
+    assert.equal(report.revision, attempt.revision);
+    assert.equal(report.sourceDirty, false);
+    assert.equal(report.cleanup, true);
+    assert.equal(report.businessWorkflowCompleted, false);
+    const azure = report.exchanges.filter(item => item.target === 'azure');
+    assert.ok(azure.some(item => item.method === 'PUT' && item.status === 201));
+    assert.equal(azure.at(-2).method, 'DELETE'); assert.equal(azure.at(-2).status, 200);
+    assert.equal(azure.at(-1).method, 'GET'); assert.equal(azure.at(-1).status, 404);
+    if (attempt.phase === 'after') {
+      assert.equal(report.error, undefined);
+      assert.equal(report.assignmentRoundTrip, true);
+      const local = report.exchanges.filter(item => item.target === 'local');
+      assert.deepEqual(local.map(item => [item.method, item.status]), [['PUT', 201], ['GET', 200], ['DELETE', 200]]);
+    }
+  }
+});

@@ -89,3 +89,53 @@ A permissions listing alone cannot prove conditions, policy or deny assignments
 will allow a particular request.
 
 Reference: [Microsoft's conditional role delegation guidance](https://learn.microsoft.com/en-us/azure/role-based-access-control/delegate-role-assignments-overview).
+
+## Document API registration
+
+The pilot can read its own application, but its current application has no API
+identifier, app roles or v2 token configuration. A direct application-creation
+preflight returned Graph `403 Authorization_RequestDenied`. Resource-group role
+delegation does not authorize directory application setup.
+
+`document_api.py` is an operator-run setup helper for the ingress API. It creates
+one single-tenant API application and enterprise application, enables v2 access
+tokens with `idtyp`, and grants only its three Documents roles to the existing
+certificate-authenticated pilot client. It creates no credentials and grants no
+Microsoft Graph permissions to the pilot. It does not replace the pilot app,
+modify its certificate, or configure the scanner's separate service identity.
+It supports application-token testing only; delegated user/group and scanner
+identity scenarios remain separate requirements.
+
+Run with an Azure CLI session in the intended tenant whose user can create
+applications and grant this API's application roles. Subscription Owner alone
+does not establish those directory rights. Review the script first. Plan mode
+prints the proposed API manifest without making cloud calls:
+
+```sh
+python3 experiments/production-scenarios/operator/document_api.py plan \
+  --tenant-id "$PILOT_TENANT_ID" --pilot-client-id "$PILOT_CLIENT_ID"
+python3 experiments/production-scenarios/operator/document_api.py apply \
+  --tenant-id "$PILOT_TENANT_ID" --pilot-client-id "$PILOT_CLIENT_ID" \
+  --state globalstack-document-api-state.json
+```
+
+Keep the state file. It contains object IDs and ownership metadata, not secrets.
+The output supplies API audience and token scope for the deployment. Use the
+same owner session to remove only these directory objects after the pilot:
+
+```sh
+python3 experiments/production-scenarios/operator/document_api.py cleanup \
+  --tenant-id "$PILOT_TENANT_ID" --pilot-client-id "$PILOT_CLIENT_ID" \
+  --state globalstack-document-api-state.json
+```
+
+On setup failure, the helper attempts cleanup of recorded owned objects and
+retains the journal. A lost application-create response can leave an unrecorded
+object; inspect the unique display name in the journal before retrying. The
+helper does not label that uncertain case clean. The existing pilot client and
+resource-group delegation are never removed by this helper. Tests cover payload
+scope, partial-grant failure cleanup and refusal to delete unrelated objects;
+operator setup and real API token validation have not yet run.
+
+References: [API application-role assignment](https://learn.microsoft.com/en-us/graph/api/serviceprincipal-post-approleassignedto),
+[optional token claims](https://learn.microsoft.com/en-us/entra/identity-platform/optional-claims-reference).

@@ -1,0 +1,16 @@
+{
+  "startedAt": "2026-11-08T07:38:08.164Z",
+  "scope": "Directory application creation prerequisite, no credential or consent added",
+  "request": {
+    "displayName": "globalstack-directory-probe-d0645da4-d4f0-4603-b3dc-de05c90d570e",
+    "signInAudience": "AzureADMyOrg",
+    "tags": [
+      "globalstack-conformance-disposable"
+    ]
+  },
+  "createStatus": 403,
+  "errorCode": "Authorization_RequestDenied",
+  "requestId": "a71b6f37-7917-4121-afbc-5228115aee07",
+  "noCreatedApplication": true,
+  "completedAt": "2026-11-08T07:38:08.576Z"
+}
