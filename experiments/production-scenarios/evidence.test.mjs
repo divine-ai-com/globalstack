@@ -197,6 +197,26 @@ test('local document upload capture records the event attempt without claiming a
   assert.equal(report.azurePaired, false);
 });
 
+test('paired upload attempt retains Azure route failure and verified teardown', async () => {
+  const report = await load('document-upload-azure-0ac25f3/summary.json');
+  assert.equal(report.sourceRevision, '0ac25f3d98e6fa0fc7169477c9eb7dfc62ca17bf');
+  assert.equal(report.sourceDirty, false);
+  assert.deepEqual(report.documentDataDeployment, { azure: 'Succeeded', globalstack: 'Succeeded' });
+  assert.deepEqual(report.documentEventsDeployment, { azure: 'Succeeded', globalstack: 'Succeeded' });
+  assert.deepEqual(report.workerAppUpdate, { azure: 'Succeeded', globalstack: 'Succeeded' });
+  assert.equal(report.azureHealthStatusBeforeUpdate, 200);
+  assert.deepEqual(report.azureFunctionDiscovery, { status200WithoutUploadRoute: 2, status401: 19,
+    uploadRouteDiscovered: false });
+  assert.equal(report.terminalError, 'azure upload diagnostic did not become available');
+  assert.equal(report.blobUploadAttempted, false);
+  assert.equal(report.eventDeliveryCompared, false);
+  assert.equal(report.componentChecksPassed, false);
+  assert.equal(report.fullDocumentWorkflowCompleted, false);
+  assert.deepEqual(report.automaticCleanup, { resourcesAbsent: true, groupEmpty: true, localCleanupComplete: true });
+  assert.deepEqual(report.independentAzureReadback, { resources: 0, deploymentRecords: 0 });
+  assert.equal(report.budget.actualAzureSpendMeasured, false);
+});
+
 test('partial fixes retain the initial-status difference and remaining local failures', async () => {
   const prefix = 'validation-after-4b40af6/';
   const index = await load(`${prefix}index.json`);

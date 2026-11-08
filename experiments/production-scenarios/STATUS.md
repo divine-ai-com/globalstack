@@ -48,9 +48,11 @@ the observed deployment 501 for that configuration, while actual Blob delivery,
 dead-letter timing and the full document workflow remain untested. The next
 paired run deployed the document modules on both targets but did not reach its
 Blob upload. After an application-settings update, Azure retained the old
-Function route list, then rejected fresh host keys with 401. The health route
-stayed available while the new upload route returned 404. The bounded probe
-recorded the failure and entered cleanup. See [issue #67](https://github.com/divine-ai-com/globalstack/issues/67).
+Function route list, then rejected fresh host keys with 401. A separate manual
+check observed the health route available while the new upload route returned
+404. The [bounded paired capture](evidence/document-upload-azure-0ac25f3/)
+records the failure. Automatic cleanup and an independent Azure inventory both
+confirmed zero pilot resources and deployment records. See [issue #67](https://github.com/divine-ai-com/globalstack/issues/67).
 The runner now deploys document data before the worker app and supplies all
 settings at first creation. The worker template uses Blob-backed Functions keys,
 and the local provisioner verifies those keys against the native host. A

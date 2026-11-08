@@ -1,0 +1,27 @@
+{
+  "sourceRevision": "0ac25f3d98e6fa0fc7169477c9eb7dfc62ca17bf",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T15:33:25.481Z",
+  "completedAt": "2026-11-08T16:10:12.625Z",
+  "targets": ["Azure", "GlobalStack"],
+  "templateSha256": {
+    "workerHost": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+    "workerApp": "c8922c73b03d8f4f0a87c718a1c7450f425f1dbef7401ef3c4cbba28328e0ca9",
+    "documentData": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+    "documentEvents": "d5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09"
+  },
+  "documentDataDeployment": { "azure": "Succeeded", "globalstack": "Succeeded" },
+  "documentEventsDeployment": { "azure": "Succeeded", "globalstack": "Succeeded" },
+  "workerAppUpdate": { "azure": "Succeeded", "globalstack": "Succeeded" },
+  "azureHealthStatusBeforeUpdate": 200,
+  "azureFunctionDiscovery": { "status200WithoutUploadRoute": 2, "status401": 19, "uploadRouteDiscovered": false },
+  "terminalError": "azure upload diagnostic did not become available",
+  "blobUploadAttempted": false,
+  "eventDeliveryCompared": false,
+  "componentChecksPassed": false,
+  "fullDocumentWorkflowCompleted": false,
+  "portalEvidenceComplete": false,
+  "automaticCleanup": { "resourcesAbsent": true, "groupEmpty": true, "localCleanupComplete": true },
+  "independentAzureReadback": { "resources": 0, "deploymentRecords": 0 },
+  "budget": { "runEnvelopeUsd": 12, "cumulativeConservativeAllowanceUsd": 145, "authorizedCeilingUsd": 150, "actualAzureSpendMeasured": false }
+}
