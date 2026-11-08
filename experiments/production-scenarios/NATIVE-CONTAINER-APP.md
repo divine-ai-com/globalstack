@@ -38,3 +38,20 @@ map `api://<application UUID>` requests to v2 application-audience claims.
 These local status codes and the initial readiness behavior are implementation
 contracts, not a claim of exact Azure error bodies, probe scheduling or revision
 behavior. The paired live deployment must retain and compare those differences.
+
+## First live ingress comparison
+
+The run at revision `2738c71` deployed the frozen scanner image to Azure and the
+native local runtime. Missing tokens and wrong audiences returned 401 in both;
+a valid but unlisted pilot returned 403 in both. After an accepted policy update
+allowing that pilot's client and principal, Azure returned 403 for all three
+scanner requests while the local runtime returned 200. The cause is unresolved.
+The [captured responses](evidence/scanner-policy-2738c71/auth-transition.json)
+retain this mismatch. They do not establish worker access or full workflow parity.
+
+The follow-up runner observes policy activation for a bounded window and records
+every response. If necessary, it separately tests the policy without the optional
+supplemental `jwtClaimChecks` client restriction. Both default client and principal
+allowlists remain required. A later successful response alone cannot distinguish
+propagation delay from a configuration effect. The runner restores the original
+worker-only policy and records its activation before teardown.

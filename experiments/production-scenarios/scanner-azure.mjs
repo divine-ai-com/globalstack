@@ -1,3 +1,4 @@
+import { observePolicyPropagation } from './policy-propagation.mjs';
 import { createServer as tlsServer, request as tlsRequest } from 'node:https';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
@@ -121,9 +122,9 @@ try {
   const ca = await readFile(resolve(tlsDir, 'cert'));
   facade = tlsServer({ key: await readFile(resolve(tlsDir, 'key')), cert: ca }, runtime.containerAppRouter.handler());
   await new Promise(done => facade.listen(0, '127.0.0.1', done));
-  async function localIngress(bearer) {
+  async function localIngress(bearer, path = '/scan', method = 'POST') {
     return new Promise((done, fail) => {
-      const req = tlsRequest(`https://127.0.0.1:${facade.address().port}/scan`, { ca, method: 'POST', signal: AbortSignal.timeout(20000),
+      const req = tlsRequest(`https://127.0.0.1:${facade.address().port}${path}`, { ca, method, signal: AbortSignal.timeout(20000),
         headers: { host: localHostname, ...(bearer ? { authorization: `Bearer ${bearer}` } : {}) } }, res => {
         const chunks = []; res.on('data', chunk => chunks.push(chunk)); res.on('error', fail);
         res.on('end', () => done({ status: res.statusCode, body: JSON.parse(Buffer.concat(chunks).toString()) }));
@@ -165,10 +166,30 @@ try {
     });
     return { correlationId, elapsedMs: Date.now() - started, inputSha256: createHash('sha256').update(payload).digest('hex'), ...result };
   }
+  async function settlePolicy(label, expectedStatus) {
+    return observePolicyPropagation({ expectedStatus,
+      request: () => httpExchange(`https://${hostname}/health`, { headers: { authorization: `Bearer ${pilot}` }, timeoutMs: 10000 }),
+      observe: async observation => {
+        observe('azure', { control: label, path: '/health', ...observation });
+        observe('local', { control: label, path: '/health', ...await localIngress(pilot, '/health', 'GET') });
+      },
+    });
+  }
   const normalize = value => ({ ...value, engines: value.engines?.map(({ durationMs, ...engine }) => { void durationMs; return engine; }) });
   report.scans = [];
   try {
     await setPolicy(permitted);
+    phase = 'observe-pilot-policy-activation';
+    report.pilotPolicyActivation = await settlePolicy('pilot-allowlist-activation', 200);
+    if (!report.pilotPolicyActivation.ready) {
+      phase = 'observe-policy-without-legacy-client-check';
+      const alternative = structuredClone(permitted);
+      delete alternative.identityProviders.azureActiveDirectory.validation.jwtClaimChecks;
+      await setPolicy(alternative);
+      report.policyWithoutLegacyCheck = await settlePolicy('pilot-activation-without-legacy-client-check', 200);
+    }
+    assert.ok(report.pilotPolicyActivation.ready || report.policyWithoutLegacyCheck?.ready, 'Azure did not activate either restricted pilot policy within the observation windows');
+    phase = 'authorized-scanner-component-probe';
     for (const [name, content, decision] of [
       ['clean-text', 'Document scanner paired native execution.', 'clean'],
       ['yara-harmless-marker', 'PILOT_DOCUMENT_DETECTION_73261', 'detected'],
@@ -184,6 +205,7 @@ try {
   } finally {
     phase = 'restore-worker-only-policy';
     await setPolicy(config.body.properties);
+    report.workerPolicyActivation = await settlePolicy('worker-policy-restoration', 403);
     const actual = await httpExchange(`https://${hostname}/scan`, { method: 'POST', body: {}, headers: { authorization: `Bearer ${pilot}` } });
     const counterpart = await localIngress(pilot);
     observe('azure', { control: 'pilot-denied-after-restoration', ...actual }); observe('local', { control: 'pilot-denied-after-restoration', ...counterpart });
@@ -198,7 +220,13 @@ finally {
   if (allocated) {
     try {
       const refreshed = azureToken(m.config); replacements.push([refreshed, '<redacted>']);
-      report.cleanup = await cleanupScanner(m, scannerClient({ ...m, token: refreshed }, event => observe('azure', event)));
+      const cleanupRequest = scannerClient({ ...m, token: refreshed }, event => observe('azure', event));
+      report.cleanup = await cleanupScanner(m, async (method, path, body) => {
+        const result = await cleanupRequest(method, path, body);
+        try { await local(method, path, body); }
+        catch { observe('local', { method, path, error: 'cleanup_comparison_failed' }); }
+        return result;
+      });
       await writeFile(done, 'verified\n', { mode: 0o600 }); watchdog?.kill('SIGTERM'); await rm(manifest, { force: true }); await confirmBudgetCleanup(productionBudgetPath, m.runId);
     } catch { report.cleanup = { recoveryRequired: true }; }
   }

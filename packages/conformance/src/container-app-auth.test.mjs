@@ -28,8 +28,11 @@ test('scanner ingress authenticates signatures and requires both deployed caller
     .setProtectedHeader({ alg: 'RS256', kid: 'test' }).sign(signingKey)}`;
   const input = { subscription: tenant, secure: true, configuration: scannerAuth() };
   assert.equal(await authorize({ ...input, authorization: await sign() }), null);
+  const withoutLegacyCheck = scannerAuth(); delete withoutLegacyCheck.properties.identityProviders.azureActiveDirectory.validation.jwtClaimChecks;
+  assert.equal(await authorize({ ...input, configuration: withoutLegacyCheck, authorization: await sign() }), null);
   for (const changes of [{ azp: other }, { oid: other }, { scp: 'Documents.Access' }, { idtyp: 'user' }, { idtyp: undefined }]) {
     assert.equal((await authorize({ ...input, authorization: await sign(changes) })).status, 403);
+    assert.equal((await authorize({ ...input, configuration: withoutLegacyCheck, authorization: await sign(changes) })).status, 403);
   }
   for (const changes of [{ aud: other }, { tid: other }, { iss: 'https://untrusted.example/' }, { exp: now - 1 }, { nbf: now + 60 }]) {
     assert.equal((await authorize({ ...input, authorization: await sign(changes) })).status, 401);

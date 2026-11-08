@@ -14,14 +14,15 @@ export function createContainerAppAuthorizer({ trusts = [] } = {}) {
     const aad = p?.identityProviders?.azureActiveDirectory;
     const validation = aad?.validation;
     const policy = validation?.defaultAuthorizationPolicy;
+    const additionalClients = validation?.jwtClaimChecks?.allowedClientApplications;
     if (p?.platform?.enabled !== true || p?.globalValidation?.unauthenticatedClientAction !== 'Return401'
       || p?.httpSettings?.requireHttps !== true || aad?.enabled !== true
       || !uuid.test(aad?.registration?.clientId ?? '')
       || !list(validation?.allowedAudiences) || !list(policy?.allowedApplications)
-      || !list(policy?.allowedPrincipals?.identities) || !list(validation?.jwtClaimChecks?.allowedClientApplications)
+      || !list(policy?.allowedPrincipals?.identities) || additionalClients !== undefined && !list(additionalClients)
       || (p.globalValidation.excludedPaths?.length ?? 0) > 0
       || (policy.allowedPrincipals.groups?.length ?? 0) > 0
-      || (validation.jwtClaimChecks.allowedGroups?.length ?? 0) > 0
+      || (validation.jwtClaimChecks?.allowedGroups?.length ?? 0) > 0
       || Object.entries(p.identityProviders).some(([name, provider]) => name !== 'azureActiveDirectory' && provider?.enabled === true)) {
       return failure(501, 'ContainerAppAuthenticationNotImplemented');
     }
@@ -34,7 +35,7 @@ export function createContainerAppAuthorizer({ trusts = [] } = {}) {
     if (identity.delegated || identity.applicationType !== 'app'
       || !uuid.test(identity.client ?? '')
       || !policy.allowedApplications.map(lower).includes(lower(identity.client))
-      || !validation.jwtClaimChecks.allowedClientApplications.map(lower).includes(lower(identity.client))
+      || additionalClients && !additionalClients.map(lower).includes(lower(identity.client))
       || !policy.allowedPrincipals.identities.map(lower).includes(identity.principal)) return failure(403, 'Forbidden');
     return null;
   };
