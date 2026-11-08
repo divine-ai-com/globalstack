@@ -39,3 +39,35 @@ test('foreign plan tags block all resource deletion', async () => {
   }), /ownership mismatch/);
   assert.deepEqual(mutations, []);
 });
+
+test('document foundation allowlist contains only generated identities and network', async () => {
+  const configured = { ...manifest, scenario: 'document-foundation' };
+  const foundation = scopedWebPaths(configured);
+  assert.equal(foundation.plans.length, 4);
+  assert.deepEqual(Object.values(foundation.versions), ['2023-01-31', '2023-01-31', '2023-01-31', '2024-05-01']);
+  let calls = 0;
+  const request = scopedWebClient(configured, () => {}, async () => { calls++; return { status: 200 }; });
+  await request('GET', foundation.plans[0] + '?api-version=2023-01-31');
+  for (const path of [foundation.group, scope.plans[0], foundation.plans[0] + '-foreign']) {
+    await assert.rejects(request('DELETE', path), /allowlist/);
+  }
+  assert.equal(calls, 1);
+  assert.throws(() => scopedWebPaths({ ...manifest, scenario: 'arbitrary' }), /Unknown/);
+});
+
+test('foundation cleanup checks every resource owner and uses each provider API', async () => {
+  const configured = { ...manifest, scenario: 'document-foundation' };
+  const foundation = scopedWebPaths(configured);
+  const remaining = new Set(foundation.plans);
+  const result = await cleanupScopedWeb(configured, async (method, path) => {
+    const url = new URL(path, 'https://management.azure.com');
+    if (url.pathname === foundation.deployment) return { status: 404 };
+    if (url.pathname === foundation.group) { assert.equal(method, 'GET'); return { status: 200 }; }
+    assert.ok(foundation.plans.includes(url.pathname));
+    assert.equal(url.searchParams.get('api-version'), foundation.versions[url.pathname]);
+    if (method === 'DELETE') { remaining.delete(url.pathname); return { status: 202 }; }
+    return remaining.has(url.pathname) ? { status: 200, body: { tags: { run: manifest.runId, project: 'globalstack-production-scenarios' } } } : { status: 404 };
+  });
+  assert.deepEqual(result, { resourcesAbsent: true, deploymentAbsent: true, groupPreserved: true });
+  assert.equal(remaining.size, 0);
+});
