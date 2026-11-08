@@ -1,0 +1,15 @@
+{
+  "platform": "worker-scanner",
+  "startedAt": "2026-11-08T11:34:33.147Z",
+  "completedAt": "2026-11-08T11:35:06.034Z",
+  "exitCode": 1,
+  "eventCount": 25,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "25b810400a725089024097e7ddf0b1e5d3fbfb9f2d551e0dde5d6e67644d0413",
+  "eventSha256": "0154cd7c8e7fb976058ff1d788d939f7843f32e84c8ccede7850e15f0717b902",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.64.1"
+}

@@ -74,3 +74,40 @@ key and is registered only when `SCANNER_DIAGNOSTIC_ENABLED=true`. The runner
 checks unauthorized ingress, exact input hashes, scanning, and downstream policy
 revocation/restoration. Keys remain private and are removed during cleanup.
 This diagnostic is still separate from Event Grid delivery and Durable processing.
+
+## Paired Functions-to-scanner component
+
+`worker-scanner-paired.mjs` deploys the worker and scanner using the existing
+Bicep modules. Both targets receive identical compiled templates and published
+image digests. The scanner endpoint is supplied from each target's deployment
+output. The Functions application has no emulator-specific branch.
+
+Set the existing `PAIRED_SUBSCRIPTION_ID`, `PAIRED_RESOURCE_GROUP`,
+`PAIRED_PUBLISHER_OBJECT_ID`, `PAIRED_AZURE_CONFIG_DIR`, and
+`PAIRED_AZURE_CERTIFICATE_FILE` externally. Also provide `ENTRA_TENANT_ID`,
+`SCANNER_API_AUDIENCE`, `WORKER_IMAGE_ID`, and `SCANNER_IMAGE_ID`. Image IDs must
+come from `docker image inspect` of the intended locally cached images. The
+worker image must contain the opt-in scanner diagnostic. Never supply secrets
+in tracked files.
+
+For the live comparison recording, supply the installed Playwright module and
+Chromium paths as `PAIRED_PLAYWRIGHT_MODULE` and `PAIRED_CHROMIUM_EXECUTABLE`, then:
+
+```sh
+node experiments/platform-lifecycle/walkthrough.mjs --worker-scanner
+```
+
+The harness requires a clean checkout, an empty dedicated operator resource
+group, 40 GiB free, and an available USD 11 allocation in the shared experiment
+ledger. The allocation is a conservative experiment allowance, not a reading of
+Azure billing. A watchdog initiates cleanup after process loss or the bounded
+execution deadline. Cleanup verifies ownership on both sides before removing
+shared resources, and preserves the operator resource group. Host-key responses
+are redacted before recording. Raw private cleanup manifests and Docker login
+configuration must not be published.
+
+The component checks host authentication and real clean/YARA-detected scans
+through the deployed Functions handler. Matching scan hashes and stable engine
+results are required. A pass does not establish Event Grid delivery, Durable
+orchestration, database/index updates, private networking, or full workflow
+completion. The recording displays live API observations, not Azure Portal.
