@@ -153,3 +153,12 @@ test('compiled identity map keys resolve to resource IDs instead of expression t
   } }, scope);
   assert.deepEqual(identity.userAssignedIdentities, { [expected]: {} });
 });
+
+test('ARM issuer URI expressions resolve and unimplemented expressions cannot become literal deployed values', () => {
+  assert.equal(evaluateArmValue("[uri(environment().authentication.loginEndpoint, format('{0}/v2.0', parameters('tenant')))]", { tenant: 'example' }), 'https://login.microsoftonline.com/example/v2.0');
+  assert.equal(evaluateArmValue("[uri('https://example.test/a/b', '../c?q=1')]", {}), 'https://example.test/c?q=1');
+  assert.equal(evaluateArmValue("[uri('https://example.test/a/', 'b')]", {}), 'https://example.test/a/b');
+  assert.throws(() => evaluateArmValue("[uri('relative', 'child')]", {}), { code: 'InvalidTemplate' });
+  assert.throws(() => evaluateArmValue('[unimplementedFunction()]', {}), { code: 'GlobalStackTemplateExpressionNotImplemented' });
+  assert.throws(() => evaluateArmValue('[environment().unsupportedProperty]', {}), { code: 'GlobalStackTemplateExpressionNotImplemented' });
+});

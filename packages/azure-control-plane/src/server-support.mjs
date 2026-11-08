@@ -1468,6 +1468,19 @@ export function evaluateArmExpression(expression, parameters) {
   if (text === 'resourceGroup().location') return parameters.__resourceGroupLocation;
   if (text === 'resourceGroup().id') return `/subscriptions/${parameters.__subscriptionId}/resourceGroups/${parameters.__resourceGroupName}`;
   if (text === 'subscription().tenantId') return localIdentity.tenantId;
+  // ARM template cloud metadata is separate from the local CLI transport
+  // metadata endpoint. This runtime currently targets Azure public cloud.
+  if (text === 'environment().authentication.loginEndpoint') return 'https://login.microsoftonline.com/';
+
+  const uriMatch = text.match(/^uri\((.*)\)$/s);
+  if (uriMatch) {
+    const args = splitArmArgs(uriMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    if (args.length !== 2 || args.some(arg => typeof arg !== 'string')) {
+      const error = new Error('ARM uri requires two string arguments.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
+    }
+    try { return new URL(args[1], args[0]).href; }
+    catch { const error = new Error('ARM uri requires a valid absolute base URI.'); error.code = 'InvalidTemplate'; error.status = 400; throw error; }
+  }
 
   const formatMatch = text.match(/^format\((.*)\)$/s);
   if (formatMatch) {
@@ -1544,7 +1557,8 @@ export function evaluateArmExpression(expression, parameters) {
     error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
     throw error;
   }
-  return expression;
+  const error = new Error('This ARM expression is not implemented by the local deployment runtime.');
+  error.code = 'GlobalStackTemplateExpressionNotImplemented'; error.status = 501; throw error;
 }
 
 export function evaluateArmValue(value, parameters) {
@@ -1563,7 +1577,7 @@ export function evaluateArmValue(value, parameters) {
   const trimmed = value.trim();
   if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) return unquoteArm(trimmed);
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) return evaluateArmExpression(trimmed.slice(1, -1), parameters);
-  if (/^copyIndex\(|^createArray\(|^length\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
+  if (/^uri\(|^environment\(\)\.|^copyIndex\(|^createArray\(|^length\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
   return value;
 }
 
