@@ -20,6 +20,19 @@ remain outstanding.
 
 ## Latest scanner and worker checkpoint
 
+The [completed paired Functions-to-scanner capture](evidence/worker-scanner-azure-ead706e/)
+uses the actual deployed Functions handler and scanner on both targets. Missing
+host-key calls returned 401. Clean text, a harmless YARA marker and a harmless
+EICAR marker produced matching scan decisions and hashes. The worker's managed
+identity reached scanner ingress on both targets. Revoking and restoring its
+access took 37 and 36 seconds to affect Azure, respectively; local effects
+were visible on the first check. The exact timings and traces are retained.
+Azure cleanup verified the operator group empty after a roughly 24-minute
+managed-environment deletion; the recording and replay completed. The video is
+operator-only and contains identifiers, while the public event trace is
+further redacted. It is a terminal/API view, not a Portal capture. This is a
+component result, with all 101 full-application assertions still not run.
+
 The [paired scanner capture](evidence/scanner-azure-143b1c1/) records matching
 stable outcomes for three denial controls and three real ClamAV/YARA scan
 requests. Azure took about 36 seconds to activate the temporary pilot policy and
@@ -34,11 +47,10 @@ Functions event invocation or an Azure worker-to-scanner result.
 
 Final Azure cleanup is verified in the separate scanner recovery trace. The
 original 503 failure, watchdog timeout and provider/inventory inconsistency
-remain visible. All budget allocations are cleanup-verified; the conservative
-allocated total before the corrected worker/scanner retry is USD 86 of USD 150,
-not measured billing. Subsequent reservations remain bounded by the shared ledger. The live component
-video remains in the operator workspace, with its hash published alongside the
-trace. Public video distribution and Azure Portal screenshots remain outstanding.
+remain visible. All budget allocations are cleanup-verified. The conservative
+allocated total after the corrected worker/scanner run is USD 97 of USD 150,
+not measured billing. Public video distribution and Azure Portal screenshots
+remain outstanding.
 
 The [local handler capture](evidence/function-scanner-08aabdd/) now also verifies
 four actual Functions HTTP calls: unauthenticated denial, successful scanning
@@ -49,12 +61,12 @@ The [first paired handler capture](evidence/worker-scanner-azure-8707add/) recor
 Azure scan success and local failure caused by inconsistent external tenant
 configuration. The interrupted recording and separate verified cleanup remain
 visible. The [non-default-tenant regression](evidence/function-scanner-df5b4fe/)
-passes with the same application image after correcting that configuration.
-Issue #62 remains open for a fresh paired result. Observation checkpoints and
-early local cleanup now protect against long cloud teardown interruptions.
+and the completed paired capture pass with the same application image after
+correcting that configuration. Observation checkpoints and early local cleanup
+preserve evidence during long cloud teardown.
 
-Next: repeat the real Functions handler with its managed identity on Azure,
-then complete the document pipeline and its failure controls. The 101 full
+Next: complete the Blob, Event Grid, Durable Functions, PostgreSQL and Search
+path and its failure controls, then the financial workflow. The 101 full
 scenario assertions and the full-scenario platform ports remain outstanding.
 
 ## Work verified in this session
@@ -213,13 +225,13 @@ for this change.
 
 ## Budget and storage
 
-The private cumulative ledger currently reserves USD 52 in conservative envelopes
+The private cumulative ledger currently records USD 97 in conservative envelopes
 against the USD 150 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup. The scoped hosting plans were removed. The
 operator's empty group is intentionally retained for subsequent scoped runs.
 
-The workspace had approximately 64 GiB free at the last check, above the 40 GiB
+The workspace had approximately 57 GiB free at the last check, above the 40 GiB
 minimum. Diagnostic containers, internal networks and temporary private TLS files
 are removed after each probe. Shared caches and unrelated workloads are retained.
 
