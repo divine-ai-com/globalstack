@@ -31,7 +31,9 @@ jobs:
           fi
           printf '%s  %s\n' '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb' "$RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check
           tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
-          "$RUNNER_TEMP/gitleaks" git . --log-opts='--all' --redact=100 --no-banner
+          # Each push and PR checks its own reachable history. Other branches
+          # are checked by their own runs and cannot fail an unrelated commit.
+          "$RUNNER_TEMP/gitleaks" git . --log-opts='HEAD' --redact=100 --no-banner
       - name: Check reviewed fixture exceptions remain narrow
         run: node scripts/repository/check-research-secret-scan.mjs "$RUNNER_TEMP/gitleaks"
   dependencies:

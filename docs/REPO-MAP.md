@@ -80,6 +80,7 @@ flowchart TD
 - `packages/core/src/event-grid-storage-contract.mjs`
 - `packages/core/src/hybrid-coverage.mjs`
 - `packages/core/src/resource-store.mjs`
+- `packages/azure-control-plane/src/arm-response.mjs`
 - `packages/azure-control-plane/src/container-environment-validation.mjs`
 - `packages/azure-control-plane/src/deployment-validation.mjs`
 - `packages/azure-control-plane/src/provider-validation-support.mjs`
@@ -152,6 +153,7 @@ flowchart TD
 - `packages/conformance/src/arm-group-role-lifecycle.test.mjs`
 - `packages/conformance/src/arm-resource-dependencies.test.mjs`
 - `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`
+- `packages/conformance/src/arm-write-only-properties.test.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
 - `packages/conformance/src/azure-derived-local-expectations.test.mjs`

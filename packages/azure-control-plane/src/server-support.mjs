@@ -1,3 +1,4 @@
+import { armResponseReplacer } from './arm-response.mjs';
 import { URL } from 'node:url';
 import { allCapabilities, supportedCapabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
@@ -40,7 +41,7 @@ async function parseRequestBody(req) {
   }
 }
 export function sendJson(res, status, body, headers = {}) {
-  const payload = body === undefined ? '' : JSON.stringify(body, null, 2);
+  const payload = body === undefined ? '' : JSON.stringify(body, armResponseReplacer, 2);
   res.writeHead(status, {
     'content-type': 'application/json',
     'content-length': Buffer.byteLength(payload),
