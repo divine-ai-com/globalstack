@@ -26,6 +26,42 @@ function unsupported(message, path) {
   throw new ValidationFailure('GlobalStackValidationNotImplemented', message, path, 501);
 }
 
+function validateDocumentPostgres(type, route, body) {
+  const path = 'properties.template.resources';
+  const parts = route.typePath.split('/');
+  const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
+  if (type === 'Microsoft.DBforPostgreSQL/flexibleServers') {
+    const properties = body.properties ?? {};
+    if (!/^[a-z0-9](?:[a-z0-9-]{1,61})[a-z0-9]$/.test(parts[1] ?? '') || !body.location) {
+      invalid('A PostgreSQL server requires a valid name and location.', path);
+    }
+    if (body.sku?.name !== 'Standard_B1ms' || body.sku?.tier !== 'Burstable'
+      || properties.version !== '16' || properties.storage?.storageSizeGB !== 32
+      || properties.backup?.backupRetentionDays !== 7 || properties.backup?.geoRedundantBackup !== 'Disabled'
+      || properties.highAvailability?.mode !== 'Disabled'
+      || properties.authConfig?.activeDirectoryAuth !== 'Enabled' || properties.authConfig?.passwordAuth !== 'Disabled'
+      || !uuid.test(properties.authConfig?.tenantId ?? '') || properties.administratorLogin !== undefined
+      || properties.administratorLoginPassword !== undefined || properties.network?.publicNetworkAccess !== 'Enabled') {
+      unsupported('PostgreSQL provider validation outside the captured Entra-only pilot shape is not implemented.', path);
+    }
+    return;
+  }
+  if (type === 'Microsoft.DBforPostgreSQL/flexibleServers/administrators') {
+    if (!uuid.test(parts[3] ?? '') || body.properties?.principalType !== 'ServicePrincipal'
+      || !body.properties?.principalName || !uuid.test(body.properties?.tenantId ?? '')) {
+      unsupported('PostgreSQL administrator validation outside the captured service-principal shape is not implemented.', path);
+    }
+    return;
+  }
+  if (type === 'Microsoft.DBforPostgreSQL/flexibleServers/databases') {
+    if (parts[3] !== 'documents' || body.properties?.charset !== 'UTF8' || body.properties?.collation !== 'en_US.utf8') {
+      unsupported('PostgreSQL database validation outside the captured documents shape is not implemented.', path);
+    }
+    return;
+  }
+  unsupported(`PostgreSQL provider validation for ${type} is not implemented.`, path);
+}
+
 function parameterMatches(type, value) {
   switch (type.toLowerCase()) {
     case 'string': case 'securestring': return typeof value === 'string';
@@ -147,6 +183,11 @@ export function validateDeployment({ subscriptionId, resourceGroupName = null, d
       const type = `${route.providerNamespace}/${route.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
       const id = `${route.scopeId ?? `/subscriptions/${subscriptionId}/resourceGroups/${route.resourceGroupName}`}/providers/${route.providerNamespace}/${route.typePath}`;
       if (level !== 'Template') {
+        if (type.startsWith('Microsoft.DBforPostgreSQL/flexibleServers')) {
+          validateDocumentPostgres(type, route, operation.body);
+          validatedResources.push({ id });
+          continue;
+        }
         if (type === 'Microsoft.Web/serverfarms') {
           const planName = route.typePath.split('/').at(-1);
           if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/.test(planName)) unsupported('Hosting plan name validation is outside the supported subset.', 'properties.template.resources');
