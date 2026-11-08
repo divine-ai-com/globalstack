@@ -26,8 +26,9 @@ document-module deployment attempt, Azure accepted both modules; GlobalStack acc
 the data module but returned 501 for identity-based Event Grid dead lettering.
 The [redacted comparison](evidence/document-event-azure-40e5521/) retains the
 same compiled template hash. After the local fix, a clean-source replay with a
-synthetic Function discovery adapter accepted both modules. The paired run is
-still cleaning up Azure resources, and actual Blob delivery on the corrected
+synthetic Function discovery adapter accepted both modules. The paired run's
+automatic cleanup failed, then ownership-checked manual recovery and a fresh
+Azure inventory verified the group empty. Actual Blob delivery on the corrected
 revision remains untested. The local
 [native Event Grid probe](evidence/native-event-discovery-d61025d/) discovered
 the deployed Function without a manually written Function child resource and
@@ -65,9 +66,8 @@ Functions event invocation or an Azure worker-to-scanner result.
 
 Final Azure cleanup is verified in the separate scanner recovery trace. The
 original 503 failure, watchdog timeout and provider/inventory inconsistency
-remain visible. All budget allocations are cleanup-verified. The conservative
-allocated total after the corrected worker/scanner run is USD 97 of USD 150,
-not measured billing. Public video distribution and Azure Portal screenshots
+remain visible. The conservative allocated total at that checkpoint was USD 97
+of USD 150, not measured billing. Public video distribution and Azure Portal screenshots
 remain outstanding.
 
 The [local handler capture](evidence/function-scanner-08aabdd/) now also verifies
@@ -243,11 +243,13 @@ for this change.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 97 in conservative envelopes
+The private cumulative ledger currently records USD 121 in conservative envelopes
 against the USD 150 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
-allocations have verified cleanup. The scoped hosting plans were removed. The
-operator's empty group is intentionally retained for subsequent scoped runs.
+allocations have verified cleanup after manual recovery of the latest document
+deployment attempt. USD 29 remains unallocated under this conservative ledger.
+The scoped hosting plans were removed. The operator's empty group is intentionally
+retained for subsequent scoped runs.
 
 The workspace had approximately 57 GiB free at the last check, above the 40 GiB
 minimum. Diagnostic containers, internal networks and temporary private TLS files
