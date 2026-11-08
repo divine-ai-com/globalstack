@@ -202,6 +202,12 @@ try {
     await pause(1000);
   }
   assert.ok(report.localBlobEvent?.subjectMatches, 'Local Blob upload did not reach the deployed Event Grid subscription');
+  const localEventDeadline = Math.min(Date.now() + 15000, m.workDeadline - 60000);
+  while (Date.now() < localEventDeadline && !runtime.storageEventDelivery.diagnostics.some(item => item.eventId === report.localBlobEvent.eventId)) {
+    await pause(250);
+  }
+  report.localEventDelivery = runtime.storageEventDelivery.diagnostics.filter(item => item.eventId === report.localBlobEvent.eventId);
+  assert.ok(report.localEventDelivery.length, 'Local Event Grid did not attempt native Function delivery');
   const readAzureEventMetrics = () => {
     try {
       const metrics = azureCli(m.config, ['monitor', 'metrics', 'list', '--resource', d.eventSubscription,
