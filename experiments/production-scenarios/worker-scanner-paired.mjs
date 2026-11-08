@@ -30,7 +30,8 @@ const out = resolve(process.env.PAIRED_RUN_DIR); await mkdir(out, { mode: 0o700 
 const disk = await statfs(out); assert.ok(disk.bavail * disk.bsize >= 40 * 1024 ** 3);
 const m = { subscription: process.env.PAIRED_SUBSCRIPTION_ID, group: process.env.PAIRED_RESOURCE_GROUP,
   publisher: process.env.PAIRED_PUBLISHER_OBJECT_ID, config: process.env.PAIRED_AZURE_CONFIG_DIR,
-  runId: randomBytes(6).toString('hex'), roles: Array.from({ length: 7 }, randomUUID), documentRoles: Array.from({ length: 3 }, randomUUID), parentPid: process.pid, deadline: Date.now() + 25 * 60000 };
+  runId: randomBytes(6).toString('hex'), roles: Array.from({ length: 7 }, randomUUID), documentRoles: Array.from({ length: 3 }, randomUUID),
+  parentPid: process.pid, workDeadline: Date.now() + 18 * 60000, deadline: Date.now() + 45 * 60000 };
 const manifests = pairedComponentManifests(m), w = workerPaths(manifests.worker), s = scannerPaths(manifests.scanner);
 const d = documentPaths(m);
 const token = azureToken(m.config), replacements = [[token, '<redacted>'], [m.subscription, '<subscription>'], [m.publisher, '<publisher>']];
@@ -50,7 +51,7 @@ async function local(method, path, body) {
   observe('local', { method, path, request: body, ...result }); return result;
 }
 async function deploy(name, id, values, localValues = values) {
-  assert.ok(Date.now() < m.deadline - 180000, 'Deployment time budget exhausted');
+  assert.ok(Date.now() < m.workDeadline - 180000, 'Deployment time budget exhausted');
   phase = name;
   const { text, template } = compiled.get(name);
   await writeFile(resolve(out, `${name}.json`), text);
@@ -59,7 +60,7 @@ async function deploy(name, id, values, localValues = values) {
   let azure = await request('PUT', `${id}?api-version=2025-04-01`, body(values));
   if ([200, 201, 202].includes(azure.status)) {
     while (!['Succeeded', 'Failed', 'Canceled'].includes(azure.body?.properties?.provisioningState)) {
-      assert.ok(Date.now() < m.deadline - 180000, 'Deployment time budget exhausted'); await pause(3000);
+      assert.ok(Date.now() < m.workDeadline - 180000, 'Deployment time budget exhausted'); await pause(3000);
       azure = await request('GET', `${id}?api-version=2025-04-01`); assert.equal(azure.status, 200);
     }
   }
@@ -132,7 +133,7 @@ try {
   const worker = await deploy('worker-app', w.deployments[1], { ...base, imageReference: workerImage, applicationSettings: settings(azureScanner) }, { ...base, imageReference: workerImage, applicationSettings: settings(localScanner) });
   const hostname = worker.azure.properties.outputs.hostname.value; assert.ok(hostname.startsWith(`${w.service}-worker`) && hostname.endsWith('.azurewebsites.net'));
   phase = 'worker-readiness';
-  const healthDeadline = Math.min(Date.now() + 240000, m.deadline - 120000);
+  const healthDeadline = Math.min(Date.now() + 240000, m.workDeadline - 120000);
   let ready = false;
   do {
     try { const result = await httpExchange(`https://${hostname}/api/health`, { timeoutMs: 10000 }); observe('azure', { method: 'GET', path: '/api/health', ...result }); ready = result.status === 200 && result.body?.worker === 'ready'; }

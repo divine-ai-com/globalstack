@@ -35,7 +35,7 @@ export async function cleanupDocumentPaired(m, request = documentPairedClient(m)
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [manifestPath, donePath, resultPath] = process.argv.slice(2), m = JSON.parse(await readFile(manifestPath));
-  assert.ok(Number.isFinite(m.deadline) && m.deadline <= Date.now() + 1800000);
+  assert.ok(Number.isFinite(m.deadline) && m.deadline <= Date.now() + 3000000);
   documentPaths(m); pairedComponentManifests(m);
   while (Date.now() < m.deadline) {
     try { await access(donePath); process.exit(0); } catch {}
