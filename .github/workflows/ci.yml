@@ -90,9 +90,19 @@ jobs:
       - run: npm install --global npm@11.14.1
       - run: npm ci
       - run: npm run research:claims:build
+      - name: Fetch pinned provider archive through the release asset API
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLAIMS_PROVIDER_MIRROR: ${{ runner.temp }}/provider-mirror
+        run: |
+          archive="$CLAIMS_PROVIDER_MIRROR/registry.terraform.io/azure/azapi/terraform-provider-azapi_2.13.0_linux_amd64.zip"
+          mkdir -p "$(dirname "$archive")"
+          gh api repos/Azure/terraform-provider-azapi/releases/assets/594680645 -H 'Accept: application/octet-stream' > "$archive"
+          node --input-type=module -e 'import {verifyProviderMirror} from "./experiments/claims-evidence/provider-mirror.mjs"; console.log(await verifyProviderMirror(process.env.CLAIMS_PROVIDER_MIRROR, "experiments/claims-evidence/terraform/lib/.terraform.lock.hcl"));'
       - name: Run and verify native behavior
         env:
           CLAIMS_RUN_DIR: ${{ runner.temp }}/claims-reproduction
+          CLAIMS_PROVIDER_MIRROR: ${{ runner.temp }}/provider-mirror
         run: |
           npm run research:claims
           node experiments/claims-evidence/verify.mjs "$CLAIMS_RUN_DIR/result.json"

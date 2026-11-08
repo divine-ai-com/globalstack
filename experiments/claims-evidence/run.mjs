@@ -1,4 +1,5 @@
 import { retryableDependencyFailure } from './dependency-retry.mjs';
+import { verifyProviderMirror } from './provider-mirror.mjs';
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { spawn, execFileSync } from 'node:child_process';
@@ -155,6 +156,13 @@ try {
   await writeFile(resolve(output, 'shims/az'), `#!/bin/sh\ncase "$1 $2" in\n'account get-access-token') echo '${token}';;\n'account show') echo '${account}';;\n'cloud show') echo '${cloud}';;\n'version ') echo '{"azure-cli":"test-shim"}';;\n*) exit 1;;\nesac\n`, { mode: 0o755 });
   const inspected = JSON.parse(execFileSync('docker', ['image', 'inspect', imageName], { encoding: 'utf8' }))[0];
   record.runnerImage = { name: imageName, id: inspected.Id };
+  const mirror = process.env.CLAIMS_PROVIDER_MIRROR;
+  const mirrorArgs = [];
+  if (mirror) {
+    record.providerMirror = await verifyProviderMirror(mirror, resolve(bundle, 'lib/.terraform.lock.hcl'));
+    await writeFile(resolve(output, 'shims/terraform.rc'), 'provider_installation { filesystem_mirror { path = "/provider-mirror" include = ["registry.terraform.io/azure/azapi"] } }\n');
+    mirrorArgs.push('-v', `${mirror}:/provider-mirror:ro`, '-e', 'TF_CLI_CONFIG_FILE=/shims/terraform.rc');
+  }
   tf = async (label, args) => {
     const name = `gs-claims-${process.pid}-${commandIndex}`; containers.add(name);
     try {
@@ -164,7 +172,7 @@ try {
         '-w', '/work', '-e', 'PATH=/shims:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', '-e', 'HOME=/tmp',
         '-e', `ARM_RESOURCE_MANAGER_ENDPOINT=${tlsEndpoint}`, '-e', 'ARM_USE_CLI=true', '-e', `ARM_SUBSCRIPTION_ID=${localIdentity.subscriptionId}`,
         '-e', `ARM_TENANT_ID=${localIdentity.tenantId}`, '-e', 'SSL_CERT_FILE=/certs/ca.pem', '-e', 'AZURE_IDENTITY_DISABLE_INSTANCE_DISCOVERY=true',
-        '-e', 'TF_IN_AUTOMATION=1', '--entrypoint', 'terraform', imageName, ...args]);
+        '-e', 'TF_IN_AUTOMATION=1', ...mirrorArgs, '--entrypoint', 'terraform', imageName, ...args]);
     } finally { try { execFileSync('docker', ['rm', '-f', name], { stdio: 'ignore' }); } catch {} containers.delete(name); }
   };
   const setConfig = async (count, path = '/claims') => writeFile(resolve(output, 'task/lib/terraform.tfvars.json'), JSON.stringify({
