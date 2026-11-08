@@ -33,6 +33,12 @@ remain outstanding.
   reached actual Azure creation and retained provider 429 for both plans.
   Cancellation and individual-resource cleanup verified both plans and the
   deployment record absent while preserving the operator group.
+- The [authorized pay-as-you-go retry](evidence/scoped-hosting-success-c135f08/)
+  provisioned both P0v3 and EP1 successfully on 2026-11-08. Both targets returned
+  200 for reads, unchanged PUTs and tag updates, and identical 400 error bodies
+  for invalid SKUs. The valid SKU and updated tag survived rejection. Azure
+  cleanup verified both plans and the deployment absent. This clears the observed
+  hosting creation blocker for this attempt, not the full application gate.
 - Signed Key Vault secret reads enforce the implemented tenant, audience,
   signature and role scopes. The [native database diagnostic](evidence/functions-native-database-14e4f4a/)
   verifies secret access, PostgreSQL TLS, schema migration, certificate rejection
@@ -50,10 +56,9 @@ remain outstanding.
 
 ## External prerequisites
 
-1. Resolve the Azure App Service creation restriction. Both P0v3 and EP1 returned
-   subscription-throttling errors after provider validation accepted the request.
-   A free Portal support request is pending operator action. No paid support or
-   repeated paid retry is authorized by this checklist.
+1. Hosting creation succeeded in the latest authorized retry. Earlier 429
+   observations remain retained. Availability for other SKUs, regions and future
+   attempts is not established by this bounded result.
 2. Before full-stack deployment, establish restricted permission to create and
    delete the required workload role assignments inside the test group. Do not
    elevate this service principal to subscription Owner. Contributor alone is
@@ -90,7 +95,7 @@ remain outstanding.
 
 ## Budget and storage
 
-The private cumulative ledger currently reserves USD 34 in conservative envelopes
+The private cumulative ledger currently reserves USD 35 in conservative envelopes
 against the USD 150 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup. The scoped hosting plans were removed. The

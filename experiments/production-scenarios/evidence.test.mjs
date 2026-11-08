@@ -395,3 +395,33 @@ test('native Search SDK evidence retains write, read-only and revoked phases', a
   assert.ok(search.requests.every(item => item.bearer));
   assert.equal(report.nativeIdentity.database.cleanup, true);
 });
+
+test('successful scoped hosting retry retains rejection parity and cleanup', async () => {
+  const prefix = 'scoped-hosting-success-c135f08/';
+  const index = await load(prefix + 'index.json');
+  for (const [name, metadata] of Object.entries(index.files)) {
+    const bytes = await readFile(new URL(prefix + name, base));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sha256);
+    assert.equal(bytes.length, metadata.bytes);
+  }
+  const report = await load(prefix + 'result.json');
+  assert.equal(report.revision, index.sourceRevision);
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.observationsComplete, true);
+  assert.equal(report.error, undefined);
+  assert.equal(report.fullProtocolParityEvaluated, false);
+  assert.deepEqual(report.cleanup, { plansAbsent: true, deploymentAbsent: true, groupPreserved: true });
+  for (const sku of ['P0v3', 'EP1']) {
+    const exchanges = (phase) => report.exchanges.filter(item => item.phase === `${sku}-${phase}`);
+    for (const phase of ['read', 'unchanged-put', 'tag-update', 'read-after-rejection']) {
+      assert.deepEqual(exchanges(phase).map(item => [item.target, item.status]), [['azure', 200], ['local', 200]]);
+    }
+    const rejected = exchanges('invalid-sku');
+    assert.deepEqual(rejected.map(item => [item.target, item.status]), [['azure', 400], ['local', 400]]);
+    assert.deepEqual(rejected[0].body, rejected[1].body);
+    for (const item of exchanges('read-after-rejection')) {
+      assert.equal(item.body.sku.name, sku);
+      assert.equal(item.body.tags.purpose, 'lifecycle-update');
+    }
+  }
+});
