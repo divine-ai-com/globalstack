@@ -43,7 +43,7 @@ export function workerClient(m, observe = () => {}, exchange = httpExchange) {
     observe({ method, path, request: body, ...recorded, startedAt, completedAt: new Date().toISOString() }); return result;
   };
 }
-export async function cleanupWorker(m, request = workerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 600000 } = {}) {
+export async function cleanupWorker(m, request = workerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 600000, planOnly = false } = {}) {
   const s = workerPaths(m), deadline = Date.now() + timeoutMs, existing = [], deployments = [];
   const get = id => request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`);
   const terminal = state => ['Succeeded', 'Failed', 'Canceled'].includes(state);
@@ -51,7 +51,7 @@ export async function cleanupWorker(m, request = workerClient(m), { sleep = ms =
     let found = await get(id); if (found.status === 404) continue;
     assert.equal(found.status, 200); assert.equal(found.body.properties?.parameters?.runId?.value, m.runId);
     assert.equal(found.body.properties?.parameters?.serviceName?.value, s.service);
-    if (!terminal(found.body.properties.provisioningState)) {
+    if (!planOnly && !terminal(found.body.properties.provisioningState)) {
       assert.ok([200, 202, 204, 409].includes((await request('POST', `${id}/cancel?api-version=2025-04-01`)).status));
       do { assert.ok(Date.now() < deadline); await sleep(3000); found = await get(id); assert.ok([200, 404].includes(found.status)); }
       while (found.status !== 404 && !terminal(found.body.properties.provisioningState));
@@ -76,6 +76,7 @@ export async function cleanupWorker(m, request = workerClient(m), { sleep = ms =
     }
     existing.push(id);
   }
+  if (planOnly) return { ownershipVerified: true };
   // Complete each deletion before removing a dependency, such as the hosting plan.
   for (const id of [...existing, ...deployments.reverse()]) {
     assert.ok([200, 202, 204, 404].includes((await request('DELETE', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`)).status));

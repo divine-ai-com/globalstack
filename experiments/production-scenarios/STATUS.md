@@ -39,7 +39,12 @@ allocated total is USD 75 of USD 150, not measured billing. The live component
 video remains in the operator workspace, with its hash published alongside the
 trace. Public video distribution and Azure Portal screenshots remain outstanding.
 
-Next: invoke the real Functions handler with its managed identity on both targets,
+The [local handler capture](evidence/function-scanner-08aabdd/) now also verifies
+four actual Functions HTTP calls: unauthenticated denial, successful scanning
+with matching input hashes, downstream denial, and access restoration. Cleanup
+passed. This adds no full-workflow assertions.
+
+Next: repeat the real Functions handler with its managed identity on Azure,
 then complete the document pipeline and its failure controls. The 101 full
 scenario assertions and the full-scenario platform ports remain outstanding.
 

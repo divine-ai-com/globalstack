@@ -1,0 +1,1508 @@
+{
+  "sourceRevision": "08aabdd115d28ae4b74032b8fe615ed914bcad25",
+  "sourceDirty": false,
+  "scope": "Includes an actual admin-authenticated Functions handler calling the scanner. Local ARM-deployed native Functions container obtains a managed-identity token through the Azure SDK and calls the native scanner. SDK commands execute inside the worker container; this is not an Event Grid invocation, Azure comparison or complete business workflow.",
+  "startedAt": "2026-11-08T11:29:13.670Z",
+  "image": "sha256:c9eb00bbf652ddd14546d28c587c3cab99f34c63551fcd5e358cbd9ad582f6ff",
+  "scannerImage": "sha256:742cbf642f8fd492829e379d38e77c2117fd9a7b6eabaea0da0e31c35413463e",
+  "functionHandlerRequested": true,
+  "functionCalls": [
+    {
+      "label": "missing-admin-key",
+      "at": "2026-11-08T11:29:57.193Z",
+      "status": 401,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "label": "function-managed-identity-scan",
+      "at": "2026-11-08T11:29:57.348Z",
+      "status": 200,
+      "body": {
+        "correlationId": "dcc96938-d394-4c6b-939a-ec05b96bdd8f",
+        "inputSha256": "428ba126571cc9c8a8f787b9a5ca8e7421720f511d6bd2a3bbcffe6f4d6baf8d",
+        "upstreamStatus": 200,
+        "scan": {
+          "sha256": "428ba126571cc9c8a8f787b9a5ca8e7421720f511d6bd2a3bbcffe6f4d6baf8d",
+          "bytes": 36,
+          "mediaType": "text/plain",
+          "engines": [
+            {
+              "engine": "clamav",
+              "status": "clean",
+              "findings": [],
+              "durationMs": 33
+            },
+            {
+              "engine": "yara",
+              "status": "clean",
+              "findings": [],
+              "durationMs": 17
+            }
+          ],
+          "status": "clean",
+          "pages": [
+            {
+              "page": 1,
+              "method": "utf8",
+              "text": "Native Functions scanner invocation."
+            }
+          ],
+          "extractionStatus": "completed",
+          "provenance": {
+            "versions": {
+              "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+              "yara": "4.2.3"
+            },
+            "clamavDatabases": [
+              {
+                "file": "bytecode.cvd",
+                "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+              },
+              {
+                "file": "daily.cvd",
+                "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+              },
+              {
+                "file": "main.cvd",
+                "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+              }
+            ],
+            "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "label": "function-scanner-policy-denied",
+      "at": "2026-11-08T11:29:59.286Z",
+      "status": 403,
+      "body": {
+        "correlationId": "d0966e5d-e2a4-4fb3-aeba-53034b59c8ca",
+        "inputSha256": "428ba126571cc9c8a8f787b9a5ca8e7421720f511d6bd2a3bbcffe6f4d6baf8d",
+        "upstreamStatus": 403,
+        "scan": null
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "label": "function-scanner-policy-restored",
+      "at": "2026-11-08T11:29:59.992Z",
+      "status": 200,
+      "body": {
+        "correlationId": "7126a551-e193-44ca-be62-0a68209b1729",
+        "inputSha256": "428ba126571cc9c8a8f787b9a5ca8e7421720f511d6bd2a3bbcffe6f4d6baf8d",
+        "upstreamStatus": 200,
+        "scan": {
+          "sha256": "428ba126571cc9c8a8f787b9a5ca8e7421720f511d6bd2a3bbcffe6f4d6baf8d",
+          "bytes": 36,
+          "mediaType": "text/plain",
+          "engines": [
+            {
+              "engine": "clamav",
+              "status": "clean",
+              "findings": [],
+              "durationMs": 16
+            },
+            {
+              "engine": "yara",
+              "status": "clean",
+              "findings": [],
+              "durationMs": 17
+            }
+          ],
+          "status": "clean",
+          "pages": [
+            {
+              "page": 1,
+              "method": "utf8",
+              "text": "Native Functions scanner invocation."
+            }
+          ],
+          "extractionStatus": "completed",
+          "provenance": {
+            "versions": {
+              "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+              "yara": "4.2.3"
+            },
+            "clamavDatabases": [
+              {
+                "file": "bytecode.cvd",
+                "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+              },
+              {
+                "file": "daily.cvd",
+                "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+              },
+              {
+                "file": "main.cvd",
+                "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+              }
+            ],
+            "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template?api-version=2022-09-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template",
+        "name": "worker-template",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-host?api-version=2025-04-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-host",
+        "name": "worker-host",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T11:29:16.357Z",
+          "duration": "PT0.019S",
+          "outputs": {
+            "registryHost": {
+              "type": "String",
+              "value": "gsa740ca0a3cimages.azurecr.io"
+            },
+            "workerClientId": {
+              "type": "String",
+              "value": "d1107b16-75a8-604d-c62d-9e3825369059"
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gsa740ca0a3c-worker",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gsa740ca0a3chost",
+              "status": 202
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ContainerRegistry/registries/gsa740ca0a3cimages",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/serverfarms/gsa740ca0a3c-worker",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gsa740ca0a3chost/providers/Microsoft.Authorization/roleAssignments/98ad71de-4bb3-4287-985e-c66ef2c9b5f2",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gsa740ca0a3chost/providers/Microsoft.Authorization/roleAssignments/b366c6dc-e56c-436a-bfb8-a105495cedda",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gsa740ca0a3chost/providers/Microsoft.Authorization/roleAssignments/c6b4e7e4-bd6b-4bd5-8dc2-0a6ccb2024b4",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Storage/storageAccounts/gsa740ca0a3chost/providers/Microsoft.Authorization/roleAssignments/091e1ee0-1715-41a0-babf-a487b87f4a09",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ContainerRegistry/registries/gsa740ca0a3cimages/providers/Microsoft.Authorization/roleAssignments/5e69ab65-2ba5-48cc-8764-bd35b226b46e",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ContainerRegistry/registries/gsa740ca0a3cimages/providers/Microsoft.Authorization/roleAssignments/22db7dcc-857e-4fb9-8815-07848cbd4d48",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gsa740ca0a3c-scanner?api-version=2023-01-31",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gsa740ca0a3c-scanner",
+        "name": "gsa740ca0a3c-scanner",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "resourceGroupName": "worker-template",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "clientId": "d84f491c-d8e5-2f28-3a62-d91fb1d4e97c",
+          "principalId": "bb5c05eb-9cb6-4855-386c-a9c69a1cc1e3",
+          "tenantId": "00000000-0000-0000-0000-000000000000",
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2023-01-31",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "identity-rbac",
+          "backingEngines": [
+            "globalstack-local-token-service"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "MVP uses permissive local tokens and records authorization decisions.",
+            "No exact Entra ID, conditional access, OAuth flow, or cross-data-plane RBAC parity initially."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/managedEnvironments/gsa740ca0a3c-scanner?api-version=2025-01-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/managedEnvironments/gsa740ca0a3c-scanner",
+        "name": "gsa740ca0a3c-scanner",
+        "type": "Microsoft.App/managedEnvironments",
+        "resourceGroupName": "worker-template",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded",
+          "defaultDomain": "gsa740ca0a3c-scanner.globalstack.local",
+          "staticIp": "10.255.0.10",
+          "createdAt": "2026-11-08T11:29:16.368Z",
+          "updatedAt": "2026-11-08T11:29:16.368Z"
+        },
+        "apiVersion": "2025-01-01",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "service-discovery",
+          "backingEngines": [
+            "globalstack-service-registry",
+            "globalstack-dns-registry"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+            "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/scanner-app?api-version=2025-04-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/scanner-app",
+        "name": "scanner-app",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T11:29:18.927Z",
+          "duration": "PT0.003S",
+          "outputs": {
+            "hostname": {
+              "type": "String",
+              "value": "gsa740ca0a3c-scanner.worker-template.globalstack.local"
+            },
+            "scannerId": {
+              "type": "String",
+              "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner"
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/scanner-auth?api-version=2025-04-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/scanner-auth",
+        "name": "scanner-auth",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T11:29:21.821Z",
+          "duration": "PT0.002S",
+          "outputs": {
+            "authenticationId": {
+              "type": "String",
+              "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner/authConfigs/current"
+            },
+            "evidenceRunId": {
+              "type": "String",
+              "value": ""
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner/authConfigs/current",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-app?api-version=2025-04-01",
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Resources/deployments/worker-app",
+        "name": "worker-app",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-08T11:29:45.718Z",
+          "duration": "PT0.005S",
+          "outputs": {
+            "hostname": {
+              "type": "String",
+              "value": "gsa740ca0a3c-worker.azurewebsites.net"
+            }
+          },
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/sites/gsa740ca0a3c-worker",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner/authConfigs/current?api-version=2025-01-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner/authConfigs/current",
+        "name": "gsa740ca0a3c-scanner/current",
+        "type": "Microsoft.App/containerApps/authConfigs",
+        "resourceGroupName": "worker-template",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "platform": {
+            "enabled": true
+          },
+          "globalValidation": {
+            "unauthenticatedClientAction": "Return401"
+          },
+          "httpSettings": {
+            "requireHttps": true
+          },
+          "identityProviders": {
+            "azureActiveDirectory": {
+              "enabled": true,
+              "registration": {
+                "clientId": "35117bea-27fb-4211-b306-a19120d4fedf",
+                "openIdIssuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0"
+              },
+              "validation": {
+                "allowedAudiences": [
+                  "35117bea-27fb-4211-b306-a19120d4fedf"
+                ],
+                "defaultAuthorizationPolicy": {
+                  "allowedApplications": [
+                    "ace8fbd0-a06f-4535-8f93-031b00394e4d"
+                  ],
+                  "allowedPrincipals": {
+                    "identities": [
+                      "22ad2999-4c82-89d9-7288-969d6eede6ca"
+                    ]
+                  }
+                },
+                "jwtClaimChecks": {
+                  "allowedClientApplications": [
+                    "d1107b16-75a8-604d-c62d-9e3825369059"
+                  ]
+                }
+              }
+            }
+          },
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2025-01-01",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "service-discovery",
+          "backingEngines": [
+            "globalstack-service-registry",
+            "globalstack-dns-registry"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+            "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner/authConfigs/current?api-version=2025-01-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner/authConfigs/current",
+        "name": "gsa740ca0a3c-scanner/current",
+        "type": "Microsoft.App/containerApps/authConfigs",
+        "resourceGroupName": "worker-template",
+        "location": "global",
+        "tags": {},
+        "properties": {
+          "platform": {
+            "enabled": true
+          },
+          "globalValidation": {
+            "unauthenticatedClientAction": "Return401"
+          },
+          "httpSettings": {
+            "requireHttps": true
+          },
+          "identityProviders": {
+            "azureActiveDirectory": {
+              "enabled": true,
+              "registration": {
+                "clientId": "35117bea-27fb-4211-b306-a19120d4fedf",
+                "openIdIssuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0"
+              },
+              "validation": {
+                "allowedAudiences": [
+                  "35117bea-27fb-4211-b306-a19120d4fedf"
+                ],
+                "defaultAuthorizationPolicy": {
+                  "allowedApplications": [
+                    "d1107b16-75a8-604d-c62d-9e3825369059"
+                  ],
+                  "allowedPrincipals": {
+                    "identities": [
+                      "22ad2999-4c82-89d9-7288-969d6eede6ca"
+                    ]
+                  }
+                },
+                "jwtClaimChecks": {
+                  "allowedClientApplications": [
+                    "d1107b16-75a8-604d-c62d-9e3825369059"
+                  ]
+                }
+              }
+            }
+          },
+          "provisioningState": "Succeeded"
+        },
+        "apiVersion": "2025-01-01",
+        "globalstack": {
+          "supportLevel": "globalstack-facade+real-azure-capture-required",
+          "capabilityId": "service-discovery",
+          "backingEngines": [
+            "globalstack-service-registry",
+            "globalstack-dns-registry"
+          ],
+          "emulationDepth": "metadata-only-control-plane",
+          "realAzureApiComplete": false,
+          "cloudValidated": false,
+          "knownGaps": [
+            "Azure does not have a single Cloud Map equivalent; this is a closest-equivalent composition.",
+            "No full service mesh, revision traffic splitting, DNS propagation, health-aware discovery, or private resolver parity in MVP."
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/sites/gsa740ca0a3c-worker?api-version=2023-12-01",
+      "status": 200,
+      "body": {
+        "status": "Deleted",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.Web/sites/gsa740ca0a3c-worker"
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    }
+  ],
+  "storage": [
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts",
+      "bearer": true,
+      "status": 409
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-workitems",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-01",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-02",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-03",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-00",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-00",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-01",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-02",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-03",
+      "bearer": true,
+      "status": 204
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/host",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/host",
+      "bearer": true,
+      "status": 404
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/host",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/host",
+      "bearer": true,
+      "status": 201
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/host",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/5d10cb41c5bb-2137340777/host",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 403
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 403
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "container-app",
+      "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/worker-template/providers/Microsoft.App/containerApps/gsa740ca0a3c-scanner",
+      "method": "POST",
+      "path": "/scan",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "bearer": true,
+      "status": 200
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "bearer": true,
+      "status": 200
+    }
+  ],
+  "scans": [
+    {
+      "label": "worker-clean-text",
+      "at": "2026-11-08T11:29:57.984Z",
+      "status": 200,
+      "body": {
+        "sha256": "f0edb643dc75ade2610588152d4feb53d7c713a22275ef80d7d6d5e53b60894d",
+        "bytes": 30,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 32
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "utf8",
+            "text": "Worker identity scanner probe."
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "label": "worker-yara-marker",
+      "at": "2026-11-08T11:29:58.659Z",
+      "status": 200,
+      "body": {
+        "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+        "bytes": 30,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 32
+          },
+          {
+            "engine": "yara",
+            "status": "detected",
+            "findings": [
+              "PilotDocumentDetection"
+            ],
+            "durationMs": 16
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "label": "worker-policy-denied",
+      "at": "2026-11-08T11:29:59.254Z",
+      "status": 403,
+      "body": null
+    },
+    {
+      "label": "worker-policy-restored",
+      "at": "2026-11-08T11:29:59.927Z",
+      "status": 200,
+      "body": {
+        "sha256": "b9db41df02f4168dde87854fb7205b5e9e4fb95d0412979f3f4b593a16a34990",
+        "bytes": 23,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 33
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "utf8",
+            "text": "Restored worker access."
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "label": "worker-untrusted-certificate",
+      "at": "2026-11-08T11:30:00.584Z",
+      "transportError": "DEPTH_ZERO_SELF_SIGNED_CERT"
+    }
+  ],
+  "cleanup": true,
+  "templates": [
+    {
+      "name": "host",
+      "sha256": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36"
+    },
+    {
+      "name": "scanner-app",
+      "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+    },
+    {
+      "name": "scanner-auth",
+      "sha256": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe"
+    },
+    {
+      "name": "app",
+      "sha256": "c8922c73b03d8f4f0a87c718a1c7450f425f1dbef7401ef3c4cbba28328e0ca9"
+    }
+  ],
+  "nativeWorkerState": "running",
+  "health": {
+    "status": 200,
+    "body": {
+      "worker": "ready"
+    },
+    "headers": {
+      "content-type": "application/json"
+    }
+  },
+  "discoveredEventGridFunctions": [
+    "documentuploaded"
+  ],
+  "functionHandlerInvoked": true,
+  "completedAt": "2026-11-08T11:30:01.373Z"
+}
