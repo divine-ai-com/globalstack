@@ -131,7 +131,18 @@ try {
   assert.match(localScanner, /^[a-z0-9.-]+$/);
   const settings = hostname => [{ name: 'SCANNER_ENDPOINT', value: `https://${hostname}` }, { name: 'SCANNER_SCOPE', value: `api://${audience}/.default` }, { name: 'SCANNER_DIAGNOSTIC_ENABLED', value: 'true' }];
   report.environmentMapping = { azureScanner, localScanner, differences: ['SCANNER_ENDPOINT is the deployed scanner output on each target; application and template bytes are identical.'] };
-  const worker = await deploy('worker-app', w.deployments[1], { ...base, imageReference: workerImage, applicationSettings: settings(azureScanner) }, { ...base, imageReference: workerImage, applicationSettings: settings(localScanner) });
+  const data = await deploy('document-data', d.deployments[0], { accountName: `${w.service}docs`, workerIdentityName: `${w.service}-worker`, publisherPrincipalId: m.publisher,
+    roleAssignmentNames: m.documentRoles.slice(0, 2), location: 'westus2' });
+  report.documentDataDeployed = true;
+  assert.equal(data.azure.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
+  assert.equal(data.local.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
+  const documentSettings = (scannerHostname, blobEndpoint) => [...settings(scannerHostname),
+    { name: 'STORAGE_ENDPOINT', value: blobEndpoint }, { name: 'LANDING_CONTAINER', value: 'landing' },
+    { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' }];
+  const worker = await deploy('worker-app', w.deployments[1], { ...base, imageReference: workerImage,
+    applicationSettings: documentSettings(azureScanner, data.azure.properties.outputs.blobEndpoint.value) },
+  { ...base, imageReference: workerImage,
+    applicationSettings: documentSettings(localScanner, data.local.properties.outputs.blobEndpoint.value) });
   const hostname = worker.azure.properties.outputs.hostname.value; assert.ok(hostname.startsWith(`${w.service}-worker`) && hostname.endsWith('.azurewebsites.net'));
   phase = 'worker-readiness';
   const healthDeadline = Math.min(Date.now() + 240000, m.workDeadline - 120000);
@@ -144,21 +155,9 @@ try {
   assert.ok(ready, 'Azure Functions host did not become ready');
   await runtime.containerAppRouter.lifecycle.settle(); await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
-  const data = await deploy('document-data', d.deployments[0], { accountName: `${w.service}docs`, workerIdentityName: `${w.service}-worker`, publisherPrincipalId: m.publisher,
-    roleAssignmentNames: m.documentRoles.slice(0, 2), location: 'westus2' });
-  report.documentDataDeployed = true;
-  assert.equal(data.azure.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
-  assert.equal(data.local.properties.outputs.accountId.value.toLowerCase(), d.account.toLowerCase());
   await deploy('document-events', d.deployments[1], { accountName: `${w.service}docs`, workerName: `${w.service}-worker`,
     topicName: `${w.service}-documents`, deadLetterRoleName: m.documentRoles[2], location: 'westus2' });
   report.documentEventSubscriptionDeployed = true;
-  const documentSettings = (scannerHostname, blobEndpoint) => [...settings(scannerHostname),
-    { name: 'STORAGE_ENDPOINT', value: blobEndpoint }, { name: 'LANDING_CONTAINER', value: 'landing' },
-    { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' }];
-  await deploy('worker-app', w.deployments[1], { ...base, imageReference: workerImage,
-    applicationSettings: documentSettings(azureScanner, data.azure.properties.outputs.blobEndpoint.value) },
-  { ...base, imageReference: workerImage,
-    applicationSettings: documentSettings(localScanner, data.local.properties.outputs.blobEndpoint.value) });
   await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(w.app), 'running');
   const keys = await request('POST', `${w.app}/host/default/listkeys?api-version=2024-11-01`); assert.equal(keys.status, 200);

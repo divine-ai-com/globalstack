@@ -16,6 +16,11 @@ memory, CPU and process limits, dropped capabilities and no Docker socket mount.
 The controller reads private native host keys, checks actual host readiness and
 discovers Event Grid trigger names from the native admin API. These credentials
 are removed with the worker. Private files must not be published.
+For Blob-backed Functions secret storage, the local provisioner reads host-key
+candidates from the deployed host storage account and verifies each candidate
+against the running host. File-backed keys remain supported for older local
+fixtures. The production worker template uses the Functions default Blob-backed
+secret store.
 
 The platform preparation callback owns its allocations and must return an
 idempotent disposal callback. Failed preparation must clean partial resources.
@@ -65,6 +70,11 @@ non-HTTPS URLs, credentials, paths and query strings. The application receives
 the routed endpoint from the platform and has no emulator branch. This mapping
 has a local TLS transport test; live paired document-event delivery has not yet
 been measured.
+The `LOCAL_UPLOAD_DIAGNOSTIC=true` mode of `document-worker-local.mjs` deploys
+the document account before the worker, deploys the Event Grid subscription,
+and records an actual managed-identity Blob write and delivery attempt. The
+current component probe lacks the downstream database and records the Function's
+HTTP 500 as a failed delivery attempt, not an application pass.
 
 `node experiments/production-scenarios/worker-scanner-local.mjs` deploys the native
 Functions worker and scanner, then executes Azure SDK client commands inside the
