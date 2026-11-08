@@ -18,6 +18,31 @@ runs are separate experiments. The complete scenario ports for Terraform,
 OpenTofu, Pulumi TypeScript/Python/YAML, Ansible, Azure CLI, Bicep and ARM JSON
 remain outstanding.
 
+## Latest scanner and worker checkpoint
+
+The [paired scanner capture](evidence/scanner-azure-143b1c1/) records matching
+stable outcomes for three denial controls and three real ClamAV/YARA scan
+requests. Azure took about 36 seconds to activate the temporary pilot policy and
+37 seconds to restore the worker-only policy. Local policy changes were immediate;
+those transition differences are retained. The Azure caller was the pilot, not
+the deployed worker.
+
+The [clean local worker capture](evidence/worker-scanner-95ddc68/) executes Azure
+SDK commands inside the ARM-deployed native Functions container. Five checks
+cover scanning, policy denial/restoration and TLS trust failure. This is not a
+Functions event invocation or an Azure worker-to-scanner result.
+
+Final Azure cleanup is verified in the separate scanner recovery trace. The
+original 503 failure, watchdog timeout and provider/inventory inconsistency
+remain visible. All budget allocations are cleanup-verified; the conservative
+allocated total is USD 75 of USD 150, not measured billing. The live component
+video remains in the operator workspace, with its hash published alongside the
+trace. Public video distribution and Azure Portal screenshots remain outstanding.
+
+Next: invoke the real Functions handler with its managed identity on both targets,
+then complete the document pipeline and its failure controls. The 101 full
+scenario assertions and the full-scenario platform ports remain outstanding.
+
 ## Work verified in this session
 
 - Certificate-authenticated service principal can access the dedicated test

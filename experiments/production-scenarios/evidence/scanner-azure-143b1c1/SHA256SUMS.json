@@ -1,0 +1,46 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "1b8632e133d1cda8e88c778d8eb51f1d5e9bf12c83ed53284fcdf95de2505fe3"
+  },
+  {
+    "path": "app-template.json",
+    "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+  },
+  {
+    "path": "auth-template.json",
+    "sha256": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe"
+  },
+  {
+    "path": "cleanup-recovery-first.json",
+    "sha256": "aa0bfa9bd6e1714fcef8d52c98b22c5df5ae72d12e33630b9c8cfcced751f18c"
+  },
+  {
+    "path": "cleanup-recovery.json",
+    "sha256": "fb35298090e2af140e706b1965f116312349c2976e91514b628e6dd0770a9c03"
+  },
+  {
+    "path": "events.ndjson",
+    "sha256": "b38630e5b6c4c11a66e42d05ecb5b6410ecb4ac55353b1585945d6a1e5d28b52"
+  },
+  {
+    "path": "host-template.json",
+    "sha256": "02fb8b1d21975a281a5ce2c4ebaa7f639fd1de7728b8f276ac2f0a82ab170690"
+  },
+  {
+    "path": "public-template.json",
+    "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+  },
+  {
+    "path": "recording.json",
+    "sha256": "d5cd26b8e8b46bf00f20c54a43090a033de07bd8b90d375a994ce9c513779f8c"
+  },
+  {
+    "path": "result.json",
+    "sha256": "0b6794dc66323b1f850367cbb7483fd5b923d17ef48bdf7733352ebf8e7842a2"
+  },
+  {
+    "path": "watchdog.json",
+    "sha256": "2cd829742af82f17eb0e2c9e4424a8ad636c1e4dd500eec9f50418e10fdeeb96"
+  }
+]
