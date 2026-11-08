@@ -12,6 +12,88 @@ function terms(value) {
   return String(value ?? '').toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
 }
 
+function filterDocuments(index, documents, expression) {
+  if (typeof expression !== 'string' || !expression || expression.length > 16384) return invalid('Search filter must be a nonempty string within the local size limit.');
+  const tokens = [];
+  const pattern = /\s+|'(?:[^']|'')*'|[(),:/]|[A-Za-z_][A-Za-z_0-9.]*/gy;
+  for (let pos = 0; pos < expression.length;) {
+    pattern.lastIndex = pos;
+    const match = pattern.exec(expression);
+    if (!match) return unsupported('This Search filter syntax is not implemented by the local evaluator.');
+    if (!/^\s+$/.test(match[0])) tokens.push(match[0]);
+    pos = pattern.lastIndex;
+    if (tokens.length > 1024) return unsupported('The local Search filter token limit was exceeded.');
+  }
+  let position = 0;
+  const take = expected => {
+    if (tokens[position]?.toLowerCase() !== expected.toLowerCase()) throw new Error('Unsupported filter syntax');
+    position++;
+  };
+  const next = () => tokens[position++];
+  const string = () => {
+    const value = next();
+    if (!value?.startsWith("'") || !value.endsWith("'")) throw new Error('Unsupported filter literal');
+    return value.slice(1, -1).replaceAll("''", "'");
+  };
+  const field = name => {
+    const definition = index.fields.find(item => item.name === name);
+    if (!definition || definition.filterable !== true) throw new Error('Unknown or nonfilterable field');
+    return definition;
+  };
+  const primary = () => {
+    if (tokens[position] === '(') {
+      next();
+      const nested = or();
+      take(')');
+      return nested;
+    }
+    const name = next();
+    if (!name || !/^[A-Za-z_][A-Za-z_0-9]*$/.test(name)) throw new Error('Unsupported filter field');
+    const definition = field(name);
+    if (tokens[position]?.toLowerCase() === 'eq') {
+      next();
+      if (definition.type !== 'Edm.String') throw new Error('Unsupported filter field type');
+      const value = string();
+      return document => document[name] === value;
+    }
+    take('/'); take('any'); take('(');
+    const variable = next();
+    if (!/^[A-Za-z_][A-Za-z_0-9]*$/.test(variable ?? '')) throw new Error('Unsupported lambda variable');
+    take(':'); take('search.in'); take('('); take(variable); take(',');
+    const values = string().split(stringDelimiter());
+    take(')'); take(')');
+    if (definition.type !== 'Collection(Edm.String)') throw new Error('Unsupported collection field type');
+    const allowed = new Set(values);
+    return document => Array.isArray(document[name]) && document[name].some(value => allowed.has(value));
+  };
+  const and = () => {
+    let left = primary();
+    while (tokens[position]?.toLowerCase() === 'and') {
+      next();
+      const previous = left, right = primary();
+      left = document => previous(document) && right(document);
+    }
+    return left;
+  };
+  const or = () => {
+    let left = and();
+    while (tokens[position]?.toLowerCase() === 'or') {
+      next();
+      const previous = left, right = and();
+      left = document => previous(document) || right(document);
+    }
+    return left;
+  };
+  const stringDelimiter = () => { take(','); const delimiter = string(); return delimiter; };
+  try {
+    const predicate = or();
+    if (position !== tokens.length) throw new Error('Trailing filter syntax');
+    return { documents: documents.filter(predicate) };
+  } catch {
+    return unsupported('This Search filter syntax is not implemented by the local evaluator.');
+  }
+}
+
 // Adjacent transpositions count as one edit. Fuzzy queries do not stem input.
 export function fuzzyDistance(left, right) {
   const a = [...left], b = [...right];
@@ -113,7 +195,7 @@ function vectorCandidates(index, documents, request) {
 
 export function evaluateSearch(index, request) {
   if (!request || typeof request !== 'object' || Array.isArray(request) || request.__invalidJson) return invalid('Search payload must be a JSON object.');
-  const supported = new Set(['search', 'searchFields', 'searchMode', 'queryType', 'vectorQueries', 'skip', 'top', 'count', 'select']);
+  const supported = new Set(['search', 'searchFields', 'searchMode', 'queryType', 'vectorQueries', 'skip', 'top', 'count', 'select', 'filter']);
   if (Object.keys(request).some(key => !supported.has(key) && request[key] != null)) return unsupported('One or more query options are not implemented by the local evaluator.');
   if (request.queryType === 'semantic') return unsupported('Semantic query execution is not implemented by the local evaluator.');
   if (request.count !== undefined && typeof request.count !== 'boolean') return invalid('Search count must be a boolean.');
@@ -124,7 +206,12 @@ export function evaluateSearch(index, request) {
     if (names.some(name => !fields.includes(name))) return invalid('A selected field is missing or is not retrievable.');
     fields = names;
   }
-  const documents = [...index.documents.values()];
+  let documents = [...index.documents.values()];
+  if (request.filter !== undefined) {
+    const filtered = filterDocuments(index, documents, request.filter);
+    if (filtered.error) return filtered;
+    documents = filtered.documents;
+  }
   let scored;
   if (request.vectorQueries !== undefined) {
     const result = vectorCandidates(index, documents, request);

@@ -1436,6 +1436,20 @@ export function evaluateArmExpression(expression, parameters) {
   if (text === 'true()') return true;
   if (text === 'false()') return false;
   if (text === 'null()') return null;
+  const equalsMatch = text.match(/^equals\((.*)\)$/s);
+  if (equalsMatch) {
+    const args = splitArmArgs(equalsMatch[1]);
+    if (args.length !== 2) { const error = new Error('ARM equals requires two arguments.'); error.code = 'InvalidTemplate'; throw error; }
+    return evaluateArmArgument(args[0], parameters) === evaluateArmArgument(args[1], parameters);
+  }
+  const ifMatch = text.match(/^if\((.*)\)$/s);
+  if (ifMatch) {
+    const args = splitArmArgs(ifMatch[1]);
+    if (args.length !== 3) { const error = new Error('ARM if requires three arguments.'); error.code = 'InvalidTemplate'; throw error; }
+    const condition = evaluateArmArgument(args[0], parameters);
+    if (typeof condition !== 'boolean') { const error = new Error('ARM if condition must be boolean.'); error.code = 'InvalidTemplate'; throw error; }
+    return evaluateArmArgument(args[condition ? 1 : 2], parameters);
+  }
   const indexMatch = text.match(/^(.*\))\[(.*)\]$/s);
   if (indexMatch) {
     const array = evaluateArmExpression(indexMatch[1], parameters);
@@ -1597,7 +1611,7 @@ export function evaluateArmValue(value, parameters) {
   const trimmed = value.trim();
   if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) return unquoteArm(trimmed);
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) return evaluateArmExpression(trimmed.slice(1, -1), parameters);
-  if (/^uri\(|^environment\(\)\.|^copyIndex\(|^createArray\(|^createObject\(|^length\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
+  if (/^uri\(|^environment\(\)\.|^copyIndex\(|^createArray\(|^createObject\(|^length\(|^equals\(|^if\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
   return value;
 }
 

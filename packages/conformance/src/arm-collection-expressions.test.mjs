@@ -27,3 +27,10 @@ test('nested ARM functions retain scalar types and reject unknown functions', ()
     assert.throws(() => evaluateArmValue(expression, {}), { code: 'GlobalStackTemplateExpressionNotImplemented' });
   }
 });
+
+test('ARM conditional expressions choose one branch and keep booleans', () => {
+  assert.equal(evaluateArmValue('[equals(1, 1)]', {}), true);
+  assert.equal(evaluateArmValue("[if(equals(parameters('which'), 0), 'first', 'second')]", { which: 0 }), 'first');
+  assert.equal(evaluateArmValue("[if(equals(parameters('which'), 0), futureFunction(), 'second')]", { which: 1 }), 'second');
+  assert.throws(() => evaluateArmValue('[if(1, 2, 3)]', {}), { code: 'InvalidTemplate' });
+});
