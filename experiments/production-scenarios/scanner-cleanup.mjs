@@ -35,7 +35,17 @@ export function scannerClient(m, observe = () => {}, exchange = httpExchange) {
 }
 export async function cleanupScanner(m, request = scannerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 1800000 } = {}) {
   const s = scannerPaths(m), deadline = Date.now() + timeoutMs, deployments = [], resources = [];
-  const get = id => request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`);
+  const get = async id => {
+    for (let attempt = 0; ; attempt++) {
+      assert.ok(Date.now() < deadline, 'Scanner cleanup deadline exceeded');
+      let result;
+      try { result = await request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`); }
+      catch (error) { if (attempt >= 4) throw error; }
+      if (result && (![408, 429, 500, 502, 503, 504].includes(result.status) || attempt >= 4)) return result;
+      const seconds = Number(result?.headers?.['retry-after']);
+      await sleep(Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds * 1000, 30000) : 3000);
+    }
+  };
   for (const id of s.deployments) {
     let found = await get(id); if (found.status === 404) continue;
     assert.equal(found.status, 200);

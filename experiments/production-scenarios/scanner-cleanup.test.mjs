@@ -58,3 +58,21 @@ test('slow environment deletion does not retain the registry and identities', as
   assert.equal((await cleanupScanner(m, request, { sleep: async () => {} })).groupEmpty, true);
   assert.equal(observations, 2);
 });
+
+test('cleanup retries transient reads but still requires observed resource absence', async () => {
+  const f = fixture(); let failures = 0; const delays = [];
+  const request = async (method, path) => {
+    if (method === 'GET' && path.startsWith(f.s.environment) && f.deleted.includes(f.s.environment) && failures++ === 0) {
+      return { status: 503, headers: { 'retry-after': '2' } };
+    }
+    return f.request(method, path);
+  };
+  assert.equal((await cleanupScanner(m, request, { sleep: async ms => delays.push(ms) })).groupEmpty, true);
+  assert.deepEqual(delays, [2000]);
+});
+
+test('cleanup stops on persistent read failure without claiming absence', async () => {
+  let requests = 0;
+  await assert.rejects(cleanupScanner(m, async () => { requests++; return { status: 503 }; }, { sleep: async () => {} }));
+  assert.equal(requests, 5);
+});

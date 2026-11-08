@@ -232,7 +232,7 @@ finally {
         return result;
       });
       await writeFile(done, 'verified\n', { mode: 0o600 }); watchdog?.kill('SIGTERM'); await rm(manifest, { force: true }); await confirmBudgetCleanup(productionBudgetPath, m.runId);
-    } catch { report.cleanup = { recoveryRequired: true }; }
+    } catch (error) { report.cleanup = { recoveryRequired: true, error: sanitize(String(error.message).slice(0, 1000), replacements) }; }
   }
   for (const server of [facade, arm]) if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
   try { await runtime?.dispose(); report.localCleanup = true; } catch { report.localCleanup = false; }
