@@ -60,7 +60,7 @@ try {
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription;
   arm = createArmServer({ store: new ResourceStore() });
   await new Promise(done => arm.listen(0, '127.0.0.1', done));
-  const setup = await httpExchange(`http://127.0.0.1:${arm.address().port}${scope}?api-version=2022-09-01`, { method: 'PUT', body: { location: existing.body.location } });
+  const setup = await httpExchange(`http://127.0.0.1:${arm.address().port}${scope}?api-version=2022-09-01`, { method: 'PUT', body: { location: existing.body.location }, headers: { authorization: 'Bearer local-fixture' } });
   assert.ok([200, 201].includes(setup.status));
   await writeFile(journal, JSON.stringify({ assignment, properties }), { mode: 0o600, flag: 'wx' });
   submitted = true;
