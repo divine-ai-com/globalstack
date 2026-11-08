@@ -44,8 +44,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   }
   try {
     m.token = azureToken(m.config);
-    await writeFile(resultPath, JSON.stringify({ ...await cleanupPairedComponent(m), watchdog: true }), { mode: 0o600 });
+    await writeFile(resultPath, JSON.stringify({ ...await cleanupPairedComponent(m), watchdog: true, completedAt: new Date().toISOString() }), { mode: 0o600 });
   } catch {
-    await writeFile(resultPath, JSON.stringify({ cleanupComplete: false, recoveryRequired: true, watchdog: true }), { mode: 0o600 }); process.exitCode = 1;
+    await writeFile(resultPath, JSON.stringify({ cleanupComplete: false, recoveryRequired: true, watchdog: true, completedAt: new Date().toISOString() }), { mode: 0o600 }); process.exitCode = 1;
   }
 }

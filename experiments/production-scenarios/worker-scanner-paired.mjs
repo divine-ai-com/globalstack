@@ -164,7 +164,15 @@ try {
   report.workerAccessTestedOnAzure = true; report.componentChecksPassed = true;
 } catch (error) { report.error = sanitize(error.message, replacements); }
 finally {
+  // Preserve measured outcomes before a potentially long cloud deletion.
+  try { await writeFile(resolve(out, 'observations.json'), JSON.stringify({ ...report, checkpointAt: new Date().toISOString(), cleanupPending: allocated }, null, 2) + '\n', { mode: 0o600, flag: 'wx' }); }
+  catch { report.evidenceCheckpointFailed = true; }
   phase = 'cleanup';
+  for (const server of [facade, arm]) if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
+  try { await runtime?.dispose(); report.localCleanupComplete = true; } catch { report.localCleanupComplete = false; report.error ??= 'Local cleanup incomplete'; }
+  identity?.dispose(); await rm(dockerConfig, { recursive: true, force: true });
+  for (const tag of tags) try { execFileSync('docker', ['image', 'rm', tag], { stdio: 'ignore' }); } catch {}
+
   if (allocated) {
     try {
       const refreshed = azureToken(m.config); replacements.push([refreshed, '<redacted>']);
@@ -172,10 +180,6 @@ finally {
       await writeFile(donePath, 'verified\n', { mode: 0o600 }); watchdog?.kill('SIGTERM'); await rm(manifestPath, { force: true }); await confirmBudgetCleanup(productionBudgetPath, m.runId);
     } catch (error) { report.cleanup = { cleanupComplete: false, recoveryRequired: true, error: sanitize(error.message, replacements) }; }
   }
-  for (const server of [facade, arm]) if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
-  try { await runtime?.dispose(); report.localCleanupComplete = true; } catch { report.localCleanupComplete = false; report.error ??= 'Local cleanup incomplete'; }
-  identity?.dispose(); await rm(dockerConfig, { recursive: true, force: true });
-  for (const tag of tags) try { execFileSync('docker', ['image', 'rm', tag], { stdio: 'ignore' }); } catch {}
   report.completedAt = new Date().toISOString();
   emit('run-end', { summary: report.error ?? (allocated && !report.cleanup?.resourcesAbsent ? 'Cleanup incomplete' : 'Component checks recorded. Full workflow remains untested.') });
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
