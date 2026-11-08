@@ -81,11 +81,13 @@ try {
   for (const id of [...s.deployments, ...s.resources]) assert.equal((await request('GET', `${id}?api-version=${s.versions[id] ?? '2025-04-01'}`)).status, 404);
   const host = compile('worker-host'), app = compile('worker-app');
   report.templates = { host: host.sha256, app: app.sha256 };
+  process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = m.subscription;
   const store = new ResourceStore(); runtime = createEmulatorRuntime({ store });
   arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
   facade = createFunctionsRouterServer(runtime.functionsRouter);
   for (const server of [arm, facade]) await new Promise(done => server.listen(0, '127.0.0.1', done));
-  await local('PUT', `${s.group}?api-version=2022-09-01`, { location: group.body.location });
+  const localGroup = await local('PUT', `${s.group}?api-version=2022-09-01`, { location: group.body.location });
+  assert.equal(localGroup.status, 201, 'Local subscription and group setup must succeed before Azure mutation');
   report.budget = await reserveBudget(productionBudgetPath, { runId: m.runId, envelopeUsd: 5, purpose: 'Document worker image publication and short EP1 runtime probe' }); allocated = true;
   await writeFile(manifestPath, JSON.stringify(m), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'worker-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
