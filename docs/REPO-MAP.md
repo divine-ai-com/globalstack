@@ -79,6 +79,7 @@ flowchart TD
 - `packages/core/src/azure-tier1-capabilities.mjs`
 - `packages/core/src/hybrid-coverage.mjs`
 - `packages/core/src/resource-store.mjs`
+- `packages/azure-control-plane/src/arm-response.mjs`
 - `packages/azure-control-plane/src/provider-validation-support.mjs`
 - `packages/azure-control-plane/src/provider-validation.mjs`
 - `packages/azure-control-plane/src/server-support.mjs`
@@ -119,6 +120,7 @@ flowchart TD
 - `packages/azure-data-plane/src/workflow-runner.mjs`
 - `packages/conformance/src/api-management-resource-identity.test.mjs`
 - `packages/conformance/src/arm-symbolic-template-expansion.test.mjs`
+- `packages/conformance/src/arm-write-only-properties.test.mjs`
 - `packages/conformance/src/azure-capture-classification.mjs`
 - `packages/conformance/src/azure-capture-fixtures.test.mjs`
 - `packages/conformance/src/azure-derived-local-expectations.test.mjs`
