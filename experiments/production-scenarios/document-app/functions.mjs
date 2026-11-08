@@ -3,6 +3,11 @@ import df from 'durable-functions';
 import { documentEvent } from './events.mjs';
 import { applicationConfig, clients, drainOutbox, recordFailure, scanAndStore, settleFailures } from './adapters.mjs';
 import { processingContext } from './repository.mjs';
+import { createScannerDiagnostic } from './scanner-diagnostic.mjs';
+
+if (process.env.SCANNER_DIAGNOSTIC_ENABLED === 'true') {
+  app.http('scannerDiagnostic', { route: 'scanner-diagnostic', methods: ['POST'], authLevel: 'admin', handler: createScannerDiagnostic() });
+}
 
 app.http('workerHealth', { route: 'health', methods: ['GET'], authLevel: 'anonymous',
   handler: () => ({ jsonBody: { worker: 'ready' } }),

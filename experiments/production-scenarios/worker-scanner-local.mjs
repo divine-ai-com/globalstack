@@ -4,7 +4,7 @@ import { promisify } from 'node:util';
 import { createDockerContainerAppProvisioner } from '../../packages/azure-data-plane/src/docker-container-app-provisioner.mjs';
 const exec = promisify(execFile);
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
@@ -18,17 +18,17 @@ import { httpExchange } from './http-exchange.mjs';
 const out = resolve(process.env.WORKER_SCANNER_RUN_DIR ?? `reports/production-scenarios/worker-scanner-${randomBytes(5).toString('hex')}`);
 await mkdir(out, { recursive: true, mode: 0o700 });
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
-const store = new ResourceStore(), audience = randomUUID();
+const store = new ResourceStore(), audience = randomUUID(), invokeFunction = process.env.WORKER_SCANNER_HTTP === 'true';
 let scannerConfiguration, scannerId, scannerHostname;
 const identity = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub], applicationAudiences: [audience] });
-const images = new Map(), image = execFileSync('docker', ['image', 'inspect', 'globalstack/document-functions:pilot', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
+const images = new Map(), image = execFileSync('docker', ['image', 'inspect', process.env.WORKER_IMAGE_TAG ?? 'globalstack/document-functions:pilot', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
 const imageReference = 'document-pilot@' + image; images.set(imageReference, image);
 const scannerImage = execFileSync('docker', ['image', 'inspect', 'globalstack/document-scanner:frozen-20261107', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
 const scannerReference = 'scanner-pilot@' + scannerImage; images.set(scannerReference, scannerImage);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
-  scope: 'Local ARM-deployed native Functions container obtains a managed-identity token through the Azure SDK and calls the native scanner. SDK commands execute inside the worker container; this is not a Functions event invocation, Azure comparison or complete business workflow.',
-  startedAt: new Date().toISOString(), image, scannerImage, exchanges: [], storage: [], scans: [], cleanup: false };
+  scope: (invokeFunction ? 'Includes an actual admin-authenticated Functions handler calling the scanner. ' : '') + 'Local ARM-deployed native Functions container obtains a managed-identity token through the Azure SDK and calls the native scanner. SDK commands execute inside the worker container; this is not an Event Grid invocation, Azure comparison or complete business workflow.',
+  startedAt: new Date().toISOString(), image, scannerImage, functionHandlerRequested: invokeFunction, functionCalls: [], exchanges: [], storage: [], scans: [], cleanup: false };
 let runtime;
 const provision = createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'),
   preparePlatform: createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter, store, containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'], observe: event => report.storage.push(event) }) });
@@ -74,7 +74,7 @@ try {
     report.templates.push({ name: stage, sha256: createHash('sha256').update(text).digest('hex') });
     await writeFile(resolve(out, `worker-${stage}.json`), text);
     const parameters = stage === 'host' ? { ...common, publisherPrincipalId: { value: randomUUID() }, roleAssignmentNames: { value: Array.from({ length: 6 }, randomUUID) } }
-      : { ...common, imageReference: { value: imageReference }, applicationSettings: { value: [{ name: 'SCANNER_ENDPOINT', value: `https://${scannerHostname}` }, { name: 'SCANNER_SCOPE', value: `api://${audience}/.default` }] } };
+      : { ...common, imageReference: { value: imageReference }, applicationSettings: { value: [{ name: 'SCANNER_ENDPOINT', value: `https://${scannerHostname}` }, { name: 'SCANNER_SCOPE', value: `api://${audience}/.default` }, ...(invokeFunction ? [{ name: 'SCANNER_DIAGNOSTIC_ENABLED', value: 'true' }] : [])] } };
     const result = await request('PUT', `${group}/providers/Microsoft.Resources/deployments/worker-${stage}?api-version=2025-04-01`, {
       properties: { mode: 'Incremental', template: JSON.parse(text), parameters },
     });
@@ -111,16 +111,34 @@ try {
     if (decision) assert.equal(result.body.status, decision);
     return result;
   }
+  let hostKey;
+  if (invokeFunction) hostKey = (await readFile(runtime.functionsRouter.nativeWorkers.get(siteId.toLowerCase()).masterKeyFile, 'utf8')).trim();
+  async function functionCall(label, expected, authenticated = true) {
+    const result = await httpExchange(`http://127.0.0.1:${facade.address().port}/api/scanner-diagnostic`, { method: 'POST',
+      headers: { host: `${name}-worker.azurewebsites.net`, ...(authenticated ? { 'x-functions-key': hostKey } : {}) }, body: { text: 'Native Functions scanner invocation.' }, timeoutMs: 45000 });
+    report.functionCalls.push({ label, at: new Date().toISOString(), ...result });
+    assert.equal(result.status, expected);
+    if (authenticated) assert.equal(result.body.upstreamStatus, expected);
+    if (expected === 200) {
+      assert.equal(result.body.scan.status, 'clean');
+      assert.equal(result.body.inputSha256, createHash('sha256').update('Native Functions scanner invocation.').digest('hex'));
+      assert.equal(result.body.scan.sha256, result.body.inputSha256, 'Scanner must process the exact handler input');
+    }
+  }
+  if (invokeFunction) { await functionCall('missing-admin-key', 401, false); await functionCall('function-managed-identity-scan', 200); }
   await probe('worker-clean-text', 'Worker identity scanner probe.', 200, 'clean');
   await probe('worker-yara-marker', 'PILOT_DOCUMENT_DETECTION_73261', 200, 'detected');
   const denied = structuredClone(scannerConfiguration.properties);
   denied.identityProviders.azureActiveDirectory.validation.defaultAuthorizationPolicy.allowedApplications = [randomUUID()];
   await request('PUT', `${scannerId}/authConfigs/current?api-version=2025-01-01`, { properties: denied });
   assert.equal((await probe('worker-policy-denied', 'Denied input.', 403)).body, null);
+  if (invokeFunction) await functionCall('function-scanner-policy-denied', 403);
   await request('PUT', `${scannerId}/authConfigs/current?api-version=2025-01-01`, { properties: scannerConfiguration.properties });
   await probe('worker-policy-restored', 'Restored worker access.', 200, 'clean');
+  if (invokeFunction) await functionCall('function-scanner-policy-restored', 200);
   const untrusted = await probe('worker-untrusted-certificate', 'Untrusted transport.', null, null, ['-e', 'NODE_EXTRA_CA_CERTS=/dev/null']);
   assert.ok(['DEPTH_ZERO_SELF_SIGNED_CERT', 'SELF_SIGNED_CERT_IN_CHAIN', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'].includes(untrusted.transportError));
+  report.functionHandlerInvoked = invokeFunction && report.functionCalls.length === 4;
   await request('DELETE', siteId + '?api-version=2023-12-01'); await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(siteId), 'stopped');
 } catch (error) { report.error = error.message; }

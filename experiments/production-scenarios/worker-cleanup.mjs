@@ -27,15 +27,20 @@ export function workerPaths(m) {
 }
 export function workerClient(m, observe = () => {}, exchange = httpExchange) {
   const scope = workerPaths(m);
+  const hostKeysPath = `${scope.app}/host/default/listkeys`;
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
     const allowed = ['GET', 'PUT', 'DELETE'].includes(method) && [...scope.resources, ...scope.deployments].includes(url.pathname)
       || method === 'GET' && [scope.group, `${scope.group}/resources`, ...scope.deployments.map(id => `${id}/operations`)].includes(url.pathname)
+      || method === 'POST' && url.pathname === hostKeysPath
       || method === 'POST' && scope.deployments.some(id => [`${id}/validate`, `${id}/cancel`].includes(url.pathname));
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed, 'Request escaped worker allowlist');
     const startedAt = new Date().toISOString();
     const result = await exchange(url.href, { method, body, timeoutMs: 60000, headers: { authorization: `Bearer ${m.token}` } });
-    observe({ method, path, request: body, ...result, startedAt, completedAt: new Date().toISOString() }); return result;
+    // Host keys stay in the caller's memory and never reach evidence observers.
+    const recorded = url.pathname === hostKeysPath
+      ? { status: result.status, body: '<host-key response redacted>' } : result;
+    observe({ method, path, request: body, ...recorded, startedAt, completedAt: new Date().toISOString() }); return result;
   };
 }
 export async function cleanupWorker(m, request = workerClient(m), { sleep = ms => new Promise(done => setTimeout(done, ms)), timeoutMs = 600000 } = {}) {

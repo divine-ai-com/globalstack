@@ -66,3 +66,11 @@ container-level SDK calls, not an Event Grid invocation or full document workflo
 The application image contains no emulator branch. The worker template supplies
 its user-assigned client ID through `AZURE_CLIENT_ID` and accepts downstream
 application settings through a separate array parameter.
+
+To exercise an actual Functions HTTP handler, build the current document image
+and set `WORKER_IMAGE_TAG` to that local tag and `WORKER_SCANNER_HTTP=true`.
+The optional `scanner-diagnostic` route requires the native Functions host admin
+key and is registered only when `SCANNER_DIAGNOSTIC_ENABLED=true`. The runner
+checks unauthorized ingress, exact input hashes, scanning, and downstream policy
+revocation/restoration. Keys remain private and are removed during cleanup.
+This diagnostic is still separate from Event Grid delivery and Durable processing.

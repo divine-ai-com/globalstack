@@ -43,3 +43,18 @@ test('one foreign role prevents all worker resource deletion', async () => {
   await assert.rejects(cleanupWorker(m, f.request), /Role ownership mismatch/);
   assert.deepEqual(f.mutations, []);
 });
+
+test('only the owned host key operation is allowed and its response is never observed', async () => {
+  const observations = [], secret = 'synthetic-host-master-key';
+  const request = workerClient(m, event => observations.push(event), async () => ({ status: 200,
+    body: { masterKey: secret, functionKeys: { default: secret }, systemKeys: { eventgrid: secret } },
+    headers: { 'x-test-secret': secret } }));
+  const result = await request('POST', `${s.app}/host/default/listkeys?api-version=2024-11-01`);
+  assert.equal(result.body.masterKey, secret);
+  assert.equal(observations[0].body, '<host-key response redacted>');
+  assert.ok(!JSON.stringify(observations).includes(secret));
+  for (const [method, path] of [['GET', `${s.app}/host/default/listkeys`],
+    ['POST', `${s.app}-foreign/host/default/listkeys`], ['POST', `${s.app}/functions/foreign/listkeys`]]) {
+    await assert.rejects(request(method, path), /allowlist/);
+  }
+});
