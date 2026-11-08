@@ -170,7 +170,8 @@ finally {
   phase = 'cleanup';
   for (const server of [facade, arm]) if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
   try { await runtime?.dispose(); report.localCleanupComplete = true; } catch { report.localCleanupComplete = false; report.error ??= 'Local cleanup incomplete'; }
-  identity?.dispose(); await rm(dockerConfig, { recursive: true, force: true });
+  try { identity?.dispose(); await rm(dockerConfig, { recursive: true, force: true }); }
+  catch { report.localCleanupComplete = false; report.error ??= 'Local credential cleanup incomplete'; }
   for (const tag of tags) try { execFileSync('docker', ['image', 'rm', tag], { stdio: 'ignore' }); } catch {}
 
   if (allocated) {
