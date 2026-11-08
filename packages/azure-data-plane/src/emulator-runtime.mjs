@@ -7,6 +7,7 @@ import { createDigitalTwinsRouter } from './digital-twins-router.mjs';
 import { createDnsRegistry } from './dns-registry.mjs';
 import { createEdgeRouter } from './edge-router.mjs';
 import { createEventGridRouter } from './event-grid-router.mjs';
+import { createNativeFunctionsLifecycle, isNativeFunction } from './native-functions-lifecycle.mjs';
 import { createFunctionsRouter } from './functions-router.mjs';
 import { createIotHubRouter } from './iot-hub-router.mjs';
 import { createKubernetesRouter } from './kubernetes-router.mjs';
@@ -138,7 +139,7 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], storageTokenTrusts = [], keyVaultTokenTrusts = [], searchTokenTrusts = [] }) {
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nativeFunctionsProvisioner, storageTokenTrusts = [], keyVaultTokenTrusts = [], searchTokenTrusts = [] }) {
   const storageRouter = createStorageDataPlaneRouter({ store, tokenTrusts: storageTokenTrusts });
   const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
   storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
@@ -146,6 +147,8 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
   const functionsRouter = createFunctionsRouter({ nativeWorkers: nativeFunctionsWorkers });
+  const nativeFunctionsLifecycle = nativeFunctionsProvisioner
+    ? createNativeFunctionsLifecycle({ router: functionsRouter, provision: nativeFunctionsProvisioner }) : null;
   storageEventDelivery.functionsRouter = functionsRouter;
   const iotHubRouter = createIotHubRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
@@ -681,9 +684,9 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
         appName: resource.name,
         resourceId: resource.id,
         defaultHostName: resource.properties?.defaultHostName,
-        requiresNativeWorker: String(resource.kind ?? '').toLowerCase().split(',').includes('functionapp')
-          && /^DOCKER\|/i.test(resource.properties?.siteConfig?.linuxFxVersion ?? ''),
+        requiresNativeWorker: isNativeFunction(resource),
       });
+      nativeFunctionsLifecycle?.sync(resource);
       return;
     }
 
@@ -1075,6 +1078,7 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
     }
 
     if (resourceType === 'Microsoft.Web/sites') {
+      nativeFunctionsLifecycle?.remove({ id: resource?.id ?? resourcePath(providerRoute) });
       functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
     }
@@ -1354,9 +1358,11 @@ export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], stor
   async function dispose() {
     storageEventDelivery.dispose();
     await kubernetesRouter.dispose?.();
+    await nativeFunctionsLifecycle?.dispose();
   }
 
   return {
+    nativeFunctionsLifecycle,
     storageRouter,
     storageEventDelivery,
     appConfigurationRouter,

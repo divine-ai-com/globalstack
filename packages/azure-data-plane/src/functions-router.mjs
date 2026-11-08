@@ -324,7 +324,8 @@ export class FunctionsRouter {
     const app = match && this.apps.get(match[2].toLowerCase());
     const binding = match && this.nativeWorkers.get(match[1].toLowerCase());
     if (!app || !binding || app.resourceId?.toLowerCase() !== match[1].toLowerCase()) return { reason: 'NativeFunctionDestinationUnavailable' };
-    if (app.triggers.get(match[3].toLowerCase())?.type !== 'eventGridTrigger') return { reason: 'NativeEventGridTriggerNotRegistered' };
+    if (binding.eventGridFunctions ? !binding.eventGridFunctions.has(match[3].toLowerCase())
+      : app.triggers.get(match[3].toLowerCase())?.type !== 'eventGridTrigger') return { reason: 'NativeEventGridTriggerNotRegistered' };
     return deliverNativeEventGrid(binding, match[3], event, options);
   }
 

@@ -16,7 +16,7 @@ const exec = promisify(execFile);
 
 // This diagnostic uses the existing application image and adapter. Platform
 // setup is external to that image; it is not automatic IaC worker provisioning.
-export async function prepareWorkerIdentity({ store, gateway, name, suffix, out, servers, secrets, registerCleanup }) {
+export async function prepareWorkerIdentity({ store, gateway, name, suffix, out, servers, secrets, registerCleanup, hostStorageIdentity = false }) {
   const sub = '00000000-0000-0000-0000-000000000000';
   const group = `/subscriptions/${sub}/resourceGroups/${name}`;
   const siteId = `${group}/providers/Microsoft.Web/sites/${name}`;
@@ -54,24 +54,43 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
   const roleId = `${accountId}/providers/Microsoft.Authorization/roleAssignments/11111111-1111-4111-8111-111111111111`;
   await arm('PUT', roleId, { properties: { principalId: site.identity.principalId,
     roleDefinitionId: `/subscriptions/${sub}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe` } }, '2022-04-01');
+  if (hostStorageIdentity) {
+    for (const [index, role] of ['974c5e8b-45b9-4653-ba55-5f855dd0fb88', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'].entries()) {
+      await arm('PUT', `${accountId}/providers/Microsoft.Authorization/roleAssignments/22222222-2222-4222-8222-22222222222${index}`, {
+        properties: { principalId: site.identity.principalId, roleDefinitionId: `/subscriptions/${sub}/providers/Microsoft.Authorization/roleDefinitions/${role}` },
+      }, '2022-04-01');
+    }
+  }
   binding = service.bind(siteId); secrets.push(binding.identityHeader);
   const identityPort = await listen(createServer(binding.handler));
   const router = createStorageDataPlaneRouter({ store, tokenTrusts: [service.trust] });
-  router.registerStorageAccount({ accountName: account, accountKey: randomBytes(64).toString('base64'), resourceId: accountId });
+  router.registerStorageAccount({ accountName: account, accountKey: randomBytes(64).toString('base64'), resourceId: accountId, allowSharedKeyAccess: !hostStorageIdentity });
   router.configureBlobService({ accountName: account, isVersioningEnabled: true });
   await mkdir(directory, { mode: 0o700 });
   const certificate = resolve(directory, 'ca.pem'), privateKey = resolve(directory, 'key.pem');
   await exec('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', privateKey, '-out', certificate,
-    '-days', '1', '-subj', `/CN=${account}.blob.core.windows.net`, '-addext', `subjectAltName=DNS:${account}.blob.core.windows.net`]);
-  const handler = router.blobHandler();
-  const tlsPort = await listen(httpsServer({ key: await readFile(privateKey), cert: await readFile(certificate) }, (req, res) => {
-    res.once('finish', () => report.requests.push({ method: req.method, path: new URL(req.url, 'https://localhost').pathname,
-      bearer: /^Bearer /.test(req.headers.authorization ?? ''), status: res.statusCode }));
-    Promise.resolve(handler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
-  }));
+    '-days', '1', '-subj', `/CN=${account}.blob.core.windows.net`, '-addext', `subjectAltName=${['blob', 'queue', 'table'].map(surface => `DNS:${account}.${surface}.core.windows.net`).join(',')}`]);
+  const endpoints = {};
+  for (const surface of hostStorageIdentity ? ['blob', 'queue', 'table'] : ['blob']) {
+    const handler = router[`${surface}Handler`]();
+    const port = await listen(httpsServer({ key: await readFile(privateKey), cert: await readFile(certificate) }, (req, res) => {
+      res.once('finish', () => report.requests.push({ surface, method: req.method, path: new URL(req.url, 'https://localhost').pathname,
+        bearer: /^Bearer /.test(req.headers.authorization ?? ''), status: res.statusCode }));
+      Promise.resolve(handler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
+    }));
+    endpoints[surface] = `https://${account}.${surface}.core.windows.net:${port}`;
+  }
   const env = { IDENTITY_ENDPOINT: `http://${gateway}:${identityPort}/MSI/token`, IDENTITY_HEADER: binding.identityHeader,
     AZURE_TOKEN_CREDENTIALS: 'ManagedIdentityCredential', NODE_EXTRA_CA_CERTS: '/globalstack-platform-ca.pem',
-    STORAGE_ENDPOINT: `https://${account}.blob.core.windows.net:${tlsPort}` };
+    STORAGE_ENDPOINT: endpoints.blob };
+  if (hostStorageIdentity) Object.assign(env, {
+    AzureWebJobsStorage__credential: 'managedidentity',
+    AzureWebJobsStorage__blobServiceUri: endpoints.blob,
+    AzureWebJobsStorage__queueServiceUri: endpoints.queue,
+    AzureWebJobsStorage__tableServiceUri: endpoints.table,
+    SSL_CERT_FILE: '/globalstack-platform-ca.pem',
+  });
+  report.hostStorageIdentity = hostStorageIdentity;
   const database = process.env.FUNCTIONS_PROBE_DATABASE === '1'
     ? await prepareDatabaseProbe({ store, trust: service.trust, arm, listen, name, suffix, gateway, directory,
       certificateBundle: certificate, group, principalId: site.identity.principalId, registerCleanup, secrets }) : null;
@@ -102,7 +121,7 @@ export async function prepareWorkerIdentity({ store, gateway, name, suffix, out,
       console.log(JSON.stringify({ phase: 'authorized', historicalRead: true, rangeRead: true, deletedCurrentRead: true }));
     }
   `;
-  return { report, env, dockerArgs: [...(database?.dockerArgs ?? []), ...(search?.dockerArgs ?? []), '--add-host', `${account}.blob.core.windows.net:${gateway}`,
+  return { report, env, dockerArgs: [...(database?.dockerArgs ?? []), ...(search?.dockerArgs ?? []), ...['blob', 'queue', 'table'].flatMap(surface => ['--add-host', `${account}.${surface}.core.windows.net:${gateway}`]),
     '-v', `${certificate}:/globalstack-platform-ca.pem:ro`, ...Object.keys(env).flatMap(key => ['-e', key])],
     async exercise(containerName) {
       for (const phase of ['authorized', 'denied']) {

@@ -98,6 +98,7 @@ flowchart TD
 - `packages/azure-data-plane/src/cosmos-sql-router.mjs`
 - `packages/azure-data-plane/src/digital-twins-router.mjs`
 - `packages/azure-data-plane/src/dns-registry.mjs`
+- `packages/azure-data-plane/src/docker-functions-provisioner.mjs`
 - `packages/azure-data-plane/src/edge-router.mjs`
 - `packages/azure-data-plane/src/emulator-runtime.mjs`
 - `packages/azure-data-plane/src/event-grid-router.mjs`
@@ -111,6 +112,7 @@ flowchart TD
 - `packages/azure-data-plane/src/managed-identity-service.mjs`
 - `packages/azure-data-plane/src/metric-store.mjs`
 - `packages/azure-data-plane/src/migration-plan-runner.mjs`
+- `packages/azure-data-plane/src/native-functions-lifecycle.mjs`
 - `packages/azure-data-plane/src/native-functions-worker.mjs`
 - `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
@@ -164,6 +166,7 @@ flowchart TD
 - `packages/conformance/src/key-vault-token-auth.test.mjs`
 - `packages/conformance/src/local-startup.test.mjs`
 - `packages/conformance/src/managed-identity.test.mjs`
+- `packages/conformance/src/native-functions-lifecycle.test.mjs`
 - `packages/conformance/src/native-functions-worker.test.mjs`
 - `packages/conformance/src/runtime-data-plane-sync.test.mjs`
 - `packages/conformance/src/runtime-security-boundaries.test.mjs`

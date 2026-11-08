@@ -27,6 +27,8 @@ const report = { scope: 'Local official Functions host against GlobalStack Stora
   startedAt: new Date().toISOString(), configurationMode: 'host-storage-only', requests: [], workerHealthReady: false, durableWorkerStarted: false, hostLeaseAcquired: false, businessWorkflowCompleted: false, cleanup: false };
 const servers = [], identityCleanup = [];
 const store = new ResourceStore();
+const hostStorageIdentity = process.env.FUNCTIONS_PROBE_HOST_IDENTITY === '1';
+report.hostStorageAuthentication = hostStorageIdentity ? 'managed-identity' : 'shared-key';
 let workerIdentity;
 let connection, systemKey, nativeRuntime, masterKeyFileOwned = false;
 const masterKeyFile = resolve(out, 'native-master-key.private');
@@ -42,6 +44,7 @@ function request(url, options = {}) {
   });
 }
 try {
+  if (hostStorageIdentity) assert.equal(process.env.FUNCTIONS_PROBE_IDENTITY, '1', 'Host identity requires the identity fixture');
   report.imageId = (await exec('docker', ['image', 'inspect', 'globalstack/document-functions:pilot', '--format', '{{.Id}}'])).stdout.trim();
   await exec('docker', ['network', 'create', '--internal', '--label', 'globalstack.experiment=functions-storage', name]);
   const network = JSON.parse((await exec('docker', ['network', 'inspect', name])).stdout)[0];
@@ -49,7 +52,7 @@ try {
   if (process.env.FUNCTIONS_PROBE_IDENTITY === '1') {
     assert.equal(process.env.FUNCTIONS_PROBE_NATIVE_ROUTING, '1', 'Identity diagnostic requires native routing');
     workerIdentity = await prepareWorkerIdentity({ store, gateway, name, suffix: id, out, servers, secrets: privateHostKeys,
-      registerCleanup: callback => identityCleanup.push(callback) });
+      registerCleanup: callback => identityCleanup.push(callback), hostStorageIdentity });
     report.nativeIdentity = workerIdentity.report;
   }
   const endpoints = {};
@@ -74,8 +77,8 @@ try {
     '--memory', '1g', '--cpus', '2', '--pids-limit', '256', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     ...['blob', 'queue', 'table'].flatMap(surface => ['--add-host', `${account}.${surface}.core.windows.net:${gateway}`]),
     ...(workerIdentity?.dockerArgs ?? []),
-    '-e', 'AzureWebJobsStorage', '-e', 'AzureWebJobsSecretStorageType=files', '-e', 'WEBSITE_HOSTNAME=localhost',
-    report.imageId], { env: { ...process.env, ...workerIdentity?.env, AzureWebJobsStorage: connection } });
+    ...(hostStorageIdentity ? [] : ['-e', 'AzureWebJobsStorage']), '-e', 'AzureWebJobsSecretStorageType=files', '-e', 'WEBSITE_HOSTNAME=localhost',
+    report.imageId], { env: { ...process.env, ...workerIdentity?.env, AzureWebJobsStorage: hostStorageIdentity ? undefined : connection } });
   const container = JSON.parse((await exec('docker', ['inspect', name])).stdout)[0];
   const address = container.NetworkSettings.Networks[name].IPAddress;
   let workerEndpoint = `http://${address}`, workerHost;
@@ -104,7 +107,7 @@ try {
     report.nativeRouting = { scope: 'Operator-bound native host; ARM manages routing only, not container provisioning or package deployment.', arm: [], requests: [] };
     await arm('PUT', group, { location: 'westus2' });
     await arm('PUT', planId, { location: 'westus2', kind: 'functionapp', sku: { name: 'Y1', tier: 'Dynamic' }, properties: {} });
-    await arm('PUT', siteId, { location: 'westus2', kind: 'functionapp,linux', properties: { serverFarmId: planId } });
+    await arm('PUT', siteId, { location: 'westus2', kind: 'functionapp,linux', ...(hostStorageIdentity ? { identity: store.resources.get(siteId.toLowerCase()).identity } : {}), properties: { serverFarmId: planId } });
   }
   const workerRequest = async (path, options = {}) => {
     const response = await request(`${workerEndpoint}${path}`, { ...options,
@@ -120,7 +123,7 @@ try {
     } catch {}
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
-  if (workerIdentity && report.workerHealthReady) await workerIdentity.exercise(name);
+  if (workerIdentity && !hostStorageIdentity && report.workerHealthReady) await workerIdentity.exercise(name);
   // Observe background Durable storage setup even if the HTTP worker is ready.
   await new Promise(resolve => setTimeout(resolve, 15000));
   if (process.env.FUNCTIONS_PROBE_ORCHESTRATION === '1' && report.workerHealthReady) {
@@ -206,6 +209,7 @@ try {
     }
     report.expectedFailurePersisted = report.orchestrationPolls.at(-1)?.runtimeStatus === 'Failed';
   }
+  if (hostStorageIdentity) assert.ok(report.nativeIdentity.requests.length > 0 && report.nativeIdentity.requests.every(item => item.bearer), 'Host storage must use bearer authentication');
   if (report.nativeRouting) {
     await exec('docker', ['stop', '--time', '10', name]);
     const unavailable = await workerRequest('/api/health', { signal: AbortSignal.timeout(10000) });
