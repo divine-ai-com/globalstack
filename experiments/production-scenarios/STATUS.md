@@ -46,9 +46,19 @@ to propagate; GlobalStack reflected each on the first check. Automatic teardown
 and an independent Azure readback found the preserved group empty. This closes
 the observed deployment 501 for that configuration, while actual Blob delivery,
 dead-letter timing and the full document workflow remain untested. The next
-paired runner revision adds a bounded, admin-key-protected Blob upload diagnostic
-and platform routing for the document storage endpoint. It has passed local
-tests and image import checks but has not yet been run against Azure.
+paired run deployed the document modules on both targets but did not reach its
+Blob upload. After an application-settings update, Azure retained the old
+Function route list, then rejected fresh host keys with 401. The health route
+stayed available while the new upload route returned 404. The bounded probe
+recorded the failure and entered cleanup. See [issue #67](https://github.com/divine-ai-com/globalstack/issues/67).
+The runner now deploys document data before the worker app and supplies all
+settings at first creation. The worker template uses Blob-backed Functions keys,
+and the local provisioner verifies those keys against the native host. A
+[clean-source local capture](evidence/document-upload-local-77d7294/) proved
+the revised deployment order, managed-identity Blob upload, Event Grid match
+and Function delivery attempt. The Function returned HTTP 500 because the
+component fixture lacks downstream application settings. This is not a paired
+Azure runtime result or a full document workflow pass.
 
 ## Latest scanner and worker checkpoint
 

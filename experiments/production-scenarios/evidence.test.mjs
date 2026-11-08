@@ -177,6 +177,26 @@ test('paired document infrastructure evidence separates deployment success from 
   assert.equal(report.portalEvidenceComplete, false);
 });
 
+test('local document upload capture records the event attempt without claiming application success', async () => {
+  const report = await load('document-upload-local-77d7294/summary.json');
+  assert.equal(report.sourceRevision, '77d729462a879da32f8092674ccfea542effa9c6');
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.target, 'GlobalStack only');
+  assert.equal(report.templateSha256.documentData,
+    'ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e');
+  assert.equal(report.templateSha256.documentEvents,
+    'd5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09');
+  assert.equal(report.workerState, 'running');
+  assert.equal(report.healthStatus, 200);
+  assert.equal(report.uploadFunctionDiscovered, true);
+  assert.equal(report.managedIdentityBlobUploadStatus, 201);
+  assert.equal(report.eventSubscriptionMatched, true);
+  assert.deepEqual(report.eventDelivery, { attempts: 1, state: 'retrying', reason: 'NativeEventGridHttp500' });
+  assert.equal(report.cleanupComplete, true);
+  assert.equal(report.fullDocumentWorkflowCompleted, false);
+  assert.equal(report.azurePaired, false);
+});
+
 test('partial fixes retain the initial-status difference and remaining local failures', async () => {
   const prefix = 'validation-after-4b40af6/';
   const index = await load(`${prefix}index.json`);
