@@ -61,6 +61,11 @@ the revised deployment order, managed-identity Blob upload, Event Grid match
 and Function delivery attempt. The Function returned HTTP 500; the component
 fixture lacks downstream application settings. This is not a paired
 Azure runtime result or a full document workflow pass.
+The conservative allocation ledger now totals USD 145 of the authorized USD
+150. A read-only Cost Management query for the pilot group returned no current
+usage rows; a subscription-wide query was denied to the pilot identity. Actual
+Azure charges are therefore unmeasured, and the allocation ledger remains the
+run gate.
 
 ## Latest scanner and worker checkpoint
 
