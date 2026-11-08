@@ -20,4 +20,11 @@ test('PostgreSQL deployment evidence retains the Azure/local mismatch and separa
     recovery.recovery.groupPreserved, recovery.recovery.independentGroupResourceCount], [true, true, true, 0]);
   assert.equal(result.fullWorkflowCompleted, false);
   assert.equal(recovery.recovery.actualAzureChargesMeasured, false);
+  const replay = JSON.parse(await readFile(new URL('./evidence/document-postgres-local-replay-f10ee8a/result.json', import.meta.url)));
+  assert.equal(replay.sameSanitizedDeploymentRequest, true);
+  assert.equal(replay.originalResultSha256, recovery.originalResultSha256);
+  assert.equal(replay.deployment.status, result.azureInitialStatus);
+  assert.equal(replay.deployment.state, result.azureTerminalState);
+  assert.deepEqual(replay.resources, { server: 200, administrator: 200, database: 200 });
+  assert.equal(replay.cleanup.groupAbsent, true);
 });
