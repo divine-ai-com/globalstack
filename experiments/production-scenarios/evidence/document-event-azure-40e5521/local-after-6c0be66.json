@@ -1,0 +1,28 @@
+{
+  "sourceRevision": "6c0be66fb482e46487efabced24a4b44a1db3a45",
+  "scope": "Local ARM deployment of the exact frozen document data and Event Grid templates with a synthetic Function discovery adapter. No native worker, event delivery, Azure rerun or full workflow.",
+  "templates": [
+    {
+      "name": "document-data",
+      "sha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e"
+    },
+    {
+      "name": "document-events",
+      "sha256": "d5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09"
+    }
+  ],
+  "deployments": [
+    {
+      "name": "document-data",
+      "status": 201,
+      "state": "Succeeded"
+    },
+    {
+      "name": "document-events",
+      "status": 201,
+      "state": "Succeeded"
+    }
+  ],
+  "cleanup": true,
+  "eventSubscriptionPresent": true
+}
