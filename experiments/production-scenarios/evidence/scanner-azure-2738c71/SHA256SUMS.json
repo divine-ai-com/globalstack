@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "sha256": "0151bdf3b0810b93052b0289e2eb0105d6247e9a190bf6ddfb6f48ade5934f2f"
+    "sha256": "973d87d8dca34184ebcf00f8599e5c199735a5de36051e23ad20e82fbcae885a"
   },
   {
     "path": "app-template.json",
@@ -10,6 +10,10 @@
   {
     "path": "auth-template.json",
     "sha256": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe"
+  },
+  {
+    "path": "cleanup-recovery.json",
+    "sha256": "caf0f9cdece6e4bb8d412c34462724d3c1d6963c4bf4266d350b03167ba6e96f"
   },
   {
     "path": "events.ndjson",

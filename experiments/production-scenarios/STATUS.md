@@ -237,6 +237,8 @@ returned 200. This remains an unresolved mismatch tracked in
 Azure environment deletion exceeded the original 15-minute cleanup window.
 The original report retains that failure. An ownership-checked recovery pass
 removed the registry, identities and deployment records while waiting for the
-remaining environment. A new paid run is prohibited until absence is verified.
-The cumulative conservative allocations are USD 69, not measured Azure charges.
+remaining environment. Recovery verified the environment absent and the group
+empty at 10:44:56 UTC. The original timeout is retained separately from recovery.
+The next recorded comparison has started with cumulative conservative allocations
+of USD 75, not measured Azure charges.
 The full-workflow ledger remains unchanged.
