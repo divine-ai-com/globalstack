@@ -66,11 +66,13 @@ async function deploy(name, id, values, localValues = values) {
 }
 async function publish(name, imageId, registry) {
   const tag = `${registry}/${name}:${revision.slice(0, 12)}`; tags.push(tag);
+  observe('azure', { operation: 'image-publication-started', name, imageId });
   execFileSync('docker', ['tag', imageId, tag], { stdio: 'pipe' });
   execFileSync('docker', ['--config', dockerConfig, 'push', tag], { stdio: 'pipe', timeout: 240000 });
   const item = JSON.parse(execFileSync('docker', ['image', 'inspect', tag], { encoding: 'utf8' }))[0];
   const reference = item.RepoDigests.find(value => value.startsWith(registry + '/')); assert.ok(reference);
-  images.set(reference, item.Id); report[name] = { id: item.Id, reference }; return reference;
+  images.set(reference, item.Id); report[name] = { id: item.Id, reference };
+  observe('azure', { operation: 'image-publication-completed', name, ...report[name] }); return reference;
 }
 try {
   const group = await request('GET', `${w.group}?api-version=2022-09-01`); assert.equal(group.status, 200); assert.equal(group.body.location, 'westus2');
