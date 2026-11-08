@@ -44,11 +44,11 @@ try {
   await request('PUT', group + '?api-version=2022-09-01', { location: 'westus2' });
   const name = 'gs' + randomBytes(5).toString('hex');
   const common = { serviceName: { value: name }, location: { value: 'westus2' }, runId: { value: name } };
-  report.templates = {};
+  report.templates = [];
   async function scannerDeploy(templateName, values) {
     const text = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${resolve('experiments/production-scenarios/document-infra')}:/fixture:ro`,
       '--entrypoint', '/root/.azure/bin/bicep', 'globalstack/validation-runner:cli-pinned', 'build', `/fixture/${templateName}.bicep`, '--stdout'], { encoding: 'utf8', timeout: 60000 });
-    report.templates[templateName] = createHash('sha256').update(text).digest('hex');
+    report.templates.push({ name: templateName, sha256: createHash('sha256').update(text).digest('hex') });
     await writeFile(resolve(out, `${templateName}.json`), text);
     const result = await request('PUT', `${group}/providers/Microsoft.Resources/deployments/${templateName}?api-version=2025-04-01`, {
       properties: { mode: 'Incremental', template: JSON.parse(text), parameters: Object.fromEntries(Object.entries(values).map(([key, value]) => [key, { value }])) },
@@ -71,7 +71,7 @@ try {
     }
     const text = execFileSync('docker', ['run', '--rm', '--network', 'none', '-v', `${resolve('experiments/production-scenarios/document-infra')}:/fixture:ro`,
       '--entrypoint', '/root/.azure/bin/bicep', 'globalstack/validation-runner:cli-pinned', 'build', `/fixture/worker-${stage}.bicep`, '--stdout'], { encoding: 'utf8', timeout: 60000 });
-    report.templates[stage] = createHash('sha256').update(text).digest('hex');
+    report.templates.push({ name: stage, sha256: createHash('sha256').update(text).digest('hex') });
     await writeFile(resolve(out, `worker-${stage}.json`), text);
     const parameters = stage === 'host' ? { ...common, publisherPrincipalId: { value: randomUUID() }, roleAssignmentNames: { value: Array.from({ length: 6 }, randomUUID) } }
       : { ...common, imageReference: { value: imageReference }, applicationSettings: { value: [{ name: 'SCANNER_ENDPOINT', value: `https://${scannerHostname}` }, { name: 'SCANNER_SCOPE', value: `api://${audience}/.default` }] } };
