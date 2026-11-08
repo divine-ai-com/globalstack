@@ -457,7 +457,7 @@ New hosting, Search and Storage runs reserve their respective USD 1, USD 2 and
 USD 1 envelopes in the same private
 `reports/production-scenarios/budget-ledger.json` before provisioning. The ledger
 starts with a conservative USD 20 allowance for earlier work, enforces the
-USD 150 aggregate ceiling, blocks overlapping allocations until cleanup is
+authorized USD 150 or USD 200 aggregate ceiling, blocks overlapping allocations until cleanup is
 verified, and never refunds an envelope automatically from delayed billing.
 It is an execution guard, not an Azure spending limit or a measured invoice.
 If a watchdog performs cleanup after the runner exits, reconcile its verified

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -28,6 +28,16 @@ test('concurrent reservation requests cannot both allocate against the same bala
   const result = await Promise.allSettled(['dd4444444444', 'ee5555555555'].map(runId => reserveBudget(path, { runId, envelopeUsd: 100 })));
   assert.equal(result.filter(item => item.status === 'fulfilled').length, 1);
   assert.equal(JSON.parse(await readFile(path)).allocations.length, 1);
+});
+
+test('authorized USD 200 ceiling accepts the next run while retaining earlier allocations', async t => {
+  const path = await ledger(t);
+  await writeFile(path, JSON.stringify({ schemaVersion: 1, totalAuthorizedUsd: 200, priorAllowanceUsd: 20,
+    allocations: [{ runId: 'aa1111111111', envelopeUsd: 125, purpose: 'earlier runs', cleanupVerified: true }] }));
+  assert.deepEqual(await reserveBudget(path, { runId: 'bb2222222222', envelopeUsd: 12, purpose: 'paired run' }),
+    { totalAuthorizedUsd: 200, allocatedUsd: 157, remainingUnallocatedUsd: 43 });
+  await confirmBudgetCleanup(path, 'bb2222222222');
+  assert.equal(JSON.parse(await readFile(path)).allocations.length, 2);
 });
 
 test('Search, Storage and hosting retain their combined allowances across runs', async t => {

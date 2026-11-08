@@ -19,7 +19,7 @@ async function update(path, change) {
       state = { schemaVersion: 1, totalAuthorizedUsd: 150, priorAllowanceUsd: 20, allocations: [] };
     }
     assert.equal(state.schemaVersion, 1);
-    assert.equal(state.totalAuthorizedUsd, 150);
+    assert.ok([150, 200].includes(state.totalAuthorizedUsd), 'Unrecognized authorized experiment ceiling');
     assert.ok(Number.isFinite(state.priorAllowanceUsd) && state.priorAllowanceUsd >= 20);
     assert.ok(Array.isArray(state.allocations));
     assert.ok(state.allocations.every(item => Number.isFinite(item.envelopeUsd) && item.envelopeUsd > 0 && typeof item.cleanupVerified === 'boolean'));
