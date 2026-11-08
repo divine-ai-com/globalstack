@@ -94,7 +94,7 @@ try {
     containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'], observe: event => observe('local-transport', event) });
   runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
     containerAppTokenTrusts: [{ ...identity.trust, configurationIssuer: `https://login.microsoftonline.com/${tenant}/v2.0` }],
-    nativeFunctionsProvisioner: createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'), preparePlatform }),
+    nativeFunctionsProvisioner: input => createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'), preparePlatform })(input),
     nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'scanner.private') }) });
   arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
   facade = createFunctionsRouterServer(runtime.functionsRouter);
