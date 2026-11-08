@@ -10,7 +10,7 @@ const subscription = '00000000-0000-0000-0000-000000000000';
 const group = `/subscriptions/${subscription}/resourceGroups/gs-document-services-test`;
 const fixture = new URL('./document-infra/', import.meta.url);
 const templateHashes = {
-  'document-search': { source: '67035e06c5030979672447319395b5a23c81ef7d790ceab0388013e6f5693d8d', compiled: '3183d0eeda00b77fc2f121eb16e7c493e410429326ab690a95110cbd38f8285a' },
+  'document-search': { source: '490bbc2011e1557bc27221f05a92edd625f4ebe3a7c56da4354e28f56e977079', compiled: '230bd99ba0f0fc58212e8abb8fb14ef7af22029642a37d59a43c3f5f62d74045' },
   'document-failures': { source: '625a9049cf275bd6a299ac8a157064e57abe3bc69b2f5cf1428107bf41f57eb3', compiled: '3219de7e24875bea97bf758567ea5b23ff1bff25217ec9c49e0a1d60f5f255d6' },
   'document-postgres': { source: '8168db6da3382f9e442b9bf282d8972117423cead3da59d429ea18329f710280', compiled: '47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9' },
 };
@@ -38,6 +38,22 @@ test('document Search, failure queue and Entra-only PostgreSQL modules deploy lo
     method, body, headers: { authorization: 'Bearer globalstack-local-token' },
   });
   assert.equal((await request('PUT', `${group}?api-version=2022-09-01`, { location: 'westus2' })).status, 201);
+  const storageId = `${group}/providers/Microsoft.Storage/storageAccounts/gsdocstorage`;
+  assert.ok([201, 202].includes((await request('PUT', `${storageId}?api-version=2023-05-01`, {
+    location: 'westus2', kind: 'StorageV2', sku: { name: 'Standard_LRS' }, properties: { allowSharedKeyAccess: false },
+  })).status));
+  let storage;
+  for (let attempt = 0; attempt < 40; attempt++) {
+    storage = await request('GET', `${storageId}?api-version=2023-05-01`);
+    if (storage.body?.properties?.provisioningState === 'Succeeded') break;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.equal(storage.body?.properties?.provisioningState, 'Succeeded');
+  const blobServiceId = `${storageId}/blobServices/default`;
+  const projectionId = `${blobServiceId}/containers/clean-projection`;
+  const blobService = await request('PUT', `${blobServiceId}?api-version=2023-05-01`, { properties: {} });
+  assert.ok([200, 201, 202].includes(blobService.status), JSON.stringify(blobService));
+  assert.ok([200, 201, 202].includes((await request('PUT', `${projectionId}?api-version=2023-05-01`, { properties: { publicAccess: 'None' } })).status));
   const identities = ['worker', 'ingress'];
   for (const name of identities) {
     const id = `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gsdoc-${name}`;
@@ -46,8 +62,8 @@ test('document Search, failure queue and Entra-only PostgreSQL modules deploy lo
   }
   const postgresAdminId = randomUUID();
   const cases = [
-    ['document-search', { serviceName: 'gsdoc', publisherPrincipalId: randomUUID(),
-      workerIdentityName: 'gsdoc-worker', ingressIdentityName: 'gsdoc-ingress', roleAssignmentNames: Array.from({ length: 3 }, randomUUID) }],
+    ['document-search', { serviceName: 'gsdoc', publisherPrincipalId: randomUUID(), storageAccountName: 'gsdocstorage',
+      workerIdentityName: 'gsdoc-worker', ingressIdentityName: 'gsdoc-ingress', roleAssignmentNames: Array.from({ length: 4 }, randomUUID) }],
     ['document-failures', { namespaceName: 'gsdoc-failures', workerIdentityName: 'gsdoc-worker',
       roleAssignmentNames: Array.from({ length: 2 }, randomUUID) }],
     ['document-postgres', { serviceName: 'gsdoc', tenantId: '11111111-1111-4111-8111-111111111111',
@@ -65,6 +81,11 @@ test('document Search, failure queue and Entra-only PostgreSQL modules deploy lo
   const search = await request('GET', `${group}/providers/Microsoft.Search/searchServices/gsdoc-search?api-version=2025-05-01`);
   assert.equal(search.status, 200);
   assert.equal(search.body.properties.disableLocalAuth, true);
+  assert.equal(search.body.identity.type, 'SystemAssigned');
+  const projectionGrant = [...store.resources.values()].find(resource => resource.type?.toLowerCase() === 'microsoft.authorization/roleassignments'
+    && resource.properties?.scope?.toLowerCase() === projectionId.toLowerCase()
+    && resource.properties?.roleDefinitionId?.toLowerCase().endsWith('/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'));
+  assert.equal(projectionGrant?.properties?.principalId, search.body.identity.principalId);
   const queue = await request('GET', `${group}/providers/Microsoft.ServiceBus/namespaces/gsdoc-failures/queues/document-failures?api-version=2024-01-01`);
   assert.equal(queue.status, 200);
   assert.equal(queue.body.properties.deadLetteringOnMessageExpiration, true);

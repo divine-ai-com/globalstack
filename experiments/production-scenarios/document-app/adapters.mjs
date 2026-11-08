@@ -7,6 +7,7 @@ import { SearchClient } from '@azure/search-documents';
 import { ServiceBusClient } from '@azure/service-bus';
 import pg from 'pg';
 import { commitRevision, deliverNext } from './repository.mjs';
+import { projectionBlob } from './search-projection.mjs';
 
 const required = name => {
   const value = process.env[name];
@@ -154,9 +155,9 @@ export async function drainOutbox(context) {
       if (!item?.succeeded) return { status: false, key: item?.key };
       // The separately configured Blob indexer reads committed projections only.
       // Tombstones must be consumed by its explicit deletion-detection policy.
-      const projection = { ...document, deleted: operation === 'delete' ? 'true' : 'false' };
-      await blobs.getContainerClient(config.projectionContainer).getBlockBlobClient(`${document.document_id}.json`).uploadData(Buffer.from(JSON.stringify(projection)), {
-        blobHTTPHeaders: { blobContentType: 'application/json' }, metadata: { isdeleted: projection.deleted }, abortSignal: signal,
+      const projection = projectionBlob(document, operation);
+      await blobs.getContainerClient(config.projectionContainer).getBlockBlobClient(projection.name).uploadData(Buffer.from(JSON.stringify(projection.body)), {
+        blobHTTPHeaders: { blobContentType: 'application/json' }, metadata: projection.metadata, abortSignal: signal,
       });
       context.log(JSON.stringify({ stage: 'search_and_projection_acknowledged', correlationId: document.root_correlation_id,
         documentId: document.document_id, revisionId: document.revision_id, operation }));

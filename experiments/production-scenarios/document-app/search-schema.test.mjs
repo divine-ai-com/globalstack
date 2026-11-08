@@ -4,6 +4,25 @@ import { createSearchRouter, createSearchRouterServer } from '../../../packages/
 import { httpExchange } from '../http-exchange.mjs';
 import { searchAccessFilter } from './access.mjs';
 import { documentIndex } from './search-schema.mjs';
+import { projectionBlob, projectionDataSource, projectionIndex, projectionIndexer } from './search-projection.mjs';
+
+test('clean projection and tombstone match the separate Blob indexer contract', () => {
+  const storageId = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-pilot/providers/Microsoft.Storage/storageAccounts/gsdocstorage';
+  const source = projectionDataSource(storageId);
+  const document = { document_id: 'doc-1', tenant_id: 'pilot', extracted_text: 'verified clean text' };
+  const clean = projectionBlob(document, 'upload');
+  const deleted = projectionBlob(document, 'delete');
+  assert.equal(clean.name, deleted.name);
+  assert.equal(clean.metadata[source.dataDeletionDetectionPolicy.softDeleteColumnName], 'false');
+  assert.equal(deleted.metadata[source.dataDeletionDetectionPolicy.softDeleteColumnName], source.dataDeletionDetectionPolicy.softDeleteMarkerValue);
+  assert.equal(projectionIndex.name, projectionIndexer.targetIndexName);
+  assert.notEqual(projectionIndex.name, documentIndex.name);
+  assert.equal(source.container.name, 'clean-projection');
+  assert.equal(source.credentials.connectionString, `ResourceId=${storageId};`);
+  assert.equal(projectionIndexer.parameters.configuration.parsingMode, 'json');
+  assert.equal(projectionIndexer.schedule.interval, 'PT5M');
+  assert.throws(() => projectionDataSource('AccountKey=secret'));
+});
 
 test('document push index accepts the application payload and enforces tenant and group filters', async t => {
   const router = createSearchRouter();

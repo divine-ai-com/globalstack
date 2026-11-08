@@ -98,6 +98,12 @@ found that the application's tenant, clean-state, owner and group filter
 returned HTTP 501. A bounded general filter evaluator now passes the clean,
 unresolved, cross-tenant and denied-reader cases. The Search service, index
 and failure queue have not yet been deployed to Azure as part of this scenario.
+The Search module now gives its system-assigned identity Blob Data Reader only
+on the clean-projection container. A shared provisioner defines separate push
+and projection indexes, a managed-identity Blob data source with a tombstone
+policy, and a five-minute scheduled indexer. In an actual local router run,
+the two index definitions were accepted and the data-source step returned
+HTTP 501. Blob projection indexing remains unimplemented ([#75](https://github.com/divine-ai-com/globalstack/issues/75)); none of these additions is a paired Azure result.
 Native Service Bus AMQP message delivery remains missing ([#71](https://github.com/divine-ai-com/globalstack/issues/71)).
 
 An [Azure-first Entra-only PostgreSQL validation](evidence/document-postgres-validation-3ee3c25/)

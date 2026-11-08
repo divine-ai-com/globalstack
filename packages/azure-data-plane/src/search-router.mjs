@@ -226,6 +226,10 @@ export class SearchRouter {
         return sendJson(res, 200, result.body);
       }
 
+      if (/^\/(datasources|indexers)(?:\(|\/|$)/.test(url.pathname)) {
+        return sendError(res, 501, 'NotImplemented', 'Azure AI Search data sources and indexers are not emulated.');
+      }
+
       return sendError(res, 404, 'RouteNotFound', `No Azure AI Search route handled ${url.pathname}.`);
     };
   }

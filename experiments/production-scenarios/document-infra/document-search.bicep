@@ -4,6 +4,7 @@ param runId string
 param publisherPrincipalId string
 param workerIdentityName string
 param ingressIdentityName string
+param storageAccountName string
 param roleAssignmentNames array
 
 var tags = { project: 'globalstack-production-scenarios', run: runId }
@@ -19,11 +20,23 @@ resource worker 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' ex
 resource ingress 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: ingressIdentityName
 }
+resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+  name: storageAccountName
+}
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' existing = {
+  parent: storage
+  name: 'default'
+}
+resource projection 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' existing = {
+  parent: blobService
+  name: 'clean-projection'
+}
 resource search 'Microsoft.Search/searchServices@2025-05-01' = {
   name: '${serviceName}-search'
   location: location
   tags: tags
   sku: { name: 'basic' }
+  identity: { type: 'SystemAssigned' }
   properties: {
     replicaCount: 1
     partitionCount: 1
@@ -43,6 +56,17 @@ resource grants 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for (rol
     description: 'globalstack-production-scenarios:${runId}'
   }
 }]
+resource projectionReadGrant 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: roleAssignmentNames[3]
+  scope: projection
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')
+    principalId: search.identity.principalId
+    principalType: 'ServicePrincipal'
+    description: 'globalstack-production-scenarios:${runId}'
+  }
+}
 
 output searchEndpoint string = 'https://${search.name}.search.windows.net'
 output searchServiceId string = search.id
+output projectionReadRoleId string = projectionReadGrant.id

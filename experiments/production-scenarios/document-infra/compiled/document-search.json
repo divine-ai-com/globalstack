@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.48.1.52935",
-      "templateHash": "13775772748966969882"
+      "templateHash": "4724149280327151241"
     }
   },
   "parameters": {
@@ -25,6 +25,9 @@
       "type": "string"
     },
     "ingressIdentityName": {
+      "type": "string"
+    },
+    "storageAccountName": {
       "type": "string"
     },
     "roleAssignmentNames": {
@@ -51,6 +54,9 @@
       "tags": "[variables('tags')]",
       "sku": {
         "name": "basic"
+      },
+      "identity": {
+        "type": "SystemAssigned"
       },
       "properties": {
         "replicaCount": 1,
@@ -79,6 +85,21 @@
       "dependsOn": [
         "[resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName')))]"
       ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', 'clean-projection')]",
+      "name": "[parameters('roleAssignmentNames')[3]]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
+        "principalId": "[reference(resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName'))), '2025-05-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName')))]"
+      ]
     }
   ],
   "outputs": {
@@ -89,6 +110,10 @@
     "searchServiceId": {
       "type": "string",
       "value": "[resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName')))]"
+    },
+    "projectionReadRoleId": {
+      "type": "string",
+      "value": "[extensionResourceId(resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', 'clean-projection'), 'Microsoft.Authorization/roleAssignments', parameters('roleAssignmentNames')[3])]"
     }
   }
 }
