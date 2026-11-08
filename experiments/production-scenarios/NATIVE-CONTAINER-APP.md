@@ -55,3 +55,9 @@ supplemental `jwtClaimChecks` client restriction. Both default client and princi
 allowlists remain required. A later successful response alone cannot distinguish
 propagation delay from a configuration effect. The runner restores the original
 worker-only policy and records its activation before teardown.
+
+Use `node experiments/platform-lifecycle/walkthrough.mjs --scanner-component`
+with the scanner runner's external configuration and the existing
+`PAIRED_PLAYWRIGHT_MODULE` / `PAIRED_CHROMIUM_EXECUTABLE` settings to record the
+live sanitized HTTP stream side by side. The video retains actual waiting time
+and failures. It is a live experiment-output recording, not Azure Portal footage.
