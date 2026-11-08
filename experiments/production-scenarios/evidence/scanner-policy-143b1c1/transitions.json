@@ -1,0 +1,766 @@
+{
+  "sourceRevision": "143b1c107eea9bbe2d8651eae941f30e8a1453bb",
+  "sourceDirty": false,
+  "scope": "Completed scanner component requests and policy transitions only. Cleanup and full-workflow completion are not asserted by this snapshot.",
+  "normalization": "Only engine durationMs is excluded from stable scan response comparison. Original response values remain below.",
+  "observations": [
+    {
+      "observedAt": "2026-11-08T10:49:18.673Z",
+      "target": "azure",
+      "phase": "ingress-negative-controls",
+      "control": "missing-token",
+      "path": "/scan",
+      "status": 401,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:18.691Z",
+      "target": "local",
+      "phase": "ingress-negative-controls",
+      "control": "missing-token",
+      "path": "/scan",
+      "status": 401,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:49:20.961Z",
+      "target": "azure",
+      "phase": "ingress-negative-controls",
+      "control": "wrong-audience",
+      "path": "/scan",
+      "status": 401,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:20.975Z",
+      "target": "local",
+      "phase": "ingress-negative-controls",
+      "control": "wrong-audience",
+      "path": "/scan",
+      "status": 401,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:49:21.661Z",
+      "target": "azure",
+      "phase": "ingress-negative-controls",
+      "control": "valid-unlisted-pilot",
+      "path": "/scan",
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:21.667Z",
+      "target": "local",
+      "phase": "ingress-negative-controls",
+      "control": "valid-unlisted-pilot",
+      "path": "/scan",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:49:23.547Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 1,
+      "elapsedMs": 682,
+      "expectedStatus": 200,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:23.567Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:29.247Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 2,
+      "elapsedMs": 6382,
+      "expectedStatus": 200,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:29.261Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:34.937Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 3,
+      "elapsedMs": 12072,
+      "expectedStatus": 200,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:34.950Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:40.642Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 4,
+      "elapsedMs": 17777,
+      "expectedStatus": 200,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:40.655Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:46.306Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 5,
+      "elapsedMs": 23441,
+      "expectedStatus": 200,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:46.320Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:52.003Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 6,
+      "elapsedMs": 29138,
+      "expectedStatus": 200,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:49:52.016Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:59.024Z",
+      "target": "azure",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "attempt": 7,
+      "elapsedMs": 36159,
+      "expectedStatus": 200,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:59.040Z",
+      "target": "local",
+      "phase": "observe-pilot-policy-activation",
+      "control": "pilot-allowlist-activation",
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "ready": true
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:59.841Z",
+      "target": "azure",
+      "phase": "authorized-scanner-component-probe",
+      "control": "clean-text",
+      "correlationId": "b9f12df8-4064-44f3-93cc-53edc7b51a29",
+      "elapsedMs": 738,
+      "inputSha256": "251d341b21f87e63f45541c68fef4165c93cb4eff3560c06a9145a9594cac206",
+      "status": 200,
+      "body": {
+        "sha256": "251d341b21f87e63f45541c68fef4165c93cb4eff3560c06a9145a9594cac206",
+        "bytes": 41,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 33
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 17
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "utf8",
+            "text": "Document scanner paired native execution."
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:49:59.841Z",
+      "target": "local",
+      "phase": "authorized-scanner-component-probe",
+      "control": "clean-text",
+      "correlationId": "56900ed2-ccb6-41ef-ab0e-f7180ca0c640",
+      "elapsedMs": 59,
+      "inputSha256": "251d341b21f87e63f45541c68fef4165c93cb4eff3560c06a9145a9594cac206",
+      "status": 200,
+      "body": {
+        "sha256": "251d341b21f87e63f45541c68fef4165c93cb4eff3560c06a9145a9594cac206",
+        "bytes": 41,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 32
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "utf8",
+            "text": "Document scanner paired native execution."
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:00.308Z",
+      "target": "azure",
+      "phase": "authorized-scanner-component-probe",
+      "control": "yara-harmless-marker",
+      "correlationId": "f2c29033-3581-4914-bb15-29c977bc54fa",
+      "elapsedMs": 372,
+      "inputSha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+      "status": 200,
+      "body": {
+        "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+        "bytes": 30,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 34
+          },
+          {
+            "engine": "yara",
+            "status": "detected",
+            "findings": [
+              "PilotDocumentDetection"
+            ],
+            "durationMs": 17
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:00.308Z",
+      "target": "local",
+      "phase": "authorized-scanner-component-probe",
+      "control": "yara-harmless-marker",
+      "correlationId": "57d81fe8-3fd7-483a-8b2f-628343fbeee0",
+      "elapsedMs": 95,
+      "inputSha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+      "status": 200,
+      "body": {
+        "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+        "bytes": 30,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 65
+          },
+          {
+            "engine": "yara",
+            "status": "detected",
+            "findings": [
+              "PilotDocumentDetection"
+            ],
+            "durationMs": 19
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:00.619Z",
+      "target": "azure",
+      "phase": "authorized-scanner-component-probe",
+      "control": "clamav-harmless-marker",
+      "correlationId": "f39039a3-90c1-4d10-bf33-d4e7e62234c9",
+      "elapsedMs": 267,
+      "inputSha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+      "status": 200,
+      "body": {
+        "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+        "bytes": 68,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "detected",
+            "findings": [
+              "Eicar-Test-Signature"
+            ],
+            "durationMs": 17
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:00.619Z",
+      "target": "local",
+      "phase": "authorized-scanner-component-probe",
+      "control": "clamav-harmless-marker",
+      "correlationId": "4707c4ac-a871-4456-90c7-6cbda6dbc409",
+      "elapsedMs": 44,
+      "inputSha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+      "status": 200,
+      "body": {
+        "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+        "bytes": 68,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "detected",
+            "findings": [
+              "Eicar-Test-Signature"
+            ],
+            "durationMs": 18
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:02.504Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 1,
+      "elapsedMs": 692,
+      "expectedStatus": 403,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:02.507Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:08.219Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 2,
+      "elapsedMs": 6408,
+      "expectedStatus": 403,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:08.226Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:13.892Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 3,
+      "elapsedMs": 12080,
+      "expectedStatus": 403,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:13.897Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:19.569Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 4,
+      "elapsedMs": 17758,
+      "expectedStatus": 403,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:19.576Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:25.709Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 5,
+      "elapsedMs": 23898,
+      "expectedStatus": 403,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:25.717Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:31.384Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 6,
+      "elapsedMs": 29573,
+      "expectedStatus": 403,
+      "status": 200,
+      "body": {
+        "ready": true
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "observedAt": "2026-11-08T10:50:31.390Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:38.448Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "attempt": 7,
+      "elapsedMs": 36637,
+      "expectedStatus": 403,
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:50:38.454Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "worker-policy-restoration",
+      "path": "/health",
+      "status": 403,
+      "body": null
+    },
+    {
+      "observedAt": "2026-11-08T10:50:39.143Z",
+      "target": "azure",
+      "phase": "restore-worker-only-policy",
+      "control": "pilot-denied-after-restoration",
+      "status": 403,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "observedAt": "2026-11-08T10:50:39.143Z",
+      "target": "local",
+      "phase": "restore-worker-only-policy",
+      "control": "pilot-denied-after-restoration",
+      "status": 403,
+      "body": null
+    }
+  ]
+}
