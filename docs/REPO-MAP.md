@@ -113,6 +113,7 @@ flowchart TD
 - `packages/azure-data-plane/src/metric-store.mjs`
 - `packages/azure-data-plane/src/migration-plan-runner.mjs`
 - `packages/azure-data-plane/src/native-functions-lifecycle.mjs`
+- `packages/azure-data-plane/src/native-functions-platform.mjs`
 - `packages/azure-data-plane/src/native-functions-worker.mjs`
 - `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`

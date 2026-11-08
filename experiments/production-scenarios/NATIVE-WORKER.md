@@ -21,8 +21,11 @@ The platform preparation callback owns its allocations and must return an
 idempotent disposal callback. Failed preparation must clean partial resources.
 This is an opt-in runtime API, not yet a default command-line worker provisioner.
 The diagnostic prepares storage and identity transport separately from the ARM
-site lifecycle. General ARM-created storage transport, registry credentials,
-user-assigned identity deployment and a fresh paired Azure run remain pending.
+site lifecycle. The deployment-driven platform adapter resolves an existing ARM storage account
+and the site identity, then supplies local TLS endpoints and an identity broker.
+The `document-worker-local.mjs` diagnostic exercises it with the existing host/app
+Bicep templates. Registry credential emulation and a fresh paired Azure result
+remain pending. The local image catalog is still trusted operator configuration.
 
 ## Local diagnostics
 

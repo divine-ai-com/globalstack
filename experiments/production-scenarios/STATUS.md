@@ -54,6 +54,27 @@ remain outstanding.
   comparison. No security threshold was reduced. Every pushed change remains
   subject to the PR's current checks.
 
+## Native worker lifecycle evidence
+
+At revision `75a2a62`, two clean-source local diagnostics passed:
+
+- [Identity-based host storage](evidence/functions-host-identity-75a2a62/): the
+  actual Node Functions image starts its Durable worker, acquires the host lease,
+  accepts an orchestration and persists the expected application failure. Host
+  storage requests use bearer tokens over verified TLS. The diagnostic omits
+  downstream business settings, so no completed workflow is claimed.
+- [Automatic worker lifecycle](evidence/functions-auto-worker-75a2a62/): an ARM
+  site update starts the approved native container; health transitions from 503
+  to 200. Native Event Grid discovery finds the actual handler and captures its
+  expected 500/missing-configuration failure. Tags preserve the process,
+  application settings replace it, an unapproved image fails closed, valid
+  configuration recovers, and deletion removes the worker and returns 404.
+
+Both diagnostics verified container/network cleanup. The lifecycle diagnostic
+prepares identity and storage transport separately. General deployment-driven
+transport is being validated next. These results do not complete the 101
+business-workflow assertions or substitute for a fresh paired Azure run.
+
 ## Native worker storage authentication follow-up
 
 Local regression tests now cover signed workload tokens for the implemented

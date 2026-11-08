@@ -12,6 +12,9 @@ import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { createManagedIdentityService } from '../../packages/azure-data-plane/src/managed-identity-service.mjs';
+import { createDockerFunctionsProvisioner } from '../../packages/azure-data-plane/src/docker-functions-provisioner.mjs';
+import { createNativeFunctionsPlatform } from '../../packages/azure-data-plane/src/native-functions-platform.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { createFunctionsRouterServer } from '../../packages/azure-data-plane/src/functions-router.mjs';
 
@@ -30,7 +33,8 @@ const emit = createRecording(out, { platform: 'Document worker: Azure CLI and lo
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
   scope: 'Containerized document Functions package, identity-based host storage and health. Downstream services are not yet configured; no complete document workflow.',
   businessWorkflowCompleted: false, portalEvidenceComplete: false, exchanges: [], cleanup: null, localNativeRuntimeVerified: false };
-let phase = 'preflight', allocated = false, watchdog, arm, facade, runtime, imageReference;
+let phase = 'preflight', allocated = false, watchdog, arm, facade, runtime, imageReference, identityService;
+const approvedImages = new Map();
 const manifestPath = resolve(out, 'private-cleanup.json'), donePath = resolve(out, 'cleanup.done'), dockerConfig = resolve(out, 'private-docker');
 const observe = (target, event) => { const safe = sanitize({ target, phase, ...event }, replacements); report.exchanges.push(safe); emit('output', { target, phase, text: JSON.stringify(safe, null, 2) + '\n' }); };
 const request = workerClient({ ...m, token }, event => observe('azure', event));
@@ -82,7 +86,12 @@ try {
   const host = compile('worker-host'), app = compile('worker-app');
   report.templates = { host: host.sha256, app: app.sha256 };
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = m.subscription;
-  const store = new ResourceStore(); runtime = createEmulatorRuntime({ store });
+  const store = new ResourceStore();
+  identityService = await createManagedIdentityService({ store, tenantId: process.env.GLOBALSTACK_AZURE_TENANT_ID ?? process.env.ARM_TENANT_ID ?? process.env.AZURE_TENANT_ID ?? '00000000-0000-0000-0000-000000000000', subscriptionIds: [m.subscription] });
+  const preparePlatform = createNativeFunctionsPlatform({ identityService, storageRouter: () => runtime.storageRouter,
+    observe: event => observe('local-storage', event) });
+  runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identityService.trust], nativeFunctionsProvisioner: input =>
+    createDockerFunctionsProvisioner({ images: approvedImages, directory: resolve(out, 'workers.private'), preparePlatform })(input) });
   arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
   facade = createFunctionsRouterServer(runtime.functionsRouter);
   for (const server of [arm, facade]) await new Promise(done => server.listen(0, '127.0.0.1', done));
@@ -108,6 +117,7 @@ try {
   const inspected = JSON.parse(execFileSync('docker', ['image', 'inspect', imageReference], { encoding: 'utf8' }))[0];
   report.applicationImage = { id: inspected.Id, digest: inspected.RepoDigests.find(value => value.startsWith(registryHost + '/')) };
   assert.ok(report.applicationImage.digest, 'Registry image digest missing'); observe('azure', { publishedImage: report.applicationImage });
+  approvedImages.set(report.applicationImage.digest, inspected.Id);
   const deployed = await deploy('app', app, { ...baseParameters, imageReference: { value: report.applicationImage.digest } });
   const hostname = deployed.properties.outputs.hostname.value;
   assert.match(hostname, /^[a-z0-9.-]+\.azurewebsites\.net$/); assert.ok(hostname.startsWith(`${s.service}-worker`));
@@ -121,9 +131,12 @@ try {
     } catch { observe('azure', { method: 'GET', path: '/api/health', error: 'Health request failed or timed out' }); }
     await new Promise(done => setTimeout(done, 5000));
   } while (Date.now() < end);
+  await runtime.nativeFunctionsLifecycle.settle();
+  report.localWorkerState = runtime.nativeFunctionsLifecycle.status(`${s.group}/providers/Microsoft.Web/sites/${s.service}-worker`);
   const localHealth = await httpExchange(`http://127.0.0.1:${facade.address().port}/api/health`, { headers: { host: `${s.service}-worker.azurewebsites.net` } });
   observe('local', { method: 'GET', path: '/api/health', ...localHealth });
   report.localHealthStatus = localHealth.status;
+  report.localNativeRuntimeVerified = report.localWorkerState === 'running' && localHealth.status === 200 && localHealth.body?.worker === 'ready';
   report.observationsComplete = true;
 } catch (error) { report.error = sanitize(error.message, replacements); }
 finally {
@@ -137,7 +150,9 @@ finally {
     } catch { report.cleanup = { cleanupComplete: false, recoveryRequired: true }; }
   }
   for (const server of [facade, arm]) if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
-  await runtime?.dispose();
+  try { await runtime?.dispose(); report.localCleanupComplete = true; }
+  catch { report.localCleanupComplete = false; report.error ??= 'Local worker cleanup incomplete'; }
+  identityService?.dispose();
   await rm(dockerConfig, { recursive: true, force: true });
   if (imageReference) try { execFileSync('docker', ['image', 'rm', imageReference], { stdio: 'ignore' }); } catch {}
   report.completedAt = new Date().toISOString(); emit('run-end', { summary: report.error ?? 'Worker observations recorded. No full application workflow.' });

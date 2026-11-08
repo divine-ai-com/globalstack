@@ -27,7 +27,7 @@ export function createDockerFunctionsProvisioner({ images, directory, preparePla
     assert.ok(space.bavail * space.bsize >= 40 * 1024 ** 3, '40 GiB free required');
     const name = `gs-native-${randomUUID()}`;
     const work = await mkdtemp(join(root, 'worker-'));
-    let platform, allocated = false;
+    let platform, partialCleanup, allocated = false;
     async function dispose() {
       if (allocated) {
         // A failed removal must stay visible to the lifecycle controller.
@@ -38,6 +38,7 @@ export function createDockerFunctionsProvisioner({ images, directory, preparePla
         allocated = false;
       }
       await platform?.dispose?.();
+      await partialCleanup?.();
       await rm(work, { recursive: true, force: true });
     }
     try {
@@ -98,7 +99,8 @@ export function createDockerFunctionsProvisioner({ images, directory, preparePla
       const eventGridFunctions = functions.filter(item => item.config?.bindings?.some(binding => String(binding.type).toLowerCase() === 'eventgridtrigger')).map(item => item.name);
       assert.ok(eventGridFunctions.every(value => typeof value === 'string' && /^[A-Za-z][A-Za-z0-9_-]{0,127}$/.test(value)));
       return { origin, masterKeyFile, eventGridFunctions, dispose };
-    } catch {
+    } catch (error) {
+      if (typeof error.cleanup === 'function') partialCleanup = error.cleanup;
       // Never publish Docker arguments, application settings or native keys.
       try { await dispose(); }
       catch { throw Object.assign(new Error('Native worker provisioning and cleanup failed'), { cleanup: dispose }); }

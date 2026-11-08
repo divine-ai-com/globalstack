@@ -1,0 +1,10 @@
+[
+  {
+    "path": "result.json",
+    "sha256": "ef804cf27828e5f702879b75aa27110689a2a94f48d13dfb67452304b7519396"
+  },
+  {
+    "path": "host.log",
+    "sha256": "dac0178b7484ab195c887a3fa77efc814fa10e622801c82dfb1eeb85bad420a6"
+  }
+]
