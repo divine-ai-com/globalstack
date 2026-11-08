@@ -272,6 +272,19 @@ for this change.
 
 ## Remaining implementation and measurement
 
+The current paired worker supplies Storage and scanner settings for the
+component probe. Code inspection of `document-app/adapters.mjs` shows that the
+production handler also needs quarantine and projection container settings,
+PostgreSQL connection and authentication settings, a Search endpoint and index,
+and a Service Bus namespace and failure queue. The containers exist, but their
+settings are absent from this component deployment. PostgreSQL, Search and
+Service Bus are not provisioned by the current document modules. This explains
+why the probe cannot be promoted to a full workflow; the exact exception behind
+the production handler's HTTP 500 has not yet been captured. The next full
+document run must provision those services, migrate the schema, configure
+worker identity and data access, then observe a clean document from upload
+through committed metadata and both Search paths before testing failure cases.
+
 1. Finish the document scenario Bicep stack, package publishing and independent
    application probes, including scanner deployment, private networking, identity
    configuration, Key Vault, PostgreSQL, Event Grid, Service Bus and both Search
