@@ -234,6 +234,22 @@ test('paired Blob upload evidence preserves the event-delivery and full-workflow
   assert.equal(report.budget.actualAzureSpendMeasured, false);
 });
 
+test('local event diagnostic evidence requires a delivered native marker and preserves the production failure', async () => {
+  const report = await load('document-event-diagnostic-b64dcfd/summary.json');
+  assert.equal(report.sourceRevision, 'b64dcfd41f1ed9928307a44c24f11c84aa5f89d3');
+  assert.equal(report.sourceDirty, false);
+  assert.equal(report.target, 'GlobalStack only');
+  assert.equal(report.templateSha256.data, 'ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e');
+  assert.equal(report.templateSha256.events, 'd5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09');
+  assert.equal(report.uploadStatus, 201);
+  assert.equal(report.eventMarker.status, 200);
+  assert.ok(report.eventDelivery.some(item => item.subscription === 'document-diagnostic' && item.state === 'delivered'));
+  assert.ok(report.eventDelivery.some(item => item.subscription === 'document-revisions' && item.reason === 'NativeEventGridHttp500'));
+  assert.equal(report.azureCompared, false);
+  assert.equal(report.fullDocumentWorkflowCompleted, false);
+  assert.equal(report.localCleanupComplete, true);
+});
+
 test('partial fixes retain the initial-status difference and remaining local failures', async () => {
   const prefix = 'validation-after-4b40af6/';
   const index = await load(`${prefix}index.json`);

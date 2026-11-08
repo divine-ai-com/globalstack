@@ -70,6 +70,12 @@ event delivery was not established. Both targets matched the scanner decisions,
 host-key denial, and scanner-policy revoke and restore outcomes. Automatic
 cleanup and an independent Azure readback found zero resources and deployment
 records. The full document workflow remains untested.
+The next [clean local capture](evidence/document-event-diagnostic-b64dcfd/)
+kept the production subscription and added a separate diagnostic subscription.
+It observed BlobCreated delivery to a native Function and an ETag-correlated
+marker written through managed-identity Blob access. The production handler
+still returned HTTP 500. The diagnostic module has not yet been replayed on
+Azure, and no full-workflow assertion is promoted from `not-run`.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
 allocation ledger now totals USD 157, leaving USD 43 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
