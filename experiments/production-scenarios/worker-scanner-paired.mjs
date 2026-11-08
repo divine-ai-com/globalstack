@@ -1,3 +1,4 @@
+import { observePolicyPropagation } from './policy-propagation.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { randomBytes, randomUUID, createHash } from 'node:crypto';
@@ -151,7 +152,7 @@ try {
   phase = 'missing-host-key';
   for (const target of ['azure', 'local']) assert.equal((await invoke(target, 'Denied input.', false)).status, 401);
   phase = 'managed-identity-scans';
-  for (const [label, text, decision] of [['clean', 'Actual Functions managed identity scan.', 'clean'], ['yara', 'PILOT_DOCUMENT_DETECTION_73261', 'detected']]) {
+  for (const [label, text, decision] of [['clean', 'Actual Functions managed identity scan.', 'clean'], ['yara', 'PILOT_DOCUMENT_DETECTION_73261', 'detected'], ['clamav-harmless-marker', 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*', 'detected']]) {
     const azure = await invoke('azure', text), counterpart = await invoke('local', text);
     report.calls.push({ label, azure, local: counterpart });
     for (const result of [azure, counterpart]) {
@@ -161,7 +162,41 @@ try {
     const stable = result => JSON.parse(JSON.stringify(result.body.scan, (key, value) => key === 'durationMs' ? undefined : value));
     assert.deepEqual(stable(azure), stable(counterpart));
   }
-  report.workerAccessTestedOnAzure = true; report.componentChecksPassed = true;
+  report.workerAccessTestedOnAzure = true;
+  const authPath = `${s.auth}?api-version=2025-01-01`;
+  const originalAzure = await request('GET', authPath), originalLocal = await local('GET', authPath);
+  assert.equal(originalAzure.status, 200); assert.equal(originalLocal.status, 200);
+  const deniedClient = randomUUID();
+  const revoke = properties => {
+    const value = structuredClone(properties);
+    value.identityProviders.azureActiveDirectory.validation.defaultAuthorizationPolicy.allowedApplications = [deniedClient];
+    return { properties: value };
+  };
+  report.policyTransitions = [];
+  for (const [label, expectedStatus, azureBody, localBody] of [
+    ['worker-policy-revoked', 403, revoke(originalAzure.body.properties), revoke(originalLocal.body.properties)],
+    ['worker-policy-restored', 200, { properties: originalAzure.body.properties }, { properties: originalLocal.body.properties }],
+  ]) {
+    phase = label;
+    assert.ok([200, 201].includes((await request('PUT', authPath, azureBody)).status));
+    assert.ok([200, 201].includes((await local('PUT', authPath, localBody)).status));
+    const counterpart = await invoke('local', 'Policy transition scan.');
+    assert.equal(counterpart.status, expectedStatus); assert.equal(counterpart.body.upstreamStatus, expectedStatus);
+    const attempts = [];
+    const readiness = await observePolicyPropagation({ expectedStatus,
+      request: () => invoke('azure', 'Policy transition scan.'), observe: event => attempts.push(event) });
+    report.policyTransitions.push({ label, local: counterpart, azure: { ...readiness, attempts } });
+    assert.ok(readiness.ready, `Azure ${label} did not reach the expected outcome`);
+    const final = attempts.at(-1);
+    assert.equal(final.body.upstreamStatus, expectedStatus);
+    if (expectedStatus === 200) {
+      for (const result of [counterpart, final]) {
+        assert.equal(result.body.scan.status, 'clean');
+        assert.equal(result.body.scan.sha256, createHash('sha256').update('Policy transition scan.').digest('hex'));
+      }
+    }
+  }
+  report.componentChecksPassed = true;
 } catch (error) { report.error = sanitize(error.message, replacements); }
 finally {
   // Preserve measured outcomes before a potentially long cloud deletion.
