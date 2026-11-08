@@ -321,6 +321,19 @@ export class StorageDataPlaneRouter {
     return message;
   }
 
+  writeSystemBlob({ accountName, containerName, blobName, body }) {
+    const account = this.account(accountName);
+    if (!account?.containers.has(lower(containerName))) throw Object.assign(new Error('The dead-letter container does not exist.'), { code: 'ContainerNotFound' });
+    if (typeof blobName !== 'string' || !blobName || !Buffer.isBuffer(body) || body.length > 4 * 1024 * 1024) {
+      throw Object.assign(new Error('Invalid dead-letter blob.'), { code: 'InvalidBlob' });
+    }
+    const key = blobKey(containerName, blobName);
+    const blob = publishBlob(account, key, { blobName, containerName, metadata: {}, contentType: 'application/json', body,
+      etag: `"0x${randomUUID().replaceAll('-', '')}"`, lastModified: nowUtc() });
+    this.onBlobEvent?.({ account, blob, api: 'PutBlob', requestId: randomUUID() });
+    return blob;
+  }
+
   configureBlobService({ accountName, isVersioningEnabled }) {
     const account = this.account(accountName);
     if (!account) throw new Error(`Storage account ${accountName} is not registered.`);

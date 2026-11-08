@@ -1,4 +1,5 @@
 const senderRoles = new Set(['c6a89b2d-59bc-44d0-9896-0f6e12d7b80a', '974c5e8b-45b9-4653-ba55-5f855dd0fb88']);
+const blobContributor = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe';
 const lower = value => String(value ?? '').toLowerCase();
 const error = (status, code, message) => ({ status, body: { error: { code, message } } });
 export const storedResource = (store, id) => store.resources.get(lower(id));
@@ -14,6 +15,28 @@ export function queueSenderAuthorized(store, principal, destinationId) {
       && lower(properties.principalId) === lower(principal)
       && !properties.condition && senderRoles.has(lower(properties.roleDefinitionId).split('/').at(-1));
   });
+}
+
+export function blobDeadLetterAuthorized(store, principal, containerId) {
+  if (!principal || !containerId) return false;
+  const target = lower(containerId);
+  return [...store.resources.values()].some(resource => {
+    if (lower(resource.type) !== 'microsoft.authorization/roleassignments') return false;
+    const properties = resource.properties ?? {};
+    const scope = lower(properties.scope);
+    return scope && (target === scope || target.startsWith(`${scope}/`))
+      && lower(properties.principalId) === lower(principal)
+      && !properties.condition && lower(properties.roleDefinitionId).split('/').at(-1) === blobContributor;
+  });
+}
+
+export function systemTopicDeadLetter(store, topic, properties) {
+  const config = properties?.deadLetterWithResourceIdentity;
+  const destination = config?.deadLetterDestination;
+  const account = storedResource(store, destination?.properties?.resourceId);
+  const containerId = account && typeof destination?.properties?.blobContainerName === 'string'
+    ? `${account.id}/blobServices/default/containers/${destination.properties.blobContainerName}` : null;
+  return { config, destination, account, containerId, container: storedResource(store, containerId), principal: topic?.identity?.principalId };
 }
 
 export function systemTopicDestination(store, topic, properties) {
@@ -32,7 +55,16 @@ export function validateStorageSystemSubscription(store, providerRoute, body, fu
   const unsupported = message => error(501, 'GlobalStackEventDeliveryNotImplemented', message);
   if (topic.properties?.topicType !== 'Microsoft.Storage.StorageAccounts') return unsupported('Only Storage system topic delivery is implemented.');
   if (properties.eventDeliverySchema && properties.eventDeliverySchema !== 'EventGridSchema') return unsupported('Only EventGridSchema delivery is implemented.');
-  if (properties.deadLetterDestination || properties.deadLetterWithResourceIdentity || properties.expirationTimeUtc) return unsupported('Dead-letter destinations and expiring subscriptions are not implemented.');
+  if (properties.deadLetterDestination || properties.expirationTimeUtc) return unsupported('Non-identity dead-letter destinations and expiring subscriptions are not implemented.');
+  if (properties.deadLetterWithResourceIdentity) {
+    const { config, destination, account, container } = systemTopicDeadLetter(store, topic, properties);
+    if (config.identity?.type !== 'SystemAssigned' || destination?.endpointType !== 'StorageBlob') {
+      return unsupported('Only system-assigned identity dead lettering to Storage Blob is implemented.');
+    }
+    if (!topic.identity?.principalId || !account || account.type !== 'Microsoft.Storage/storageAccounts' || !container) {
+      return error(400, 'InvalidRequest', 'The dead-letter Storage account, container or system topic identity does not exist.');
+    }
+  }
   const filter = properties.filter ?? {};
   if (Object.keys(filter).some(key => !['includedEventTypes', 'subjectBeginsWith', 'subjectEndsWith', 'isSubjectCaseSensitive'].includes(key))) return unsupported('Only event type and subject prefix/suffix filters are implemented.');
   if (filter.includedEventTypes !== undefined && (!Array.isArray(filter.includedEventTypes) || !filter.includedEventTypes.every(type => typeof type === 'string'))) return error(400, 'InvalidRequest', 'includedEventTypes must be a string array.');
