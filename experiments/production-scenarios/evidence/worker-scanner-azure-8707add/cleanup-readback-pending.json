@@ -1,0 +1,119 @@
+{
+  "at": "2026-11-08T12:02:33.107Z",
+  "observations": [
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner?api-version=2025-01-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner",
+        "name": "gse2ab9c2b4c10-scanner",
+        "type": "Microsoft.App/managedEnvironments",
+        "location": "West US 2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "e2ab9c2b4c10"
+        },
+        "systemData": {
+          "createdBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "createdByType": "Application",
+          "createdAt": "2026-11-08T11:36:40.9559975",
+          "lastModifiedBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2026-11-08T11:36:40.9559975"
+        },
+        "properties": {
+          "provisioningState": "ScheduledForDelete",
+          "daprAIInstrumentationKey": null,
+          "daprAIConnectionString": null,
+          "vnetConfiguration": null,
+          "defaultDomain": "jollydesert-c3b92431.westus2.azurecontainerapps.io",
+          "staticIp": "40.125.122.1",
+          "appLogsConfiguration": {
+            "destination": null,
+            "logAnalyticsConfiguration": null
+          },
+          "openTelemetryConfiguration": null,
+          "zoneRedundant": false,
+          "kedaConfiguration": {
+            "version": "2.20.2"
+          },
+          "daprConfiguration": {
+            "version": "1.16.4-msft.13"
+          },
+          "eventStreamEndpoint": "https://westus2.azurecontainerapps.dev/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/managedEnvironments/gse2ab9c2b4c10-scanner/eventstream",
+          "customDomainConfiguration": {
+            "customDomainVerificationId": "B7A15919A3B343DE67953C6AE205A01C6CA349B593D93F5948B92C9378EC8B57",
+            "dnsSuffix": null,
+            "certificateKeyVaultProperties": null,
+            "certificateValue": null,
+            "certificatePassword": null,
+            "thumbprint": null,
+            "subjectName": null,
+            "expirationDate": null
+          },
+          "workloadProfiles": [
+            {
+              "workloadProfileType": "Consumption",
+              "name": "Consumption",
+              "enableFips": false
+            }
+          ],
+          "appInsightsConfiguration": null,
+          "infrastructureResourceGroup": null,
+          "peerAuthentication": {
+            "mtls": {
+              "enabled": false
+            }
+          },
+          "peerTrafficConfiguration": {
+            "encryption": {
+              "enabled": false
+            }
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "a8a6c505-9e4c-43b8-b700-506c283e8a95",
+        "x-ms-correlation-request-id": "a8a6c505-9e4c-43b8-b700-506c283e8a95"
+      },
+      "startedAt": "2026-11-08T12:02:32.404Z",
+      "completedAt": "2026-11-08T12:02:32.763Z"
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/gs-conformance-pilot/providers/Microsoft.App/managedEnvironments/gse2ab9c2b4c10-scanner",
+            "name": "gse2ab9c2b4c10-scanner",
+            "type": "Microsoft.App/managedEnvironments",
+            "location": "westus2",
+            "tags": {
+              "project": "globalstack-production-scenarios",
+              "run": "e2ab9c2b4c10"
+            },
+            "systemData": {
+              "createdBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+              "createdByType": "Application",
+              "createdAt": "2026-11-08T11:36:40.9559975Z",
+              "lastModifiedBy": "215cb76a-7b1f-4ca7-a7aa-7cbb5a8ccc4b",
+              "lastModifiedByType": "Application",
+              "lastModifiedAt": "2026-11-08T11:36:40.9559975Z"
+            }
+          }
+        ]
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "f38605db-62b2-47ad-8696-665010660bac",
+        "x-ms-correlation-request-id": "f38605db-62b2-47ad-8696-665010660bac"
+      },
+      "startedAt": "2026-11-08T12:02:32.765Z",
+      "completedAt": "2026-11-08T12:02:33.106Z"
+    }
+  ]
+}

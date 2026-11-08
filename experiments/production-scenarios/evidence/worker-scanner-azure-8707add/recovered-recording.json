@@ -1,0 +1,10 @@
+{
+  "provenance": "Metadata recovered after interrupted recording process; original video bytes unchanged.",
+  "video": "page@0ff49e62c5e66a0f94cd7bca71240056.webm",
+  "sha256": "202384bdee303f6862300cc54afac64897d4dabef26613956bc0c2ae6b87e030",
+  "bytes": 556440217,
+  "kind": "Live browser recording of sanitized HTTP observations, not Azure Portal",
+  "completeRun": false,
+  "durationSeconds": 1225.76,
+  "publicVideoDistribution": "pending; original retained in operator workspace"
+}

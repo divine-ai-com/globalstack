@@ -1,0 +1,22 @@
+{
+  "capturedAt": "2026-11-08T11:56:41.425498+00:00",
+  "interactiveRunnerExitCode": 143,
+  "fullRunResultAvailable": false,
+  "partialTraceRetained": true,
+  "azureCleanup": "detached watchdog still running",
+  "localContainers": [
+    {
+      "name": "gs-native-6a4ae5f3-dbf0-4d46-9137-0e3a03f0d12d",
+      "removed": true
+    },
+    {
+      "name": "gs-container-app-24b1d1e6-255a-40cd-83ea-cca4e6f7b8f6",
+      "removed": true
+    }
+  ],
+  "localNetworksRemoved": [
+    "gs-functions-net-83dbce05-aa3a-494e-b1d1-f624a49bd1f0",
+    "gs-container-app-24b1d1e6-255a-40cd-83ea-cca4e6f7b8f6-network"
+  ],
+  "privateRuntimeFilesRemoved": true
+}
