@@ -42,3 +42,37 @@ test('write-only response filtering does not mutate stored state or unrelated ac
   assert.ok(!encoded.includes('synthetic-private-value')); assert.ok(encoded.includes('synthetic-action-result'));
   assert.equal(resource.properties.administratorLoginPassword, 'synthetic-private-value');
 });
+
+test('MySQL flexible server password is omitted from ARM writes, reads and provider inventory', async () => {
+  const store = new ResourceStore();
+  const server = createArmServer({ store });
+  await new Promise(done => server.listen(0, '127.0.0.1', done));
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  const group = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-write-only';
+  const id = `${group}/providers/Microsoft.DBforMySQL/flexibleServers/gs-write-only`;
+  const password = 'Synthetic-MySQL-4827!';
+  async function request(method, path, body) {
+    const response = await fetch(origin + path, {
+      method,
+      headers: { authorization: 'Bearer globalstack-local-token', 'content-type': 'application/json' },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    const text = await response.text();
+    assert.ok(!text.includes(password));
+    return { status: response.status, body: text ? JSON.parse(text) : null };
+  }
+  try {
+    assert.equal((await request('PUT', group + '?api-version=2022-09-01', { location: 'westus2' })).status, 201);
+    const created = await request('PUT', id + '?api-version=2023-12-30', {
+      location: 'westus2', sku: { name: 'Standard_B1ms', tier: 'Burstable' },
+      properties: { administratorLogin: 'pilot', administratorLoginPassword: password, version: '8.0.21' },
+    });
+    assert.equal(created.status, 201);
+    assert.equal(Object.hasOwn(created.body.properties, 'administratorLoginPassword'), false);
+    assert.equal(store.resources.get(id.toLowerCase()).properties.administratorLoginPassword, password);
+    assert.equal((await request('GET', id + '?api-version=2023-12-30')).status, 200);
+    const listed = await request('GET', group + '/providers/Microsoft.DBforMySQL/flexibleServers?api-version=2023-12-30');
+    assert.equal(listed.status, 200);
+    assert.equal(listed.body.value.length, 1);
+  } finally { server.closeAllConnections(); await new Promise(done => server.close(done)); }
+});
