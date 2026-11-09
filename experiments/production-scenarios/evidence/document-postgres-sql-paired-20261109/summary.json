@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "edd69adfde48624ef5ff04be5011ffdc11390c34",
+  "templateSha256": "47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9",
+  "startedAt": "2026-11-09T16:20:26.099Z",
+  "completedAt": "2026-11-09T16:28:24.608Z",
+  "azureDeployment": "Succeeded",
+  "globalstackDeployment": "Succeeded",
+  "azureFirewall": {
+    "initialStatus": 202,
+    "readStatus": 200
+  },
+  "globalstackFirewall": {
+    "initialStatus": 501,
+    "errorCode": "GlobalStackResourceTypeNotEmulated"
+  },
+  "azureSql": {
+    "attempted": true,
+    "connection": {
+      "status": "passed",
+      "role": "globalstack-conformance-pilot"
+    },
+    "schema": {
+      "status": "passed",
+      "tables": [
+        "document_access",
+        "document_outbox",
+        "document_revisions",
+        "scanned_documents"
+      ]
+    }
+  },
+  "globalstackSql": {
+    "attempted": false,
+    "reason": "The in-memory ARM replay has no endpoint-routed PostgreSQL wire-protocol listener or Entra SQL authentication."
+  },
+  "cleanup": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "independentAzureInventory": {
+    "resources": 0,
+    "deployments": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 350,
+    "conservativeAllocatedAfterRunUsd": 277,
+    "actualAzureChargesMeasured": false
+  },
+  "rawPrivateTraceSha256": "9766fcdef1f7cf171ec8ffdb2414e610b70b08642bdf3c87fa08306dcb4449c3",
+  "publishedTraceSha256": "a95aac31afb98975dc5a43affadb37fb07f857c771f262352cd559308935ba9f",
+  "redaction": "Existing capture substitutions plus stable opaque aliases for remaining UUIDs and IPv4 addresses."
+}

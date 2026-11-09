@@ -254,6 +254,19 @@ test passes, including denied access for an unrelated role. The procedure has
 not run against Azure or GlobalStack's PostgreSQL data plane, so the full
 application remains blocked on that paired validation.
 
+The [bounded SQL pilot](evidence/document-postgres-sql-paired-20261109/)
+replayed the same frozen PostgreSQL Bicep template on both targets. Both ARM
+deployments succeeded. A temporary single-IP firewall rule returned 202 on
+Azure and 501 (`GlobalStackResourceTypeNotEmulated`) locally. Azure then
+accepted the service-principal administrator's Entra SQL login over verified
+TLS, ran the document schema migration, and returned all four expected table
+names. The local in-memory ARM runner does not expose equivalent PostgreSQL
+wire-protocol or Entra SQL access, so local SQL remains untested. Automatic
+cleanup and an independent Azure readback found zero resources and deployment
+records. The conservative allocation ledger is now USD 277 of the USD 350
+authorized ceiling; actual Azure charges remain unmeasured. Worker and ingress
+SQL roles, application document flow, and private networking are still open.
+
 ## Latest scanner and worker checkpoint
 
 The [completed paired Functions-to-scanner capture](evidence/worker-scanner-azure-ead706e/)
