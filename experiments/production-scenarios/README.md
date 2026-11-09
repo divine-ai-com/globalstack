@@ -45,8 +45,8 @@ modules deployed, both targets created the indexes, data source and indexer,
 and both observed clean-document indexing, quarantine exclusion and soft
 deletion. The [redacted data-plane trace](evidence/document-search-paired-20261109-traversal/data-plane-trace.json)
 records 29 requests. Cleanup and an independent Azure inventory found zero
-remaining resources. The conservative budget ledger has USD 59 left under the
-USD 300 ceiling. The full document business flow remains untested, and no Azure
+remaining resources. At that checkpoint, the conservative budget ledger had USD 59 left under the
+then-authorized USD 300 ceiling. The full document business flow remains untested, and no Azure
 Portal screenshots were captured.
 The [next paired negative probe](evidence/document-search-paired-20261109-wrong-container/summary.json)
 showed a narrower mismatch: when an indexer referenced the quarantine Blob
@@ -58,7 +58,8 @@ confirmed matching HTTP 201 data-source creation and HTTP 401 indexer
 rejection on both targets, with quarantine content absent from the clean index.
 The captured error messages differed by an Azure documentation link; the local
 message was updated from that observation after the run. The conservative
-ledger now leaves USD 35 under the USD 300 ceiling.
+ledger had USD 35 left under the then-authorized USD 300 ceiling. The ceiling
+was subsequently raised to USD 350, leaving USD 85 unallocated.
 The [three-run timing capture](evidence/document-search-visibility-timing.json)
 shows that GlobalStack exposed the indexed document on its first query, while
 Azure first exposed it at a later poll. These are observed poll times, not an
@@ -219,7 +220,7 @@ invalid/corrected index schemas, indexing, fuzzy and vector queries, and index
 deletion. Component results and videos cannot mark the 101 application
 assertions complete or substitute for Portal screenshots.
 
-Read-only preflight found no deployed resources and initially unregistered required providers. Registration requests were subsequently submitted for the twelve providers needed by scenario 1. A repeated Cost Management query returned no reported month-to-date rows after an initial HTTP 429. That is not proof of zero accrued charges or a real-time budget guarantee. Search Basic pricing was retrieved from Azure's retail API; the complete architecture still needs a bounded, SKU-specific cost sheet before paid provisioning. The total authorized ceiling at the time of this capture was USD 150; it is now USD 300.
+Read-only preflight found no deployed resources and initially unregistered required providers. Registration requests were subsequently submitted for the twelve providers needed by scenario 1. A repeated Cost Management query returned no reported month-to-date rows after an initial HTTP 429. That is not proof of zero accrued charges or a real-time budget guarantee. Search Basic pricing was retrieved from Azure's retail API; the complete architecture still needs a bounded, SKU-specific cost sheet before paid provisioning. The total authorized ceiling at the time of this capture was USD 150; it is now USD 350.
 
 The following remain required: actual application code and container images, effective identity/network configuration, safe full-stack ownership/cleanup controls, Azure deployment and live event-flow captures, equivalent local runtime execution, fixes for measured gaps, Portal evidence, and subsequent scenario 2 execution. No paid license or trial will be purchased. The Cosmos-backed application dashboard replaces Power BI at the owner's instruction; Power BI is not evaluated.
 
@@ -545,7 +546,7 @@ New hosting, Search and Storage runs reserve their respective USD 1, USD 2 and
 USD 1 envelopes in the same private
 `reports/production-scenarios/budget-ledger.json` before provisioning. The ledger
 starts with a conservative USD 20 allowance for earlier work, enforces the
-current authorized aggregate ceiling (USD 300), blocks overlapping allocations until cleanup is
+current authorized aggregate ceiling (USD 350), blocks overlapping allocations until cleanup is
 verified, and never refunds an envelope automatically from delayed billing.
 It is an execution guard, not an Azure spending limit or a measured invoice.
 If a watchdog performs cleanup after the runner exits, reconcile its verified

@@ -176,6 +176,8 @@ updated after capture to match this observed message; that text change has an
 offline test but no later paired run. Cleanup and independent Azure inventory
 found zero resources. The ledger is USD 265 of USD 300, leaving USD 35;
 actual Azure charges remain unmeasured.
+The owner subsequently raised the total ceiling to USD 350 on 2026-11-09.
+No new allocation was made, so USD 85 is currently unallocated.
 Across the three paired Search runs with live indexer execution, the clean
 document was first observed after 14.397 to 14.634 seconds on Azure and
 0.005 seconds on GlobalStack. Queries were polled at roughly five-second
@@ -197,7 +199,7 @@ claim; see [issue #83](https://github.com/divine-ai-com/globalstack/issues/83).
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
-reserves a USD 12 envelope within the authorized USD 300 ceiling. It refuses
+reserves a USD 12 envelope within the authorized USD 350 ceiling. It refuses
 a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
 session is restored in this workspace. Automatic cleanup verified zero
 task-owned resources and deployment records; actual Azure charges remain
@@ -472,10 +474,10 @@ through committed metadata and both Search paths before testing failure cases.
 ## Budget and storage
 
 The private cumulative ledger currently records USD 265 in conservative envelopes
-against the USD 300 authorization, including the initial allowance for earlier
+against the USD 350 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 35 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 85 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 
