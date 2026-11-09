@@ -268,6 +268,10 @@ authorized ceiling; actual Azure charges remain unmeasured. Worker and ingress
 SQL roles, application document flow, and private networking are still open.
 The local firewall gap is tracked in [#85](https://github.com/divine-ai-com/globalstack/issues/85),
 while the broader PostgreSQL data-plane gap remains in [#74](https://github.com/divine-ai-com/globalstack/issues/74).
+An isolated follow-up template and runner now prepare worker and ingress
+user-assigned identities for a bounded Azure SQL role-bootstrap comparison.
+The compiled template and ownership-checked cleanup pass local tests; no
+role-bootstrap result is reported yet.
 
 ## Latest scanner and worker checkpoint
 

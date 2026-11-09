@@ -11,6 +11,7 @@ test('PostgreSQL client rejects paths outside the owned group', async () => {
   await assert.rejects(request('DELETE', `/subscriptions/${manifest.subscription}/resourceGroups/foreign?api-version=2022-09-01`), /escaped/);
   await assert.rejects(request('DELETE', `${scope.group}?api-version=2022-09-01`), /escaped/);
   await assert.rejects(request('PUT', `${scope.server}/firewallRules/other?api-version=2024-08-01`), /escaped/);
+  await assert.rejects(request('DELETE', `${scope.group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/other?api-version=2023-01-31`), /escaped/);
 });
 
 test('foreign PostgreSQL server tags prevent deletion', async () => {
@@ -44,10 +45,45 @@ test('owned PostgreSQL server is removed and pilot group retained', async () => 
     if (id === scope.server) return exists ? { status: 200, body: { tags } } : { status: 404 };
     if (id === scope.firewall && method === 'DELETE') { firewallExists = false; return { status: 202 }; }
     if (id === scope.firewall) return firewallExists ? { status: 200 } : { status: 404 };
+    if (id === scope.worker || id === scope.ingress) return { status: 404 };
     throw new Error('Unexpected cleanup request');
   };
   assert.deepEqual(await cleanupPostgres(manifest, request, { sleep: async () => {} }),
     { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true });
   assert.equal(staleInventoryReads, -1, 'Cleanup must retry a stale child inventory after server deletion');
   assert.equal(firewallExists, false, 'Temporary network access must be removed before deleting the server');
+});
+
+test('foreign PostgreSQL pilot identity tags prevent deletion', async () => {
+  const calls = [];
+  const request = async (method, path) => {
+    const id = new URL(path, 'https://management.azure.com').pathname;
+    calls.push([method, id]);
+    if (id === scope.deployment) return { status: 404 };
+    if (id === scope.group) return { status: 200, body: {} };
+    if (id === `${scope.group}/resources`) return { status: 200, body: { value: [{ id: scope.worker }] } };
+    if (id === scope.server || id === scope.worker && method === 'DELETE') return { status: 404 };
+    if (id === scope.worker) return { status: 200, body: { tags: { ...tags, run: 'foreign' } } };
+    throw new Error('Unexpected cleanup request');
+  };
+  await assert.rejects(cleanupPostgres(manifest, request, { sleep: async () => {} }), /Identity run mismatch/);
+  assert.ok(calls.every(([method]) => method === 'GET'));
+});
+
+test('owned PostgreSQL pilot identities are removed after server cleanup', async () => {
+  const present = new Set([scope.worker, scope.ingress]);
+  const request = async (method, path) => {
+    const id = new URL(path, 'https://management.azure.com').pathname;
+    if (id === scope.deployment) return { status: 404 };
+    if (id === scope.group) return { status: 200, body: {} };
+    if (id === `${scope.group}/resources`) return { status: 200, body: { value: [...present].map(value => ({ id: value })) } };
+    if (id === scope.server) return { status: 404 };
+    if (present.has(id) && method === 'DELETE') { present.delete(id); return { status: 202 }; }
+    if (id === scope.worker || id === scope.ingress) return present.has(id)
+      ? { status: 200, body: { tags } } : { status: 404 };
+    throw new Error('Unexpected cleanup request');
+  };
+  assert.deepEqual(await cleanupPostgres(manifest, request, { sleep: async () => {} }),
+    { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true });
+  assert.equal(present.size, 0);
 });
