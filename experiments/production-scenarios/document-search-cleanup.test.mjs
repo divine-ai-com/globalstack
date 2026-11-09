@@ -69,3 +69,22 @@ test('Search cleanup refuses an unexpected child under the owned Storage account
   await assert.rejects(cleanupDocumentSearch(manifest, request), /Foreign resource/);
   assert.deepEqual(deleted, []);
 });
+
+test('Search cleanup refuses a role with an unexpected definition before deletion', async () => {
+  const scope = documentSearchScope(manifest);
+  const deleted = [];
+  const request = async (method, path) => {
+    const id = new URL(path, 'https://management.azure.com').pathname;
+    if (method === 'DELETE') deleted.push(id);
+    if (id === scope.group) return { status: 200, body: {} };
+    if (id === scope.storage) return { status: 200, body: { tags: { project: 'globalstack-production-scenarios', run: manifest.runId } } };
+    if (id === scope.dataRoles[0]) return { status: 200, body: { properties: {
+      description: `globalstack-production-scenarios:${manifest.runId}`, scope: scope.storage,
+      principalId: manifest.publisher,
+      roleDefinitionId: `/subscriptions/${manifest.subscription}/providers/Microsoft.Authorization/roleDefinitions/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa`,
+    } } };
+    return { status: 404 };
+  };
+  await assert.rejects(cleanupDocumentSearch(manifest, request), /role definition mismatch/);
+  assert.deepEqual(deleted, []);
+});

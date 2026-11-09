@@ -101,6 +101,9 @@ export async function cleanupDocumentSearch(m, request = documentSearchClient(m)
   const expectedPrincipals = [m.publisher, identities.get(s.worker)?.properties?.principalId,
     m.publisher, identities.get(s.worker)?.properties?.principalId,
     identities.get(s.ingress)?.properties?.principalId, identities.get(s.search)?.identity?.principalId];
+  const expectedRoleIds = ['ba92f5b4-2d11-453d-a403-e96b0029c9fe', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe',
+    '7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7',
+    '1407120a-92aa-4202-b7e9-c0e197c71c8f', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'];
   for (const [i, id] of [...s.dataRoles, ...s.searchRoles].entries()) {
     const found = await get(id);
     if (found.status === 404) continue;
@@ -108,6 +111,11 @@ export async function cleanupDocumentSearch(m, request = documentSearchClient(m)
     assert.equal(found.body?.properties?.description, `${project}:${m.runId}`, 'Search role description mismatch');
     assert.equal(found.body?.properties?.scope?.toLowerCase(), expectedScopes[i].toLowerCase(), 'Search role scope mismatch');
     assert.equal(found.body?.properties?.principalId?.toLowerCase(), expectedPrincipals[i]?.toLowerCase(), 'Search role principal mismatch');
+    assert.equal(found.body?.properties?.roleDefinitionId?.toLowerCase(),
+      `/subscriptions/${m.subscription}/providers/Microsoft.Authorization/roleDefinitions/${expectedRoleIds[i]}`.toLowerCase(),
+      'Search role definition mismatch');
+    assert.ok(!found.body?.properties?.condition && !found.body?.properties?.conditionVersion,
+      'Search role has an unexpected condition');
     existing.add(id);
   }
   const inventory = await get(`${s.group}/resources`);
