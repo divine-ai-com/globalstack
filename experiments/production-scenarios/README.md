@@ -9,16 +9,24 @@ Execution tracker: [#28](https://github.com/divine-ai-com/globalstack/issues/28)
 The `document-search-paired.mjs` runner deploys the same compiled
 identity, Storage and Search modules on Azure and GlobalStack in dependency
 order. It then attempts the application's Search index, Blob data source and
-indexer provisioning. The local data source currently returns HTTP 501, so a
-complete comparison is expected to expose a gap. The first Azure-first run
+indexer provisioning. The first Azure-first run
 reached the Search deployment after identity and data succeeded on both targets.
 Azure rejected a projection-container Blob reader role assignment because the
 pilot's conditional delegation omitted that role; GlobalStack accepted the
 template. [The redacted summary](evidence/document-search-paired-20261109/summary.json)
 records the stage outcomes and verified cleanup. This is a pilot delegation
 error, not a demonstrated failure of the Search template under an authorized
-deployer. Search data-plane provisioning, the full document business flow and
-Azure Portal screenshots were not reached. See [issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
+deployer. See [issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
+
+After the operator updated the delegation, a second
+[Azure-first run](evidence/document-search-paired-20261109-retry/summary.json)
+reached `Succeeded` for all three infrastructure modules on both targets.
+Azure created both indexes, the managed-identity Blob data source and the
+scheduled indexer. GlobalStack created both indexes, then returned HTTP 501 for
+the data source ([issue #75](https://github.com/divine-ai-com/globalstack/issues/75)).
+Both runs verified cleanup, and an independent Azure inventory after the second
+run was empty. Neither run uploaded a Blob, observed indexer execution,
+completed the document business flow or captured Azure Portal screenshots.
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private

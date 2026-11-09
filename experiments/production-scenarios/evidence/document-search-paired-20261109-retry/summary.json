@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-09T12:07:39.318Z",
+  "completedAt": "2026-11-09T12:20:03.206Z",
+  "revision": "9aedd518f1c1876bd678b4d5a367d26e119e6a52",
+  "sourceDirty": false,
+  "evidenceClass": "Azure-first paired ARM and Search object provisioning with verified teardown",
+  "stages": [
+    {
+      "stage": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    },
+    {
+      "stage": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    },
+    {
+      "stage": "search",
+      "templateSha256": "230bd99ba0f0fc58212e8abb8fb14ef7af22029642a37d59a43c3f5f62d74045",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    }
+  ],
+  "azureProvision": [
+    {
+      "stage": "push-index",
+      "status": 201
+    },
+    {
+      "stage": "projection-index",
+      "status": 201
+    },
+    {
+      "stage": "projection-data-source",
+      "status": 201
+    },
+    {
+      "stage": "projection-indexer",
+      "status": 201
+    }
+  ],
+  "localProvision": [
+    {
+      "stage": "push-index",
+      "status": 201
+    },
+    {
+      "stage": "projection-index",
+      "status": 201
+    },
+    {
+      "stage": "projection-data-source",
+      "status": 501,
+      "code": "NotImplemented"
+    }
+  ],
+  "cleanup": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "independentAzureInventoryEmpty": true,
+  "budget": {
+    "authorizedUsd": 225,
+    "allocatedAfterRunUsd": 205,
+    "remainingUnallocatedUsd": 20,
+    "actualAzureChargesMeasured": false
+  },
+  "fullWorkflowCompleted": false,
+  "limitations": [
+    "No blob was uploaded or indexed in this pilot. Indexer execution and event traversal were not tested.",
+    "No Azure Portal screenshot or video was captured.",
+    "Local data source and indexer behavior remain unimplemented."
+  ]
+}

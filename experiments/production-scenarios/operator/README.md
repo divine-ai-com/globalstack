@@ -50,11 +50,11 @@ For a Portal-created assignment, remove that exact conditional assignment from
 the group's IAM page after pilot cleanup. The Bicep output and deployment-history
 cleanup commands below apply only to the CLI/template path.
 
-The 2026-11-09 Search pilot found that the earlier condition omitted Storage
-Blob Data Reader. An operator must edit the existing group-scoped delegation
-and add that one built-in role before another Search run. Keep its service
-principal restriction and all other role limits. Adding it to this repository
-does not change the existing Azure assignment.
+The first 2026-11-09 Search pilot found that the earlier condition omitted
+Storage Blob Data Reader. The operator added that role to the existing
+group-scoped delegation, keeping its service-principal restriction. A read-only
+preflight verified the full documented condition before the second paired run.
+Adding a role to this repository alone does not change an Azure assignment.
 
 ### Azure CLI alternative
 

@@ -87,7 +87,7 @@ while Azure deleted its managed environment, before writing its final result.
 Independent Azure inventory later found zero resources and deployment records;
 local managed containers were absent. The cleanup ledger was reconciled manually.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
-allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09, leaving USD 32 unallocated before the next run. A read-only Cost Management query for the pilot group returned no current
+allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09. The second Search pilot reserved USD 12, leaving USD 20 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
@@ -96,8 +96,8 @@ The document Search and failure-queue templates now compile and deploy through
 the local ARM runtime with scoped identity roles. A local Search regression
 found that the application's tenant, clean-state, owner and group filter
 returned HTTP 501. A bounded general filter evaluator now passes the clean,
-unresolved, cross-tenant and denied-reader cases. The Search service, index
-and failure queue have not yet been deployed to Azure as part of this scenario.
+unresolved, cross-tenant and denied-reader cases. The failure queue has not
+yet been deployed to Azure as part of this scenario.
 The document Search paired pilot ran Azure-first on 2026-11-09. Its identity
 and data Bicep modules reached `Succeeded` on Azure and GlobalStack. Azure
 rejected the Search module with `InvalidTemplateDeployment` because the pilot's
@@ -107,10 +107,18 @@ template. A read-only check confirmed the missing role in the installed Azure
 condition, and the [redacted summary](evidence/document-search-paired-20261109/summary.json)
 records the stage outcomes. This is an operator setup error and a caller-specific
 authorization mismatch, not a complete Search deployment comparison. The
-delegated-role catalog now includes the missing role; an operator still needs
-to update the existing Azure assignment. A read-only preflight now checks that
-condition before the runner reserves budget or creates resources. See
+delegated-role catalog now includes the missing role, and the operator updated
+the existing Azure assignment. A read-only preflight now checks that condition
+before the runner reserves budget or creates resources. See
 [issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
+The subsequent [paired Search run](evidence/document-search-paired-20261109-retry/summary.json)
+reached `Succeeded` for all three compiled infrastructure modules on both
+targets. Azure returned HTTP 201 for both indexes, the managed-identity Blob
+data source and the scheduled indexer. GlobalStack returned HTTP 201 for both
+indexes and HTTP 501 for the data source. No Blob was uploaded or indexed, so
+this proves object provisioning, not indexer execution or document flow. The
+runner verified cleanup, and an independent Azure readback found zero pilot
+resources and deployment records.
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer where supported, and
 reserves a USD 12 envelope within the authorized USD 225 ceiling. It refuses
@@ -128,9 +136,10 @@ The Search module now gives its system-assigned identity Blob Data Reader only
 on the clean-projection container. A shared provisioner defines separate push
 and projection indexes, a managed-identity Blob data source with a tombstone
 policy, explicit document-ID mapping, and a five-minute scheduled indexer.
-Deletion markers contain no extracted text. In an actual local router run,
-the two index definitions were accepted and the data-source step returned
-HTTP 501. Blob projection indexing remains unimplemented ([#75](https://github.com/divine-ai-com/globalstack/issues/75)); none of these additions is a paired Azure result.
+Deletion markers contain no extracted text. The paired Azure run accepted
+those Search objects, while the local router accepted the two indexes and
+returned HTTP 501 for the data source. Blob projection indexing remains
+unimplemented ([#75](https://github.com/divine-ai-com/globalstack/issues/75)).
 The document ingress also emits multiword fuzzy queries as an all-`AND` Lucene
 chain. The local evaluator previously rejected that valid application shape;
 the bounded parser now returns the expected authorized hit and rejects other
