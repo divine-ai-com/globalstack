@@ -24,8 +24,9 @@ empty and the shared budget ledger permits a USD 12 envelope:
 node experiments/production-scenarios/document-search-paired.mjs
 ```
 
-It writes redacted request and response observations to `result.json` in the
-private run directory. It installs an ownership-checked cleanup watchdog before
+It writes redacted request and response observations to `result.json` and a
+time-ordered API trace to `events.ndjson` in the private run directory. This is
+not Portal footage or a video. It installs an ownership-checked cleanup watchdog before
 resource creation, preserves the pilot group, and verifies an empty Azure
 resource inventory after teardown. If cleanup reports `recoveryRequired`, keep
 the private manifest and reconcile the resources before another paid run.

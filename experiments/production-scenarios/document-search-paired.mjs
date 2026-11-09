@@ -7,6 +7,7 @@ import { createArmServer } from '../../packages/azure-control-plane/src/server.m
 import { createSearchRouterServer } from '../../packages/azure-data-plane/src/search-router.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { createRecording } from '../platform-lifecycle/recording.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { azureCli, azureToken } from './azure-session.mjs';
 import { productionBudgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
@@ -53,10 +54,15 @@ const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new 
   scope: 'Document Search identity, Storage and Search deployment, index/data-source provisioning, and immediate cleanup. No full document workflow.',
   budget: { totalAuthorizedUsd: 200, thisRunEnvelopeUsd: 12, actualAzureChargesMeasured: false },
   observations: [], stages: [], cleanup: null, fullWorkflowCompleted: false };
+const emit = createRecording(out, { platform: 'document Search paired pilot', revision, sourceDirty: false,
+  evidence: 'time-ordered API trace; no Portal screenshots or video' });
 const manifestPath = resolve(out, 'private-cleanup.json'), donePath = resolve(out, 'cleanup.done');
 let phase = 'preflight', allocated = false, watchdog, arm, search, runtime;
 function observe(target, event) {
-  report.observations.push(sanitize({ target, phase, ...event }, replacements));
+  const safe = sanitize({ target, phase, ...event }, replacements);
+  report.observations.push(safe);
+  emit('http', { target, phase, method: safe.method, path: safe.path, status: safe.status,
+    code: safe.body?.error?.code ?? null });
 }
 const azure = documentSearchClient({ ...manifest, token: armToken }, event => observe('azure', event));
 async function local(method, path, body) {
@@ -187,6 +193,8 @@ try {
   await runtime?.dispose();
   report.completedAt = new Date().toISOString();
   await writeFile(resolve(out, 'result.json'), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
+  emit('run-end', { comparisonComplete: report.comparisonComplete === true, cleanup: report.cleanup,
+    error: report.error ?? report.localProvisionError ?? null });
 }
 console.log(JSON.stringify({ out, stages: report.stages, azureProvision: report.azureProvision?.length,
   localProvisionError: report.localProvisionError, cleanup: report.cleanup, error: report.error ?? null }));
