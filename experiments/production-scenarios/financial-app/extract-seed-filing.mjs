@@ -28,6 +28,7 @@ export function extractSeedFiling(bytes) {
   const period = uniqueLine(header, 'period', /^Reporting period: (FY20\d\d H[12])$/gm);
   const revision = Number(uniqueLine(header, 'revision', /^Revision: ([1-9]\d?)$/gm));
   assert.match(page1, /^Consolidated operating results \(USD millions\)\n/);
+  assert.equal(page1.trimEnd().split('\n').length, 4, 'Unexpected page-one financial row');
   const values = {};
   for (const [label, key] of [['Revenue', 'revenue'], ['Operating expenses', 'expenses'], ['Operating income', 'operatingIncome']]) {
     values[key] = uniqueLine(page1, label, new RegExp(`^${label} \\| (-?(?:0|[1-9]\\d{0,23})(?:\\.\\d{1,6})?)$`, 'gm'));

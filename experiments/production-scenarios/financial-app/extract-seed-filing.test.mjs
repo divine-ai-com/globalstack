@@ -27,5 +27,7 @@ test('seed extraction ignores page-two injection text and rejects changed accoun
   assert.throws(() => extractSeedFiling(original.replace('Operating income | 63', 'Operating income | 64')),
     /Operating income must reconcile/);
   assert.throws(() => extractSeedFiling(original.replace('Revenue | 159', 'Revenue | 159\nRevenue | 999')),
-    /Expected one Revenue line/);
+    /Unexpected page-one financial row/);
+  assert.throws(() => extractSeedFiling(original.replace('Revenue | 159', 'Revenue | 159\nFree cash flow | 50')),
+    /Unexpected page-one financial row/);
 });
