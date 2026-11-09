@@ -204,7 +204,19 @@ The conservative ledger is now USD 301 of USD 350, with actual charges
 unmeasured and USD 49 of allowance unallocated.
 The paired Search runner now records the first status response immediately
 after each accepted index and delete run, with the elapsed time to that read.
-This instrumentation has not yet produced paired evidence.
+The [first immediate-status pair](evidence/document-search-immediate-status-20261109/)
+found a narrower lifecycle mismatch. Azure's first indexing status read, about
+1,033 ms after run acceptance, returned top-level `running` with no
+`lastResult` or history. GlobalStack's first read, about 3 ms after acceptance,
+returned top-level `running` but already had a completed `lastResult` and
+history entry. Both targets eventually indexed, deleted and rejected the
+wrong-container probe as expected. The first delete status read showed a
+successful result on both targets, but that result could describe an earlier
+run; it is not proof of immediate delete completion. This one pair does not
+define an Azure latency distribution or justify a fixed local delay.
+Automatic cleanup and independent Azure inventory found zero resources and
+deployment records. The conservative ledger is now USD 313 of USD 350,
+with USD 37 unallocated and actual charges unmeasured.
 The local Search indexer reads Blob state through an in-process store call.
 The paired HTTP trace does not measure the internal Search-to-Blob request path
 or token exchange on Azure, so it cannot support an internal wire-level parity
