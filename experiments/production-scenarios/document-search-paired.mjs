@@ -192,7 +192,10 @@ async function wrongContainerProbe(target, quarantineId) {
   phase = `wrong-container-indexer-${target}`;
   const configured = await searchRequest(target, 'PUT', `/indexers('${indexerName}')`, indexer);
   outcome.stages.push({ name: 'indexer', status: configured.status, code: configured.body?.error?.code ?? null });
-  if (![200, 201].includes(configured.status)) return outcome;
+  if (![200, 201].includes(configured.status)) {
+    outcome.quarantineIndexed = (await projectionQuery(target, quarantineId)).length > 0;
+    return outcome;
+  }
   phase = `wrong-container-run-${target}`;
   const started = await searchRequest(target, 'POST', `/indexers('${indexerName}')/search.run`);
   outcome.stages.push({ name: 'run', status: started.status, code: started.body?.error?.code ?? null });
@@ -308,10 +311,10 @@ try {
     }
     report.negativeWiring = [];
     for (const target of ['azure', 'local']) report.negativeWiring.push(await wrongContainerProbe(target, quarantineId));
-    assert.ok(report.negativeWiring.every(item => item.stages.length === 3
-      && item.stages[0].status === 201 && item.stages[1].status === 201 && item.stages[2].status === 202
-      && ['transientFailure', 'persistentFailure'].includes(item.indexerStatus)
-      && item.quarantineIndexed === false), 'Wrong-container probe did not fail safely on both targets');
+    assert.ok(report.negativeWiring.every(item => item.stages.length === 2
+      && item.stages[0].status === 201 && item.stages[1].status === 401
+      && item.stages[1].code === '' && item.quarantineIndexed === false),
+    'Wrong-container probe did not reject indexer creation on both targets');
     report.comparisonComplete = true;
   }
 } catch (error) {

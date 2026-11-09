@@ -131,12 +131,13 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   const wrongSource = { ...projectionDataSource(`${pilotGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccountName}`),
     name: 'quarantine-probe-source', container: { name: 'quarantine' } };
   assert.equal((await searchCall('PUT', "/datasources('quarantine-probe-source')", wrongSource)).status, 201);
-  assert.equal((await searchCall('PUT', "/indexers('quarantine-probe-indexer')", {
+  const wrongIndexer = await searchCall('PUT', "/indexers('quarantine-probe-indexer')", {
     ...projectionIndexer, name: 'quarantine-probe-indexer', dataSourceName: wrongSource.name,
-  })).status, 201);
-  assert.equal((await searchCall('POST', "/indexers('quarantine-probe-indexer')/search.run")).status, 202);
-  const wrongStatus = await searchCall('GET', "/indexers('quarantine-probe-indexer')/search.status");
-  assert.equal(wrongStatus.body.lastResult.status, 'transientFailure');
+  });
+  assert.equal(wrongIndexer.status, 401);
+  assert.equal(wrongIndexer.body.error.code, '');
+  assert.match(wrongIndexer.body.error.message, /managed identity.*Storage Blob Data Reader/);
+  assert.equal((await searchCall('GET', "/indexers('quarantine-probe-indexer')")).status, 404);
   assert.equal((await query('bad-1')).body.value.length, 0);
   assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2', deleted: 'true' }, true)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);

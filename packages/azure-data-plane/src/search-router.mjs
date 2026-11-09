@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { URL } from 'node:url';
 import { evaluateSearch } from './search-query.mjs';
 import { searchTokenAuthorizer } from './search-token-auth.mjs';
-import { runBlobIndexer, validateBlobDataSource, validateBlobIndexer } from './search-blob-indexer.mjs';
+import { runBlobIndexer, validateBlobDataSource, validateBlobIndexer, validateBlobIndexerAccess } from './search-blob-indexer.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -284,6 +284,8 @@ export class SearchRouter {
           const error = validateBlobIndexer(body, service);
           if (error) return sendError(res, error.status, error.code, error.message);
           if (body.name !== indexerName) return sendError(res, 400, 'InvalidRequestParameter', 'Indexer name in URI and body must match.');
+          const accessError = validateBlobIndexerAccess(body, service, this.store);
+          if (accessError) return sendError(res, accessError.status, accessError.code, accessError.message);
           const prior = service.indexers.get(indexerName);
           clearInterval(prior?.timer);
           const definition = { ...structuredClone(body), '@odata.etag': etagFor(body) };

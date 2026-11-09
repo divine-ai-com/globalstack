@@ -153,6 +153,17 @@ inventory check found zero task resources and deployment records. The run
 reserved USD 12, bringing the conservative ledger to USD 241 of USD 300.
 Actual Azure charges are unmeasured. This does not cover the document worker,
 malware scanners, PostgreSQL metadata or the complete business flow.
+The [sixth paired Search run](evidence/document-search-paired-20261109-wrong-container/summary.json)
+repeated the positive projection path, then deliberately pointed a new indexer
+at the quarantine container, where the Search service identity had no Blob
+read grant. Azure accepted the data source (HTTP 201) but rejected indexer
+creation (HTTP 401) with a managed-identity container-access message.
+GlobalStack accepted both objects, then reported `transientFailure` after
+indexer execution. Neither target indexed quarantine content. This is a
+measured failure-stage mismatch. The local indexer now checks its Blob grant
+when created and returns HTTP 401 for this case; a new paired run is required
+to verify the correction against Azure. Cleanup and independent Azure inventory
+were empty. The ledger rose to USD 253 of USD 300, with actual charges unmeasured.
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
@@ -423,11 +434,11 @@ through committed metadata and both Search paths before testing failure cases.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 241 in conservative envelopes
+The private cumulative ledger currently records USD 253 in conservative envelopes
 against the USD 300 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 59 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 47 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 

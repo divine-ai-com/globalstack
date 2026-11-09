@@ -87,6 +87,14 @@ function canReadProjection(store, service, storageId, containerName) {
   return false;
 }
 
+export function validateBlobIndexerAccess(body, service, store) {
+  const source = service.dataSources.get(body.dataSourceName)?.definition;
+  const storageId = /^ResourceId=([^;]+);$/i.exec(source?.credentials?.connectionString ?? '')?.[1];
+  const accountName = storageIdPattern.exec(storageId ?? '')?.[2];
+  if (!accountName || canReadProjection(store, service, storageId, source.container?.name)) return null;
+  return { status: 401, code: '', message: `Unable to retrieve blob container for account '${accountName}' using your managed identity. Ensure the resource ID is correct and that the managed identity for your search service has been granted permission (e.g., Storage Blob Data Reader) to read blob container for this account.` };
+}
+
 function result(status, started, count, errors = []) {
   return {
     status,

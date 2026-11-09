@@ -48,6 +48,12 @@ records 29 requests. Cleanup and an independent Azure inventory found zero
 remaining resources. The conservative budget ledger has USD 59 left under the
 USD 300 ceiling. The full document business flow remains untested, and no Azure
 Portal screenshots were captured.
+The [next paired negative probe](evidence/document-search-paired-20261109-wrong-container/summary.json)
+showed a narrower mismatch: when an indexer referenced the quarantine Blob
+container without a read grant, Azure rejected indexer creation with HTTP 401.
+GlobalStack initially created it, then reported a failure on execution. The
+local indexer now checks its Blob read grant at creation. A repeat Azure-first
+run is needed before that correction is counted as paired conformance.
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private
