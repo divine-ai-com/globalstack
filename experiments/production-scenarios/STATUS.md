@@ -23,9 +23,11 @@ a deterministic seed corpus with 12 logical synthetic filings, one revision
 and 24 known-answer questions. Local tests cover arithmetic, citations,
 mixed-context rejection and pinned corpus answers. The seed-only text
 extractor binds known values to file hashes, document IDs and page numbers.
-The fixtures and calculation tool are not connected to general filing
-extraction, retrieval, agents, Azure services or audit. None of the 51
-financial assertions is promoted by these component tests.
+A verified fact boundary checks the file hashes, selects the latest revision
+within a tenant and supplies calculator inputs from parsed facts. The fixtures
+and calculation tool are not connected to general filing extraction, retrieval,
+agents, Azure services or audit. None of the 51 financial assertions is
+promoted by these component tests.
 
 The first document data and eventing Bicep modules now compile with the pinned
 CLI image. The data module now includes scoped pilot and worker Blob grants.
@@ -225,8 +227,8 @@ successful result on both targets, but that result could describe an earlier
 run; it is not proof of immediate delete completion. This one pair does not
 define an Azure latency distribution or justify a fixed local delay.
 Automatic cleanup and independent Azure inventory found zero resources and
-deployment records. The conservative ledger is now USD 313 of USD 350,
-with USD 37 unallocated and actual charges unmeasured.
+deployment records. At that capture, the conservative ledger was USD 313 of
+USD 350, with USD 37 unallocated and actual charges unmeasured.
 The local status model now leaves `lastResult` and history empty until the first
 job finishes, then retains the previous completed result while a new job is
 pending. A deterministic local test covers both states. This corrects the field
@@ -239,7 +241,7 @@ claim; see [issue #83](https://github.com/divine-ai-com/globalstack/issues/83).
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
-reserves a USD 12 envelope within the authorized USD 350 ceiling. It refuses
+reserves a USD 12 envelope within the authorized USD 500 ceiling. It refuses
 a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
 session is restored in this workspace. Automatic cleanup verified zero
 task-owned resources and deployment records; actual Azure charges remain

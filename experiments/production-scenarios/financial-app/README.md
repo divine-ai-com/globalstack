@@ -33,3 +33,11 @@ rejects duplicate lines and inconsistent operating income, and ignores the
 untrusted narrative on page two. The extraction test checks all 13 committed
 files. This does not verify a general regulatory filing parser or establish
 that an agent used the extracted facts.
+
+`verified-seed-facts.mjs` checks each input file against the committed manifest
+and parser result before exposing its facts. It selects the latest revision for
+a tenant, issuer and period, and builds both calculator operands from those
+verified facts. The result carries the two source-file hashes and page citations.
+Tests reject changed bytes, duplicate revisions, absent facts and cross-tenant
+requests. This is a local seed-corpus boundary, not live ingestion, retrieval,
+or an independent verification of a real filing's origin.
