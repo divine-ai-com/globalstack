@@ -102,6 +102,18 @@ test('verified PostgreSQL TLS client reaches real SQL and invalid identity is de
   assert.equal(row.rows[0].content, 'same SQL client');
   await good.end();
   assert.ok(observed.some(event => event.outcome === 'connected'));
+  const defaultDb = new pg.Client({ host: '127.0.0.1', port: gateway.address().port,
+    user: 'pilot', database: 'postgres', password: await token('https://ossrdbms-aad.database.windows.net'),
+    ssl: { ca: cert, rejectUnauthorized: true, servername: `${serverName}.postgres.database.azure.com` } });
+  await defaultDb.connect();
+  assert.equal((await defaultDb.query('SELECT current_database() AS name')).rows[0].name, 'postgres');
+  await defaultDb.end();
+  const undeployed = new pg.Client({ host: '127.0.0.1', port: gateway.address().port,
+    user: 'pilot', database: 'undeployed', password: await token('https://ossrdbms-aad.database.windows.net'),
+    ssl: { ca: cert, rejectUnauthorized: true, servername: `${serverName}.postgres.database.azure.com` },
+    connectionTimeoutMillis: 4000 });
+  await assert.rejects(undeployed.connect());
+  undeployed.connection?.stream?.destroy();
 
   const unsafeRoleGateway = createPostgresWireGateway({ tls: { cert, key }, trust,
     resolveConnection: async () => ({ ...manager.postgresEndpoint, database, role: 'outsider' }) });

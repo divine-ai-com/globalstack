@@ -318,8 +318,10 @@ A disposable PostgreSQL test committed and read a row, then rejected a wrong
 audience, wrong principal, wrong TLS server name, non-TLS access and a connection
 after the firewall rule was deleted. A separate test path provisioned the
 native Functions network and connected through its generated PostgreSQL
-hostname, port and TLS certificate to read the same row. The actual Functions
-worker process, nonadmin worker and ingress roles, and Azure parity for this
+hostname, port and TLS certificate to read the same row. The gateway also
+reaches the default `postgres` database needed for bootstrap and denies an
+undeployed named database. The actual Functions worker process, nonadmin
+worker and ingress roles, and Azure parity for this
 gateway remain untested. The gateway rejects backend role switching because a
 forwarded `RESET ROLE` could restore a privileged session. It does not emulate private
 networking, cancellation or Azure SQL protocol behavior beyond this client

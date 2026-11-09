@@ -45,9 +45,11 @@ export function createPostgresArmConnectionResolver({ store, backend, serverHost
     assert.ok(admin && lower(admin.properties?.principalName) === lower(user)
       && lower(admin.properties?.tenantId) === lower(tenantId)
       && admin.properties?.principalType === 'ServicePrincipal', 'PostgreSQL administrator identity does not match');
-    const db = store.resources.get(`${lower(server.id)}/databases/${lower(database)}`);
-    assert.ok(db && lower(db.type) === 'microsoft.dbforpostgresql/flexibleservers/databases', 'PostgreSQL database is not deployed');
+    const defaultDatabase = lower(database) === 'postgres';
+    const db = defaultDatabase ? null : store.resources.get(`${lower(server.id)}/databases/${lower(database)}`);
+    assert.ok(defaultDatabase || db && lower(db.type) === 'microsoft.dbforpostgresql/flexibleservers/databases',
+      'PostgreSQL database is not deployed');
     return { host: backend.host, port: backend.port, user: backend.user, password: backend.password,
-      database: physicalDatabaseName('postgres', name, database), ssl: false };
+      database: defaultDatabase ? backend.database || 'postgres' : physicalDatabaseName('postgres', name, database), ssl: false };
   };
 }
