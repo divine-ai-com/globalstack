@@ -108,7 +108,9 @@ condition, and the [redacted summary](evidence/document-search-paired-20261109/s
 records the stage outcomes. This is an operator setup error and a caller-specific
 authorization mismatch, not a complete Search deployment comparison. The
 delegated-role catalog now includes the missing role; an operator still needs
-to update the existing Azure assignment. See [issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
+to update the existing Azure assignment. A read-only preflight now checks that
+condition before the runner reserves budget or creates resources. See
+[issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer where supported, and
 reserves a USD 12 envelope within the existing USD 200 ceiling. It refuses

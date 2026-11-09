@@ -14,6 +14,7 @@ import { productionBudgetPath, reserveBudget, confirmBudgetCleanup } from './bud
 import { cleanupDocumentSearch, documentSearchClient, documentSearchScope } from './document-search-cleanup.mjs';
 import { provisionDocumentSearch } from './document-app/search-provision.mjs';
 import { httpExchange } from './http-exchange.mjs';
+import { assertDocumentDelegation } from './operator/delegation-check.mjs';
 
 assert.ok(process.env.PAIRED_RUN_DIR, 'An explicit private run directory is required');
 const out = resolve(process.env.PAIRED_RUN_DIR);
@@ -120,6 +121,12 @@ async function provision(target, token) {
 try {
   assert.deepEqual(azureCli(config, ['resource', 'list', '--subscription', account.id]), [], 'Azure inventory is not empty');
   assert.equal((await azure('GET', `${s.group}?api-version=2022-09-01`)).status, 200);
+  const assignments = azureCli(config, ['role', 'assignment', 'list', '--scope', s.group]);
+  const delegation = assignments.find(item => item.principalId?.toLowerCase() === claims.oid.toLowerCase()
+    && item.scope?.toLowerCase() === s.group.toLowerCase()
+    && item.roleDefinitionId?.toLowerCase().endsWith('/f58310d9-a9f6-439a-9e8d-f62e7b41a168'));
+  assert.ok(delegation, 'Pilot role delegation is missing');
+  await assertDocumentDelegation(delegation.condition);
   for (const id of [...s.resources, ...s.deployments]) {
     assert.equal((await azure('GET', `${id}?api-version=${s.version(id)}`)).status, 404, 'Previous pilot resource exists');
   }

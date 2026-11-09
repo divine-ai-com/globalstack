@@ -8,6 +8,7 @@ import { httpExchange } from './http-exchange.mjs';
 import { sanitize } from '../paired-lifecycle/transport.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
+import { assertDocumentDelegation } from './operator/delegation-check.mjs';
 
 const subscription = process.env.PAIRED_SUBSCRIPTION_ID, group = process.env.PAIRED_RESOURCE_GROUP;
 assert.match(subscription ?? '', /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i);
@@ -51,12 +52,10 @@ try {
   assert.equal(existing.status, 200);
   const roles = await request('azure', 'GET', `${scope}/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01`);
   assert.equal(roles.status, 200); assert.ok(!roles.body.nextLink);
-  const expected = (await readFile(new URL('./operator/workload-delegation.condition', import.meta.url), 'utf8'))
-    .replaceAll('__ROLE_IDS__', catalog.roles.map(role => role.id).join(', '));
-  const normalize = value => value.replace(/\s+/g, '').toLowerCase();
   const delegated = roles.body.value.find(item => item.properties.principalId === claims.oid
     && item.properties.roleDefinitionId.endsWith('/f58310d9-a9f6-439a-9e8d-f62e7b41a168'));
-  assert.ok(delegated && normalize(delegated.properties.condition ?? '') === normalize(expected), 'Restricted delegation must match before testing');
+  assert.ok(delegated, 'Restricted delegation is missing');
+  await assertDocumentDelegation(delegated.properties.condition);
   assert.ok(!roles.body.value.some(item => item.properties.principalId === claims.oid && item.properties.roleDefinitionId.endsWith('/' + roleId)), 'Do not collide with an existing workload grant');
   assert.equal((await request('azure', 'GET', apiPath)).status, 404);
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = subscription;

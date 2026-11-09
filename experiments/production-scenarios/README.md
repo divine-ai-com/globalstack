@@ -26,7 +26,9 @@ in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private
 explicit private `PAIRED_RUN_DIR`. The CLI configuration and certificate must
 remain outside the disposable run directory so the cleanup watchdog can still
 authenticate after an interruption. Run it only after the pilot resource group
-is empty and the shared budget ledger permits a USD 12 envelope:
+is empty, the documented role delegation is installed, and the shared budget
+ledger permits a USD 12 envelope. The runner checks the actual delegation
+condition before reserving the envelope or creating paid resources:
 
 ```bash
 node experiments/production-scenarios/document-search-paired.mjs
