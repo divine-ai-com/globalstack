@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.48.1.52935",
-      "templateHash": "4724149280327151241"
+      "templateHash": "11058635657388965234"
     }
   },
   "parameters": {
@@ -94,6 +94,21 @@
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
         "principalId": "[reference(resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName'))), '2025-05-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.Search/searchServices', format('{0}-search', parameters('serviceName')))]",
+      "name": "[parameters('roleAssignmentNames')[4]]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '1407120a-92aa-4202-b7e9-c0e197c71c8f')]",
+        "principalId": "[parameters('publisherPrincipalId')]",
         "principalType": "ServicePrincipal",
         "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
       },

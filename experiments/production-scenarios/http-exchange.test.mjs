@@ -19,10 +19,13 @@ test('capture transport preserves virtual host, body and response metadata witho
   const result = await httpExchange(`${origin}/query?a=1`, { method: 'POST', headers: { host: 'capture-search.search.windows.net' }, body: { search: 'query' } });
   assert.deepEqual(calls[0], { host: 'capture-search.search.windows.net', path: '/query?a=1', method: 'POST', body: '{"search":"query"}' });
   assert.equal(result.headers['request-id'], 'response-proof');
+  await httpExchange(`${origin}/blob`, { method: 'PUT', body: Buffer.from('{"document_id":"doc-1"}'),
+    headers: { 'content-type': 'application/json' } });
+  assert.equal(calls[1].body, '{"document_id":"doc-1"}');
   const redirect = await httpExchange(`${origin}/redirect`);
   assert.equal(redirect.status, 302);
   assert.equal(redirect.headers['set-cookie'], undefined);
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 3);
 });
 
 test('capture calls use fresh sockets across blocking deployment commands', async t => {

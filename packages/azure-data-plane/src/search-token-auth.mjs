@@ -28,7 +28,10 @@ export function searchTokenAuthorizer({ store, trusts = [] }) {
     const path = url.pathname, method = req.method;
     let roles;
     const schemaPath = /^\/indexes\('[^']+'\)$/.test(path);
-    if (method === 'GET' && path === '/indexes' || schemaPath && ['GET', 'PUT', 'POST', 'DELETE'].includes(method)) roles = [searchRoles.service];
+    const pipelinePath = /^\/(datasources|indexers)\('[^']+'\)(?:\/search\.(run|status))?$/.test(path);
+    if (method === 'GET' && ['/indexes', '/datasources', '/indexers'].includes(path)
+      || schemaPath && ['GET', 'PUT', 'POST', 'DELETE'].includes(method)
+      || pipelinePath && ['GET', 'PUT', 'POST', 'DELETE'].includes(method)) roles = [searchRoles.service];
     else if (indexName && method === 'POST' && path.endsWith('/docs/search.index')) roles = [searchRoles.writer];
     else if (indexName && (method === 'GET' && path.endsWith('/docs/count') || method === 'POST' && /\/docs\/(search|search\.post\.search)$/.test(path))) roles = [searchRoles.reader, searchRoles.writer];
     else return error(501, 'NotImplemented', 'This Search operation is not implemented for workload tokens.');

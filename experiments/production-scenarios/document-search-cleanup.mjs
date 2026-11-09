@@ -13,8 +13,8 @@ export function documentSearchScope(m) {
   assert.equal(m.group, 'gs-conformance-pilot');
   assert.match(m.publisher ?? '', uuid);
   assert.ok(Array.isArray(m.dataRoles) && m.dataRoles.length === 2);
-  assert.ok(Array.isArray(m.searchRoles) && m.searchRoles.length === 4);
-  assert.equal(new Set([...m.dataRoles, ...m.searchRoles]).size, 6);
+  assert.ok(Array.isArray(m.searchRoles) && m.searchRoles.length === 5);
+  assert.equal(new Set([...m.dataRoles, ...m.searchRoles]).size, 7);
   [...m.dataRoles, ...m.searchRoles].forEach(value => assert.match(value, uuid));
   const group = `/subscriptions/${m.subscription}/resourceGroups/${m.group}`;
   const name = `gs${m.runId}`;
@@ -26,6 +26,7 @@ export function documentSearchScope(m) {
   const dataRoles = m.dataRoles.map(id => `${storage}/providers/Microsoft.Authorization/roleAssignments/${id}`);
   const searchRoles = m.searchRoles.slice(0, 3).map(id => `${search}/providers/Microsoft.Authorization/roleAssignments/${id}`);
   searchRoles.push(`${projection}/providers/Microsoft.Authorization/roleAssignments/${m.searchRoles[3]}`);
+  searchRoles.push(`${search}/providers/Microsoft.Authorization/roleAssignments/${m.searchRoles[4]}`);
   const storageChildren = ['landing', 'clean-projection', 'quarantine', 'event-deadletters']
     .map(container => `${storage}/blobServices/default/containers/${container}`);
   storageChildren.push(`${storage}/blobServices/default`);
@@ -97,13 +98,14 @@ export async function cleanupDocumentSearch(m, request = documentSearchClient(m)
     identities.set(id, found.body);
     existing.add(id);
   }
-  const expectedScopes = [...s.dataRoles.map(() => s.storage), ...s.searchRoles.slice(0, 3).map(() => s.search), s.projection];
+  const expectedScopes = [...s.dataRoles.map(() => s.storage), ...s.searchRoles.slice(0, 3).map(() => s.search), s.projection, s.search];
   const expectedPrincipals = [m.publisher, identities.get(s.worker)?.properties?.principalId,
     m.publisher, identities.get(s.worker)?.properties?.principalId,
-    identities.get(s.ingress)?.properties?.principalId, identities.get(s.search)?.identity?.principalId];
+    identities.get(s.ingress)?.properties?.principalId, identities.get(s.search)?.identity?.principalId, m.publisher];
   const expectedRoleIds = ['ba92f5b4-2d11-453d-a403-e96b0029c9fe', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe',
     '7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7',
-    '1407120a-92aa-4202-b7e9-c0e197c71c8f', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'];
+    '1407120a-92aa-4202-b7e9-c0e197c71c8f', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1',
+    '1407120a-92aa-4202-b7e9-c0e197c71c8f'];
   for (const [i, id] of [...s.dataRoles, ...s.searchRoles].entries()) {
     const found = await get(id);
     if (found.status === 404) continue;

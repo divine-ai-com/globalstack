@@ -285,6 +285,19 @@ export class StorageDataPlaneRouter {
     return this.accounts.get(lower(accountName)) ?? null;
   }
 
+  searchBlobs({ accountName, resourceId, containerName }) {
+    const account = this.account(accountName);
+    if (lower(account?.resourceId) !== lower(resourceId) || !account?.containers.has(lower(containerName))) return null;
+    const prefix = `${lower(containerName)}\0`;
+    const blobs = [];
+    for (const [key, blob] of account.blobs) {
+      if (!key.startsWith(prefix)) continue;
+      if (blobs.length >= 1000 || blob.body.length > 4 * 1024 * 1024) throw new RangeError('Blob projection exceeds the local indexer limit.');
+      blobs.push({ name: blob.blobName, body: Buffer.from(blob.body), metadata: { ...blob.metadata }, etag: blob.etag });
+    }
+    return blobs;
+  }
+
   registerStorageAccount({ accountName, accountKey, resourceId, allowSharedKeyAccess }) {
     const key = lower(accountName);
     const existing = this.accounts.get(key);

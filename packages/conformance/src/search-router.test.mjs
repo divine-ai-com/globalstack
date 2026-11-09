@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { test } from 'node:test';
 import { createSearchRouter, createSearchRouterServer } from '../../azure-data-plane/src/search-router.mjs';
+import { createStorageDataPlaneRouter } from '../../azure-data-plane/src/storage-router.mjs';
 
 function httpJson(port, method, path, body, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -150,4 +151,88 @@ test('invalid index key definitions do not create or overwrite an index', async 
     const results = await httpJson(port, 'POST', "/indexes('contracts')/docs/search?api-version=2024-07-01", { search: '*' });
     assert.equal(results.body.value[0].contractId, 'agreement-17');
   });
+});
+
+test('Blob indexer reads only the granted projection container and honors metadata soft deletion', async () => {
+  const sub = '11111111-1111-4111-8111-111111111111';
+  const storageId = `/subscriptions/${sub}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/projectionstore`;
+  const searchId = `/subscriptions/${sub}/resourceGroups/rg/providers/Microsoft.Search/searchServices/srch-local`;
+  const principal = '22222222-2222-4222-8222-222222222222';
+  const scope = `${storageId}/blobServices/default/containers/clean-projection`;
+  const grantId = `${scope}/providers/Microsoft.Authorization/roleAssignments/read-projection`;
+  const store = { resources: new Map([
+    [searchId.toLowerCase(), { identity: { principalId: principal } }],
+    [grantId.toLowerCase(), { type: 'Microsoft.Authorization/roleAssignments', properties: {
+      principalId: principal, scope,
+      roleDefinitionId: `/subscriptions/${sub}/providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1`,
+    } }],
+  ]) };
+  const storageRouter = createStorageDataPlaneRouter({ store });
+  storageRouter.registerStorageAccount({ accountName: 'projectionstore', resourceId: storageId });
+  storageRouter.registerContainer({ accountName: 'projectionstore', containerName: 'clean-projection' });
+  storageRouter.registerContainer({ accountName: 'projectionstore', containerName: 'quarantine' });
+  const account = storageRouter.account('projectionstore');
+  const put = (container, id, document, deleted = false) => account.blobs.set(`${container}\0${id}.json`, {
+    blobName: `${id}.json`, body: Buffer.from(JSON.stringify(document)),
+    metadata: { 'x-ms-meta-isdeleted': deleted ? 'true' : 'false' },
+    etag: `"${document.revision_id ?? deleted}"`,
+  });
+  put('clean-projection', 'doc-1', { document_id: 'doc-1', extracted_text: 'safe content', revision_id: 'r1' });
+  put('quarantine', 'bad-1', { document_id: 'bad-1', extracted_text: 'infected content' });
+
+  const router = createSearchRouter({ store, storageRouter });
+  router.registerService({ serviceName: 'srch-local', resourceId: searchId });
+  const server = createSearchRouterServer(router);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  const call = (method, path, body) => httpJson(port, method, `${path}?api-version=2025-09-01`, body);
+  try {
+    assert.equal((await call('PUT', "/indexes('projection')", {
+      name: 'projection', fields: [
+        { name: 'document_id', type: 'Edm.String', key: true },
+        { name: 'extracted_text', type: 'Edm.String', searchable: true },
+        { name: 'revision_id', type: 'Edm.String' },
+      ],
+    })).status, 201);
+    assert.equal((await call('PUT', "/datasources('source')", {
+      name: 'source', type: 'azureblob', credentials: { connectionString: `ResourceId=${storageId};` },
+      container: { name: 'clean-projection' }, dataDeletionDetectionPolicy: {
+        '@odata.type': '#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy',
+        softDeleteColumnName: 'isdeleted', softDeleteMarkerValue: 'true',
+      },
+    })).status, 201);
+    const secretSource = await call('PUT', "/datasources('source')", {
+      name: 'source', type: 'azureblob', credentials: { connectionString: `ResourceId=${storageId};`, accountKey: 'do-not-store' },
+      container: { name: 'clean-projection' },
+    });
+    assert.equal(secretSource.status, 501);
+    assert.equal(JSON.stringify(await call('GET', "/datasources('source')")).includes('do-not-store'), false);
+    assert.equal((await call('PUT', "/indexers('worker')", {
+      name: 'worker', dataSourceName: 'source', targetIndexName: 'projection',
+      parameters: { configuration: { parsingMode: 'json' } }, schedule: { interval: 'PT5M' },
+      fieldMappings: [{ sourceFieldName: '/document_id', targetFieldName: 'document_id' }],
+    })).status, 201);
+    assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    let found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
+    assert.deepEqual(found.body.value.map(row => row.document_id), ['doc-1']);
+    assert.equal((await call('GET', "/indexers('worker')/search.status")).body.lastResult.status, 'success');
+
+    put('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2' }, true);
+    assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
+    assert.equal(found.body.value.length, 0);
+
+    store.resources.delete(grantId.toLowerCase());
+    put('clean-projection', 'doc-2', { document_id: 'doc-2', extracted_text: 'new content' });
+    assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    const status = await call('GET', "/indexers('worker')/search.status");
+    assert.equal(status.body.lastResult.status, 'transientFailure');
+    assert.equal((await call('POST', "/indexes('projection')/docs/search", { search: '*' })).body.value.length, 0);
+    assert.equal(storageRouter.searchBlobs({ accountName: 'projectionstore',
+      resourceId: storageId.replace('/resourceGroups/rg/', '/resourceGroups/foreign/'),
+      containerName: 'clean-projection' }), null);
+  } finally {
+    router.unregisterService('srch-local');
+    await new Promise(resolve => server.close(resolve));
+  }
 });

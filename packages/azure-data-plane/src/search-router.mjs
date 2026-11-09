@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { URL } from 'node:url';
 import { evaluateSearch } from './search-query.mjs';
 import { searchTokenAuthorizer } from './search-token-auth.mjs';
+import { runBlobIndexer, validateBlobDataSource, validateBlobIndexer } from './search-blob-indexer.mjs';
 
 async function readBody(req) {
   let text = '';
@@ -66,6 +67,11 @@ function indexNameFromPath(pathname) {
   return null;
 }
 
+function namedResource(pathname, collection) {
+  const match = new RegExp(`^/${collection}\\('([^']+)'\\)(?:$|/)`).exec(pathname);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 function validateIndex(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body) || body.__invalidJson) {
     return 'Index payload must be a JSON object.';
@@ -95,23 +101,28 @@ function keyField(index) {
 }
 
 export class SearchRouter {
-  constructor({ store, tokenTrusts = [] } = {}) {
+  constructor({ store, storageRouter, tokenTrusts = [] } = {}) {
     if (!Array.isArray(tokenTrusts)) throw new Error('Search token trusts must be an array.');
     this.store = store;
+    this.storageRouter = storageRouter;
     this.workloadAuthorization = tokenTrusts.length ? searchTokenAuthorizer({ store, trusts: tokenTrusts }) : null;
     this.services = new Map();
   }
 
   registerService({ serviceName, endpoint, resourceId }) {
     const name = String(serviceName);
+    const existing = this.services.get(serviceKey(name));
     this.services.set(serviceKey(name), {
       serviceName: name, resourceId,
       endpoint: endpoint ?? `https://${name}.search.windows.net`,
-      indexes: this.services.get(serviceKey(name))?.indexes ?? new Map(),
+      indexes: existing?.indexes ?? new Map(),
+      dataSources: existing?.dataSources ?? new Map(),
+      indexers: existing?.indexers ?? new Map(),
     });
   }
 
   unregisterService(serviceName) {
+    for (const indexer of this.services.get(serviceKey(serviceName))?.indexers.values() ?? []) clearInterval(indexer.timer);
     this.services.delete(serviceKey(serviceName));
   }
 
@@ -230,12 +241,85 @@ export class SearchRouter {
         return sendJson(res, 200, result.body);
       }
 
+      const dataSourceName = namedResource(url.pathname, 'datasources');
+      const indexerName = namedResource(url.pathname, 'indexers');
+      if (method === 'GET' && url.pathname === '/datasources') {
+        return sendJson(res, 200, { value: [...service.dataSources.values()].map(source => source.definition) });
+      }
+      if (method === 'GET' && url.pathname === '/indexers') {
+        return sendJson(res, 200, { value: [...service.indexers.values()].map(indexer => indexer.definition) });
+      }
+      if (dataSourceName && url.pathname === `/datasources('${dataSourceName}')`) {
+        if (method === 'GET') {
+          const source = service.dataSources.get(dataSourceName);
+          return source ? sendJson(res, 200, source.definition) : sendError(res, 404, 'DataSourceNotFound', `Data source '${dataSourceName}' was not found.`);
+        }
+        if (method === 'DELETE') {
+          service.dataSources.delete(dataSourceName);
+          return sendJson(res, 204);
+        }
+        if (method === 'PUT') {
+          const body = await readBody(req);
+          const error = validateBlobDataSource(body);
+          if (error) return sendError(res, error.status, error.code, error.message);
+          if (body.name !== dataSourceName) return sendError(res, 400, 'InvalidRequestParameter', 'Data source name in URI and body must match.');
+          const exists = service.dataSources.has(dataSourceName);
+          const definition = { ...structuredClone(body), '@odata.etag': etagFor(body) };
+          service.dataSources.set(dataSourceName, { definition });
+          return sendJson(res, exists ? 200 : 201, definition, { etag: definition['@odata.etag'] });
+        }
+      }
+      if (indexerName && url.pathname === `/indexers('${indexerName}')`) {
+        if (method === 'GET') {
+          const indexer = service.indexers.get(indexerName);
+          return indexer ? sendJson(res, 200, indexer.definition) : sendError(res, 404, 'IndexerNotFound', `Indexer '${indexerName}' was not found.`);
+        }
+        if (method === 'DELETE') {
+          clearInterval(service.indexers.get(indexerName)?.timer);
+          service.indexers.delete(indexerName);
+          return sendJson(res, 204);
+        }
+        if (method === 'PUT') {
+          const body = await readBody(req);
+          const error = validateBlobIndexer(body, service);
+          if (error) return sendError(res, error.status, error.code, error.message);
+          if (body.name !== indexerName) return sendError(res, 400, 'InvalidRequestParameter', 'Indexer name in URI and body must match.');
+          const prior = service.indexers.get(indexerName);
+          clearInterval(prior?.timer);
+          const definition = { ...structuredClone(body), '@odata.etag': etagFor(body) };
+          const indexer = { definition, checkpoint: prior?.checkpoint ?? new Map(), lastResult: prior?.lastResult ?? null, history: prior?.history ?? [] };
+          indexer.timer = setInterval(() => this.executeIndexer(service, indexer), 300_000);
+          indexer.timer.unref();
+          service.indexers.set(indexerName, indexer);
+          return sendJson(res, prior ? 200 : 201, definition, { etag: definition['@odata.etag'] });
+        }
+      }
+      if (indexerName && url.pathname === `/indexers('${indexerName}')/search.run` && method === 'POST') {
+        const indexer = service.indexers.get(indexerName);
+        if (!indexer) return sendError(res, 404, 'IndexerNotFound', `Indexer '${indexerName}' was not found.`);
+        this.executeIndexer(service, indexer);
+        return sendJson(res, 202);
+      }
+      if (indexerName && url.pathname === `/indexers('${indexerName}')/search.status` && method === 'GET') {
+        const indexer = service.indexers.get(indexerName);
+        if (!indexer) return sendError(res, 404, 'IndexerNotFound', `Indexer '${indexerName}' was not found.`);
+        return sendJson(res, 200, { name: indexerName, status: 'running', lastResult: indexer.lastResult,
+          executionHistory: indexer.history });
+      }
+
       if (/^\/(datasources|indexers)(?:\(|\/|$)/.test(url.pathname)) {
-        return sendError(res, 501, 'NotImplemented', 'Azure AI Search data sources and indexers are not emulated.');
+        return sendError(res, 501, 'NotImplemented', 'This Azure AI Search data source or indexer operation is not implemented.');
       }
 
       return sendError(res, 404, 'RouteNotFound', `No Azure AI Search route handled ${url.pathname}.`);
     };
+  }
+
+  executeIndexer(service, indexer) {
+    const outcome = runBlobIndexer({ service, indexer, storageRouter: this.storageRouter, store: this.store });
+    indexer.lastResult = outcome;
+    indexer.history.unshift(outcome);
+    indexer.history.length = Math.min(indexer.history.length, 20);
   }
 }
 

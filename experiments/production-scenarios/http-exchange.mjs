@@ -7,7 +7,7 @@ export function httpExchange(url, { method = 'GET', body, headers = {}, timeoutM
   return new Promise((resolve, reject) => {
     const target = new URL(url);
     if (!['http:', 'https:'].includes(target.protocol) || target.username || target.password) return reject(new Error('Unsupported HTTP target'));
-    const payload = body === undefined ? undefined : JSON.stringify(body);
+    const payload = body === undefined ? undefined : Buffer.isBuffer(body) ? body : JSON.stringify(body);
     const request = target.protocol === 'https:' ? httpsRequest : httpRequest;
     // Native CLI subprocesses can block long enough for a pooled socket to expire.
     // Use a fresh connection rather than retrying a potentially submitted mutation.

@@ -66,6 +66,16 @@ resource projectionReadGrant 'Microsoft.Authorization/roleAssignments@2022-04-01
     description: 'globalstack-production-scenarios:${runId}'
   }
 }
+resource pilotQueryGrant 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: roleAssignmentNames[4]
+  scope: search
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '1407120a-92aa-4202-b7e9-c0e197c71c8f')
+    principalId: publisherPrincipalId
+    principalType: 'ServicePrincipal'
+    description: 'globalstack-production-scenarios:${runId}'
+  }
+}
 
 output searchEndpoint string = 'https://${search.name}.search.windows.net'
 output searchServiceId string = search.id

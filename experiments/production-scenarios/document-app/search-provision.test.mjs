@@ -30,14 +30,14 @@ test('document Search provisioner installs the deletion policy before the schedu
   assert.deepEqual(steps.map(step => step.status), [201, 201, 201, 201]);
 });
 
-test('document Search provisioner exposes the local data-source gap', async t => {
+test('document Search provisioner installs the local Blob data source and indexer', async t => {
   const router = createSearchRouter();
   router.registerService({ serviceName: 'gsdoc-search' });
   const server = createSearchRouterServer(router);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  t.after(() => { router.unregisterService('gsdoc-search'); return new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }); });
   const calls = [];
-  await assert.rejects(provisionDocumentSearch({ endpoint, storageResourceId, credential, async request(url, options) {
+  const steps = await provisionDocumentSearch({ endpoint, storageResourceId, credential, async request(url, options) {
     const path = new URL(url).pathname;
     calls.push(path);
     const result = await httpExchange(`http://127.0.0.1:${server.address().port}${path}?api-version=2025-09-01`, {
@@ -45,9 +45,12 @@ test('document Search provisioner exposes the local data-source gap', async t =>
       headers: { host: 'gsdoc-search.search.windows.net', authorization: options.headers.authorization },
     });
     return { status: result.status, json: async () => result.body };
-  } }), /projection-data-source returned HTTP 501 \(NotImplemented\)/);
-  assert.equal(calls.length, 3);
+  } });
+  assert.equal(steps.length, 4);
+  assert.equal(calls.length, 4);
   assert.equal(router.services.get('gsdoc-search').indexes.size, 2);
+  assert.equal(router.services.get('gsdoc-search').dataSources.size, 1);
+  assert.equal(router.services.get('gsdoc-search').indexers.size, 1);
   await assert.rejects(provisionDocumentSearch({ endpoint: 'https://attacker.invalid', storageResourceId, credential, request: async () => {
     throw new Error('Network request must not occur');
   } }));

@@ -13,7 +13,7 @@ const fixture = new URL('./document-infra/', import.meta.url);
 const templateHashes = {
   'document-search-identities': { source: '2f8b61af0f0e7dde9dc34c9aa2ba31e0f0cb557c1131598ae37562b7932dc613', compiled: '09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac' },
   'document-data': { source: '0ed505824dbfabf628ab9366cdca245afc0658c65e309fe7e19f1580e51af063', compiled: 'ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e' },
-  'document-search': { source: '490bbc2011e1557bc27221f05a92edd625f4ebe3a7c56da4354e28f56e977079', compiled: '230bd99ba0f0fc58212e8abb8fb14ef7af22029642a37d59a43c3f5f62d74045' },
+  'document-search': { source: '2a0785b1e12fcc3edbe9fcffff550d9ba44fc0fed0ffb1c8b3c14a3fd4148ef1', compiled: '73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8' },
   'document-failures': { source: '625a9049cf275bd6a299ac8a157064e57abe3bc69b2f5cf1428107bf41f57eb3', compiled: '3219de7e24875bea97bf758567ea5b23ff1bff25217ec9c49e0a1d60f5f255d6' },
   'document-postgres': { source: '8168db6da3382f9e442b9bf282d8972117423cead3da59d429ea18329f710280', compiled: '47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9' },
 };
@@ -48,7 +48,7 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   const ingressIdentityName = `${serviceName}-ingress`;
   const publisherPrincipalId = randomUUID();
   const dataRoles = Array.from({ length: 2 }, randomUUID);
-  const searchRoles = Array.from({ length: 4 }, randomUUID);
+  const searchRoles = Array.from({ length: 5 }, randomUUID);
   assert.equal((await request('PUT', `${pilotGroup}?api-version=2022-09-01`, { location: 'westus2' })).status, 201);
   const stages = [
     ['document-search-identities', { serviceName }],
@@ -118,7 +118,7 @@ test('document Search, failure queue and Entra-only PostgreSQL modules deploy lo
   const postgresAdminId = randomUUID();
   const cases = [
     ['document-search', { serviceName: 'gsdoc', publisherPrincipalId: randomUUID(), storageAccountName: 'gsdocstorage',
-      workerIdentityName: 'gsdoc-worker', ingressIdentityName: 'gsdoc-ingress', roleAssignmentNames: Array.from({ length: 4 }, randomUUID) }],
+      workerIdentityName: 'gsdoc-worker', ingressIdentityName: 'gsdoc-ingress', roleAssignmentNames: Array.from({ length: 5 }, randomUUID) }],
     ['document-failures', { namespaceName: 'gsdoc-failures', workerIdentityName: 'gsdoc-worker',
       roleAssignmentNames: Array.from({ length: 2 }, randomUUID) }],
     ['document-postgres', { serviceName: 'gsdoc', tenantId: '11111111-1111-4111-8111-111111111111',

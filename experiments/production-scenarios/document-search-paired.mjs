@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createServer } from 'node:http';
 import { mkdir, readFile, realpath, rm, statfs, writeFile } from 'node:fs/promises';
 import { resolve, sep } from 'node:path';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
@@ -38,10 +39,14 @@ const claims = JSON.parse(Buffer.from(armToken.split('.')[1], 'base64url'));
 assert.equal(claims.tid, account.tenantId);
 assert.match(claims.oid, /^[0-9a-f-]{36}$/i);
 const searchToken = azureCli(config, ['account', 'get-access-token', '--resource', 'https://search.azure.com/']).accessToken;
+const storageToken = azureCli(config, ['account', 'get-access-token', '--resource', 'https://storage.azure.com/']).accessToken;
 const searchClaims = JSON.parse(Buffer.from(searchToken.split('.')[1], 'base64url'));
 assert.equal(searchClaims.tid, account.tenantId);
 assert.equal(searchClaims.oid, claims.oid);
 assert.ok(['https://search.azure.com', 'https://search.azure.com/'].includes(searchClaims.aud));
+const storageClaims = JSON.parse(Buffer.from(storageToken.split('.')[1], 'base64url'));
+assert.equal(storageClaims.oid, claims.oid);
+assert.ok(['https://storage.azure.com', 'https://storage.azure.com/'].includes(storageClaims.aud));
 assert.ok([`https://login.microsoftonline.com/${account.tenantId}/v2.0`, `https://sts.windows.net/${account.tenantId}/`].includes(searchClaims.iss));
 const keyResponse = await fetch(`https://login.microsoftonline.com/${account.tenantId}/discovery/v2.0/keys`, {
   redirect: 'error', signal: AbortSignal.timeout(10000),
@@ -53,19 +58,19 @@ assert.ok(keys.length > 0 && keys.length <= 16, 'Signing key set is outside the 
 
 const runId = randomBytes(6).toString('hex');
 const manifest = { subscription: account.id, group: 'gs-conformance-pilot', runId, publisher: claims.oid,
-  dataRoles: [randomUUID(), randomUUID()], searchRoles: Array.from({ length: 4 }, randomUUID),
+  dataRoles: [randomUUID(), randomUUID()], searchRoles: Array.from({ length: 5 }, randomUUID),
   config, parentPid: process.pid, deadline: Date.now() + 60 * 60000 };
 const s = documentSearchScope(manifest);
-const replacements = [[armToken, '<redacted>'], [searchToken, '<redacted>'], [account.id, '<subscription>'],
+const replacements = [[armToken, '<redacted>'], [searchToken, '<redacted>'], [storageToken, '<redacted>'], [account.id, '<subscription>'],
   [account.tenantId, '<tenant>'], [claims.oid, '<pilot-principal>'], [runId, '<run>']];
 const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new Date().toISOString(),
-  scope: 'Document Search identity, Storage and Search deployment, index/data-source provisioning, and immediate cleanup. No full document workflow.',
+  scope: 'Document Search identity, Storage and Search deployment, index/data-source provisioning, Blob projection traversal, and immediate cleanup. No full document workflow.',
   budget: { thisRunEnvelopeUsd: 12, actualAzureChargesMeasured: false },
   observations: [], stages: [], cleanup: null, fullWorkflowCompleted: false };
 const emit = createRecording(out, { platform: 'document Search paired pilot', revision, sourceDirty: false,
   evidence: 'time-ordered API trace; no Portal screenshots or video' });
 const manifestPath = resolve(out, 'private-cleanup.json'), donePath = resolve(out, 'cleanup.done');
-let phase = 'preflight', allocated = false, watchdog, arm, search, runtime;
+let phase = 'preflight', allocated = false, watchdog, arm, search, blob, runtime;
 function observe(target, event) {
   const safe = sanitize({ target, phase, ...event }, replacements);
   report.observations.push(safe);
@@ -118,6 +123,43 @@ async function provision(target, token) {
     },
   });
 }
+async function searchRequest(target, method, path, body) {
+  const origin = target === 'azure' ? `https://${s.name}-search.search.windows.net` : `http://127.0.0.1:${search.address().port}`;
+  const result = await httpExchange(`${origin}${path}?api-version=2025-09-01`, { method, body,
+    headers: { authorization: `Bearer ${searchToken}`,
+      ...(target === 'local' ? { host: `${s.name}-search.search.windows.net` } : {}) } });
+  observe(target, { method, path: `${path}?api-version=2025-09-01`, request: body, ...result });
+  return result;
+}
+async function blobPut(target, container, name, document, deleted = false) {
+  const accountName = `${s.name}docs`;
+  const origin = target === 'azure' ? `https://${accountName}.blob.core.windows.net` : `http://127.0.0.1:${blob.address().port}`;
+  const bytes = Buffer.from(JSON.stringify(document));
+  const path = `/${container}/${name}.json`;
+  const result = await httpExchange(origin + path, { method: 'PUT', body: bytes, headers: {
+    authorization: `Bearer ${storageToken}`, host: `${accountName}.blob.core.windows.net`,
+    'x-ms-version': '2023-11-03', 'x-ms-blob-type': 'BlockBlob',
+    'x-ms-meta-isdeleted': deleted ? 'true' : 'false', 'content-type': 'application/json',
+  } });
+  observe(target, { method: 'PUT', path, request: { sha256: createHash('sha256').update(bytes).digest('hex'), deleted }, ...result });
+  return result;
+}
+async function projectionQuery(target, documentId) {
+  const result = await searchRequest(target, 'POST', "/indexes('document-projection')/docs/search", {
+    search: '*', filter: `document_id eq '${documentId}'`, select: 'document_id,revision_id', top: 2,
+  });
+  assert.equal(result.status, 200, `${target} projection query failed`);
+  return result.body?.value ?? [];
+}
+async function waitProjection(target, documentId, present) {
+  const deadline = Date.now() + 180000;
+  while (true) {
+    const rows = await projectionQuery(target, documentId);
+    if (present ? rows.some(row => row.document_id === documentId) : rows.length === 0) return rows;
+    assert.ok(Date.now() < deadline, `${target} projection did not reach the expected state`);
+    await new Promise(done => setTimeout(done, 5000));
+  }
+}
 try {
   assert.deepEqual(azureCli(config, ['resource', 'list', '--subscription', account.id]), [], 'Azure inventory is not empty');
   assert.equal((await azure('GET', `${s.group}?api-version=2022-09-01`)).status, 200);
@@ -141,11 +183,13 @@ try {
   watchdog.unref();
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = account.id;
   const store = new ResourceStore();
-  runtime = createEmulatorRuntime({ store, searchTokenTrusts: [{ issuer: searchClaims.iss, tenantId: account.tenantId,
-    subscriptionIds: [account.id], jwks: { keys } }] });
+  const trust = { issuer: searchClaims.iss, tenantId: account.tenantId,
+    subscriptionIds: [account.id], jwks: { keys } };
+  runtime = createEmulatorRuntime({ store, searchTokenTrusts: [trust], storageTokenTrusts: [trust] });
   arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource });
   search = createSearchRouterServer(runtime.searchRouter);
-  for (const server of [arm, search]) await new Promise(done => server.listen(0, '127.0.0.1', done));
+  blob = createServer(runtime.storageRouter.blobHandler());
+  for (const server of [arm, search, blob]) await new Promise(done => server.listen(0, '127.0.0.1', done));
   assert.ok([200, 201].includes((await local('PUT', `${s.group}?api-version=2022-09-01`, { location: 'westus2' })).status));
   const inputs = [
     ['search-identities', { serviceName: s.name }],
@@ -181,7 +225,35 @@ try {
   phase = 'provision-search-local';
   try { report.localProvision = await provision('local', searchToken); }
   catch (error) { report.localProvisionError = sanitize(error.message, replacements); }
-  report.comparisonComplete = true;
+  if (!report.localProvisionError) {
+    const documentId = `doc-${runId}`;
+    const quarantineId = `quarantine-${runId}`;
+    report.searchTraversal = [];
+    for (const target of ['azure', 'local']) {
+      phase = `projection-upload-${target}`;
+      assert.equal((await blobPut(target, 'clean-projection', documentId, {
+        document_id: documentId, extracted_text: 'harmless projection probe', revision_id: 'r1', deleted: 'false',
+      })).status, 201, `${target} projection upload failed`);
+      assert.equal((await blobPut(target, 'quarantine', quarantineId, {
+        document_id: quarantineId, extracted_text: 'must not be indexed', revision_id: 'r1', deleted: 'false',
+      })).status, 201, `${target} quarantine probe upload failed`);
+      phase = `projection-index-${target}`;
+      assert.equal((await searchRequest(target, 'POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+      const indexed = await waitProjection(target, documentId, true);
+      assert.equal((await projectionQuery(target, quarantineId)).length, 0, `${target} indexed quarantine content`);
+      report.searchTraversal.push({ target, indexed: indexed[0]?.document_id === documentId, quarantineExcluded: true });
+      phase = `projection-delete-${target}`;
+      assert.equal((await blobPut(target, 'clean-projection', documentId, {
+        document_id: documentId, revision_id: 'r2', deleted: 'true',
+      }, true)).status, 201, `${target} tombstone upload failed`);
+      assert.equal((await searchRequest(target, 'POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+      await waitProjection(target, documentId, false);
+      report.searchTraversal.at(-1).softDeleteObserved = true;
+      const status = await searchRequest(target, 'GET', "/indexers('document-projection-indexer')/search.status");
+      report.searchTraversal.at(-1).indexerStatus = status.body?.lastResult?.status ?? `HTTP ${status.status}`;
+    }
+    report.comparisonComplete = true;
+  }
 } catch (error) {
   report.error = sanitize(error.message, replacements);
 } finally {
@@ -200,7 +272,7 @@ try {
   }
   if (arm) {
     await local('DELETE', `${s.group}?api-version=2022-09-01`).catch(() => {});
-    for (const server of [search, arm].filter(Boolean)) {
+    for (const server of [blob, search, arm].filter(Boolean)) {
       server.closeAllConnections();
       await new Promise(done => server.close(done));
     }
