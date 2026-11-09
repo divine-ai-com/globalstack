@@ -42,7 +42,7 @@ const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new 
   transport: 'Native Bicep compilation followed by ARM template deployment and Search HTTP requests.',
   portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
   region,
-  budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 2, rateUsdPerHour: 0.101, runtimeMinutes: 30, cleanupReserveMinutes: 10,
+  budget: { totalAuthorizedUsd: null, thisRunEnvelopeUsd: 2, rateUsdPerHour: 0.101, runtimeMinutes: 30, cleanupReserveMinutes: 10,
     source: `Azure Retail Prices API, ${region} Basic Search consumption meter, verified 2026-11-07. Cost reporting can lag.` } };
 let phase = 'preflight', arm, search, runtime, watchdog, manifestPath;
 const donePath = resolve(out, 'cleanup.done');
@@ -85,6 +85,7 @@ try {
     groupName: manifest.group, serviceName: manifest.service, location: region, runId, runnerIp: `${ip}/32`,
   }).map(([key, value]) => [key, { value }])) } };
   report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: `Search comparison in ${region}` });
+  report.budget.totalAuthorizedUsd = report.budget.ledger.totalAuthorizedUsd;
   manifestPath = resolve(out, 'private-cleanup.json');
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'search-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });

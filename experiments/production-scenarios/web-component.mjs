@@ -39,7 +39,7 @@ const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new 
   scope: 'Two Linux hosting plans only. No application, private network or business workflow is deployed.',
   transport: 'One native Bicep compilation, then direct ARM deployment and resource requests.',
   region, portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
-  budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10,
+  budget: { totalAuthorizedUsd: null, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10,
     hourlyRatesUsd: region === 'westus2' ? { P0v3: 0.0775, EP1: 0.16 + 3.5 * 0.0114 } : { P0v3: 0.084, EP1: 0.167 + 3.5 * 0.0119 }, maxInstancesPerPlan: 1,
     source: `Azure Retail Prices API, ${region} Linux P0v3 and Premium Functions CPU/memory, verified 2026-11-07.` } };
 let phase = 'preflight', arm, watchdog, manifestPath;
@@ -91,6 +91,7 @@ try {
   // Quota listings can disagree with this actual provider validation.
   assert.ok(validation.azure.status === 200 && !validation.azure.body?.error, 'Azure provider validation did not complete successfully; no provisioning permitted');
   report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: `Hosting comparison in ${region}` });
+  report.budget.totalAuthorizedUsd = report.budget.ledger.totalAuthorizedUsd;
   manifestPath = resolve(out, 'private-cleanup.json');
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'web-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });

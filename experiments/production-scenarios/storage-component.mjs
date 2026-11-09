@@ -42,7 +42,7 @@ const emit = createRecording(out, { platform: 'Storage component contracts', rev
 const report = { revision, sourceDirty: false, startedAt: new Date().toISOString(),
   scope: 'Temporary Storage account API diagnostics. Not a native IaC tool lifecycle or a complete application deployment.',
   portalEvidenceComplete: false, fullProtocolParityEvaluated: false,
-  budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10,
+  budget: { totalAuthorizedUsd: null, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10,
     limits: 'One Standard_LRS StorageV2 account, less than 1 MiB stored, fewer than 200 requests, no added paid features.' }, exchanges: [], cleanup: null };
 let phase = 'setup';
 const observe = (target, event) => {
@@ -73,6 +73,7 @@ try {
   assert.equal(isIP(ip), 4);
   replacements.push([ip, '<runner-ip>']);
   report.budget.ledger = await reserveBudget(budgetPath, { runId, envelopeUsd: report.budget.thisRunEnvelopeUsd, purpose: 'Storage comparison in westus2' });
+  report.budget.totalAuthorizedUsd = report.budget.ledger.totalAuthorizedUsd;
   if (manifest.eventing) {
     report.budget.limits = 'One Standard_LRS account, one Event Grid system topic/subscription, one account-scoped queue sender role, less than 1 MiB, fewer than 500 HTTP requests and 100 event operations. No Event Grid namespace or throughput-unit reservation.';
     report.budget.eventGridRate = { usdPerMillionEventOperations: 0.6, region: 'westus2', verified: '2026-11-07', source: 'Azure Retail Prices API, Standard Event Operations' };

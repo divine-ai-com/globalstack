@@ -30,7 +30,7 @@ const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new 
   scope: 'Two Linux hosting plans only, deployed inside an existing operator group. No applications or completed business workflow.',
   transport: 'Native Bicep compilation followed by direct ARM requests; not a native CLI deployment capture.',
   portalEvidenceComplete: false, fullProtocolParityEvaluated: false, exchanges: [], cleanup: null,
-  budget: { totalAuthorizedUsd: 150, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10 } };
+  budget: { totalAuthorizedUsd: null, thisRunEnvelopeUsd: 1, runtimeMinutes: 20, cleanupReserveMinutes: 10 } };
 let phase = 'preflight', arm, watchdog, allocated = false;
 const donePath = resolve(out, 'cleanup.done'), manifestPath = resolve(out, 'private-cleanup.json');
 function observe(target, event) {
@@ -66,6 +66,7 @@ try {
   const validated = await pair('POST', `${scope.deployment}/validate?api-version=2025-04-01`, { properties: { ...body.properties, validationLevel: 'Provider' } });
   assert.ok(validated.azure.status === 200 && !validated.azure.body?.error, 'Azure provider validation rejected or incomplete');
   report.budget.ledger = await reserveBudget(productionBudgetPath, { runId: manifest.runId, envelopeUsd: 1, purpose: 'Scoped hosting comparison in westus2' }); allocated = true;
+  report.budget.totalAuthorizedUsd = report.budget.ledger.totalAuthorizedUsd;
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve(here, 'scoped-web-cleanup.mjs'), manifestPath, donePath, resolve(out, 'watchdog.json')], { detached: true, stdio: 'ignore' });
   await new Promise((done, fail) => { watchdog.once('spawn', done); watchdog.once('error', fail); }); watchdog.unref();
