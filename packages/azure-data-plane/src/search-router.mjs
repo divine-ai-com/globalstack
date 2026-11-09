@@ -101,10 +101,12 @@ function keyField(index) {
 }
 
 export class SearchRouter {
-  constructor({ store, storageRouter, tokenTrusts = [] } = {}) {
+  constructor({ store, storageRouter, tokenTrusts = [], scheduleIndexerJob = callback => setImmediate(callback) } = {}) {
     if (!Array.isArray(tokenTrusts)) throw new Error('Search token trusts must be an array.');
+    if (typeof scheduleIndexerJob !== 'function') throw new Error('Indexer job scheduler must be a function.');
     this.store = store;
     this.storageRouter = storageRouter;
+    this.scheduleIndexerJob = scheduleIndexerJob;
     this.workloadAuthorization = tokenTrusts.length ? searchTokenAuthorizer({ store, trusts: tokenTrusts }) : null;
     this.services = new Map();
   }
@@ -122,7 +124,10 @@ export class SearchRouter {
   }
 
   unregisterService(serviceName) {
-    for (const indexer of this.services.get(serviceKey(serviceName))?.indexers.values() ?? []) clearInterval(indexer.timer);
+    for (const indexer of this.services.get(serviceKey(serviceName))?.indexers.values() ?? []) {
+      clearInterval(indexer.timer);
+      indexer.pending = false;
+    }
     this.services.delete(serviceKey(serviceName));
   }
 
@@ -275,7 +280,9 @@ export class SearchRouter {
           return indexer ? sendJson(res, 200, indexer.definition) : sendError(res, 404, 'IndexerNotFound', `Indexer '${indexerName}' was not found.`);
         }
         if (method === 'DELETE') {
-          clearInterval(service.indexers.get(indexerName)?.timer);
+          const indexer = service.indexers.get(indexerName);
+          clearInterval(indexer?.timer);
+          if (indexer) indexer.pending = false;
           service.indexers.delete(indexerName);
           return sendJson(res, 204);
         }
@@ -288,8 +295,10 @@ export class SearchRouter {
           if (accessError) return sendError(res, accessError.status, accessError.code, accessError.message);
           const prior = service.indexers.get(indexerName);
           clearInterval(prior?.timer);
+          if (prior) prior.pending = false;
           const definition = { ...structuredClone(body), '@odata.etag': etagFor(body) };
-          const indexer = { definition, checkpoint: prior?.checkpoint ?? new Map(), lastResult: prior?.lastResult ?? null, history: prior?.history ?? [] };
+          const indexer = { definition, checkpoint: prior?.checkpoint ?? new Map(), lastResult: prior?.lastResult ?? null,
+            history: prior?.history ?? [], pending: false };
           indexer.timer = setInterval(() => this.executeIndexer(service, indexer), 300_000);
           indexer.timer.unref();
           service.indexers.set(indexerName, indexer);
@@ -318,10 +327,25 @@ export class SearchRouter {
   }
 
   executeIndexer(service, indexer) {
-    const outcome = runBlobIndexer({ service, indexer, storageRouter: this.storageRouter, store: this.store });
-    indexer.lastResult = outcome;
-    indexer.history.unshift(outcome);
-    indexer.history.length = Math.min(indexer.history.length, 20);
+    if (indexer.pending) return;
+    indexer.pending = true;
+    const started = new Date().toISOString();
+    // Keep acceptance separate from execution so callers can observe inProgress.
+    indexer.lastResult = { status: 'inProgress', startTime: started, endTime: null, itemsProcessed: 0,
+      itemsFailed: 0, errors: [], warnings: [] };
+    this.scheduleIndexerJob(() => {
+      if (!indexer.pending || service.indexers.get(indexer.definition.name) !== indexer) return;
+      indexer.pending = false;
+      let outcome;
+      try { outcome = runBlobIndexer({ service, indexer, storageRouter: this.storageRouter, store: this.store }); }
+      catch {
+        outcome = { status: 'transientFailure', startTime: started, endTime: new Date().toISOString(),
+          itemsProcessed: 0, itemsFailed: 1, errors: [{ errorMessage: 'Indexer execution failed.', statusCode: 500 }], warnings: [] };
+      }
+      indexer.lastResult = outcome;
+      indexer.history.unshift(outcome);
+      indexer.history.length = Math.min(indexer.history.length, 20);
+    });
   }
 }
 

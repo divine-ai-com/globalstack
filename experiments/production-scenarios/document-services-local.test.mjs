@@ -123,10 +123,18 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   const query = id => searchCall('POST', "/indexes('document-projection')/docs/search", {
     search: '*', filter: `document_id eq '${id}'`, select: 'document_id,revision_id', top: 2,
   });
+  async function waitFor(predicate) {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const value = await predicate();
+      if (value) return value;
+      await new Promise(done => setTimeout(done, 10));
+    }
+    assert.fail('Local indexer did not reach the expected state');
+  }
   assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r1', extracted_text: 'clean' }, false)).status, 201);
   assert.equal((await upload('quarantine', 'bad-1', { document_id: 'bad-1', extracted_text: 'excluded' }, false)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
-  assert.equal((await query('doc-1')).body.value[0].revision_id, 'r1');
+  assert.equal((await waitFor(async () => (await query('doc-1')).body.value[0])).revision_id, 'r1');
   assert.equal((await query('bad-1')).body.value.length, 0);
   const wrongSource = { ...projectionDataSource(`${pilotGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccountName}`),
     name: 'quarantine-probe-source', container: { name: 'quarantine' } };
@@ -142,12 +150,18 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   assert.equal((await query('bad-1')).body.value.length, 0);
   assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2', deleted: 'true' }, true)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
-  assert.equal((await query('doc-1')).body.value.length, 0);
+  await waitFor(async () => {
+    const status = await searchCall('GET', "/indexers('document-projection-indexer')/search.status");
+    return status.body.lastResult?.status === 'success' && (await query('doc-1')).body.value.length === 0;
+  });
   const readGrantPath = `${projectionId}/providers/Microsoft.Authorization/roleAssignments/${searchRoles[3]}?api-version=2022-04-01`;
   assert.ok([200, 204].includes((await request('DELETE', readGrantPath)).status));
   assert.equal((await upload('clean-projection', 'doc-2', { document_id: 'doc-2', revision_id: 'r1' }, false)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
-  const denied = await searchCall('GET', "/indexers('document-projection-indexer')/search.status");
+  const denied = await waitFor(async () => {
+    const value = await searchCall('GET', "/indexers('document-projection-indexer')/search.status");
+    return value.body.lastResult?.status === 'transientFailure' ? value : null;
+  });
   assert.equal(denied.body.lastResult.status, 'transientFailure');
   assert.equal((await query('doc-2')).body.value.length, 0);
   const restored = await request('PUT', readGrantPath, { properties: {
@@ -157,7 +171,7 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   } });
   assert.ok([200, 201].includes(restored.status));
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
-  assert.equal((await query('doc-2')).body.value[0].document_id, 'doc-2');
+  assert.equal((await waitFor(async () => (await query('doc-2')).body.value[0])).document_id, 'doc-2');
   const cleanup = await cleanupDocumentSearch({ subscription, group: 'gs-conformance-pilot', runId,
     publisher: publisherPrincipalId, dataRoles, searchRoles }, request, { sleep: async () => {} });
   assert.equal(cleanup.resourcesAbsent, true);

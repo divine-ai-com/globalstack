@@ -66,6 +66,9 @@ indexing-latency estimate or timing parity. GlobalStack also reads Blob state
 in process, so the trace does not establish internal Search-to-Blob wire parity
 ([issues #83](https://github.com/divine-ai-com/globalstack/issues/83) and
 [#84](https://github.com/divine-ai-com/globalstack/issues/84)).
+The local indexer now reports `inProgress` before executing on a later event-loop
+turn. That ordering is locally tested; Azure timing and scheduled execution
+remain open comparisons.
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private

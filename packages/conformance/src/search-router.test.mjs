@@ -180,7 +180,8 @@ test('Blob indexer reads only the granted projection container and honors metada
   put('clean-projection', 'doc-1', { document_id: 'doc-1', extracted_text: 'safe content', revision_id: 'r1' });
   put('quarantine', 'bad-1', { document_id: 'bad-1', extracted_text: 'infected content' });
 
-  const router = createSearchRouter({ store, storageRouter });
+  const jobs = [];
+  const router = createSearchRouter({ store, storageRouter, scheduleIndexerJob: job => jobs.push(job) });
   router.registerService({ serviceName: 'srch-local', resourceId: searchId });
   const server = createSearchRouterServer(router);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -213,18 +214,25 @@ test('Blob indexer reads only the granted projection container and honors metada
       fieldMappings: [{ sourceFieldName: '/document_id', targetFieldName: 'document_id' }],
     })).status, 201);
     assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    assert.equal((await call('GET', "/indexers('worker')/search.status")).body.lastResult.status, 'inProgress');
     let found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
+    assert.equal(found.body.value.length, 0);
+    assert.equal(jobs.length, 1);
+    jobs.shift()();
+    found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
     assert.deepEqual(found.body.value.map(row => row.document_id), ['doc-1']);
     assert.equal((await call('GET', "/indexers('worker')/search.status")).body.lastResult.status, 'success');
 
     put('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2' }, true);
     assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    jobs.shift()();
     found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
     assert.equal(found.body.value.length, 0);
 
     store.resources.delete(grantId.toLowerCase());
     put('clean-projection', 'doc-2', { document_id: 'doc-2', extracted_text: 'new content' });
     assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    jobs.shift()();
     const status = await call('GET', "/indexers('worker')/search.status");
     assert.equal(status.body.lastResult.status, 'transientFailure');
     assert.equal((await call('POST', "/indexes('projection')/docs/search", { search: '*' })).body.value.length, 0);

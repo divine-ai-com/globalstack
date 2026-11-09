@@ -181,10 +181,15 @@ document was first observed after 14.397 to 14.634 seconds on Azure and
 0.005 seconds on GlobalStack. Queries were polled at roughly five-second
 intervals, so these are first-observation times, not exact indexing latency.
 The [per-poll timing evidence](evidence/document-search-visibility-timing.json)
-also records the delete observations. GlobalStack currently executes the
-indexer synchronously when `search.run` is called. This measured timing gap
+also records the delete observations. At the captured revisions, GlobalStack
+executed the indexer synchronously when `search.run` was called. This measured timing gap
 does not establish latency parity or scheduled-run timing; see
 [issue #84](https://github.com/divine-ai-com/globalstack/issues/84).
+The local runtime now accepts the run, exposes an `inProgress` result, and
+executes the job on a later event-loop turn. A deterministic local test holds
+the job to verify that the document remains absent before execution. This
+changes lifecycle ordering but is not a calibrated Azure delay, and it has not
+yet been tested in a new paired run.
 The local Search indexer reads Blob state through an in-process store call.
 The paired HTTP trace does not measure the internal Search-to-Blob request path
 or token exchange on Azure, so it cannot support an internal wire-level parity
