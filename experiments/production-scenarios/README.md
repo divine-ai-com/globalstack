@@ -59,6 +59,13 @@ rejection on both targets, with quarantine content absent from the clean index.
 The captured error messages differed by an Azure documentation link; the local
 message was updated from that observation after the run. The conservative
 ledger now leaves USD 35 under the USD 300 ceiling.
+The [three-run timing capture](evidence/document-search-visibility-timing.json)
+shows that GlobalStack exposed the indexed document on its first query, while
+Azure first exposed it at a later poll. These are observed poll times, not an
+indexing-latency estimate or timing parity. GlobalStack also reads Blob state
+in process, so the trace does not establish internal Search-to-Blob wire parity
+([issues #83](https://github.com/divine-ai-com/globalstack/issues/83) and
+[#84](https://github.com/divine-ai-com/globalstack/issues/84)).
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private

@@ -176,6 +176,19 @@ updated after capture to match this observed message; that text change has an
 offline test but no later paired run. Cleanup and independent Azure inventory
 found zero resources. The ledger is USD 265 of USD 300, leaving USD 35;
 actual Azure charges remain unmeasured.
+Across the three paired Search runs with live indexer execution, the clean
+document was first observed after 14.397 to 14.634 seconds on Azure and
+0.005 seconds on GlobalStack. Queries were polled at roughly five-second
+intervals, so these are first-observation times, not exact indexing latency.
+The [per-poll timing evidence](evidence/document-search-visibility-timing.json)
+also records the delete observations. GlobalStack currently executes the
+indexer synchronously when `search.run` is called. This measured timing gap
+does not establish latency parity or scheduled-run timing; see
+[issue #84](https://github.com/divine-ai-com/globalstack/issues/84).
+The local Search indexer reads Blob state through an in-process store call.
+The paired HTTP trace does not measure the internal Search-to-Blob request path
+or token exchange on Azure, so it cannot support an internal wire-level parity
+claim; see [issue #83](https://github.com/divine-ai-com/globalstack/issues/83).
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
