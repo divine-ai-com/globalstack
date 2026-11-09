@@ -23,6 +23,10 @@ def main():
     args = parser.parse_args()
     subscription = os.environ['PAIRED_SUBSCRIPTION_ID']
     config = Path(os.environ['PAIRED_AZURE_CONFIG_DIR']).resolve(strict=True)
+    ledger_path = Path(__file__).resolve().parents[2] / 'reports/production-scenarios/budget-ledger.json'
+    # The private ledger is the source of the current allowance. A missing
+    # ledger must never be presented as an authorized amount.
+    authorized_usd = json.loads(ledger_path.read_text())['totalAuthorizedUsd'] if ledger_path.is_file() else None
     out = Path(args.output)
     out.mkdir(parents=True, mode=0o700, exist_ok=False)
     prefix = ['docker', 'run', '--rm', '--user', f'{os.getuid()}:{os.getgid()}',
@@ -79,7 +83,7 @@ def main():
     results = [run(job) for job in jobs]
     (out / 'index.json').write_text(json.dumps({
         'scope': 'Read-only Azure preflight. No resources created and no model inference invoked.',
-        'region': args.region, 'totalAuthorizedUsd': 150,
+        'region': args.region, 'totalAuthorizedUsd': authorized_usd,
         'billingCaveat': 'Cost Management is delayed and is not a real-time spending cap.',
         'results': results}, indent=2) + '\n')
 
