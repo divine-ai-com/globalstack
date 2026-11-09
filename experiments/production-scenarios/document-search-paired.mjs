@@ -286,6 +286,7 @@ try {
     const documentId = `doc-${runId}`;
     const quarantineId = `quarantine-${runId}`;
     report.searchTraversal = [];
+    report.indexerImmediateStatuses = [];
     for (const target of ['azure', 'local']) {
       phase = `projection-upload-${target}`;
       assert.equal((await blobPut(target, 'clean-projection', documentId, {
@@ -296,6 +297,10 @@ try {
       })).status, 201, `${target} quarantine probe upload failed`);
       phase = `projection-index-${target}`;
       assert.equal((await searchRequest(target, 'POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+      let acceptedAt = performance.now();
+      let immediate = await searchRequest(target, 'GET', "/indexers('document-projection-indexer')/search.status");
+      report.indexerImmediateStatuses.push({ target, operation: 'index', httpStatus: immediate.status,
+        result: immediate.body?.lastResult?.status ?? null, elapsedAfterAcceptanceMs: Math.round(performance.now() - acceptedAt) });
       const indexed = await waitProjection(target, documentId, true);
       assert.equal((await projectionQuery(target, quarantineId)).length, 0, `${target} indexed quarantine content`);
       report.searchTraversal.push({ target, indexed: indexed[0]?.document_id === documentId, quarantineExcluded: true });
@@ -304,6 +309,10 @@ try {
         document_id: documentId, revision_id: 'r2', deleted: 'true',
       }, true)).status, 201, `${target} tombstone upload failed`);
       assert.equal((await searchRequest(target, 'POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+      acceptedAt = performance.now();
+      immediate = await searchRequest(target, 'GET', "/indexers('document-projection-indexer')/search.status");
+      report.indexerImmediateStatuses.push({ target, operation: 'delete', httpStatus: immediate.status,
+        result: immediate.body?.lastResult?.status ?? null, elapsedAfterAcceptanceMs: Math.round(performance.now() - acceptedAt) });
       await waitProjection(target, documentId, false);
       report.searchTraversal.at(-1).softDeleteObserved = true;
       const status = await searchRequest(target, 'GET', "/indexers('document-projection-indexer')/search.status");

@@ -202,6 +202,9 @@ for the intermediate `inProgress` state or indexing latency. Automatic cleanup
 and an independent Azure readback found zero resources and deployment records.
 The conservative ledger is now USD 301 of USD 350, with actual charges
 unmeasured and USD 49 of allowance unallocated.
+The paired Search runner now records the first status response immediately
+after each accepted index and delete run, with the elapsed time to that read.
+This instrumentation has not yet produced paired evidence.
 The local Search indexer reads Blob state through an in-process store call.
 The paired HTTP trace does not measure the internal Search-to-Blob request path
 or token exchange on Azure, so it cannot support an internal wire-level parity
