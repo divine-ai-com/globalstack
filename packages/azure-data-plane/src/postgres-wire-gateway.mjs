@@ -147,10 +147,9 @@ export function createPostgresWireGateway({ tls, trust, resolveConnection, obser
         connectionTimeoutMillis: 5000 });
       backend.on('error', () => frontend.destroy());
       await backend.connect();
-      if (connection.role) {
-        assert.match(connection.role, /^[A-Za-z][A-Za-z0-9_-]{0,62}$/);
-        await backend.query(`SET ROLE "${connection.role}"`);
-      }
+      // Never switch a privileged backend session to an application role.
+      // A forwarded RESET ROLE could otherwise restore the backend login.
+      assert.equal(connection.role, undefined, 'Use a separate database login for a nonadmin identity');
       frontend.write(Buffer.concat([
         authentication(0),
         parameter('server_version', '16.0'),

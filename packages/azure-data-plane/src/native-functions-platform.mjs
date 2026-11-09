@@ -62,9 +62,10 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
     const applicationBlobs = resolveNativeBlobEndpoints({ settings, names: blobEndpoints, router, subscriptionId: subscription(resource.id) });
     const services = resolveNativeContainerAppEndpoints({ resource, store, settings, names: containerAppEndpoints });
     const postgresHost = settings.DB_HOST;
+    const backend = postgresHost && typeof postgresBackend === 'function' ? postgresBackend() : postgresBackend;
     if (postgresHost !== undefined) {
       assert.match(postgresHost, /^[a-z0-9][a-z0-9-]{2,62}\.postgres\.database\.azure\.com$/);
-      assert.ok(postgresBackend?.host && postgresBackend?.port && postgresBackend?.user,
+      assert.ok(backend?.host && backend?.port && backend?.user,
         'PostgreSQL transport requires an operator-configured local backend');
       assert.ok(settings.DB_PORT === undefined || settings.DB_PORT === '5432', 'The declared PostgreSQL port must be the Azure default');
     }
@@ -143,7 +144,7 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
       }
       if (postgresHost) {
         const gatewayServer = createPostgresWireGateway({ tls, trust: identityService.trust,
-          resolveConnection: createPostgresArmConnectionResolver({ store, backend: postgresBackend,
+          resolveConnection: createPostgresArmConnectionResolver({ store, backend,
             serverHost: postgresHost }), observe: event => observe({ surface: 'postgres', ...event }) });
         env.DB_PORT = String(await listen(gatewayServer, gateway));
       }

@@ -13,6 +13,7 @@ import { ResourceStore } from '../../../packages/core/src/resource-store.mjs';
 import { RelationalBackendManager, physicalDatabaseName } from '../../../packages/azure-data-plane/src/relational-backend-manager.mjs';
 import { createPostgresArmConnectionResolver } from '../../../packages/azure-data-plane/src/postgres-arm-connection.mjs';
 import { createPostgresWireGateway } from '../../../packages/azure-data-plane/src/postgres-wire-gateway.mjs';
+import { createNativeFunctionsPlatform } from '../../../packages/azure-data-plane/src/native-functions-platform.mjs';
 import { httpExchange } from '../http-exchange.mjs';
 
 const exec = promisify(execFile);
@@ -102,6 +103,17 @@ test('verified PostgreSQL TLS client reaches real SQL and invalid identity is de
   await good.end();
   assert.ok(observed.some(event => event.outcome === 'connected'));
 
+  const unsafeRoleGateway = createPostgresWireGateway({ tls: { cert, key }, trust,
+    resolveConnection: async () => ({ ...manager.postgresEndpoint, database, role: 'outsider' }) });
+  t.after(() => new Promise(done => { unsafeRoleGateway.closeAllConnections(); unsafeRoleGateway.close(done); }));
+  await new Promise(done => unsafeRoleGateway.listen(0, '127.0.0.1', done));
+  const unsafeRole = new pg.Client({ host: '127.0.0.1', port: unsafeRoleGateway.address().port,
+    user: 'pilot', database: 'documents', password: await token('https://ossrdbms-aad.database.windows.net'),
+    ssl: { ca: cert, rejectUnauthorized: true, servername: `${serverName}.postgres.database.azure.com` },
+    connectionTimeoutMillis: 4000 });
+  await assert.rejects(unsafeRole.connect());
+  unsafeRole.connection?.stream?.destroy();
+
   const wrongAudience = client(await token('https://storage.azure.com'));
   await assert.rejects(wrongAudience.connect());
   wrongAudience.connection?.stream?.destroy();
@@ -120,4 +132,37 @@ test('verified PostgreSQL TLS client reaches real SQL and invalid identity is de
   await assert.rejects(denied.connect());
   denied.connection?.stream?.destroy();
   assert.ok(observed.filter(event => event.outcome === 'rejected').length >= 4);
+
+  const storage = `${group}/providers/Microsoft.Storage/storageAccounts/pgwirehost`;
+  const storageRouter = { account: () => ({ resourceId: storage }),
+    blobHandler: () => (_req, res) => res.end(), queueHandler: () => (_req, res) => res.end(),
+    tableHandler: () => (_req, res) => res.end() };
+  const identity = { trust, bind: () => ({ identityHeader: 'test-header',
+    handler: (_req, res) => res.end(), revoke() {} }) };
+  const prepare = createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => storageRouter,
+    store, postgresBackend: () => manager.postgresEndpoint });
+  const platform = await prepare({ resource: { id: `${group}/providers/Microsoft.Web/sites/pg-wire-worker`,
+    name: 'pg-wire-worker', properties: { siteConfig: { appSettings: [
+      { name: 'AzureWebJobsStorage__credential', value: 'managedidentity' },
+      { name: 'AzureWebJobsStorage__accountName', value: 'pgwirehost' },
+      { name: 'DB_HOST', value: `${serverName}.postgres.database.azure.com` },
+      { name: 'DB_PORT', value: '5432' },
+    ] } } }, signal: new AbortController().signal, directory });
+  try {
+    const mapping = platform.extraHosts.find(item => item.startsWith(`${serverName}.postgres.database.azure.com:`));
+    assert.ok(mapping);
+    const gatewayAddress = mapping.split(':')[1];
+    const prefix = gatewayAddress.split('.').slice(0, 2).join('.');
+    assert.equal((await request('PUT', rule, { properties: {
+      startIpAddress: `${prefix}.0.0`, endIpAddress: `${prefix}.255.255` } })).status, 202);
+    const native = new pg.Client({ host: gatewayAddress, port: Number(platform.env.DB_PORT),
+      user: 'pilot', database: 'documents', password: await token('https://ossrdbms-aad.database.windows.net'),
+      ssl: { ca: await readFile(join(directory, 'platform-ca.pem')), rejectUnauthorized: true,
+        servername: `${serverName}.postgres.database.azure.com` }, connectionTimeoutMillis: 4000 });
+    await native.connect();
+    assert.equal((await native.query('SELECT content FROM documents_probe WHERE id=1')).rows[0].content, 'same SQL client');
+    await native.end();
+  } finally {
+    await platform.dispose();
+  }
 });

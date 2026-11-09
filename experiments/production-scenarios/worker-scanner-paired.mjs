@@ -97,10 +97,13 @@ try {
   process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID = m.subscription;
   process.env.GLOBALSTACK_AZURE_TENANT_ID = process.env.ENTRA_TENANT_ID;
   const store = new ResourceStore(), tenant = process.env.ENTRA_TENANT_ID, audience = process.env.SCANNER_API_AUDIENCE;
-  identity = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [m.subscription], applicationAudiences: [audience] });
+  identity = await createManagedIdentityService({ store, tenantId: tenant, subscriptionIds: [m.subscription],
+    audiences: ['https://storage.azure.com', 'https://storage.azure.com/', 'https://ossrdbms-aad.database.windows.net'],
+    applicationAudiences: [audience] });
   const preparePlatform = createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter, store,
     containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'],
-    blobEndpoints: ['STORAGE_ENDPOINT'], observe: event => observe('local-transport', event) });
+    blobEndpoints: ['STORAGE_ENDPOINT'], postgresBackend: () => runtime.relationalBackends.postgresEndpoint,
+    observe: event => observe('local-transport', event) });
   runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
     containerAppTokenTrusts: [{ ...identity.trust, configurationIssuer: `https://login.microsoftonline.com/${tenant}/v2.0` }],
     nativeFunctionsProvisioner: input => createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'), preparePlatform })(input),
