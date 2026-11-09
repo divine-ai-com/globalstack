@@ -25,6 +25,7 @@ import {
   nearestCapabilityParentRoute,
   normalizeProviderRoute,
   openIdConfiguration,
+  parameterContext,
   parseProviderRoute,
   parseResourceGroupRoute,
   parseResourceGroupDeploymentRoute,
@@ -496,6 +497,11 @@ export function createArmRequestHandler({
       } } };
     }
     const operations = expanded.operations;
+    const resolvedParameters = parameterContext(template, body.properties?.parameters ?? {});
+    const responseParameters = Object.fromEntries(Object.entries(template.parameters ?? {}).map(([name, definition]) => [name, {
+      type: definition.type[0].toUpperCase() + definition.type.slice(1),
+      ...(/^secure/i.test(definition.type) ? {} : { value: resolvedParameters[name] }),
+    }]));
     const steps = [];
     const operationRecords = [];
     const deploymentName = body.name ?? 'deployment';
@@ -524,6 +530,7 @@ export function createArmRequestHandler({
       const saved = store.putDeployment({ subscriptionId, resourceGroupName, deploymentName, body: {
         id: deploymentId, name: deploymentName, type: 'Microsoft.Resources/deployments', location: body.location,
         properties: { provisioningState: error ? 'Failed' : 'Succeeded', mode: body.properties?.mode ?? 'Incremental',
+          parameters: responseParameters,
           timestamp: new Date().toISOString(), duration: `PT${(Date.now() - startedAt) / 1000}S`,
           ...(error ? { error } : { outputs }), globalstackDeploymentSteps: steps,
         },

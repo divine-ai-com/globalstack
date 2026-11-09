@@ -151,3 +151,19 @@ test('deployment output type casing matches retained Azure responses on create a
     assert.deepEqual(response.body.properties.outputs.items.value, ['first', 'second']);
   }
 });
+
+test('deployment history retains nonsecret parameters but omits secure values', async t => {
+  const { request } = await fixture(t);
+  const marker = 'synthetic-secret-that-must-not-appear';
+  const body = { properties: { mode: 'Incremental', template: {
+    parameters: { runId: { type: 'string' }, secret: { type: 'secureString' } }, resources: [],
+  }, parameters: { runId: { value: 'aabbccddeeff' }, secret: { value: marker } } } };
+  const created = await request('PUT', deployment, body);
+  assert.equal(created.status, 201);
+  for (const result of [created, await request('GET', deployment)]) {
+    assert.equal(result.body.properties.parameters.runId.value, 'aabbccddeeff');
+    assert.equal(result.body.properties.parameters.secret.type, 'SecureString');
+    assert.ok(!('value' in result.body.properties.parameters.secret));
+    assert.ok(!JSON.stringify(result.body).includes(marker));
+  }
+});
