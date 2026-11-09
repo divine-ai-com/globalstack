@@ -31,8 +31,17 @@ test('document Search provisioner installs the deletion policy before the schedu
 });
 
 test('document Search provisioner installs the local Blob data source and indexer', async t => {
-  const router = createSearchRouter();
-  router.registerService({ serviceName: 'gsdoc-search' });
+  const principalId = 'doc-search-principal';
+  const serviceResourceId = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-pilot/providers/Microsoft.Search/searchServices/gsdoc-search';
+  const store = { resources: new Map([
+    [serviceResourceId.toLowerCase(), { identity: { principalId } }],
+    ['projection-reader', { type: 'Microsoft.Authorization/roleAssignments', properties: {
+      principalId, scope: `${storageResourceId}/blobServices/default/containers/clean-projection`,
+      roleDefinitionId: '/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1',
+    } }],
+  ]) };
+  const router = createSearchRouter({ store });
+  router.registerService({ serviceName: 'gsdoc-search', resourceId: serviceResourceId });
   const server = createSearchRouterServer(router);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => { router.unregisterService('gsdoc-search'); return new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }); });

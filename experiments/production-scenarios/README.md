@@ -52,8 +52,13 @@ The [next paired negative probe](evidence/document-search-paired-20261109-wrong-
 showed a narrower mismatch: when an indexer referenced the quarantine Blob
 container without a read grant, Azure rejected indexer creation with HTTP 401.
 GlobalStack initially created it, then reported a failure on execution. The
-local indexer now checks its Blob read grant at creation. A repeat Azure-first
-run is needed before that correction is counted as paired conformance.
+local indexer now checks its Blob read grant at creation.
+The [paired retry](evidence/document-search-paired-20261109-wrong-container-retry/summary.json)
+confirmed matching HTTP 201 data-source creation and HTTP 401 indexer
+rejection on both targets, with quarantine content absent from the clean index.
+The captured error messages differed by an Azure documentation link; the local
+message was updated from that observation after the run. The conservative
+ledger now leaves USD 35 under the USD 300 ceiling.
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private

@@ -137,6 +137,7 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   assert.equal(wrongIndexer.status, 401);
   assert.equal(wrongIndexer.body.error.code, '');
   assert.match(wrongIndexer.body.error.message, /managed identity.*Storage Blob Data Reader/);
+  assert.match(wrongIndexer.body.error.message, /linkid=2193521 for detailed documentation/);
   assert.equal((await searchCall('GET', "/indexers('quarantine-probe-indexer')")).status, 404);
   assert.equal((await query('bad-1')).body.value.length, 0);
   assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2', deleted: 'true' }, true)).status, 201);
