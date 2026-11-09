@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
+import { postgresSqlPairPassed } from './document-postgres-sql-outcome.mjs';
 
 test('published PostgreSQL SQL pilot retains its paired result and cleanup proof', async () => {
   const base = new URL('./evidence/document-postgres-sql-paired-20261109/', import.meta.url);
@@ -27,4 +28,16 @@ test('published PostgreSQL SQL pilot retains its paired result and cleanup proof
   assert.equal(summary.independentAzureInventory.resources, 0);
   assert.equal(summary.independentAzureInventory.deployments, 0);
   assert.equal(summary.budget.actualAzureChargesMeasured, false);
+  assert.equal(postgresSqlPairPassed(trace), false, 'Azure-only SQL success is not paired SQL conformance');
+});
+
+test('PostgreSQL pair requires both firewall and SQL results', () => {
+  const paired = { comparisonComplete: true, azureTerminalState: 'Succeeded', localTerminalState: 'Succeeded',
+    cleanup: { resourcesAbsent: true, deploymentsAbsent: true },
+    firewall: { azure: { initialStatus: 202 }, local: { initialStatus: 201 } },
+    sql: { azure: { connection: { status: 'passed' }, schema: { status: 'passed' } },
+      local: { attempted: true, connection: { status: 'passed' }, schema: { status: 'passed' } } } };
+  assert.equal(postgresSqlPairPassed(paired), true);
+  assert.equal(postgresSqlPairPassed({ ...paired, sql: { ...paired.sql,
+    local: { ...paired.sql.local, schema: { status: 'failed' } } } }), false);
 });

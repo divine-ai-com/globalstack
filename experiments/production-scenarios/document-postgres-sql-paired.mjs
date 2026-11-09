@@ -13,6 +13,7 @@ import { productionBudgetPath, reserveBudget, confirmBudgetCleanup } from './bud
 import { postgresClient, postgresScope, cleanupPostgres } from './document-postgres-cleanup.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { migrate } from './document-app/repository.mjs';
+import { postgresSqlPairPassed } from './document-postgres-sql-outcome.mjs';
 
 assert.ok(process.env.PAIRED_RUN_DIR, 'An explicit private run directory is required');
 const out = resolve(process.env.PAIRED_RUN_DIR);
@@ -207,6 +208,4 @@ try {
 }
 console.log(JSON.stringify({ out, azure: report.azureTerminalState, local: report.localTerminalState,
   azureSql: report.sql.azure, localSql: report.sql.local, cleanup: report.cleanup, error: report.error ?? null }));
-if (report.error || !report.comparisonComplete || !report.cleanup?.resourcesAbsent
-    || report.sql.azure.connection?.status !== 'passed' || report.sql.azure.schema?.status !== 'passed'
-    || ![200, 201, 202].includes(report.firewall?.local?.initialStatus) || !report.sql.local.attempted) process.exitCode = 1;
+if (!postgresSqlPairPassed(report)) process.exitCode = 1;
