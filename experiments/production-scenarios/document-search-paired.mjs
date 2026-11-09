@@ -17,6 +17,7 @@ import { provisionDocumentSearch } from './document-app/search-provision.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { assertDocumentDelegation } from './operator/delegation-check.mjs';
 import { waitForSearchReadiness } from './search-readiness.mjs';
+import { tokenNeedsRefresh, validateWorkloadToken } from './workload-token.mjs';
 
 assert.ok(process.env.PAIRED_RUN_DIR, 'An explicit private run directory is required');
 const out = resolve(process.env.PAIRED_RUN_DIR);
@@ -80,13 +81,20 @@ function observe(target, event) {
 }
 function refreshWorkloadToken(resource, previous) {
   const next = azureCli(config, ['account', 'get-access-token', '--resource', resource]).accessToken;
-  const payload = JSON.parse(Buffer.from(next.split('.')[1], 'base64url'));
-  assert.equal(payload.tid, account.tenantId);
-  assert.equal(payload.oid, claims.oid);
-  assert.equal(payload.iss, searchClaims.iss);
-  assert.ok(payload.exp - Date.now() / 1000 > 15 * 60, `${resource} token expires too soon for the paired probe`);
+  validateWorkloadToken(next, { tenantId: account.tenantId, principalId: claims.oid,
+    issuer: searchClaims.iss, audiences: resource === 'https://search.azure.com/'
+      ? ['https://search.azure.com', 'https://search.azure.com/']
+      : ['https://storage.azure.com', 'https://storage.azure.com/'] });
   if (next !== previous) replacements.push([next, '<redacted>']);
   return next;
+}
+function freshSearchToken() {
+  if (tokenNeedsRefresh(searchToken)) searchToken = refreshWorkloadToken('https://search.azure.com/', searchToken);
+  return searchToken;
+}
+function freshStorageToken() {
+  if (tokenNeedsRefresh(storageToken)) storageToken = refreshWorkloadToken('https://storage.azure.com/', storageToken);
+  return storageToken;
 }
 const azure = documentSearchClient({ ...manifest, token: armToken }, event => observe('azure', event));
 async function local(method, path, body) {
@@ -109,7 +117,7 @@ async function waitSearchReady() {
   const deadline = Math.min(Date.now() + 10 * 60000, manifest.deadline - 10 * 60000);
   await waitForSearchReadiness({ deadline,
     request: () => httpExchange(`https://${s.name}-search.search.windows.net/indexes?api-version=2025-09-01`, {
-      method: 'GET', timeoutMs: 30000, headers: { authorization: `Bearer ${searchToken}` },
+      method: 'GET', timeoutMs: 30000, headers: { authorization: `Bearer ${freshSearchToken()}` },
     }),
     observe: result => observe('azure', { method: 'GET', path: '/indexes?api-version=2025-09-01', ...result }),
     refreshToken: () => {
@@ -136,7 +144,7 @@ async function provision(target, token) {
 async function searchRequest(target, method, path, body) {
   const origin = target === 'azure' ? `https://${s.name}-search.search.windows.net` : `http://127.0.0.1:${search.address().port}`;
   const result = await httpExchange(`${origin}${path}?api-version=2025-09-01`, { method, body,
-    headers: { authorization: `Bearer ${searchToken}`,
+    headers: { authorization: `Bearer ${freshSearchToken()}`,
       ...(target === 'local' ? { host: `${s.name}-search.search.windows.net` } : {}) } });
   observe(target, { method, path: `${path}?api-version=2025-09-01`, request: body, ...result });
   return result;
@@ -147,7 +155,7 @@ async function blobPut(target, container, name, document, deleted = false) {
   const bytes = Buffer.from(JSON.stringify(document));
   const path = `/${container}/${name}.json`;
   const result = await httpExchange(origin + path, { method: 'PUT', body: bytes, headers: {
-    authorization: `Bearer ${storageToken}`, host: `${accountName}.blob.core.windows.net`,
+    authorization: `Bearer ${freshStorageToken()}`, host: `${accountName}.blob.core.windows.net`,
     'x-ms-version': '2023-11-03', 'x-ms-blob-type': 'BlockBlob',
     'x-ms-meta-isdeleted': deleted ? 'true' : 'false', 'content-type': 'application/json',
   } });
@@ -234,9 +242,9 @@ try {
   storageToken = refreshWorkloadToken('https://storage.azure.com/', storageToken);
   await waitSearchReady();
   phase = 'provision-search-azure';
-  report.azureProvision = await provision('azure', searchToken);
+  report.azureProvision = await provision('azure', freshSearchToken());
   phase = 'provision-search-local';
-  try { report.localProvision = await provision('local', searchToken); }
+  try { report.localProvision = await provision('local', freshSearchToken()); }
   catch (error) { report.localProvisionError = sanitize(error.message, replacements); }
   if (!report.localProvisionError) {
     const documentId = `doc-${runId}`;

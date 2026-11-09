@@ -129,6 +129,16 @@ runner now refreshes workload tokens and allows a bounded retry of 401 during
 readiness. Cleanup and an independent Azure resource inventory found zero
 remaining test resources. The ledger is at USD 217 of the USD 300 ceiling;
 actual Azure charges remain unmeasured.
+The [fourth paired attempt](evidence/document-search-paired-20261109-token-guard/summary.json)
+again reached `Succeeded` for the same three compiled modules on Azure and
+GlobalStack. Search provisioning took long enough that the cached Search token
+had nine minutes remaining. The pilot runner required more than fifteen
+minutes, so it stopped before sending a Search data-plane request. This was a
+runner guard error, not a measured GlobalStack divergence. The guard now accepts
+a token with more than two minutes remaining and refreshes tokens before five
+minutes remain. Tests cover this observed timing. Cleanup and an independent
+Azure inventory found zero resources. The conservative ledger is now USD 229
+of USD 300, with USD 71 unallocated; actual charges remain unmeasured.
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
@@ -399,11 +409,11 @@ through committed metadata and both Search paths before testing failure cases.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 217 in conservative envelopes
+The private cumulative ledger currently records USD 229 in conservative envelopes
 against the USD 300 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 83 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 71 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 

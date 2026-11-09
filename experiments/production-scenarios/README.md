@@ -37,8 +37,10 @@ first Azure Search readiness request returned an empty HTTP 401, so it stopped
 before provisioning indexes or uploading a Blob. The cause is unconfirmed.
 The runner now checks token freshness and retries bounded 401 readiness
 responses. Cleanup and an independent Azure resource inventory both found no
-remaining test resources. The conservative budget ledger has USD 83 left under
-the USD 300 ceiling. None of these attempts completed the document business
+remaining test resources. A fourth attempt deployed all three modules on both
+targets, then stopped on a runner token-life guard before a data-plane request.
+Its cleanup was independently verified. The conservative budget ledger has
+USD 71 left under the USD 300 ceiling. None of these attempts completed the document business
 flow or captured Azure Portal screenshots.
 
 The runner requires an existing certificate-authenticated Azure CLI session
