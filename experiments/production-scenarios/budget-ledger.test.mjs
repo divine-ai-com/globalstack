@@ -8,8 +8,18 @@ import { reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 async function ledger(t) {
   const directory = await mkdtemp(join(tmpdir(), 'gs-budget-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  return join(directory, 'ledger.json');
+  const path = join(directory, 'ledger.json');
+  await writeFile(path, JSON.stringify({ schemaVersion: 1, totalAuthorizedUsd: 150, priorAllowanceUsd: 20, allocations: [] }));
+  return path;
 }
+
+test('a missing ledger blocks paid reservations without resetting prior allowances', async t => {
+  const path = await ledger(t);
+  await rm(path);
+  await assert.rejects(reserveBudget(path, { runId: 'aa1111111111', envelopeUsd: 1, purpose: 'test' }),
+    { code: 'ENOENT' });
+  await assert.rejects(readFile(path), { code: 'ENOENT' });
+});
 
 test('actual ledger prevents overlapping runs, preserves allowances after cleanup and enforces the total', async t => {
   const path = await ledger(t);

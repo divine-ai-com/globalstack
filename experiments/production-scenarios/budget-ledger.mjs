@@ -12,12 +12,9 @@ async function update(path, change) {
   const lock = await open(`${path}.lock`, 'wx', 0o600);
   const temporary = `${path}.${randomUUID()}.tmp`;
   try {
-    let state;
-    try { state = JSON.parse(await readFile(path, 'utf8')); }
-    catch (error) {
-      if (error.code !== 'ENOENT') throw error;
-      state = { schemaVersion: 1, totalAuthorizedUsd: 150, priorAllowanceUsd: 20, allocations: [] };
-    }
+    // A missing ledger cannot prove prior Azure allowances. Never reset it
+    // implicitly after experiments have started.
+    const state = JSON.parse(await readFile(path, 'utf8'));
     assert.equal(state.schemaVersion, 1);
     assert.ok([150, 200, 225, 300, 350].includes(state.totalAuthorizedUsd), 'Unrecognized authorized experiment ceiling');
     assert.ok(Number.isFinite(state.priorAllowanceUsd) && state.priorAllowanceUsd >= 20);
