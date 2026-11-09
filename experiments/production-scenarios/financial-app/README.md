@@ -12,5 +12,6 @@ which period is current and which is previous.
 The component does not verify that a cited document exists or that its page
 contains the supplied value. The planned ingestion and retrieval flow must
 bind each operand to a verified source before an agent can call it. Passing
-these local tests does not establish Azure deployment, agent behavior or a
-financial-scenario result.
+these local tests does not validate whether the chosen formula makes business
+sense or establish Azure deployment, agent behavior or a financial-scenario
+result.
