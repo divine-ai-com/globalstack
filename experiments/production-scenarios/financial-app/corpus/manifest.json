@@ -1,0 +1,613 @@
+{
+  "schemaVersion": 1,
+  "description": "Synthetic seed corpus; no real issuer or live ingestion claim",
+  "logicalFilings": 12,
+  "physicalRevisions": 13,
+  "documents": [
+    {
+      "id": "alpha-2024-h1-r1",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2024,
+      "period": "H1",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "100",
+      "expenses": "60",
+      "operatingIncome": "40",
+      "sha256": "d34b1a6cb9ca580fb1662ea1770ccb94f409cf9fe579ac3d7045734dc48a1fb6",
+      "file": "alpha-2024-h1-r1.txt"
+    },
+    {
+      "id": "alpha-2024-h2-r1",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2024,
+      "period": "H2",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "105",
+      "expenses": "64",
+      "operatingIncome": "41",
+      "sha256": "2da2e8b8ac0644d8ce39d1f080a1c4651221cbf53e38ef323a8242aa7ea29e29",
+      "file": "alpha-2024-h2-r1.txt"
+    },
+    {
+      "id": "alpha-2025-h1-r1",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2025,
+      "period": "H1",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "112",
+      "expenses": "67",
+      "operatingIncome": "45",
+      "sha256": "43be193621bcb2cb47ef41feb220c8472e59ce166ef654a76d9114d3c7d5da35",
+      "file": "alpha-2025-h1-r1.txt"
+    },
+    {
+      "id": "alpha-2025-h2-r1",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2025,
+      "period": "H2",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "117",
+      "expenses": "71",
+      "operatingIncome": "46",
+      "sha256": "6c7bd75a5116ed0700455523974fd606125de86e774cb28b72bef1b7a7522e99",
+      "file": "alpha-2025-h2-r1.txt"
+    },
+    {
+      "id": "alpha-2026-h1-r1",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2026,
+      "period": "H1",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "124",
+      "expenses": "74",
+      "operatingIncome": "50",
+      "sha256": "0d1edc20c0a454a3c9d27db7af1498f51a4656299bb84b2ffef81315ccc3504e",
+      "file": "alpha-2026-h1-r1.txt"
+    },
+    {
+      "id": "alpha-2026-h2-r1",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2026,
+      "period": "H2",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "129",
+      "expenses": "78",
+      "operatingIncome": "51",
+      "sha256": "24f1aa2b490b2ab743d387ecb35e5301537e5be1ab3739ae24369b7dcab88993",
+      "file": "alpha-2026-h2-r1.txt"
+    },
+    {
+      "id": "beta-2024-h1-r1",
+      "company": "beta",
+      "tenant": "tenant-beta",
+      "year": 2024,
+      "period": "H1",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "130",
+      "expenses": "78",
+      "operatingIncome": "52",
+      "sha256": "fc52b2270ff7c89e13c81b19e05e8fb7d3afdea3816964a74a849c888afbaf1b",
+      "file": "beta-2024-h1-r1.txt"
+    },
+    {
+      "id": "beta-2024-h2-r1",
+      "company": "beta",
+      "tenant": "tenant-beta",
+      "year": 2024,
+      "period": "H2",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "135",
+      "expenses": "82",
+      "operatingIncome": "53",
+      "sha256": "d02fa9b34a5231397845e010a8c4bf7f52d98dcf7ae2246a678ff6adfed46dd0",
+      "file": "beta-2024-h2-r1.txt"
+    },
+    {
+      "id": "beta-2025-h1-r1",
+      "company": "beta",
+      "tenant": "tenant-beta",
+      "year": 2025,
+      "period": "H1",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "142",
+      "expenses": "85",
+      "operatingIncome": "57",
+      "sha256": "733bc9611f851e67d85c2294092eebf20f0dcb63ab210a32032d72d468828564",
+      "file": "beta-2025-h1-r1.txt"
+    },
+    {
+      "id": "beta-2025-h2-r1",
+      "company": "beta",
+      "tenant": "tenant-beta",
+      "year": 2025,
+      "period": "H2",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "147",
+      "expenses": "89",
+      "operatingIncome": "58",
+      "sha256": "bab4ea0b8e958e27e9b57efdacf874cebd90f742b6c9619a5bf8b640b7bce9ef",
+      "file": "beta-2025-h2-r1.txt"
+    },
+    {
+      "id": "beta-2026-h1-r1",
+      "company": "beta",
+      "tenant": "tenant-beta",
+      "year": 2026,
+      "period": "H1",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "154",
+      "expenses": "92",
+      "operatingIncome": "62",
+      "sha256": "fd09284d85b7c3475e3f824dcd4d640361ce28d5b13dda047b5fef54193304c6",
+      "file": "beta-2026-h1-r1.txt"
+    },
+    {
+      "id": "beta-2026-h2-r1",
+      "company": "beta",
+      "tenant": "tenant-beta",
+      "year": 2026,
+      "period": "H2",
+      "revision": 1,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "159",
+      "expenses": "96",
+      "operatingIncome": "63",
+      "sha256": "70abe829eedc3b88786c0240081e9d38f5d90ca8262646711a6f113a7341000d",
+      "file": "beta-2026-h2-r1.txt"
+    },
+    {
+      "id": "alpha-2025-h2-r2",
+      "company": "alpha",
+      "tenant": "tenant-alpha",
+      "year": 2025,
+      "period": "H2",
+      "revision": 2,
+      "currency": "USD",
+      "unit": "millions",
+      "revenue": "120",
+      "expenses": "71",
+      "operatingIncome": "49",
+      "sha256": "b1a62c1b264c7f4e98cbfa9bf3deece32824bee6c7534067dac0245f44339c23",
+      "file": "alpha-2025-h2-r2.txt"
+    }
+  ],
+  "questions": [
+    {
+      "id": "revenue-alpha-2024-h1",
+      "prompt": "What is Fictional Alpha Research revenue in FY2024 H1, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "100",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2024-h1-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-alpha-2024-h2",
+      "prompt": "What is Fictional Alpha Research revenue in FY2024 H2, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "105",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2024-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-alpha-2025-h1",
+      "prompt": "What is Fictional Alpha Research revenue in FY2025 H1, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "112",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2025-h1-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-alpha-2025-h2",
+      "prompt": "What is Fictional Alpha Research revenue in FY2025 H2, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "120",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2025-h2-r2",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-alpha-2026-h1",
+      "prompt": "What is Fictional Alpha Research revenue in FY2026 H1, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "124",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2026-h1-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-alpha-2026-h2",
+      "prompt": "What is Fictional Alpha Research revenue in FY2026 H2, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "129",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2026-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-beta-2024-h1",
+      "prompt": "What is Fictional Beta Research revenue in FY2024 H1, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "130",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2024-h1-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-beta-2024-h2",
+      "prompt": "What is Fictional Beta Research revenue in FY2024 H2, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "135",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2024-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-beta-2025-h1",
+      "prompt": "What is Fictional Beta Research revenue in FY2025 H1, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "142",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2025-h1-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-beta-2025-h2",
+      "prompt": "What is Fictional Beta Research revenue in FY2025 H2, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "147",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2025-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-beta-2026-h1",
+      "prompt": "What is Fictional Beta Research revenue in FY2026 H1, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "154",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2026-h1-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "revenue-beta-2026-h2",
+      "prompt": "What is Fictional Beta Research revenue in FY2026 H2, in USD millions?",
+      "expected": {
+        "outcome": "answer",
+        "value": "159",
+        "unit": "millions",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2026-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "margin-alpha-2024-h2",
+      "prompt": "What is Fictional Alpha Research operating margin in FY2024 H2?",
+      "expected": {
+        "outcome": "answer",
+        "value": "39.047619",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2024-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "alpha-2024-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "margin-alpha-2025-h2",
+      "prompt": "What is Fictional Alpha Research operating margin in FY2025 H2?",
+      "expected": {
+        "outcome": "answer",
+        "value": "40.833333",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2025-h2-r2",
+            "page": 1
+          },
+          {
+            "documentId": "alpha-2025-h2-r2",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "margin-alpha-2026-h2",
+      "prompt": "What is Fictional Alpha Research operating margin in FY2026 H2?",
+      "expected": {
+        "outcome": "answer",
+        "value": "39.534884",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2026-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "alpha-2026-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "margin-beta-2024-h2",
+      "prompt": "What is Fictional Beta Research operating margin in FY2024 H2?",
+      "expected": {
+        "outcome": "answer",
+        "value": "39.259259",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2024-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "beta-2024-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "margin-beta-2025-h2",
+      "prompt": "What is Fictional Beta Research operating margin in FY2025 H2?",
+      "expected": {
+        "outcome": "answer",
+        "value": "39.455782",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2025-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "beta-2025-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "margin-beta-2026-h2",
+      "prompt": "What is Fictional Beta Research operating margin in FY2026 H2?",
+      "expected": {
+        "outcome": "answer",
+        "value": "39.622642",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2026-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "beta-2026-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "growth-alpha-2025-h2",
+      "prompt": "How much did Fictional Alpha Research H2 revenue change from FY2024 to FY2025, in percent?",
+      "expected": {
+        "outcome": "answer",
+        "value": "14.285714",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2025-h2-r2",
+            "page": 1
+          },
+          {
+            "documentId": "alpha-2024-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "growth-alpha-2026-h2",
+      "prompt": "How much did Fictional Alpha Research H2 revenue change from FY2025 to FY2026, in percent?",
+      "expected": {
+        "outcome": "answer",
+        "value": "7.5",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "alpha-2026-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "alpha-2025-h2-r2",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "growth-beta-2025-h2",
+      "prompt": "How much did Fictional Beta Research H2 revenue change from FY2024 to FY2025, in percent?",
+      "expected": {
+        "outcome": "answer",
+        "value": "8.888889",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2025-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "beta-2024-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "growth-beta-2026-h2",
+      "prompt": "How much did Fictional Beta Research H2 revenue change from FY2025 to FY2026, in percent?",
+      "expected": {
+        "outcome": "answer",
+        "value": "8.163265",
+        "unit": "percent",
+        "currency": "USD",
+        "citations": [
+          {
+            "documentId": "beta-2026-h2-r1",
+            "page": 1
+          },
+          {
+            "documentId": "beta-2025-h2-r1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-cash-flow-alpha-2026-h2",
+      "prompt": "What was Fictional Alpha Research free cash flow in FY2026 H2?",
+      "expected": {
+        "outcome": "abstain",
+        "reason": "No free cash flow is present in the source corpus."
+      }
+    },
+    {
+      "id": "mixed-units-alpha-2026-h2",
+      "prompt": "Add Fictional Alpha Research FY2026 H2 revenue in USD millions to its employee count in people.",
+      "expected": {
+        "outcome": "reject",
+        "reason": "Currency and unit mismatch."
+      }
+    }
+  ]
+}

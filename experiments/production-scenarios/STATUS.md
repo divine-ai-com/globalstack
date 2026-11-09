@@ -18,11 +18,13 @@ runs are separate experiments. The complete scenario ports for Terraform,
 OpenTofu, Pulumi TypeScript/Python/YAML, Ansible, Azure CLI, Bicep and ARM JSON
 remain outstanding.
 
-The financial scenario now has a local fixed-point calculation component with
-tests for arithmetic, percentage change, citations and mixed-context rejection.
-It is not connected to verified filing extraction, retrieval, agents, Azure
-services or audit. None of the 51 financial assertions is promoted by this
-component test.
+The financial scenario now has a local fixed-point calculation component and
+a deterministic seed corpus with 12 logical synthetic filings, one revision
+and 24 known-answer questions. Local tests cover arithmetic, citations,
+mixed-context rejection and pinned corpus answers. The text fixtures and
+calculation tool are not connected to verified filing extraction, retrieval,
+agents, Azure services or audit. None of the 51 financial assertions is
+promoted by these component tests.
 
 The first document data and eventing Bicep modules now compile with the pinned
 CLI image. The data module now includes scoped pilot and worker Blob grants.

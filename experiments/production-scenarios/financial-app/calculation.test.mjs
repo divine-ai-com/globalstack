@@ -35,6 +35,8 @@ test('mixed context and unsupported or uncited values are rejected', () => {
   assert.throws(() => calculate('add', cited('1'), cited('2', 'FY2026', { currency: 'EUR' })), /Currency and unit/);
   assert.throws(() => calculate('add', cited('1'), cited('2', 'FY2026', { unit: 'thousands' })), /Currency and unit/);
   assert.throws(() => calculate('percentageChange', cited('1'), cited('0', 'FY2025')), /nonzero/);
+  assert.equal(calculate('percentageOf', cited('25'), cited('100')).value, '25');
+  assert.throws(() => calculate('percentageOf', cited('25'), cited('100', 'FY2025')), /Periods must match/);
   assert.throws(() => calculate('percentageChange', cited('1'), cited('2')), /must differ/);
   assert.throws(() => calculate('add', cited('1'), cited('2', 'FY2026', { citation: null })), /citation/);
   assert.throws(() => calculate('add', cited('1e9'), cited('2')), /decimal string/);

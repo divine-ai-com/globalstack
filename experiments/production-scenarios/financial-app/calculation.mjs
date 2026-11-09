@@ -44,17 +44,20 @@ export function calculateFinancialMetric({ operation, operands } = {}) {
   if (!Array.isArray(operands) || operands.length !== 2) throw new Error('Exactly two cited operands are required');
   const [left, right] = operands.map(citedOperand);
   compatible(left, right);
-  if (!['add', 'subtract', 'percentageChange'].includes(operation)) throw new Error('Unsupported financial operation');
+  if (!['add', 'subtract', 'percentageChange', 'percentageOf'].includes(operation)) throw new Error('Unsupported financial operation');
   const citations = [left.citation, right.citation];
-  if (operation === 'percentageChange') {
-    if (left.period === right.period) throw new Error('Current and previous periods must differ');
-    if (right.scaled === 0n) throw new Error('Previous amount must be nonzero');
-    const numerator = (left.scaled - right.scaled) * 100n * SCALE;
+  if (operation === 'percentageChange' || operation === 'percentageOf') {
+    if (operation === 'percentageChange' && left.period === right.period) throw new Error('Current and previous periods must differ');
+    if (operation === 'percentageOf' && left.period !== right.period) throw new Error('Periods must match for a percentage');
+    if (right.scaled === 0n) throw new Error('Denominator must be nonzero');
+    const numerator = (operation === 'percentageChange' ? left.scaled - right.scaled : left.scaled) * 100n * SCALE;
     const denominator = right.scaled < 0n ? -right.scaled : right.scaled;
     const magnitude = numerator < 0n ? -numerator : numerator;
     const rounded = (magnitude + denominator / 2n) / denominator;
     return { operation, value: decimal(numerator < 0n ? -rounded : rounded), unit: 'percent',
-      currency: left.currency, periods: { current: left.period, previous: right.period }, citations };
+      currency: left.currency,
+      ...(operation === 'percentageChange' ? { periods: { current: left.period, previous: right.period } } : { period: left.period }),
+      citations };
   }
   if (left.period !== right.period) throw new Error('Periods must match for arithmetic');
   return { operation, value: decimal(operation === 'add' ? left.scaled + right.scaled : left.scaled - right.scaled),

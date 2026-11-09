@@ -1,0 +1,15 @@
+SYNTHETIC REGULATORY-STYLE FILING. NOT A REAL COMPANY OR SEC SUBMISSION.
+Document ID: alpha-2026-h1-r1
+Issuer: Fictional Alpha Research
+Tenant: tenant-alpha
+Reporting period: FY2026 H1
+Revision: 1
+Page 1 of 2
+Consolidated operating results (USD millions)
+Revenue | 124
+Operating expenses | 74
+Operating income | 50
+Page 2 of 2
+Management discussion
+This page contains narrative context, not additional financial line items.
+Employees at period end (people, not USD): 1280

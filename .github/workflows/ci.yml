@@ -48,6 +48,7 @@ jobs:
       - run: node --test experiments/platform-lifecycle/*.test.mjs
       - run: node --test experiments/production-scenarios/*.test.mjs
       - run: node --test experiments/production-scenarios/financial-app/*.test.mjs
+      - run: node experiments/production-scenarios/financial-app/generate-corpus.mjs --check
       - run: python3 -B -m unittest discover -s experiments/production-scenarios/operator -p 'test_*.py'
       - name: Exercise document scanner binaries
         if: matrix.node == 22
