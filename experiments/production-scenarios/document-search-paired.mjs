@@ -60,7 +60,7 @@ const replacements = [[armToken, '<redacted>'], [searchToken, '<redacted>'], [ac
   [account.tenantId, '<tenant>'], [claims.oid, '<pilot-principal>'], [runId, '<run>']];
 const report = { schemaVersion: 1, revision, sourceDirty: false, startedAt: new Date().toISOString(),
   scope: 'Document Search identity, Storage and Search deployment, index/data-source provisioning, and immediate cleanup. No full document workflow.',
-  budget: { totalAuthorizedUsd: 200, thisRunEnvelopeUsd: 12, actualAzureChargesMeasured: false },
+  budget: { thisRunEnvelopeUsd: 12, actualAzureChargesMeasured: false },
   observations: [], stages: [], cleanup: null, fullWorkflowCompleted: false };
 const emit = createRecording(out, { platform: 'document Search paired pilot', revision, sourceDirty: false,
   evidence: 'time-ordered API trace; no Portal screenshots or video' });
@@ -132,6 +132,7 @@ try {
   }
   report.budget.ledger = await reserveBudget(productionBudgetPath, { runId, envelopeUsd: 12,
     purpose: 'Bounded document Search identity, Storage and indexer comparison in westus2' });
+  report.budget.totalAuthorizedUsd = report.budget.ledger.totalAuthorizedUsd;
   allocated = true;
   await writeFile(manifestPath, JSON.stringify(manifest), { mode: 0o600, flag: 'wx' });
   watchdog = spawn(process.execPath, [resolve('experiments/production-scenarios/document-search-cleanup.mjs'),

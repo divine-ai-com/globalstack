@@ -87,7 +87,7 @@ while Azure deleted its managed environment, before writing its final result.
 Independent Azure inventory later found zero resources and deployment records;
 local managed containers were absent. The cleanup ledger was reconciled manually.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
-allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12, leaving USD 7 unallocated. A read-only Cost Management query for the pilot group returned no current
+allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09, leaving USD 32 unallocated before the next run. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
@@ -113,7 +113,7 @@ condition before the runner reserves budget or creates resources. See
 [issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer where supported, and
-reserves a USD 12 envelope within the existing USD 200 ceiling. It refuses
+reserves a USD 12 envelope within the authorized USD 225 ceiling. It refuses
 a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
 session is restored in this workspace. Automatic cleanup verified zero
 task-owned resources and deployment records; actual Azure charges remain

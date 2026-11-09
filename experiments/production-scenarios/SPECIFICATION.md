@@ -6,7 +6,7 @@ The objective is to run unchanged IaC and unchanged application artifacts on Azu
 
 ## Decisions and source material
 
-The two user-supplied architectural blueprints are requirements references, not validated implementations. Their hashes are retained in `requirements.json`. On 2026-11-07 the owner selected ClamAV and YARA, delegated explicit pilot targets, authorized a USD 150 total Azure ceiling, and prohibited purchasing licenses or paid trials. The owner raised the ceiling to USD 200 on 2026-11-08. Replace the Power BI display with an application audit dashboard backed by Cosmos DB; Power BI compatibility is explicitly excluded, rather than marked passed.
+The two user-supplied architectural blueprints are requirements references, not validated implementations. Their hashes are retained in `requirements.json`. On 2026-11-07 the owner selected ClamAV and YARA, delegated explicit pilot targets, authorized a USD 150 total Azure ceiling, and prohibited purchasing licenses or paid trials. The owner raised the ceiling to USD 200 on 2026-11-08 and USD 225 on 2026-11-09. Replace the Power BI display with an application audit dashboard backed by Cosmos DB; Power BI compatibility is explicitly excluded, rather than marked passed.
 
 Use Bicep first for each scenario, compiling one immutable template per attempted revision and submitting the identical template to both targets with native Azure CLI commands. Complete scenario 1 before executing scenario 2. Subsequent Terraform, OpenTofu, Pulumi and Ansible ports are separate runs of the same application contract. A Bicep pass never stands in for those clients.
 
