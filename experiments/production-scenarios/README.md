@@ -39,9 +39,15 @@ The runner now checks token freshness and retries bounded 401 readiness
 responses. Cleanup and an independent Azure resource inventory both found no
 remaining test resources. A fourth attempt deployed all three modules on both
 targets, then stopped on a runner token-life guard before a data-plane request.
-Its cleanup was independently verified. The conservative budget ledger has
-USD 71 left under the USD 300 ceiling. None of these attempts completed the document business
-flow or captured Azure Portal screenshots.
+Its cleanup was independently verified. A [fifth paired run](evidence/document-search-paired-20261109-traversal/summary.json)
+then passed this bounded Search slice on both targets. The same three compiled
+modules deployed, both targets created the indexes, data source and indexer,
+and both observed clean-document indexing, quarantine exclusion and soft
+deletion. The [redacted data-plane trace](evidence/document-search-paired-20261109-traversal/data-plane-trace.json)
+records 29 requests. Cleanup and an independent Azure inventory found zero
+remaining resources. The conservative budget ledger has USD 59 left under the
+USD 300 ceiling. The full document business flow remains untested, and no Azure
+Portal screenshots were captured.
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private

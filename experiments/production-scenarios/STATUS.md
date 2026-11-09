@@ -139,6 +139,20 @@ a token with more than two minutes remaining and refreshes tokens before five
 minutes remain. Tests cover this observed timing. Cleanup and an independent
 Azure inventory found zero resources. The conservative ledger is now USD 229
 of USD 300, with USD 71 unallocated; actual charges remain unmeasured.
+The [fifth paired attempt](evidence/document-search-paired-20261109-traversal/summary.json)
+passed the bounded document Search slice. All three compiled infrastructure
+modules reached `Succeeded` on Azure and GlobalStack with matching template
+hashes. Both targets returned HTTP 201 for two indexes, the managed-identity
+Blob data source and the indexer. Both accepted clean and quarantine Blob
+uploads, ran the indexer, returned the clean document in a query while excluding
+the quarantined document, and removed the clean document after its soft-delete
+marker was indexed. Both indexer status reads reported `success`. The
+[redacted request trace](evidence/document-search-paired-20261109-traversal/data-plane-trace.json)
+contains 29 Search and Blob calls. Automatic cleanup and a separate Azure
+inventory check found zero task resources and deployment records. The run
+reserved USD 12, bringing the conservative ledger to USD 241 of USD 300.
+Actual Azure charges are unmeasured. This does not cover the document worker,
+malware scanners, PostgreSQL metadata or the complete business flow.
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
@@ -146,8 +160,8 @@ reserves a USD 12 envelope within the authorized USD 300 ceiling. It refuses
 a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
 session is restored in this workspace. Automatic cleanup verified zero
 task-owned resources and deployment records; actual Azure charges remain
-unmeasured. The former local data-source HTTP 501 has an implementation and
-regression test, but no paired Azure traversal result yet.
+unmeasured. The former local data-source HTTP 501 has an implementation,
+regression test and paired Azure traversal result for this bounded slice.
 The local deployment readback omitted its submitted parameters, which kept
 the ownership-checked cleanup from identifying the run. That response now
 includes nonsecure parameter values and omits secure values; a local lifecycle
@@ -409,11 +423,11 @@ through committed metadata and both Search paths before testing failure cases.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 229 in conservative envelopes
+The private cumulative ledger currently records USD 241 in conservative envelopes
 against the USD 300 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 71 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 59 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 
