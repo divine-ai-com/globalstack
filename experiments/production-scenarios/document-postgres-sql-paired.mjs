@@ -82,6 +82,7 @@ async function pollFirewall(request) {
 }
 async function probeAzureSql() {
   report.sql.azure.attempted = true;
+  report.sql.azure.connectionAttempts = [];
   const password = () => azureCli(config, ['account', 'get-access-token',
     '--resource', 'https://ossrdbms-aad.database.windows.net']).accessToken;
   const pool = new pg.Pool({ host: databaseHost, port: 5432, database: 'documents',
@@ -95,11 +96,14 @@ async function probeAzureSql() {
         const result = await pool.query('SELECT current_database() AS database, current_user AS role');
         assert.equal(result.rows[0]?.database, 'documents');
         report.sql.azure.connection = { status: 'passed', role: result.rows[0].role };
+        report.sql.azure.connectionAttempts.push({ status: 'passed' });
         connected = true;
         break;
       } catch (error) {
-        report.sql.azure.connection = { status: 'failed', code: error.code ?? null,
+        const failure = { status: 'failed', code: error.code ?? null,
           message: sanitize(error.message, replacements) };
+        report.sql.azure.connection = failure;
+        report.sql.azure.connectionAttempts.push(failure);
         await new Promise(done => setTimeout(done, 10000));
       }
     }
@@ -204,4 +208,5 @@ try {
 console.log(JSON.stringify({ out, azure: report.azureTerminalState, local: report.localTerminalState,
   azureSql: report.sql.azure, localSql: report.sql.local, cleanup: report.cleanup, error: report.error ?? null }));
 if (report.error || !report.comparisonComplete || !report.cleanup?.resourcesAbsent
-    || report.sql.azure.connection?.status !== 'passed' || report.sql.azure.schema?.status !== 'passed') process.exitCode = 1;
+    || report.sql.azure.connection?.status !== 'passed' || report.sql.azure.schema?.status !== 'passed'
+    || ![200, 201, 202].includes(report.firewall?.local?.initialStatus) || !report.sql.local.attempted) process.exitCode = 1;

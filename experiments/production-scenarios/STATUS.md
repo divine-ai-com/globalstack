@@ -266,6 +266,8 @@ cleanup and an independent Azure readback found zero resources and deployment
 records. The conservative allocation ledger is now USD 277 of the USD 350
 authorized ceiling; actual Azure charges remain unmeasured. Worker and ingress
 SQL roles, application document flow, and private networking are still open.
+The local firewall gap is tracked in [#85](https://github.com/divine-ai-com/globalstack/issues/85),
+while the broader PostgreSQL data-plane gap remains in [#74](https://github.com/divine-ai-com/globalstack/issues/74).
 
 ## Latest scanner and worker checkpoint
 
