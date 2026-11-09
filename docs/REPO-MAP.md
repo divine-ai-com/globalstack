@@ -126,6 +126,7 @@ flowchart TD
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
 - `packages/azure-data-plane/src/queue-delete-window.mjs`
 - `packages/azure-data-plane/src/relational-backend-manager.mjs`
+- `packages/azure-data-plane/src/search-blob-indexer.mjs`
 - `packages/azure-data-plane/src/search-query.mjs`
 - `packages/azure-data-plane/src/search-router.mjs`
 - `packages/azure-data-plane/src/search-token-auth.mjs`

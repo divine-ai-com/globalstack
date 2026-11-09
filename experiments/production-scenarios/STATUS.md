@@ -399,15 +399,15 @@ through committed metadata and both Search paths before testing failure cases.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 169 in conservative envelopes
-against the USD 200 authorization, including the initial allowance for earlier
+The private cumulative ledger currently records USD 217 in conservative envelopes
+against the USD 225 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 31 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 8 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 
-The workspace had approximately 57 GiB free at the last check, above the 40 GiB
+The workspace had approximately 55 GiB free at the last check, above the 40 GiB
 minimum. Diagnostic containers, internal networks and temporary private TLS files
 are removed after each probe. Shared caches and unrelated workloads are retained.
 
