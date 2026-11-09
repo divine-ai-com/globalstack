@@ -106,6 +106,7 @@ async function pollDeployment(id) {
 }
 async function waitSearchReady() {
   const deadline = Math.min(Date.now() + 10 * 60000, manifest.deadline - 10 * 60000);
+  let lastTokenRefresh = Date.now();
   while (true) {
     assert.ok(Date.now() < deadline, 'Azure Search did not become usable before the readiness deadline');
     const result = await httpExchange(`https://${s.name}-search.search.windows.net/indexes?api-version=2025-09-01`, {
@@ -113,7 +114,10 @@ async function waitSearchReady() {
     });
     observe('azure', { method: 'GET', path: '/indexes?api-version=2025-09-01', ...result });
     if (result.status === 200) return;
-    if (result.status === 401) searchToken = refreshWorkloadToken('https://search.azure.com/', searchToken);
+    if (result.status === 401 && Date.now() - lastTokenRefresh >= 60000) {
+      searchToken = refreshWorkloadToken('https://search.azure.com/', searchToken);
+      lastTokenRefresh = Date.now();
+    }
     assert.ok([401, 403, 404, 429, 503].includes(result.status), 'Azure Search readiness failed with a terminal response');
     await new Promise(done => setTimeout(done, 10000));
   }
