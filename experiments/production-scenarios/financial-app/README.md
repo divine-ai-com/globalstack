@@ -10,7 +10,7 @@ currency, unit and period. Percentage change requires matching currency and
 unit, distinct periods and a nonzero previous value. The caller must identify
 which period is current and which is previous.
 
-The component does not verify that a cited document exists or that its page
+The calculator alone does not verify that a cited document exists or that its page
 contains the supplied value. The planned ingestion and retrieval flow must
 bind each operand to a verified source before an agent can call it. Passing
 these local tests does not validate whether the chosen formula makes business
@@ -26,3 +26,10 @@ harmless prompt-injection fixture. The generated question values are checked
 against pinned examples, and CI checks that committed files match the generator.
 These plain-text fixtures do not yet exercise PDF parsing, live retrieval,
 agent synthesis, Content Safety, Cosmos audit or Azure deployment.
+
+`extract-seed-filing.mjs` parses only this fixture format. It binds each
+financial value to the source-file SHA-256, document ID and page number,
+rejects duplicate lines and inconsistent operating income, and ignores the
+untrusted narrative on page two. The extraction test checks all 13 committed
+files. This does not verify a general regulatory filing parser or establish
+that an agent used the extracted facts.
