@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { mkdir, readFile, rm, statfs, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, realpath, rm, statfs, writeFile } from 'node:fs/promises';
+import { resolve, sep } from 'node:path';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
 import { createSearchRouterServer } from '../../packages/azure-data-plane/src/search-router.mjs';
 import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
@@ -22,6 +22,13 @@ assert.ok((await statfs(out)).bavail * (await statfs(out)).bsize >= 40 * 1024 **
 assert.equal(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(), '', 'Commit source before capture');
 const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const config = process.env.PAIRED_AZURE_CONFIG_DIR;
+const certificate = process.env.PAIRED_AZURE_CERTIFICATE_FILE;
+assert.ok(config && certificate, 'A durable Azure CLI config and certificate are required');
+const realOut = await realpath(out);
+for (const [label, value] of [['Azure CLI config', config], ['Azure certificate', certificate]]) {
+  const actual = await realpath(value);
+  assert.ok(actual !== realOut && !actual.startsWith(realOut + sep), `${label} must be outside the disposable run directory`);
+}
 const account = azureCli(config, ['account', 'show']);
 assert.equal(account.id, process.env.PAIRED_SUBSCRIPTION_ID);
 assert.equal(account.state, 'Enabled');

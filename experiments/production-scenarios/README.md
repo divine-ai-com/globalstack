@@ -17,8 +17,10 @@ the full document business flow or supply Azure Portal screenshots.
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private
 `PAIRED_AZURE_CERTIFICATE_FILE` readable by the pinned CLI container, and an
-explicit private `PAIRED_RUN_DIR`. Run it only after the pilot resource group is
-empty and the shared budget ledger permits a USD 12 envelope:
+explicit private `PAIRED_RUN_DIR`. The CLI configuration and certificate must
+remain outside the disposable run directory so the cleanup watchdog can still
+authenticate after an interruption. Run it only after the pilot resource group
+is empty and the shared budget ledger permits a USD 12 envelope:
 
 ```bash
 node experiments/production-scenarios/document-search-paired.mjs
@@ -26,9 +28,10 @@ node experiments/production-scenarios/document-search-paired.mjs
 
 It writes redacted request and response observations to `result.json` and a
 time-ordered API trace to `events.ndjson` in the private run directory. This is
-not Portal footage or a video. It installs an ownership-checked cleanup watchdog before
-resource creation, preserves the pilot group, and verifies an empty Azure
-resource inventory after teardown. If cleanup reports `recoveryRequired`, keep
+not Portal footage or a video. It installs an ownership-checked cleanup
+watchdog before resource creation, preserves the pilot group, and verifies an
+empty Azure resource inventory after teardown. If cleanup reports
+`recoveryRequired`, keep
 the private manifest and reconcile the resources before another paid run.
 
 ## Captured baseline findings
