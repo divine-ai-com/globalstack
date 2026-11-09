@@ -6,13 +6,19 @@ Execution tracker: [#28](https://github.com/divine-ai-com/globalstack/issues/28)
 
 ## Document Search paired pilot
 
-The prepared `document-search-paired.mjs` runner deploys the same compiled
+The `document-search-paired.mjs` runner deploys the same compiled
 identity, Storage and Search modules on Azure and GlobalStack in dependency
 order. It then attempts the application's Search index, Blob data source and
 indexer provisioning. The local data source currently returns HTTP 501, so a
-complete comparison is expected to expose a gap. This pilot has passed local
-deployment and cleanup tests but has not run against Azure. It does not execute
-the full document business flow or supply Azure Portal screenshots.
+complete comparison is expected to expose a gap. The first Azure-first run
+reached the Search deployment after identity and data succeeded on both targets.
+Azure rejected a projection-container Blob reader role assignment because the
+pilot's conditional delegation omitted that role; GlobalStack accepted the
+template. [The redacted summary](evidence/document-search-paired-20261109/summary.json)
+records the stage outcomes and verified cleanup. This is a pilot delegation
+error, not a demonstrated failure of the Search template under an authorized
+deployer. Search data-plane provisioning, the full document business flow and
+Azure Portal screenshots were not reached. See [issue #78](https://github.com/divine-ai-com/globalstack/issues/78).
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private

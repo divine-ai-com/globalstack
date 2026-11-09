@@ -13,7 +13,7 @@ inside the existing test resource group. It adds one conditional Role Based
 Access Control Administrator assignment to the pilot service principal. It does
 not grant subscription Owner or change the existing Contributor assignment.
 
-The condition restricts both assignment creation and deletion to the 13 built-in
+The condition restricts both assignment creation and deletion to the 14 built-in
 roles in `document-role-catalog.json`, and to service principals (including
 managed identities). It does not permit granting Owner, Contributor, User Access
 Administrator or Role Based Access Control Administrator. The grant applies only
@@ -23,7 +23,8 @@ experiment group; this is not a principal-ID-specific delegation.
 
 The roles support Blob/document access, Durable host Blob/Queue/Table access,
 host storage management, read-only secret access, Search schema and document
-operations, Service Bus send/receive, and image push/pull. The catalog lists the
+operations, a container-scoped Blob reader for Search indexers, Service Bus
+send/receive, and image push/pull. The catalog lists the
 maximum delegated set, not the permissions every workload should receive.
 Application templates must assign each role only to the identity and resource
 that need it. Secret creation through the Key Vault data plane is not authorized
@@ -48,6 +49,12 @@ operator template, not an additional grant.
 For a Portal-created assignment, remove that exact conditional assignment from
 the group's IAM page after pilot cleanup. The Bicep output and deployment-history
 cleanup commands below apply only to the CLI/template path.
+
+The 2026-11-09 Search pilot found that the earlier condition omitted Storage
+Blob Data Reader. An operator must edit the existing group-scoped delegation
+and add that one built-in role before another Search run. Keep its service
+principal restriction and all other role limits. Adding it to this repository
+does not change the existing Azure assignment.
 
 ### Azure CLI alternative
 
