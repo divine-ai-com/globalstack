@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"><title>Native platform lifecycle snapshots</title><style>body{font:16px/1.55 system-ui,sans-serif;background:#f4f7fb;color:#172c42;margin:0}main{max-width:1200px;margin:auto;padding:32px}a{color:#174b9b}nav{display:flex;gap:10px;flex-wrap:wrap}nav a{background:white;padding:8px;border:1px solid #ccd6e3;border-radius:6px}section{background:white;border:1px solid #ccd6e3;border-radius:8px;padding:24px;margin:24px 0}article{border-top:1px solid #ccd6e3;margin-top:18px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}.pair>div{min-width:0}pre{font:13px/1.5 monospace;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:#f1f4f8}summary{cursor:pointer;font-weight:600;padding:8px 0}.pending{color:#7b4d00;background:#fff5dd;padding:14px}small{color:#44556a}@media(max-width:760px){main{padding:16px}.pair{grid-template-columns:1fr}}</style></head><body><main><h1>Native platform lifecycle snapshots</h1><p>Nine native Azure platform implementations of one empty-resource-group lifecycle. These are local captures. The new live pairs and Azure Portal screenshots remain pending browser access. The earlier Terraform pair is retained separately and does not satisfy the new portal screenshot requirement.</p><nav aria-label="Platforms"><a href="#azure-terraform-hcl">Terraform Azure HCL</a><a href="#azure-opentofu-hcl">OpenTofu Azure HCL</a><a href="#azure-pulumi-ts">Pulumi Azure TypeScript</a><a href="#azure-pulumi-py">Pulumi Azure Python</a><a href="#azure-pulumi-yaml">Pulumi Azure YAML</a><a href="#azure-ansible-yaml">Ansible Azure YAML</a><a href="#azure-cli-rest">Azure CLI REST Bash</a><a href="#azure-bicep">Azure Bicep</a><a href="#azure-arm-json">Azure ARM JSON</a></nav><p>154 command stages and 137 native ARM exchanges. One scenario, nine implementations.</p><ul><li>Each record preserves actual command arguments, exit status, UTC start/end times, bounded sanitized output, and selected ARM request/response fields. Direct probes and cleanup evidence remain separate from native commands.</li><li>Source hashes and image IDs identify each run. The fixtures contain no branch for the target environment. External credentials and routing select the target; identity acquisition is not being compared.</li><li>No Azure Portal screenshot is included in this local-only record. Screenshots of a generated report are not substitutes for portal evidence. Live cells remain pending until real captures exist.</li><li>Command timing includes container and provider overhead. These single runs are not a speed benchmark. No data-plane, application-event or broad service-compatibility conclusion follows from an empty resource group.</li><li>A native command can produce several API calls. State/import applies only to the HCL and Pulumi families. Bicep/ARM compilation and az rest template submission are distinct from az deployment command coverage.</li></ul><section id="azure-terraform-hcl"><h2>Terraform Azure HCL</h2><p>version → format → init → validate → plan-create → apply-create → plan-stable → refresh → plan-update → apply-update → plan-drift → apply-repair → state-remove → import → plan-imported → destroy</p><small>Source 7192faabe735d8c4f4b99bc0cb4c52c27a69f748. Native cleanup and independent absence checks passed.</small><article><h3>1. version</h3><pre>terraform version -json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"><title>Native platform lifecycle snapshots</title><style>body{font:16px/1.55 system-ui,sans-serif;background:#f4f7fb;color:#172c42;margin:0}main{max-width:1200px;margin:auto;padding:32px}a{color:#174b9b}nav{display:flex;gap:10px;flex-wrap:wrap}nav a{background:white;padding:8px;border:1px solid #ccd6e3;border-radius:6px}section{background:white;border:1px solid #ccd6e3;border-radius:8px;padding:24px;margin:24px 0}article{border-top:1px solid #ccd6e3;margin-top:18px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}.pair>div{min-width:0}pre{font:13px/1.5 monospace;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:#f1f4f8}summary{cursor:pointer;font-weight:600;padding:8px 0}.pending{color:#7b4d00;background:#fff5dd;padding:14px}small{color:#44556a}@media(max-width:760px){main{padding:16px}.pair{grid-template-columns:1fr}}</style></head><body><main><h1>Native platform lifecycle snapshots</h1><p>Nine native Azure platform implementations of one empty-resource-group lifecycle. This page contains local captures only. All nine native Azure pairs are recorded separately in LIVE.md. Azure Portal screenshots remain pending. The earlier Terraform pair is retained separately and does not satisfy the Portal screenshot requirement.</p><nav aria-label="Platforms"><a href="#azure-terraform-hcl">Terraform Azure HCL</a><a href="#azure-opentofu-hcl">OpenTofu Azure HCL</a><a href="#azure-pulumi-ts">Pulumi Azure TypeScript</a><a href="#azure-pulumi-py">Pulumi Azure Python</a><a href="#azure-pulumi-yaml">Pulumi Azure YAML</a><a href="#azure-ansible-yaml">Ansible Azure YAML</a><a href="#azure-cli-rest">Azure CLI REST Bash</a><a href="#azure-bicep">Azure Bicep</a><a href="#azure-arm-json">Azure ARM JSON</a></nav><p>154 command stages and 137 native ARM exchanges. One scenario, nine implementations.</p><ul><li>Each record preserves actual command arguments, exit status, UTC start/end times, bounded sanitized output, and selected ARM request/response fields. Direct probes and cleanup evidence remain separate from native commands.</li><li>Source hashes and image IDs identify each run. The fixtures contain no branch for the target environment. External credentials and routing select the target; identity acquisition is not being compared.</li><li>No Azure Portal screenshot is included in this local-only record. Screenshots of a generated report are not substitutes for Portal evidence. Per-stage Azure cells on this page are not populated from the separate live-run ledger.</li><li>Command timing includes container and provider overhead. These single runs are not a speed benchmark. No data-plane, application-event or broad service-compatibility conclusion follows from an empty resource group.</li><li>A native command can produce several API calls. State/import applies only to the HCL and Pulumi families. Bicep/ARM compilation and az rest template submission are distinct from az deployment command coverage.</li></ul><section id="azure-terraform-hcl"><h2>Terraform Azure HCL</h2><p>version → format → init → validate → plan-create → apply-create → plan-stable → refresh → plan-update → apply-update → plan-drift → apply-repair → state-remove → import → plan-imported → destroy</p><small>Source 7192faabe735d8c4f4b99bc0cb4c52c27a69f748. Native cleanup and independent absence checks passed.</small><article><h3>1. version</h3><pre>terraform version -json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;version&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -15,7 +15,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. format</h3><pre>terraform fmt -check</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. format</h3><pre>terraform fmt -check</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;format&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -32,7 +32,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. init</h3><pre>terraform init -input=false -lockfile=readonly -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. init</h3><pre>terraform init -input=false -lockfile=readonly -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;init&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -51,7 +51,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. validate</h3><pre>terraform validate -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. validate</h3><pre>terraform validate -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;validate&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -68,7 +68,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. plan-create</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. plan-create</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-create&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -87,7 +87,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. apply-create</h3><pre>terraform apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. apply-create</h3><pre>terraform apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-create&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -213,7 +213,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:43:42.054Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. plan-stable</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. plan-stable</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-stable&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -268,7 +268,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:43:49.208Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. refresh</h3><pre>terraform apply -refresh-only -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. refresh</h3><pre>terraform apply -refresh-only -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -324,7 +324,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:43:56.487Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. plan-update</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. plan-update</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-update&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -379,7 +379,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:05.214Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. apply-update</h3><pre>terraform apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. apply-update</h3><pre>terraform apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-update&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -513,7 +513,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:15.000Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. plan-drift</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. plan-drift</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-drift&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -568,7 +568,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:18.687Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. apply-repair</h3><pre>terraform apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. apply-repair</h3><pre>terraform apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-repair&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -702,7 +702,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:22.794Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. state-remove</h3><pre>terraform state rm azapi_resource.group</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. state-remove</h3><pre>terraform state rm azapi_resource.group</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-remove&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -720,7 +720,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. import</h3><pre>terraform import -input=false -no-color azapi_resource.group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. import</h3><pre>terraform import -input=false -no-color azapi_resource.group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;import&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -811,7 +811,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:31.763Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>15. plan-imported</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>15. plan-imported</h3><pre>terraform plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-imported&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -901,7 +901,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:35.263Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>16. destroy</h3><pre>terraform destroy -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>16. destroy</h3><pre>terraform destroy -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;terraform&quot;,
@@ -1015,7 +1015,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:44:39.821Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -1223,7 +1223,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. format</h3><pre>tofu fmt -check</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. format</h3><pre>tofu fmt -check</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;format&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1240,7 +1240,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. init</h3><pre>tofu init -input=false -lockfile=readonly -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. init</h3><pre>tofu init -input=false -lockfile=readonly -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;init&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1259,7 +1259,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. validate</h3><pre>tofu validate -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. validate</h3><pre>tofu validate -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;validate&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1276,7 +1276,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. plan-create</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. plan-create</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-create&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1295,7 +1295,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. apply-create</h3><pre>tofu apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. apply-create</h3><pre>tofu apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-create&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1421,7 +1421,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:05.338Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. plan-stable</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. plan-stable</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-stable&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1476,7 +1476,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:08.810Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. refresh</h3><pre>tofu apply -refresh-only -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. refresh</h3><pre>tofu apply -refresh-only -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1532,7 +1532,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:12.308Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. plan-update</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. plan-update</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-update&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1587,7 +1587,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:15.775Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. apply-update</h3><pre>tofu apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. apply-update</h3><pre>tofu apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-update&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1721,7 +1721,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:19.866Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. plan-drift</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. plan-drift</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 2; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-drift&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1776,7 +1776,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:23.359Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. apply-repair</h3><pre>tofu apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. apply-repair</h3><pre>tofu apply -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-repair&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1910,7 +1910,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:27.471Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. state-remove</h3><pre>tofu state rm azapi_resource.group</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. state-remove</h3><pre>tofu state rm azapi_resource.group</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-remove&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -1928,7 +1928,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. import</h3><pre>tofu import -input=false -no-color azapi_resource.group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. import</h3><pre>tofu import -input=false -no-color azapi_resource.group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;import&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -2019,7 +2019,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:30.886Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>15. plan-imported</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>15. plan-imported</h3><pre>tofu plan -input=false -no-color -detailed-exitcode</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;plan-imported&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -2109,7 +2109,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:34.379Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>16. destroy</h3><pre>tofu destroy -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>16. destroy</h3><pre>tofu destroy -auto-approve -input=false -no-color</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;tofu&quot;,
@@ -2223,7 +2223,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:45:38.987Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -2430,7 +2430,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. dependencies</h3><pre>npm ci --ignore-scripts --no-audit</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. dependencies</h3><pre>npm ci --ignore-scripts --no-audit</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;dependencies&quot;,
   &quot;command&quot;: [
     &quot;npm&quot;,
@@ -2448,7 +2448,7 @@
   &quot;stderr&quot;: &quot;npm warn deprecated @opentelemetry/sdk-trace-node@2.12.0: Use @opentelemetry/sdk-trace package\nnpm warn deprecated @opentelemetry/sdk-trace-base@2.12.0: Use @opentelemetry/sdk-trace package\n&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. provider-install</h3><pre>pulumi plugin install resource azure-native 3.30.0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. provider-install</h3><pre>pulumi plugin install resource azure-native 3.30.0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;provider-install&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2468,7 +2468,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. stack-init</h3><pre>pulumi stack init pilot --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. stack-init</h3><pre>pulumi stack init pilot --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;stack-init&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2487,7 +2487,7 @@
   &quot;stderr&quot;: &quot;Created stack &#39;pilot&#39;\n&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. config-azure-native:subscriptionId</h3><pre>pulumi config set azure-native:subscriptionId &lt;subscription&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. config-azure-native:subscriptionId</h3><pre>pulumi config set azure-native:subscriptionId &lt;subscription&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-azure-native:subscriptionId&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2507,7 +2507,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. config-groupName</h3><pre>pulumi config set groupName &lt;group&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. config-groupName</h3><pre>pulumi config set groupName &lt;group&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-groupName&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2527,7 +2527,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. config-location</h3><pre>pulumi config set location eastus --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. config-location</h3><pre>pulumi config set location eastus --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-location&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2547,7 +2547,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. config-runId</h3><pre>pulumi config set runId &lt;run&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. config-runId</h3><pre>pulumi config set runId &lt;run&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-runId&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2567,7 +2567,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. config-expires</h3><pre>pulumi config set expires &lt;expiry&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. config-expires</h3><pre>pulumi config set expires &lt;expiry&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-expires&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2587,7 +2587,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. config-revision</h3><pre>pulumi config set revision one --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. config-revision</h3><pre>pulumi config set revision one --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-revision&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2607,7 +2607,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. preview-create</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. preview-create</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-create&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2625,7 +2625,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. up-create</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. up-create</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-create&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2751,7 +2751,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:46:17.993Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. preview-stable</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. preview-stable</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-stable&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2770,7 +2770,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. refresh</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. refresh</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2859,7 +2859,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:46:30.208Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>15. config-revision</h3><pre>pulumi config set revision two --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>15. config-revision</h3><pre>pulumi config set revision two --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-revision&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2879,7 +2879,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>16. preview-update</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>16. preview-update</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-update&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2897,7 +2897,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>17. up-update</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>17. up-update</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-update&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -2996,7 +2996,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:46:47.614Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>18. refresh-drift</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>18. refresh-drift</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh-drift&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3085,7 +3085,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:46:51.391Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>19. up-repair</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>19. up-repair</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-repair&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3184,7 +3184,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:47:00.342Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>20. state-export</h3><pre>pulumi stack export</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>20. state-export</h3><pre>pulumi stack export</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-export&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3201,7 +3201,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>21. state-remove</h3><pre>pulumi state delete urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>21. state-remove</h3><pre>pulumi state delete urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-remove&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3221,7 +3221,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>22. import</h3><pre>pulumi import azure-native:resources:ResourceGroup group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt; --generate-code=false --protect=false --yes --non-interactive --provider urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a4056328-69be-4610-946a-3f86ac9eaaff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>22. import</h3><pre>pulumi import azure-native:resources:ResourceGroup group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt; --generate-code=false --protect=false --yes --non-interactive --provider urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a4056328-69be-4610-946a-3f86ac9eaaff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;import&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3317,7 +3317,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:47:08.025Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>23. preview-imported</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>23. preview-imported</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-imported&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3336,7 +3336,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>24. destroy</h3><pre>pulumi destroy --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>24. destroy</h3><pre>pulumi destroy --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3380,7 +3380,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:47:18.899Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -3590,7 +3590,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. dependencies</h3><pre>python3 -m pip install --target /cache/python -r requirements.txt</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. dependencies</h3><pre>python3 -m pip install --target /cache/python -r requirements.txt</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;dependencies&quot;,
   &quot;command&quot;: [
     &quot;python3&quot;,
@@ -3612,7 +3612,7 @@
   &quot;stderr&quot;: &quot;WARNING: The directory &#39;/cache/pip&#39; or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo&#39;s -H flag.\nWARNING: Target directory /cache/python/wrapt-2.5.2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/debugpy already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/packaging already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/pulumi_azure_native-3.30.0.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/wrapt-stubs already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/semver-3.1.0.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/_yaml already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/semver already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_proto-1.45.2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/pulumi_azure_native already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/grpcio-1.85.1.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/pulumi-3.273.0.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/pulumi already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/packaging-26.3.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/__pycache__ already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_exporter_otlp_proto_grpc-1.45.2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/googleapis_common_protos-1.76.0.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/dill-0.4.1.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_exporter_otlp_proto_common-1.45.2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/typing_extensions-4.16.0.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/parver already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/protobuf-6.33.6.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/dill already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_api-1.45.2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_semantic_conventions-0.66b2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_exporter_otlp_common-0.66b2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/typing_extensions.py already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/pyyaml-6.0.3.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/grpc already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_instrumentation-0.66b2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_sdk-1.45.2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/google already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/yaml already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/wrapt already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/parver-1.0.1.post0.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/opentelemetry_instrumentation_grpc-0.66b2.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/debugpy-1.8.22.dist-info already exists. Specify --upgrade to force replacement.\nWARNING: Target directory /cache/python/bin already exists. Specify --upgrade to force replacement.\nWARNING: Running pip as the &#39;root&#39; user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. provider-install</h3><pre>pulumi plugin install resource azure-native 3.30.0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. provider-install</h3><pre>pulumi plugin install resource azure-native 3.30.0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;provider-install&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3632,7 +3632,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. stack-init</h3><pre>pulumi stack init pilot --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. stack-init</h3><pre>pulumi stack init pilot --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;stack-init&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3651,7 +3651,7 @@
   &quot;stderr&quot;: &quot;Created stack &#39;pilot&#39;\n&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. config-azure-native:subscriptionId</h3><pre>pulumi config set azure-native:subscriptionId &lt;subscription&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. config-azure-native:subscriptionId</h3><pre>pulumi config set azure-native:subscriptionId &lt;subscription&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-azure-native:subscriptionId&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3671,7 +3671,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. config-groupName</h3><pre>pulumi config set groupName &lt;group&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. config-groupName</h3><pre>pulumi config set groupName &lt;group&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-groupName&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3691,7 +3691,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. config-location</h3><pre>pulumi config set location eastus --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. config-location</h3><pre>pulumi config set location eastus --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-location&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3711,7 +3711,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. config-runId</h3><pre>pulumi config set runId &lt;run&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. config-runId</h3><pre>pulumi config set runId &lt;run&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-runId&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3731,7 +3731,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. config-expires</h3><pre>pulumi config set expires &lt;expiry&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. config-expires</h3><pre>pulumi config set expires &lt;expiry&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-expires&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3751,7 +3751,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. config-revision</h3><pre>pulumi config set revision one --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. config-revision</h3><pre>pulumi config set revision one --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-revision&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3771,7 +3771,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. preview-create</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. preview-create</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-create&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3789,7 +3789,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. up-create</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. up-create</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-create&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3915,7 +3915,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:48:34.605Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. preview-stable</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. preview-stable</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-stable&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -3934,7 +3934,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. refresh</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. refresh</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4023,7 +4023,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:48:43.256Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>15. config-revision</h3><pre>pulumi config set revision two --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>15. config-revision</h3><pre>pulumi config set revision two --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-revision&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4043,7 +4043,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>16. preview-update</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>16. preview-update</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-update&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4061,7 +4061,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>17. up-update</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>17. up-update</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-update&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4160,7 +4160,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:48:51.229Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>18. refresh-drift</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>18. refresh-drift</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh-drift&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4249,7 +4249,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:48:56.231Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>19. up-repair</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>19. up-repair</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-repair&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4348,7 +4348,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:48:59.901Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>20. state-export</h3><pre>pulumi stack export</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>20. state-export</h3><pre>pulumi stack export</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-export&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4365,7 +4365,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>21. state-remove</h3><pre>pulumi state delete urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>21. state-remove</h3><pre>pulumi state delete urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-remove&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4385,7 +4385,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>22. import</h3><pre>pulumi import azure-native:resources:ResourceGroup group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt; --generate-code=false --protect=false --yes --non-interactive --provider urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::9971b437-c2b5-46f7-9e93-26efd32131a0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>22. import</h3><pre>pulumi import azure-native:resources:ResourceGroup group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt; --generate-code=false --protect=false --yes --non-interactive --provider urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::9971b437-c2b5-46f7-9e93-26efd32131a0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;import&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4481,7 +4481,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:49:10.067Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>23. preview-imported</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>23. preview-imported</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-imported&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4500,7 +4500,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>24. destroy</h3><pre>pulumi destroy --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>24. destroy</h3><pre>pulumi destroy --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4544,7 +4544,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:49:17.002Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -4752,7 +4752,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. provider-install</h3><pre>pulumi plugin install resource azure-native 3.30.0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. provider-install</h3><pre>pulumi plugin install resource azure-native 3.30.0</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;provider-install&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4772,7 +4772,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. stack-init</h3><pre>pulumi stack init pilot --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. stack-init</h3><pre>pulumi stack init pilot --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;stack-init&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4791,7 +4791,7 @@
   &quot;stderr&quot;: &quot;Created stack &#39;pilot&#39;\n&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. config-azure-native:subscriptionId</h3><pre>pulumi config set azure-native:subscriptionId &lt;subscription&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. config-azure-native:subscriptionId</h3><pre>pulumi config set azure-native:subscriptionId &lt;subscription&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-azure-native:subscriptionId&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4811,7 +4811,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. config-groupName</h3><pre>pulumi config set groupName &lt;group&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. config-groupName</h3><pre>pulumi config set groupName &lt;group&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-groupName&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4831,7 +4831,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. config-location</h3><pre>pulumi config set location eastus --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. config-location</h3><pre>pulumi config set location eastus --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-location&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4851,7 +4851,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. config-runId</h3><pre>pulumi config set runId &lt;run&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. config-runId</h3><pre>pulumi config set runId &lt;run&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-runId&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4871,7 +4871,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. config-expires</h3><pre>pulumi config set expires &lt;expiry&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. config-expires</h3><pre>pulumi config set expires &lt;expiry&gt; --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-expires&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4891,7 +4891,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. config-revision</h3><pre>pulumi config set revision one --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. config-revision</h3><pre>pulumi config set revision one --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-revision&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4911,7 +4911,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. preview-create</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. preview-create</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-create&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -4929,7 +4929,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. up-create</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. up-create</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → PUT 201 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-create&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5055,7 +5055,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:49:51.760Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. preview-stable</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. preview-stable</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-stable&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5074,7 +5074,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. refresh</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. refresh</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5163,7 +5163,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:03.764Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. config-revision</h3><pre>pulumi config set revision two --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. config-revision</h3><pre>pulumi config set revision two --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;config-revision&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5183,7 +5183,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>15. preview-update</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>15. preview-update</h3><pre>pulumi preview --non-interactive --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-update&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5201,7 +5201,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>16. up-update</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>16. up-update</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-update&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5300,7 +5300,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:16.563Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>17. refresh-drift</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>17. refresh-drift</h3><pre>pulumi refresh --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;refresh-drift&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5389,7 +5389,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:20.821Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>18. up-repair</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>18. up-repair</h3><pre>pulumi up --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;up-repair&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5488,7 +5488,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:27.151Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>19. state-export</h3><pre>pulumi stack export</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>19. state-export</h3><pre>pulumi stack export</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-export&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5505,7 +5505,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>20. state-remove</h3><pre>pulumi state delete urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>20. state-remove</h3><pre>pulumi state delete urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group --yes --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;state-remove&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5525,7 +5525,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>21. import</h3><pre>pulumi import azure-native:resources:ResourceGroup group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt; --generate-code=false --protect=false --yes --non-interactive --provider urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a094aab8-d0d6-47a6-8928-7a418847a46c</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>21. import</h3><pre>pulumi import azure-native:resources:ResourceGroup group /subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt; --generate-code=false --protect=false --yes --non-interactive --provider urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::a094aab8-d0d6-47a6-8928-7a418847a46c</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;import&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5621,7 +5621,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:35.861Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>22. preview-imported</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>22. preview-imported</h3><pre>pulumi preview --non-interactive --diff --expect-no-changes</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;preview-imported&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5640,7 +5640,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>23. destroy</h3><pre>pulumi destroy --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>23. destroy</h3><pre>pulumi destroy --yes --skip-preview --non-interactive</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;pulumi&quot;,
@@ -5684,7 +5684,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:45.325Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -5890,7 +5890,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. syntax-check</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --syntax-check</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. syntax-check</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --syntax-check</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;syntax-check&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -5911,7 +5911,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. check-create</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. check-create</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;check-create&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -5961,7 +5961,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:50:56.908Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. apply-create</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → HEAD 404 → PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. apply-create</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 404 → HEAD 404 → PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-create&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6072,7 +6072,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:04.054Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. repeat-stable</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. repeat-stable</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;repeat-stable&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6151,7 +6151,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:13.256Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. check-stable</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. check-stable</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;check-stable&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6232,7 +6232,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:18.773Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. check-update</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. check-update</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;check-update&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6313,7 +6313,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:23.995Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. apply-update</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. apply-update</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-update&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6436,7 +6436,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:29.497Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. check-drift</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. check-drift</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json --check --diff</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;check-drift&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6517,7 +6517,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:35.001Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. apply-repair</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. apply-repair</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-repair&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6640,7 +6640,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:40.515Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. repeat-final</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. repeat-final</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;repeat-final&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6719,7 +6719,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:45.944Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. destroy</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. destroy</h3><pre>ansible-playbook -i localhost, playbook.yml -e @/private/vars.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200 → GET 200 → DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;ansible-playbook&quot;,
@@ -6822,7 +6822,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:51.420Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -7028,7 +7028,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. syntax-check</h3><pre>bash -n deploy.sh</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. syntax-check</h3><pre>bash -n deploy.sh</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;syntax-check&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7045,7 +7045,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. apply-create</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. apply-create</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-create&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7107,7 +7107,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:51:59.208Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. repeat-stable</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. repeat-stable</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;repeat-stable&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7169,7 +7169,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:00.181Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. read</h3><pre>bash deploy.sh read</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. read</h3><pre>bash deploy.sh read</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7222,7 +7222,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:01.145Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. apply-update</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. apply-update</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-update&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7284,7 +7284,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:02.105Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. read-drift</h3><pre>bash deploy.sh read</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. read-drift</h3><pre>bash deploy.sh read</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-drift&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7337,7 +7337,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:03.075Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. apply-repair</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. apply-repair</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;apply-repair&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7399,7 +7399,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:04.014Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. repeat-final</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. repeat-final</h3><pre>bash deploy.sh present</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;repeat-final&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7461,7 +7461,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:04.973Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. destroy</h3><pre>bash deploy.sh absent</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. destroy</h3><pre>bash deploy.sh absent</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy&quot;,
   &quot;command&quot;: [
     &quot;bash&quot;,
@@ -7503,7 +7503,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:05.906Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -7709,7 +7709,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. compile</h3><pre>/root/.azure/bin/bicep build main.bicep --outfile /private/template.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. compile</h3><pre>/root/.azure/bin/bicep build main.bicep --outfile /private/template.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;compile&quot;,
   &quot;command&quot;: [
     &quot;/root/.azure/bin/bicep&quot;,
@@ -7728,7 +7728,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. cli-version</h3><pre>/usr/bin/az version</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. cli-version</h3><pre>/usr/bin/az version</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;cli-version&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -7744,7 +7744,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. deploy-create</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. deploy-create</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-create&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -7888,7 +7888,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:15.496Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. deploy-create-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. deploy-create-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-create-read-0&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -7959,7 +7959,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:16.382Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. read-stable</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. read-stable</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-stable&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8030,7 +8030,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:17.267Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. read-group</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. read-group</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-group&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8091,7 +8091,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:18.154Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. deploy-update</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. deploy-update</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-update&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8235,7 +8235,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:19.032Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. deploy-update-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. deploy-update-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-update-read-0&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8306,7 +8306,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:19.912Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. read-drift</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. read-drift</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-drift&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8367,7 +8367,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:20.847Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. deploy-repair</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. deploy-repair</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-repair&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8511,7 +8511,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:21.745Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. deploy-repair-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. deploy-repair-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-repair-read-0&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8582,7 +8582,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:22.637Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. read-final</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. read-final</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-final&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8653,7 +8653,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:23.538Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. destroy-group</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. destroy-group</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy-group&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8703,7 +8703,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:24.422Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>15. destroy-deployment</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 202.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>15. destroy-deployment</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 202.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy-deployment&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8751,7 +8751,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:25.302Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
@@ -8975,7 +8975,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>2. cli-version</h3><pre>/usr/bin/az version</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>2. cli-version</h3><pre>/usr/bin/az version</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; No ARM exchange captured.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;cli-version&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -8991,7 +8991,7 @@
   &quot;stderr&quot;: &quot;&quot;,
   &quot;truncated&quot;: false,
   &quot;timedOut&quot;: false
-}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>3. deploy-create</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+}</pre></details><details><summary>Request and response snapshots (0)</summary><pre>[]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>3. deploy-create</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-create&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9128,7 +9128,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:31.404Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>4. deploy-create-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>4. deploy-create-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-create-read-0&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9199,7 +9199,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:32.314Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>5. read-stable</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>5. read-stable</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-stable&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9270,7 +9270,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:33.322Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>6. read-group</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>6. read-group</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-group&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9331,7 +9331,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:34.242Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>7. deploy-update</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>7. deploy-update</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-update&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9468,7 +9468,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:35.127Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>8. deploy-update-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>8. deploy-update-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-update-read-0&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9539,7 +9539,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:36.011Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>9. read-drift</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>9. read-drift</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-drift&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9600,7 +9600,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:36.926Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>10. deploy-repair</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>10. deploy-repair</h3><pre>/usr/bin/az rest --method put --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json --body @/private/deployment.json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; PUT 201.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-repair&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9737,7 +9737,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:37.794Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>11. deploy-repair-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>11. deploy-repair-read-0</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;deploy-repair-read-0&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9808,7 +9808,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:38.674Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>12. read-final</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>12. read-final</h3><pre>/usr/bin/az rest --method get --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; GET 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;read-final&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9879,7 +9879,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:39.554Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>13. destroy-group</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>13. destroy-group</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/resourcegroups/&lt;group&gt;?api-version=2021-04-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 200.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy-group&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9929,7 +9929,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:40.428Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><article><h3>14. destroy-deployment</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 202.</p><details><summary>Command outcome and output</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><article><h3>14. destroy-deployment</h3><pre>/usr/bin/az rest --method delete --url https://management.azure.com/subscriptions/&lt;subscription&gt;/providers/Microsoft.Resources/deployments/&lt;group&gt;?api-version=2022-09-01 --skip-authorization-header --headers @/private/headers.json --output json</pre><div class="pair"><div><h4>GlobalStack</h4><p>Exit 0; DELETE 202.</p><details><summary>Command outcome and output</summary><pre>{
   &quot;phase&quot;: &quot;destroy-deployment&quot;,
   &quot;command&quot;: [
     &quot;/usr/bin/az&quot;,
@@ -9977,7 +9977,7 @@
     },
     &quot;completedAt&quot;: &quot;2026-11-06T21:52:41.291Z&quot;
   }
-]</pre></details></div><div><h4>Azure</h4><p class="pending">Pending live run and Azure Portal capture</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
+]</pre></details></div><div><h4>Azure</h4><p class="pending">See separate live pair; Portal capture pending</p></div></div></article><details><summary>Independent probes and cleanup</summary><pre>{
   &quot;probes&quot;: [
     {
       &quot;phase&quot;: &quot;preflight&quot;,
