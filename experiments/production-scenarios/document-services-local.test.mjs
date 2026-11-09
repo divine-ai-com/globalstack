@@ -11,6 +11,7 @@ import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { cleanupDocumentSearch } from './document-search-cleanup.mjs';
 import { provisionDocumentSearch } from './document-app/search-provision.mjs';
+import { projectionDataSource, projectionIndexer } from './document-app/search-projection.mjs';
 
 const subscription = '00000000-0000-0000-0000-000000000000';
 const group = `/subscriptions/${subscription}/resourceGroups/gs-document-services-test`;
@@ -126,6 +127,16 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   assert.equal((await upload('quarantine', 'bad-1', { document_id: 'bad-1', extracted_text: 'excluded' }, false)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
   assert.equal((await query('doc-1')).body.value[0].revision_id, 'r1');
+  assert.equal((await query('bad-1')).body.value.length, 0);
+  const wrongSource = { ...projectionDataSource(`${pilotGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccountName}`),
+    name: 'quarantine-probe-source', container: { name: 'quarantine' } };
+  assert.equal((await searchCall('PUT', "/datasources('quarantine-probe-source')", wrongSource)).status, 201);
+  assert.equal((await searchCall('PUT', "/indexers('quarantine-probe-indexer')", {
+    ...projectionIndexer, name: 'quarantine-probe-indexer', dataSourceName: wrongSource.name,
+  })).status, 201);
+  assert.equal((await searchCall('POST', "/indexers('quarantine-probe-indexer')/search.run")).status, 202);
+  const wrongStatus = await searchCall('GET', "/indexers('quarantine-probe-indexer')/search.status");
+  assert.equal(wrongStatus.body.lastResult.status, 'transientFailure');
   assert.equal((await query('bad-1')).body.value.length, 0);
   assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2', deleted: 'true' }, true)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);

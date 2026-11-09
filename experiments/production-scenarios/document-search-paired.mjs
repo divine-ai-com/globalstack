@@ -14,6 +14,7 @@ import { azureCli, azureToken } from './azure-session.mjs';
 import { productionBudgetPath, reserveBudget, confirmBudgetCleanup } from './budget-ledger.mjs';
 import { cleanupDocumentSearch, documentSearchClient, documentSearchScope } from './document-search-cleanup.mjs';
 import { provisionDocumentSearch } from './document-app/search-provision.mjs';
+import { projectionDataSource, projectionIndexer } from './document-app/search-projection.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { assertDocumentDelegation } from './operator/delegation-check.mjs';
 import { waitForSearchReadiness } from './search-readiness.mjs';
@@ -178,6 +179,38 @@ async function waitProjection(target, documentId, present) {
     await new Promise(done => setTimeout(done, 5000));
   }
 }
+async function wrongContainerProbe(target, quarantineId) {
+  const dataSourceName = 'quarantine-probe-source';
+  const indexerName = 'quarantine-probe-indexer';
+  const outcome = { target, stages: [] };
+  const source = { ...projectionDataSource(s.storage), name: dataSourceName, container: { name: 'quarantine' } };
+  phase = `wrong-container-source-${target}`;
+  const created = await searchRequest(target, 'PUT', `/datasources('${dataSourceName}')`, source);
+  outcome.stages.push({ name: 'data-source', status: created.status, code: created.body?.error?.code ?? null });
+  if (![200, 201].includes(created.status)) return outcome;
+  const indexer = { ...projectionIndexer, name: indexerName, dataSourceName };
+  phase = `wrong-container-indexer-${target}`;
+  const configured = await searchRequest(target, 'PUT', `/indexers('${indexerName}')`, indexer);
+  outcome.stages.push({ name: 'indexer', status: configured.status, code: configured.body?.error?.code ?? null });
+  if (![200, 201].includes(configured.status)) return outcome;
+  phase = `wrong-container-run-${target}`;
+  const started = await searchRequest(target, 'POST', `/indexers('${indexerName}')/search.run`);
+  outcome.stages.push({ name: 'run', status: started.status, code: started.body?.error?.code ?? null });
+  if (started.status !== 202) return outcome;
+  const deadline = Date.now() + 180000;
+  while (Date.now() < deadline) {
+    const status = await searchRequest(target, 'GET', `/indexers('${indexerName}')/search.status`);
+    assert.equal(status.status, 200, `${target} wrong-container status request failed`);
+    if (status.body?.lastResult?.status && status.body.lastResult.status !== 'inProgress') {
+      outcome.indexerStatus = status.body.lastResult.status;
+      outcome.indexerErrorCount = status.body.lastResult.errors?.length ?? 0;
+      break;
+    }
+    await new Promise(done => setTimeout(done, 5000));
+  }
+  outcome.quarantineIndexed = (await projectionQuery(target, quarantineId)).length > 0;
+  return outcome;
+}
 try {
   assert.deepEqual(azureCli(config, ['resource', 'list', '--subscription', account.id]), [], 'Azure inventory is not empty');
   assert.equal((await azure('GET', `${s.group}?api-version=2022-09-01`)).status, 200);
@@ -273,6 +306,12 @@ try {
       const status = await searchRequest(target, 'GET', "/indexers('document-projection-indexer')/search.status");
       report.searchTraversal.at(-1).indexerStatus = status.body?.lastResult?.status ?? `HTTP ${status.status}`;
     }
+    report.negativeWiring = [];
+    for (const target of ['azure', 'local']) report.negativeWiring.push(await wrongContainerProbe(target, quarantineId));
+    assert.ok(report.negativeWiring.every(item => item.stages.length === 3
+      && item.stages[0].status === 201 && item.stages[1].status === 201 && item.stages[2].status === 202
+      && ['transientFailure', 'persistentFailure'].includes(item.indexerStatus)
+      && item.quarantineIndexed === false), 'Wrong-container probe did not fail safely on both targets');
     report.comparisonComplete = true;
   }
 } catch (error) {
