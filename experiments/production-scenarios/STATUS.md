@@ -312,8 +312,16 @@ The local firewall gap is tracked in [#85](https://github.com/divine-ai-com/glob
 while the broader PostgreSQL data-plane gap remains in [#74](https://github.com/divine-ai-com/globalstack/issues/74).
 The firewall rule now has a local ARM create, read, list and delete path with
 single-address and invalid-range tests. It has not been replayed against Azure
-on this revision. No PostgreSQL wire endpoint enforces the rule yet, so #85
-remains open and this does not advance a full-scenario assertion.
+on this revision. A bounded local PostgreSQL TLS gateway now accepts the
+unmodified `pg` client and a locally issued Entra-shaped administrator token.
+A disposable PostgreSQL test committed and read a row, then rejected a wrong
+audience, wrong principal, wrong TLS server name, non-TLS access and a connection
+after the firewall rule was deleted. The test used a direct localhost source;
+the native Functions network path, worker and ingress roles, and Azure parity
+for this gateway remain untested. The local gateway does not emulate private
+networking, cancellation or Azure SQL protocol behavior beyond this client
+path. Issue #85 and the broader SQL issue #74 remain open. This does not advance
+a full-scenario assertion.
 The [follow-up role pilot](evidence/document-postgres-roles-paired-20261109/)
 deployed the same PostgreSQL and two managed-identity resources on both targets.
 Azure created separate nonadmin SQL roles for the worker and ingress identities,

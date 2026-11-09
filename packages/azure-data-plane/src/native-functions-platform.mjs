@@ -7,6 +7,8 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { resolveNativeContainerAppEndpoints } from './native-container-app-endpoints.mjs';
+import { createPostgresArmConnectionResolver } from './postgres-arm-connection.mjs';
+import { createPostgresWireGateway } from './postgres-wire-gateway.mjs';
 
 const exec = promisify(execFile);
 
@@ -46,7 +48,7 @@ export function resolveNativeBlobEndpoints({ settings, names, router, subscripti
 // identity credential remain unchanged; endpoint and CA wiring belongs to the
 // local platform. Additional service origins must resolve to deployed apps.
 export function createNativeFunctionsPlatform({ identityService, storageRouter, store, containerAppRouter,
-  containerAppEndpoints = [], blobEndpoints = [], observe = () => {} }) {
+  containerAppEndpoints = [], blobEndpoints = [], postgresBackend = null, observe = () => {} }) {
   return async ({ resource, signal, directory }) => {
     const settings = Object.fromEntries((resource.properties?.siteConfig?.appSettings ?? []).map(item => [item.name, item.value]));
     assert.equal(settings.AzureWebJobsStorage__credential, 'managedidentity');
@@ -59,6 +61,13 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
     assert.ok(deployed && subscription(resource.id) && subscription(deployed.resourceId) === subscription(resource.id), 'Host storage must be deployed in the workload subscription');
     const applicationBlobs = resolveNativeBlobEndpoints({ settings, names: blobEndpoints, router, subscriptionId: subscription(resource.id) });
     const services = resolveNativeContainerAppEndpoints({ resource, store, settings, names: containerAppEndpoints });
+    const postgresHost = settings.DB_HOST;
+    if (postgresHost !== undefined) {
+      assert.match(postgresHost, /^[a-z0-9][a-z0-9-]{2,62}\.postgres\.database\.azure\.com$/);
+      assert.ok(postgresBackend?.host && postgresBackend?.port && postgresBackend?.user,
+        'PostgreSQL transport requires an operator-configured local backend');
+      assert.ok(settings.DB_PORT === undefined || settings.DB_PORT === '5432', 'The declared PostgreSQL port must be the Azure default');
+    }
     const appHandler = services.length ? containerAppRouter().handler() : null;
     const name = `gs-functions-net-${randomUUID()}`, servers = [];
     let binding, networkCreated = false;
@@ -89,7 +98,8 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
       const identityPort = await listen(createServer(binding.handler), gateway);
       const certificate = join(directory, 'platform-ca.pem'), keyFile = join(directory, 'platform-key.pem');
       const hostnames = [...new Set([...['blob', 'queue', 'table'].map(surface => `${account}.${surface}.core.windows.net`),
-        ...applicationBlobs.map(item => item.hostname), ...services.map(service => service.hostname)])];
+        ...applicationBlobs.map(item => item.hostname), ...services.map(service => service.hostname),
+        ...(postgresHost ? [postgresHost] : [])])];
       await exec('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certificate,
         '-days', '1', '-subj', '/CN=GlobalStack local storage', '-addext', `subjectAltName=${hostnames.map(hostname => `DNS:${hostname}`).join(',')}`], { signal, timeout: 10000 });
       const tls = { key: await readFile(keyFile), cert: await readFile(certificate) };
@@ -130,6 +140,12 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
           Promise.resolve(appHandler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
         }), gateway);
         env[service.setting] = `https://${service.hostname}:${port}`;
+      }
+      if (postgresHost) {
+        const gatewayServer = createPostgresWireGateway({ tls, trust: identityService.trust,
+          resolveConnection: createPostgresArmConnectionResolver({ store, backend: postgresBackend,
+            serverHost: postgresHost }), observe: event => observe({ surface: 'postgres', ...event }) });
+        env.DB_PORT = String(await listen(gatewayServer, gateway));
       }
       signal.throwIfAborted();
       return { network: name, env, readHostMasterKeys: () => blobHostMasterKeys(router.account(account)),

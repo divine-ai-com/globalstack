@@ -124,6 +124,8 @@ flowchart TD
 - `packages/azure-data-plane/src/native-workload-lifecycle.mjs`
 - `packages/azure-data-plane/src/network-model.mjs`
 - `packages/azure-data-plane/src/official-emulator-compose.mjs`
+- `packages/azure-data-plane/src/postgres-arm-connection.mjs`
+- `packages/azure-data-plane/src/postgres-wire-gateway.mjs`
 - `packages/azure-data-plane/src/queue-delete-window.mjs`
 - `packages/azure-data-plane/src/relational-backend-manager.mjs`
 - `packages/azure-data-plane/src/search-blob-indexer.mjs`
