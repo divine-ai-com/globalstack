@@ -13,7 +13,7 @@
       "sha256": "da9e24f2ad29f865259592a831c128bd42f8b644a30f8218687ba8fdb2f43bf6"
     }
   ],
-  "authorizedTotalUsd": 350,
+  "authorizedTotalUsd": 500,
   "powerBi": "Replaced with Cosmos-backed application dashboard at owner instruction; Power BI not evaluated",
   "assertions": [
     {

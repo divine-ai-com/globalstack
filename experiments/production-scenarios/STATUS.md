@@ -538,10 +538,10 @@ through committed metadata and both Search paths before testing failure cases.
 ## Budget and storage
 
 The private cumulative ledger currently records USD 313 in conservative envelopes
-against the USD 350 authorization, including the initial allowance for earlier
+against the USD 500 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 37 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 187 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 
