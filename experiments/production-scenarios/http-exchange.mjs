@@ -27,7 +27,7 @@ export function httpExchange(url, { method = 'GET', body, headers = {}, timeoutM
         const text = Buffer.concat(chunks).toString('utf8');
         let parsed;
         try { parsed = text ? JSON.parse(text) : null; } catch { parsed = { unparsedBytes: bytes }; }
-        const retainedHeaders = ['content-type', 'etag', 'retry-after', 'request-id', 'x-ms-request-id', 'x-ms-correlation-request-id', 'azure-asyncoperation', 'location'];
+        const retainedHeaders = ['content-type', 'etag', 'retry-after', 'request-id', 'www-authenticate', 'x-ms-request-id', 'x-ms-correlation-request-id', 'azure-asyncoperation', 'location'];
         resolve({ status: response.statusCode, body: parsed,
           headers: Object.fromEntries(retainedHeaders.filter(key => response.headers[key] !== undefined).map(key => [key, response.headers[key]])),
         });

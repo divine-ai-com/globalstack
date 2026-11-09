@@ -38,8 +38,8 @@ const armToken = azureToken(config);
 const claims = JSON.parse(Buffer.from(armToken.split('.')[1], 'base64url'));
 assert.equal(claims.tid, account.tenantId);
 assert.match(claims.oid, /^[0-9a-f-]{36}$/i);
-const searchToken = azureCli(config, ['account', 'get-access-token', '--resource', 'https://search.azure.com/']).accessToken;
-const storageToken = azureCli(config, ['account', 'get-access-token', '--resource', 'https://storage.azure.com/']).accessToken;
+let searchToken = azureCli(config, ['account', 'get-access-token', '--resource', 'https://search.azure.com/']).accessToken;
+let storageToken = azureCli(config, ['account', 'get-access-token', '--resource', 'https://storage.azure.com/']).accessToken;
 const searchClaims = JSON.parse(Buffer.from(searchToken.split('.')[1], 'base64url'));
 assert.equal(searchClaims.tid, account.tenantId);
 assert.equal(searchClaims.oid, claims.oid);
@@ -77,6 +77,16 @@ function observe(target, event) {
   emit('http', { target, phase, method: safe.method, path: safe.path, status: safe.status,
     code: safe.body?.error?.code ?? null });
 }
+function refreshWorkloadToken(resource, previous) {
+  const next = azureCli(config, ['account', 'get-access-token', '--resource', resource]).accessToken;
+  const payload = JSON.parse(Buffer.from(next.split('.')[1], 'base64url'));
+  assert.equal(payload.tid, account.tenantId);
+  assert.equal(payload.oid, claims.oid);
+  assert.equal(payload.iss, searchClaims.iss);
+  assert.ok(payload.exp - Date.now() / 1000 > 15 * 60, `${resource} token expires too soon for the paired probe`);
+  if (next !== previous) replacements.push([next, '<redacted>']);
+  return next;
+}
 const azure = documentSearchClient({ ...manifest, token: armToken }, event => observe('azure', event));
 async function local(method, path, body) {
   const result = await httpExchange(`http://127.0.0.1:${arm.address().port}${path}`, {
@@ -103,7 +113,8 @@ async function waitSearchReady() {
     });
     observe('azure', { method: 'GET', path: '/indexes?api-version=2025-09-01', ...result });
     if (result.status === 200) return;
-    assert.ok([403, 404, 429, 503].includes(result.status), 'Azure Search readiness failed with a terminal response');
+    if (result.status === 401) searchToken = refreshWorkloadToken('https://search.azure.com/', searchToken);
+    assert.ok([401, 403, 404, 429, 503].includes(result.status), 'Azure Search readiness failed with a terminal response');
     await new Promise(done => setTimeout(done, 5000));
   }
 }
@@ -219,6 +230,9 @@ try {
     assert.equal(result.localState, 'Succeeded', `Local ${stage} deployment failed`);
   }
   phase = 'search-readiness-azure';
+  report.authAtSearchReadiness = { initialTokenMinutesRemaining: Math.floor((searchClaims.exp - Date.now() / 1000) / 60) };
+  searchToken = refreshWorkloadToken('https://search.azure.com/', searchToken);
+  storageToken = refreshWorkloadToken('https://storage.azure.com/', storageToken);
   await waitSearchReady();
   phase = 'provision-search-azure';
   report.azureProvision = await provision('azure', searchToken);

@@ -87,7 +87,7 @@ while Azure deleted its managed environment, before writing its final result.
 Independent Azure inventory later found zero resources and deployment records;
 local managed containers were absent. The cleanup ledger was reconciled manually.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
-allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09. The second Search pilot reserved USD 12, leaving USD 20 unallocated. A read-only Cost Management query for the pilot group returned no current
+allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09. The second and third Search pilots each reserved USD 12, leaving USD 8 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
@@ -119,14 +119,25 @@ indexes and HTTP 501 for the data source. No Blob was uploaded or indexed, so
 this proves object provisioning, not indexer execution or document flow. The
 runner verified cleanup, and an independent Azure readback found zero pilot
 resources and deployment records.
+The [third paired attempt](evidence/document-search-paired-20261109-traversal-attempt/summary.json)
+used a revised Search module that granted the pilot identity read-only query
+access. All three compiled infrastructure modules reached `Succeeded` on Azure
+and GlobalStack. Azure's first Search data-plane readiness request then returned
+HTTP 401 with an empty body. No Search object or Blob was created through the
+data plane, and no indexer ran. The cause of the 401 is not established. The
+runner now refreshes workload tokens and allows a bounded retry of 401 during
+readiness. Cleanup and an independent Azure resource inventory found zero
+remaining test resources. The ledger is at USD 217 of the USD 225 ceiling;
+actual Azure charges remain unmeasured.
 The pilot runner records each Azure and local deployment stage, provisions
-both Search indexes and the Blob data source/indexer where supported, and
+both Search indexes and the Blob data source/indexer, and attempts projection
+upload, indexing, quarantine exclusion and soft deletion. It
 reserves a USD 12 envelope within the authorized USD 225 ceiling. It refuses
 a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
 session is restored in this workspace. Automatic cleanup verified zero
 task-owned resources and deployment records; actual Azure charges remain
-unmeasured. The known local data-source HTTP 501 is still an open conformance
-failure, not a pass.
+unmeasured. The former local data-source HTTP 501 has an implementation and
+regression test, but no paired Azure traversal result yet.
 The local deployment readback omitted its submitted parameters, which kept
 the ownership-checked cleanup from identifying the run. That response now
 includes nonsecure parameter values and omits secure values; a local lifecycle
@@ -136,10 +147,11 @@ The Search module now gives its system-assigned identity Blob Data Reader only
 on the clean-projection container. A shared provisioner defines separate push
 and projection indexes, a managed-identity Blob data source with a tombstone
 policy, explicit document-ID mapping, and a five-minute scheduled indexer.
-Deletion markers contain no extracted text. The paired Azure run accepted
-those Search objects, while the local router accepted the two indexes and
-returned HTTP 501 for the data source. Blob projection indexing remains
-unimplemented ([#75](https://github.com/divine-ai-com/globalstack/issues/75)).
+Deletion markers contain no extracted text. The second paired Azure run
+accepted those Search objects, while the local router then returned HTTP 501
+for the data source. The local router now implements the bounded projection
+path and passes indexing, deletion, quarantine exclusion and revoked-reader
+tests. Paired live execution remains open ([#75](https://github.com/divine-ai-com/globalstack/issues/75)).
 The document ingress also emits multiword fuzzy queries as an all-`AND` Lucene
 chain. The local evaluator previously rejected that valid application shape;
 the bounded parser now returns the expected authorized hit and rejects other

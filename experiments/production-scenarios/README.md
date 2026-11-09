@@ -25,8 +25,19 @@ Azure created both indexes, the managed-identity Blob data source and the
 scheduled indexer. GlobalStack created both indexes, then returned HTTP 501 for
 the data source ([issue #75](https://github.com/divine-ai-com/globalstack/issues/75)).
 Both runs verified cleanup, and an independent Azure inventory after the second
-run was empty. Neither run uploaded a Blob, observed indexer execution,
-completed the document business flow or captured Azure Portal screenshots.
+run was empty. Neither run uploaded a Blob or observed indexer execution.
+
+The local router now supports the document projection's managed-identity Blob
+data source, scheduled JSON indexer, on-demand execution and metadata
+soft deletion. A [third paired attempt](evidence/document-search-paired-20261109-traversal-attempt/summary.json)
+deployed the same three compiled modules successfully on both targets. Its
+first Azure Search readiness request returned an empty HTTP 401, so it stopped
+before provisioning indexes or uploading a Blob. The cause is unconfirmed.
+The runner now checks token freshness and retries bounded 401 readiness
+responses. Cleanup and an independent Azure resource inventory both found no
+remaining test resources. The conservative budget ledger has USD 8 left under
+the USD 225 ceiling. None of these attempts completed the document business
+flow or captured Azure Portal screenshots.
 
 The runner requires an existing certificate-authenticated Azure CLI session
 in `PAIRED_AZURE_CONFIG_DIR`, the authorized `PAIRED_SUBSCRIPTION_ID`, a private
