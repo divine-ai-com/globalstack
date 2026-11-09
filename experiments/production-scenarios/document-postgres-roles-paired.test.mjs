@@ -6,6 +6,29 @@ import { createArmServer } from '../../packages/azure-control-plane/src/server.m
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { httpExchange } from './http-exchange.mjs';
 
+test('published PostgreSQL role pilot records Azure grants without claiming local SQL parity', async () => {
+  const base = new URL('./evidence/document-postgres-roles-paired-20261109/', import.meta.url);
+  const bytes = await readFile(new URL('trace.json', base));
+  const trace = JSON.parse(bytes);
+  const summary = JSON.parse(await readFile(new URL('summary.json', base)));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), summary.publishedTraceSha256);
+  assert.equal(trace.revision, summary.sourceRevision);
+  assert.equal(trace.templateSha256, summary.templateSha256);
+  assert.equal(trace.sourceDirty, false);
+  assert.equal(trace.azureTerminalState, 'Succeeded');
+  assert.equal(trace.localTerminalState, 'Succeeded');
+  assert.deepEqual(trace.sql.azure.roles.grants, { worker_access_read: true, worker_outbox_write: true,
+    ingress_access_write: true, ingress_outbox_read: false });
+  assert.equal(trace.sql.local.attempted, false);
+  assert.equal(summary.pairedSqlConformance, false);
+  assert.equal(summary.runExitStatus, 1);
+  assert.deepEqual(trace.cleanup, { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true });
+  assert.deepEqual(summary.independentAzureInventory, { resources: 0, deployments: 0 });
+  assert.ok(trace.observations.some(event => event.target === 'local' && event.method === 'PUT'
+    && event.path.includes('/firewallRules/pilot-egress') && event.status === 501
+    && event.body?.error?.code === 'GlobalStackResourceTypeNotEmulated'));
+});
+
 test('PostgreSQL role pilot fixture deploys server and both identities locally', async () => {
   const source = await readFile(new URL('./document-infra/document-postgres-roles.bicep', import.meta.url));
   const compiled = await readFile(new URL('./document-infra/compiled/document-postgres-roles.json', import.meta.url));

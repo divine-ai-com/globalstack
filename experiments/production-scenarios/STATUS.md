@@ -268,10 +268,15 @@ authorized ceiling; actual Azure charges remain unmeasured. Worker and ingress
 SQL roles, application document flow, and private networking are still open.
 The local firewall gap is tracked in [#85](https://github.com/divine-ai-com/globalstack/issues/85),
 while the broader PostgreSQL data-plane gap remains in [#74](https://github.com/divine-ai-com/globalstack/issues/74).
-An isolated follow-up template and runner now prepare worker and ingress
-user-assigned identities for a bounded Azure SQL role-bootstrap comparison.
-The compiled template and ownership-checked cleanup pass local tests; no
-role-bootstrap result is reported yet.
+The [follow-up role pilot](evidence/document-postgres-roles-paired-20261109/)
+deployed the same PostgreSQL and two managed-identity resources on both targets.
+Azure created separate nonadmin SQL roles for the worker and ingress identities,
+applied the document schema and verified the intended grants and ingress outbox
+denial. GlobalStack again returned 501 for the temporary firewall rule, so its
+SQL path was not attempted and the paired runner correctly exited nonzero.
+Automatic cleanup and independent Azure inventory found zero resources and
+deployment records. The conservative ledger is USD 289 of the USD 350 ceiling,
+with actual charges still unmeasured. No application process used these roles.
 
 ## Latest scanner and worker checkpoint
 

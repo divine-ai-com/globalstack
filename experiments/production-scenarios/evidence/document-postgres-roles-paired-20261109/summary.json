@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "938563c2395d553f398cdc217a3dc85ad246d85f",
+  "templateSha256": "0e761f0f028aff6903bfa93899f5b95781d5a70f54af28fa5b61f5c84804cbc1",
+  "startedAt": "2026-11-09T16:43:27.087Z",
+  "completedAt": "2026-11-09T16:52:11.218Z",
+  "azureDeployment": "Succeeded",
+  "globalstackDeployment": "Succeeded",
+  "azureFirewall": {
+    "initialStatus": 202,
+    "readStatus": 200
+  },
+  "globalstackFirewall": {
+    "initialStatus": 501,
+    "errorCode": "GlobalStackResourceTypeNotEmulated"
+  },
+  "azureSql": {
+    "attempted": true,
+    "connectionAttempts": [
+      {
+        "status": "passed"
+      }
+    ],
+    "connection": {
+      "status": "passed",
+      "role": "globalstack-conformance-pilot"
+    },
+    "schema": {
+      "status": "passed",
+      "tables": [
+        "document_access",
+        "document_outbox",
+        "document_revisions",
+        "scanned_documents"
+      ]
+    },
+    "roles": {
+      "status": "passed",
+      "grants": {
+        "worker_access_read": true,
+        "worker_outbox_write": true,
+        "ingress_access_write": true,
+        "ingress_outbox_read": false
+      }
+    }
+  },
+  "globalstackSql": {
+    "attempted": false,
+    "reason": "The in-memory ARM replay has no endpoint-routed PostgreSQL wire-protocol listener or Entra SQL authentication."
+  },
+  "pairedSqlConformance": false,
+  "runExitStatus": 1,
+  "cleanup": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "independentAzureInventory": {
+    "resources": 0,
+    "deployments": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 350,
+    "conservativeAllocatedAfterRunUsd": 289,
+    "actualAzureChargesMeasured": false
+  },
+  "rawPrivateTraceSha256": "82c5f1cafad086002b11ad60a6db65d8ac712d9d7e9627547a82f6e0073dd3c4",
+  "publishedTraceSha256": "7ac367006e1b5637d1f3740fce08495ed2b882be6cafa8a671e1f414a25db130",
+  "redaction": "Existing capture substitutions plus stable opaque aliases for remaining UUIDs and IPv4 addresses."
+}
