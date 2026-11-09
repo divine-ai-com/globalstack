@@ -1,0 +1,15 @@
+{
+  "platform": "azure-bicep",
+  "startedAt": "2026-11-07T05:07:06.727Z",
+  "completedAt": "2026-11-07T05:08:40.179Z",
+  "exitCode": 0,
+  "eventCount": 892,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "669d2bc339924c5a38d468fd45ff76e926764847e860bdfd5db3e199e1b496a6",
+  "eventSha256": "7a3243f1b840430a210004221f209a6125ca9dea064b17f3d1ddb1c3123ad296",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}

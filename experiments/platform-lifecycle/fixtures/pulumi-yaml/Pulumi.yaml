@@ -1,0 +1,23 @@
+name: paired-lifecycle
+runtime: yaml
+config:
+  groupName: {type: string}
+  location: {type: string}
+  runId: {type: string}
+  expires: {type: string}
+  revision: {type: string}
+resources:
+  group:
+    type: azure-native:resources:ResourceGroup
+    properties:
+      resourceGroupName: ${groupName}
+      location: ${location}
+      tags:
+        project: globalstack-paired-lifecycle
+        run: ${runId}
+        expires: ${expires}
+        revision: ${revision}
+    options:
+      version: 3.30.0
+outputs:
+  groupId: ${group.id}

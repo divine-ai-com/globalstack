@@ -2,6 +2,8 @@
 
 The initial Azure comparison confirms that native deployment success alone does not establish protocol equivalence. After two targeted corrections, the unchanged Terraform configuration completed all 16 recorded stages on both GlobalStack and Azure. Selected protocol differences remain visible.
 
+[Stage-by-stage snapshots](SNAPSHOTS.md) show the lifecycle first, followed by both targets' command outcomes, API sequences and remaining differences. The downloadable HTML includes expandable recorded request/response fields. Capture boundaries and the general scope of each fix are stated alongside the comparison.
+
 ## Scope
 
 One empty resource-group configuration uses Terraform 1.17.1 and AzAPI 2.13.0 in East US. Source hashes, provider lockfile and the tool image match across the two targets. Deployment identity and credentials are external runner inputs. This is a first-party pilot on one host, not an independent reproduction or a Storage/event-flow evaluation.

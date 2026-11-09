@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "scope": "Nine native implementations of one empty-resource-group lifecycle, paired with Azure. Terminal video capture; no Portal screenshots.",
+  "platforms": [
+    {
+      "id": "azure-terraform-hcl",
+      "revision": "1bc474a3c3623acf61dee3ddf33cc2ce86d02dbc",
+      "files": {
+        "result.json": {
+          "path": "azure-terraform-hcl/result.json",
+          "sha256": "04a7feb4ebab68385b8162824bb855ff7e88bff84d7018d6d85ca1b6c990cd24"
+        },
+        "comparison.json": {
+          "path": "azure-terraform-hcl/comparison.json",
+          "sha256": "4e77ae74b8b0191a2d60024c3de421675678183daa55ff9407535bad2ad9779c"
+        },
+        "events.ndjson": {
+          "path": "azure-terraform-hcl/events.ndjson",
+          "sha256": "59009edafe791e4ded1ff79cf9b7fce95b1bf7eb50f9d6798594c870f653deed"
+        },
+        "recording.json": {
+          "path": "azure-terraform-hcl/recording.json",
+          "sha256": "b90614eeb766c832b1e77374416ce0c99cf4ea0358304b617bcd9954739b9954"
+        }
+      }
+    },
+    {
+      "id": "azure-opentofu-hcl",
+      "revision": "1bc474a3c3623acf61dee3ddf33cc2ce86d02dbc",
+      "files": {
+        "result.json": {
+          "path": "azure-opentofu-hcl/result.json",
+          "sha256": "a0e544cad9a7a228e406b1ed4bb87230dd28bbb8eb55fd95c5dd84172f3e8600"
+        },
+        "comparison.json": {
+          "path": "azure-opentofu-hcl/comparison.json",
+          "sha256": "25b68da266bb41cdbe5a38045ac7ef0bd4070c97b43c585f403af3fadd8f70bb"
+        },
+        "events.ndjson": {
+          "path": "azure-opentofu-hcl/events.ndjson",
+          "sha256": "2dccaa6ffb4a5a28929eab6ae95b883c2ed6826824785ab21d0766057dcdbc56"
+        },
+        "recording.json": {
+          "path": "azure-opentofu-hcl/recording.json",
+          "sha256": "059e860d6a6e09a8b3ac18f0a8f44027a04a7e30d46b368291e0b748bb361df9"
+        }
+      }
+    },
+    {
+      "id": "azure-pulumi-ts",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-pulumi-ts/result.json",
+          "sha256": "0386c147d4b39cf4864629592c344f3cc046eb9bcbb587571c22a701adac5512"
+        },
+        "comparison.json": {
+          "path": "azure-pulumi-ts/comparison.json",
+          "sha256": "78cd0cbc305ac87651fdcc64494e934539902d7c36860fa480d94b4791b6eb0e"
+        },
+        "events.ndjson": {
+          "path": "azure-pulumi-ts/events.ndjson",
+          "sha256": "cfb358adc18ff07e20b4c0109c34f8590d3ced3e783d6006cfe880310313c6a3"
+        },
+        "recording.json": {
+          "path": "azure-pulumi-ts/recording.json",
+          "sha256": "4314deb1c48a9a7014ee2a9ced0749afa70e6e6d20d2bf4bcab528977d0b45c1"
+        }
+      }
+    },
+    {
+      "id": "azure-pulumi-py",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-pulumi-py/result.json",
+          "sha256": "91385aad77367baa20232d5883065f2c7a00b905752296344e982700cbed224e"
+        },
+        "comparison.json": {
+          "path": "azure-pulumi-py/comparison.json",
+          "sha256": "334a546cb0bdfb4bca14ebfc06ee778244f180aad5e057bcb35a42401ece9dba"
+        },
+        "events.ndjson": {
+          "path": "azure-pulumi-py/events.ndjson",
+          "sha256": "59160b39f80b315ecb8eb5c6d142a417f2af1ebb697168644a0a139fe8a56cbe"
+        },
+        "recording.json": {
+          "path": "azure-pulumi-py/recording.json",
+          "sha256": "4ca1c54010759f1c1fa0e5e7a0d1f743a483a1c35f33ffee75a49bcf0c37d30f"
+        }
+      }
+    },
+    {
+      "id": "azure-pulumi-yaml",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-pulumi-yaml/result.json",
+          "sha256": "e64d4183753d3f033f21e3437255b1a10558c484e9916d307257ffbacb8ebe38"
+        },
+        "comparison.json": {
+          "path": "azure-pulumi-yaml/comparison.json",
+          "sha256": "2f406ef961962593dc5373a34210db544ebad2c388ed1243fa11b2a4d6db94ce"
+        },
+        "events.ndjson": {
+          "path": "azure-pulumi-yaml/events.ndjson",
+          "sha256": "0240748d57d3220c2598839611d1c77313014d12d0dd4fb7ecfef7cf553e2075"
+        },
+        "recording.json": {
+          "path": "azure-pulumi-yaml/recording.json",
+          "sha256": "53cfcfd7d53f58fc021925dd144234b3c54df21e47c8b9f4963f23fdf99f06f3"
+        }
+      }
+    },
+    {
+      "id": "azure-ansible-yaml",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-ansible-yaml/result.json",
+          "sha256": "941759e452def06470cccfa2cf23177f0a2e454572eebc25f87964dd329d9d9d"
+        },
+        "comparison.json": {
+          "path": "azure-ansible-yaml/comparison.json",
+          "sha256": "73e46231f39f94382df2205c68fbc110d4bcb58670dd1b2a869f9b4c038a6a93"
+        },
+        "events.ndjson": {
+          "path": "azure-ansible-yaml/events.ndjson",
+          "sha256": "c500fb1c2ad494e21866d1a81ef3815c57c616c6853b1df9f06abce313b2c536"
+        },
+        "recording.json": {
+          "path": "azure-ansible-yaml/recording.json",
+          "sha256": "c3264127d72707b6abce34f4e66b6957884284d04158f30591e8417073692e5b"
+        }
+      }
+    },
+    {
+      "id": "azure-cli-rest",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-cli-rest/result.json",
+          "sha256": "683e1af8b9532a166411a0d7ae4c410f2dcc50ed7827a5a3eb218d87b46c58b0"
+        },
+        "comparison.json": {
+          "path": "azure-cli-rest/comparison.json",
+          "sha256": "50fa28161541a55cfa9b4db339fe0a75e0da053b5675a36099af4770da5ac468"
+        },
+        "events.ndjson": {
+          "path": "azure-cli-rest/events.ndjson",
+          "sha256": "aaa379a79e1f7e5970e85d6345ce3f99d05e9460dd106cf1e6a4c057cf051c16"
+        },
+        "recording.json": {
+          "path": "azure-cli-rest/recording.json",
+          "sha256": "f11f3fa6f6a623b5725c7edc40ee89dde91465409aa4b7f15000328cad1cda14"
+        }
+      }
+    },
+    {
+      "id": "azure-bicep",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-bicep/result.json",
+          "sha256": "7f15ec8dbb8c4016e49ef85e98d2e411a225b60b364bf3e7fd569ddc35312988"
+        },
+        "comparison.json": {
+          "path": "azure-bicep/comparison.json",
+          "sha256": "c81de62329ad54eb00d379bf787954d146c64a9585adc5637c6e1c2e0e5c5187"
+        },
+        "events.ndjson": {
+          "path": "azure-bicep/events.ndjson",
+          "sha256": "7a3243f1b840430a210004221f209a6125ca9dea064b17f3d1ddb1c3123ad296"
+        },
+        "recording.json": {
+          "path": "azure-bicep/recording.json",
+          "sha256": "2b941700eb691f5831573fff3cf6c25ce984a1e8cb2305f635afd9daf05198ad"
+        }
+      }
+    },
+    {
+      "id": "azure-arm-json",
+      "revision": "0ed293215f9990d28574cced7f66f0b3678a234f",
+      "files": {
+        "result.json": {
+          "path": "azure-arm-json/result.json",
+          "sha256": "fe99e097c7a9c4d997226c55f24a18ae2e2ba04ce86fb017e32413b3d690d480"
+        },
+        "comparison.json": {
+          "path": "azure-arm-json/comparison.json",
+          "sha256": "118d3b607d4a5199661dcabcf9853a268bf4176e1045721324dda0390fa566ad"
+        },
+        "events.ndjson": {
+          "path": "azure-arm-json/events.ndjson",
+          "sha256": "c929bda3da1b4f1c558a9f124a4b250ab5f28a2c7aa635e05dbebd3ddd154137"
+        },
+        "recording.json": {
+          "path": "azure-arm-json/recording.json",
+          "sha256": "e3f58b433736d33418b36a4f4590abe3409f37348ae6c68f2ad640bcf4a02244"
+        }
+      }
+    }
+  ]
+}

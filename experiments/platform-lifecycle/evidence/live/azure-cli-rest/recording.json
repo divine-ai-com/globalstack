@@ -1,0 +1,15 @@
+{
+  "platform": "azure-cli-rest",
+  "startedAt": "2026-11-07T05:06:17.872Z",
+  "completedAt": "2026-11-07T05:07:05.835Z",
+  "exitCode": 0,
+  "eventCount": 304,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "c7b1029f7dfc7bf522097fa64d54da00a0ebf91289786be02c1a2bd0ae1f2b1c",
+  "eventSha256": "aaa379a79e1f7e5970e85d6345ce3f99d05e9460dd106cf1e6a4c057cf051c16",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}

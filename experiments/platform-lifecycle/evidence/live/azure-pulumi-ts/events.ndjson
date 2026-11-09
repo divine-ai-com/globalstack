@@ -1,0 +1,792 @@
+{"sequence":0,"elapsed":0.00006299300000000585,"at":"2026-11-07T04:50:49.871Z","type":"run-start","platform":"azure-pulumi-ts","revision":"0ed293215f9990d28574cced7f66f0b3678a234f","sourceDirty":false,"source":{"Pulumi.yaml":"ae9e8d6274ebeb802e4c834f62d82a65fec0f1e1269f957c5b1c7ac83c85d34c","index.ts":"0cb59caa8d7b9cd25e89567c103c500064aec286cad50a9a551685d21bc41e20","package-lock.json":"382b0a910b3e29c7a02707611c1ca3b3cb6c55be073bc061d04e2bc403c609cf","package.json":"b0b5dbd2104eb3f56284008f4c953d448898bdf6868418d3e42ef47edba7f129","tsconfig.json":"c06b20b96dd9a46049c855a6605881efa3cf66fdc3771e6af387122e696f8936"},"image":"sha256:1a9a6e74b9b47575c5da7d2e15d1da5fea5a5236381dc8c31eddb4a1eb03f024","portalCapture":"deferred","target":"both"}
+{"sequence":1,"elapsed":0.00374405299999998,"at":"2026-11-07T04:50:49.875Z","type":"target-start","target":"local"}
+{"sequence":2,"elapsed":0.283410399,"at":"2026-11-07T04:50:50.155Z","type":"probe","target":"local","phase":"preflight","method":"GET","status":404}
+{"sequence":3,"elapsed":0.2966809529999999,"at":"2026-11-07T04:50:50.168Z","type":"command-start","target":"local","phase":"version","command":["pulumi","version"]}
+{"sequence":4,"elapsed":1.6293798279999998,"at":"2026-11-07T04:50:51.500Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"v3.273.0\n"}
+{"sequence":5,"elapsed":1.815495469,"at":"2026-11-07T04:50:51.687Z","type":"command-end","target":"local","phase":"version","exitCode":0,"timedOut":false}
+{"sequence":6,"elapsed":1.817519946,"at":"2026-11-07T04:50:51.689Z","type":"command-start","target":"local","phase":"dependencies","command":["npm","ci","--ignore-scripts","--no-audit"]}
+{"sequence":7,"elapsed":6.54087237,"at":"2026-11-07T04:50:56.412Z","type":"output","target":"local","phase":"dependencies","stream":"stderr","text":"npm warn deprecated @opentelemetry/sdk-trace-node@2.12.0: Use @opentelemetry/sdk-trace package\n"}
+{"sequence":8,"elapsed":7.235500709,"at":"2026-11-07T04:50:57.107Z","type":"output","target":"local","phase":"dependencies","stream":"stderr","text":"npm warn deprecated @opentelemetry/sdk-trace-base@2.12.0: Use @opentelemetry/sdk-trace package\n"}
+{"sequence":9,"elapsed":15.979439896,"at":"2026-11-07T04:51:05.851Z","type":"output","target":"local","phase":"dependencies","stream":"stdout","text":"\n"}
+{"sequence":10,"elapsed":15.979639056,"at":"2026-11-07T04:51:05.851Z","type":"output","target":"local","phase":"dependencies","stream":"stdout","text":"added 129 packages in 13s\n"}
+{"sequence":11,"elapsed":15.979693210999999,"at":"2026-11-07T04:51:05.851Z","type":"output","target":"local","phase":"dependencies","stream":"stdout","text":"\n"}
+{"sequence":12,"elapsed":15.979731033,"at":"2026-11-07T04:51:05.851Z","type":"output","target":"local","phase":"dependencies","stream":"stdout","text":"9 packages are looking for funding\n"}
+{"sequence":13,"elapsed":15.979764889,"at":"2026-11-07T04:51:05.851Z","type":"output","target":"local","phase":"dependencies","stream":"stdout","text":"  run `npm fund` for details\n"}
+{"sequence":14,"elapsed":17.436869643,"at":"2026-11-07T04:51:07.308Z","type":"command-end","target":"local","phase":"dependencies","exitCode":0,"timedOut":false}
+{"sequence":15,"elapsed":17.439348759,"at":"2026-11-07T04:51:07.310Z","type":"command-start","target":"local","phase":"provider-install","command":["pulumi","plugin","install","resource","azure-native","3.30.0"]}
+{"sequence":16,"elapsed":18.114088684,"at":"2026-11-07T04:51:07.985Z","type":"command-end","target":"local","phase":"provider-install","exitCode":0,"timedOut":false}
+{"sequence":17,"elapsed":18.115660060000003,"at":"2026-11-07T04:51:07.987Z","type":"command-start","target":"local","phase":"stack-init","command":["pulumi","stack","init","pilot","--non-interactive"]}
+{"sequence":18,"elapsed":19.328329138,"at":"2026-11-07T04:51:09.199Z","type":"output","target":"local","phase":"stack-init","stream":"stderr","text":"Created stack 'pilot'\n"}
+{"sequence":19,"elapsed":19.492266008999998,"at":"2026-11-07T04:51:09.363Z","type":"command-end","target":"local","phase":"stack-init","exitCode":0,"timedOut":false}
+{"sequence":20,"elapsed":19.493952086,"at":"2026-11-07T04:51:09.365Z","type":"command-start","target":"local","phase":"config-azure-native:subscriptionId","command":["pulumi","config","set","azure-native:subscriptionId","<subscription>","--non-interactive"]}
+{"sequence":21,"elapsed":20.157762579000003,"at":"2026-11-07T04:51:10.029Z","type":"command-end","target":"local","phase":"config-azure-native:subscriptionId","exitCode":0,"timedOut":false}
+{"sequence":22,"elapsed":20.159231629999997,"at":"2026-11-07T04:51:10.030Z","type":"command-start","target":"local","phase":"config-groupName","command":["pulumi","config","set","groupName","<group>","--non-interactive"]}
+{"sequence":23,"elapsed":20.785077508999997,"at":"2026-11-07T04:51:10.656Z","type":"command-end","target":"local","phase":"config-groupName","exitCode":0,"timedOut":false}
+{"sequence":24,"elapsed":20.786512482000003,"at":"2026-11-07T04:51:10.658Z","type":"command-start","target":"local","phase":"config-location","command":["pulumi","config","set","location","eastus","--non-interactive"]}
+{"sequence":25,"elapsed":21.445086273,"at":"2026-11-07T04:51:11.316Z","type":"command-end","target":"local","phase":"config-location","exitCode":0,"timedOut":false}
+{"sequence":26,"elapsed":21.446757764999997,"at":"2026-11-07T04:51:11.318Z","type":"command-start","target":"local","phase":"config-runId","command":["pulumi","config","set","runId","<run>","--non-interactive"]}
+{"sequence":27,"elapsed":22.158373296,"at":"2026-11-07T04:51:12.029Z","type":"command-end","target":"local","phase":"config-runId","exitCode":0,"timedOut":false}
+{"sequence":28,"elapsed":22.159952432999997,"at":"2026-11-07T04:51:12.031Z","type":"command-start","target":"local","phase":"config-expires","command":["pulumi","config","set","expires","<expiry>","--non-interactive"]}
+{"sequence":29,"elapsed":22.817946543999998,"at":"2026-11-07T04:51:12.689Z","type":"command-end","target":"local","phase":"config-expires","exitCode":0,"timedOut":false}
+{"sequence":30,"elapsed":22.819235745999997,"at":"2026-11-07T04:51:12.690Z","type":"command-start","target":"local","phase":"config-revision","command":["pulumi","config","set","revision","one","--non-interactive"]}
+{"sequence":31,"elapsed":23.468017189,"at":"2026-11-07T04:51:13.339Z","type":"command-end","target":"local","phase":"config-revision","exitCode":0,"timedOut":false}
+{"sequence":32,"elapsed":23.471941006,"at":"2026-11-07T04:51:13.343Z","type":"command-start","target":"local","phase":"preview-create","command":["pulumi","preview","--non-interactive","--diff"]}
+{"sequence":33,"elapsed":24.798539560000002,"at":"2026-11-07T04:51:14.670Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":34,"elapsed":26.290850177,"at":"2026-11-07T04:51:16.162Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"+ pulumi:pulumi:Stack: (create)\n"}
+{"sequence":35,"elapsed":26.291031598,"at":"2026-11-07T04:51:16.162Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":36,"elapsed":33.558845264999995,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"    + azure-native:resources:ResourceGroup: (create)\n"}
+{"sequence":37,"elapsed":33.559002166999996,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        [urn=urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group]\n"}
+{"sequence":38,"elapsed":33.559061713999995,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        [provider=urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::04da6b54-80e4-46f7-96ec-b56ff0331ba9]\n"}
+{"sequence":39,"elapsed":33.559108386999995,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        azureApiVersion  : \"2024-03-01\"\n"}
+{"sequence":40,"elapsed":33.559164779999996,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        location         : \"eastus\"\n"}
+{"sequence":41,"elapsed":33.559195323,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        resourceGroupName: \"<group>\"\n"}
+{"sequence":42,"elapsed":33.559216895999995,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        tags             : {\n"}
+{"sequence":43,"elapsed":33.559237595999996,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"            expires : \"<expiry>\"\n"}
+{"sequence":44,"elapsed":33.559262358999995,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"            project : \"globalstack-paired-lifecycle\"\n"}
+{"sequence":45,"elapsed":33.559333294,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"            revision: \"one\"\n"}
+{"sequence":46,"elapsed":33.559379422999996,"at":"2026-11-07T04:51:23.430Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"            run     : \"<run>\"\n"}
+{"sequence":47,"elapsed":33.559422648,"at":"2026-11-07T04:51:23.431Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"        }\n"}
+{"sequence":48,"elapsed":33.578118007,"at":"2026-11-07T04:51:23.449Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"    --outputs:--\n"}
+{"sequence":49,"elapsed":33.578358218999995,"at":"2026-11-07T04:51:23.449Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"    groupId: [unknown]\n"}
+{"sequence":50,"elapsed":33.661466219,"at":"2026-11-07T04:51:23.533Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"Resources:\n"}
+{"sequence":51,"elapsed":33.661633748999996,"at":"2026-11-07T04:51:23.533Z","type":"output","target":"local","phase":"preview-create","stream":"stdout","text":"    + 2 to create\n"}
+{"sequence":52,"elapsed":33.903991725,"at":"2026-11-07T04:51:23.775Z","type":"command-end","target":"local","phase":"preview-create","exitCode":0,"timedOut":false}
+{"sequence":53,"elapsed":33.90536442799999,"at":"2026-11-07T04:51:23.776Z","type":"command-start","target":"local","phase":"up-create","command":["pulumi","up","--yes","--skip-preview","--non-interactive"]}
+{"sequence":54,"elapsed":35.274960340999996,"at":"2026-11-07T04:51:25.146Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"Updating (pilot):\n"}
+{"sequence":55,"elapsed":35.41754017699999,"at":"2026-11-07T04:51:25.289Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":56,"elapsed":36.818868081999995,"at":"2026-11-07T04:51:26.690Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"@ updating....\n"}
+{"sequence":57,"elapsed":36.819015734999994,"at":"2026-11-07T04:51:26.690Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":" +  pulumi:pulumi:Stack paired-lifecycle-pilot creating (0s) \n"}
+{"sequence":58,"elapsed":42.97800736,"at":"2026-11-07T04:51:32.849Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"@ updating.........\n"}
+{"sequence":59,"elapsed":42.978155666,"at":"2026-11-07T04:51:32.849Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":" +  azure-native:resources:ResourceGroup group creating (0s) \n"}
+{"sequence":60,"elapsed":43.08182493099999,"at":"2026-11-07T04:51:32.953Z","type":"http","target":"local","phase":"up-create","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":404}
+{"sequence":61,"elapsed":43.08832024299999,"at":"2026-11-07T04:51:32.959Z","type":"http","target":"local","phase":"up-create","method":"PUT","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":201}
+{"sequence":62,"elapsed":43.09264378899999,"at":"2026-11-07T04:51:32.964Z","type":"http","target":"local","phase":"up-create","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":63,"elapsed":43.096107778,"at":"2026-11-07T04:51:32.967Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":" +  azure-native:resources:ResourceGroup group created (0.12s) \n"}
+{"sequence":64,"elapsed":43.244390702,"at":"2026-11-07T04:51:33.115Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":" +  pulumi:pulumi:Stack paired-lifecycle-pilot created (6s) \n"}
+{"sequence":65,"elapsed":43.244525923999994,"at":"2026-11-07T04:51:33.116Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"Outputs:\n"}
+{"sequence":66,"elapsed":43.244578129,"at":"2026-11-07T04:51:33.116Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":67,"elapsed":43.24461485,"at":"2026-11-07T04:51:33.116Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":68,"elapsed":43.245321409,"at":"2026-11-07T04:51:33.116Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"Resources:\n"}
+{"sequence":69,"elapsed":43.24544808299999,"at":"2026-11-07T04:51:33.117Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"    + 2 created\n"}
+{"sequence":70,"elapsed":43.2454975,"at":"2026-11-07T04:51:33.117Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":71,"elapsed":43.245532913999995,"at":"2026-11-07T04:51:33.117Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"Duration: 8s\n"}
+{"sequence":72,"elapsed":43.24556938599999,"at":"2026-11-07T04:51:33.117Z","type":"output","target":"local","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":73,"elapsed":43.44809347299999,"at":"2026-11-07T04:51:33.319Z","type":"command-end","target":"local","phase":"up-create","exitCode":0,"timedOut":false}
+{"sequence":74,"elapsed":43.456329026,"at":"2026-11-07T04:51:33.327Z","type":"probe","target":"local","phase":"read-create","method":"GET","status":200,"revision":"one"}
+{"sequence":75,"elapsed":43.456945114999996,"at":"2026-11-07T04:51:33.328Z","type":"command-start","target":"local","phase":"preview-stable","command":["pulumi","preview","--non-interactive","--diff","--expect-no-changes"]}
+{"sequence":76,"elapsed":44.84195332099999,"at":"2026-11-07T04:51:34.713Z","type":"output","target":"local","phase":"preview-stable","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":77,"elapsed":46.307976239999995,"at":"2026-11-07T04:51:36.179Z","type":"output","target":"local","phase":"preview-stable","stream":"stdout","text":"  pulumi:pulumi:Stack: (same)\n"}
+{"sequence":78,"elapsed":46.308166199,"at":"2026-11-07T04:51:36.179Z","type":"output","target":"local","phase":"preview-stable","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":79,"elapsed":52.79824903499999,"at":"2026-11-07T04:51:42.669Z","type":"output","target":"local","phase":"preview-stable","stream":"stdout","text":"Resources:\n"}
+{"sequence":80,"elapsed":52.798433157,"at":"2026-11-07T04:51:42.670Z","type":"output","target":"local","phase":"preview-stable","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":81,"elapsed":53.00587328299999,"at":"2026-11-07T04:51:42.877Z","type":"command-end","target":"local","phase":"preview-stable","exitCode":0,"timedOut":false}
+{"sequence":82,"elapsed":53.007649496,"at":"2026-11-07T04:51:42.879Z","type":"command-start","target":"local","phase":"refresh","command":["pulumi","refresh","--yes","--non-interactive"]}
+{"sequence":83,"elapsed":54.333204257999995,"at":"2026-11-07T04:51:44.204Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Previewing refresh (pilot):\n"}
+{"sequence":84,"elapsed":54.479423868,"at":"2026-11-07T04:51:44.351Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":85,"elapsed":55.503526101999995,"at":"2026-11-07T04:51:45.375Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"@ previewing refresh....\n"}
+{"sequence":86,"elapsed":55.503687301999996,"at":"2026-11-07T04:51:45.375Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing \n"}
+{"sequence":87,"elapsed":55.503728306,"at":"2026-11-07T04:51:45.375Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":88,"elapsed":55.505552397,"at":"2026-11-07T04:51:45.377Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing \n"}
+{"sequence":89,"elapsed":55.586955804999995,"at":"2026-11-07T04:51:45.458Z","type":"http","target":"local","phase":"refresh","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":90,"elapsed":55.592221169999995,"at":"2026-11-07T04:51:45.463Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    azure-native:resources:ResourceGroup group  \n"}
+{"sequence":91,"elapsed":55.604627621,"at":"2026-11-07T04:51:45.476Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":92,"elapsed":55.604890952999995,"at":"2026-11-07T04:51:45.476Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Resources:\n"}
+{"sequence":93,"elapsed":55.605090194999995,"at":"2026-11-07T04:51:45.476Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":94,"elapsed":55.605193672999995,"at":"2026-11-07T04:51:45.476Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":95,"elapsed":55.605503846,"at":"2026-11-07T04:51:45.477Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Refreshing (pilot):\n"}
+{"sequence":96,"elapsed":55.764763681,"at":"2026-11-07T04:51:45.636Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":97,"elapsed":56.786875983,"at":"2026-11-07T04:51:46.658Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"@ refreshing....\n"}
+{"sequence":98,"elapsed":56.787058137,"at":"2026-11-07T04:51:46.658Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing (0s) \n"}
+{"sequence":99,"elapsed":56.787118926999995,"at":"2026-11-07T04:51:46.658Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":100,"elapsed":56.787157685,"at":"2026-11-07T04:51:46.658Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing (0s) \n"}
+{"sequence":101,"elapsed":56.85216723999999,"at":"2026-11-07T04:51:46.723Z","type":"http","target":"local","phase":"refresh","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":102,"elapsed":56.856174079,"at":"2026-11-07T04:51:46.727Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    azure-native:resources:ResourceGroup group  \n"}
+{"sequence":103,"elapsed":56.86879995699999,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":104,"elapsed":56.868982319,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Outputs:\n"}
+{"sequence":105,"elapsed":56.869042959,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":106,"elapsed":56.869084935,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":107,"elapsed":56.869119637999994,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Resources:\n"}
+{"sequence":108,"elapsed":56.869154273999996,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":109,"elapsed":56.869185677999994,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":110,"elapsed":56.869214831,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"Duration: 2s\n"}
+{"sequence":111,"elapsed":56.869248615,"at":"2026-11-07T04:51:46.740Z","type":"output","target":"local","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":112,"elapsed":57.077275031,"at":"2026-11-07T04:51:46.948Z","type":"command-end","target":"local","phase":"refresh","exitCode":0,"timedOut":false}
+{"sequence":113,"elapsed":57.078828408999996,"at":"2026-11-07T04:51:46.950Z","type":"command-start","target":"local","phase":"config-revision","command":["pulumi","config","set","revision","two","--non-interactive"]}
+{"sequence":114,"elapsed":57.755027868,"at":"2026-11-07T04:51:47.626Z","type":"command-end","target":"local","phase":"config-revision","exitCode":0,"timedOut":false}
+{"sequence":115,"elapsed":57.756550974999996,"at":"2026-11-07T04:51:47.628Z","type":"command-start","target":"local","phase":"preview-update","command":["pulumi","preview","--non-interactive","--diff"]}
+{"sequence":116,"elapsed":59.056730492999996,"at":"2026-11-07T04:51:48.928Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":117,"elapsed":60.485162523999996,"at":"2026-11-07T04:51:50.356Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"  pulumi:pulumi:Stack: (same)\n"}
+{"sequence":118,"elapsed":60.48561032199999,"at":"2026-11-07T04:51:50.357Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":119,"elapsed":66.81926117100001,"at":"2026-11-07T04:51:56.690Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"    ~ azure-native:resources:ResourceGroup: (update)\n"}
+{"sequence":120,"elapsed":66.819492186,"at":"2026-11-07T04:51:56.691Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"        [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":121,"elapsed":66.81956813100001,"at":"2026-11-07T04:51:56.691Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"        [urn=urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group]\n"}
+{"sequence":122,"elapsed":66.81961479900001,"at":"2026-11-07T04:51:56.691Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"        [provider=urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::2f0151a7-42a1-4c1c-8125-cc48e8ea6109]\n"}
+{"sequence":123,"elapsed":66.819663188,"at":"2026-11-07T04:51:56.691Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"      ~ tags: {\n"}
+{"sequence":124,"elapsed":66.81970210400002,"at":"2026-11-07T04:51:56.691Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"          ~ revision: \"one\" => \"two\"\n"}
+{"sequence":125,"elapsed":66.819757105,"at":"2026-11-07T04:51:56.691Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"        }\n"}
+{"sequence":126,"elapsed":66.939413843,"at":"2026-11-07T04:51:56.811Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"Resources:\n"}
+{"sequence":127,"elapsed":66.93957932800001,"at":"2026-11-07T04:51:56.811Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"    ~ 1 to update\n"}
+{"sequence":128,"elapsed":66.939630179,"at":"2026-11-07T04:51:56.811Z","type":"output","target":"local","phase":"preview-update","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":129,"elapsed":67.158711196,"at":"2026-11-07T04:51:57.030Z","type":"command-end","target":"local","phase":"preview-update","exitCode":0,"timedOut":false}
+{"sequence":130,"elapsed":67.160420599,"at":"2026-11-07T04:51:57.032Z","type":"command-start","target":"local","phase":"up-update","command":["pulumi","up","--yes","--skip-preview","--non-interactive"]}
+{"sequence":131,"elapsed":68.47479728700002,"at":"2026-11-07T04:51:58.346Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"Updating (pilot):\n"}
+{"sequence":132,"elapsed":68.620072166,"at":"2026-11-07T04:51:58.491Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":133,"elapsed":75.89903351800001,"at":"2026-11-07T04:52:05.770Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"@ updating..........\n"}
+{"sequence":134,"elapsed":75.899169966,"at":"2026-11-07T04:52:05.770Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updating (0s) [diff: ~tags]\n"}
+{"sequence":135,"elapsed":75.976565214,"at":"2026-11-07T04:52:05.848Z","type":"http","target":"local","phase":"up-update","method":"PUT","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":136,"elapsed":75.981806799,"at":"2026-11-07T04:52:05.853Z","type":"http","target":"local","phase":"up-update","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":137,"elapsed":75.984623588,"at":"2026-11-07T04:52:05.856Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updated (0.09s) [diff: ~tags]\n"}
+{"sequence":138,"elapsed":76.120517031,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":139,"elapsed":76.12066015399999,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"Outputs:\n"}
+{"sequence":140,"elapsed":76.120713313,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":141,"elapsed":76.120755827,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":142,"elapsed":76.120788644,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"Resources:\n"}
+{"sequence":143,"elapsed":76.12082617700001,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"    ~ 1 updated\n"}
+{"sequence":144,"elapsed":76.120862633,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":145,"elapsed":76.12089365199999,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":146,"elapsed":76.120931966,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"Duration: 8s\n"}
+{"sequence":147,"elapsed":76.120989976,"at":"2026-11-07T04:52:05.992Z","type":"output","target":"local","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":148,"elapsed":76.33897602500001,"at":"2026-11-07T04:52:06.210Z","type":"command-end","target":"local","phase":"up-update","exitCode":0,"timedOut":false}
+{"sequence":149,"elapsed":76.34969170000001,"at":"2026-11-07T04:52:06.221Z","type":"probe","target":"local","phase":"read-update","method":"GET","status":200,"revision":"two"}
+{"sequence":150,"elapsed":76.363321402,"at":"2026-11-07T04:52:06.234Z","type":"probe","target":"local","phase":"inject-drift","method":"PATCH","status":200,"revision":"external"}
+{"sequence":151,"elapsed":76.36369293800001,"at":"2026-11-07T04:52:06.235Z","type":"command-start","target":"local","phase":"refresh-drift","command":["pulumi","refresh","--yes","--non-interactive"]}
+{"sequence":152,"elapsed":77.699938639,"at":"2026-11-07T04:52:07.571Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"Previewing refresh (pilot):\n"}
+{"sequence":153,"elapsed":77.84823887,"at":"2026-11-07T04:52:07.719Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":154,"elapsed":78.840733121,"at":"2026-11-07T04:52:08.712Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"@ previewing refresh....\n"}
+{"sequence":155,"elapsed":78.84086182,"at":"2026-11-07T04:52:08.712Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing \n"}
+{"sequence":156,"elapsed":78.840895896,"at":"2026-11-07T04:52:08.712Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":157,"elapsed":78.840919645,"at":"2026-11-07T04:52:08.712Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing \n"}
+{"sequence":158,"elapsed":78.91913380700001,"at":"2026-11-07T04:52:08.790Z","type":"http","target":"local","phase":"refresh-drift","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":159,"elapsed":78.925027352,"at":"2026-11-07T04:52:08.796Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group update [diff: ~tags]\n"}
+{"sequence":160,"elapsed":78.945722743,"at":"2026-11-07T04:52:08.817Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":161,"elapsed":78.945873062,"at":"2026-11-07T04:52:08.817Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"Resources:\n"}
+{"sequence":162,"elapsed":78.94591994000001,"at":"2026-11-07T04:52:08.817Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    ~ 1 to update\n"}
+{"sequence":163,"elapsed":78.94595363,"at":"2026-11-07T04:52:08.817Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":164,"elapsed":78.945989183,"at":"2026-11-07T04:52:08.817Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":165,"elapsed":78.94602609500001,"at":"2026-11-07T04:52:08.817Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"Refreshing (pilot):\n"}
+{"sequence":166,"elapsed":79.094712952,"at":"2026-11-07T04:52:08.966Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":167,"elapsed":80.132987802,"at":"2026-11-07T04:52:10.004Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"@ refreshing....\n"}
+{"sequence":168,"elapsed":80.13340707300001,"at":"2026-11-07T04:52:10.005Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing (0s) \n"}
+{"sequence":169,"elapsed":80.133511013,"at":"2026-11-07T04:52:10.005Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":170,"elapsed":80.133552952,"at":"2026-11-07T04:52:10.005Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing (0s) \n"}
+{"sequence":171,"elapsed":80.190656394,"at":"2026-11-07T04:52:10.062Z","type":"http","target":"local","phase":"refresh-drift","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":172,"elapsed":80.194439128,"at":"2026-11-07T04:52:10.066Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updated (0.06s) [diff: ~tags]\n"}
+{"sequence":173,"elapsed":80.206360856,"at":"2026-11-07T04:52:10.077Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":174,"elapsed":80.206484837,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"Outputs:\n"}
+{"sequence":175,"elapsed":80.206555886,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":176,"elapsed":80.20658655400001,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":177,"elapsed":80.206610973,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"Resources:\n"}
+{"sequence":178,"elapsed":80.206634884,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    ~ 1 updated\n"}
+{"sequence":179,"elapsed":80.20665837800001,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":180,"elapsed":80.206681672,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":181,"elapsed":80.206705285,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"Duration: 2s\n"}
+{"sequence":182,"elapsed":80.206873967,"at":"2026-11-07T04:52:10.078Z","type":"output","target":"local","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":183,"elapsed":80.414263473,"at":"2026-11-07T04:52:10.285Z","type":"command-end","target":"local","phase":"refresh-drift","exitCode":0,"timedOut":false}
+{"sequence":184,"elapsed":80.415778146,"at":"2026-11-07T04:52:10.287Z","type":"command-start","target":"local","phase":"up-repair","command":["pulumi","up","--yes","--skip-preview","--non-interactive"]}
+{"sequence":185,"elapsed":81.73659949200001,"at":"2026-11-07T04:52:11.608Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"Updating (pilot):\n"}
+{"sequence":186,"elapsed":81.879664756,"at":"2026-11-07T04:52:11.751Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":187,"elapsed":89.65522917400001,"at":"2026-11-07T04:52:19.526Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"@ updating..........\n"}
+{"sequence":188,"elapsed":89.655445411,"at":"2026-11-07T04:52:19.527Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updating (0s) [diff: ~tags]\n"}
+{"sequence":189,"elapsed":89.73793777099999,"at":"2026-11-07T04:52:19.609Z","type":"http","target":"local","phase":"up-repair","method":"PUT","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":190,"elapsed":89.742335908,"at":"2026-11-07T04:52:19.613Z","type":"http","target":"local","phase":"up-repair","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":191,"elapsed":89.74611556,"at":"2026-11-07T04:52:19.617Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"@ updating....\n"}
+{"sequence":192,"elapsed":89.746316565,"at":"2026-11-07T04:52:19.617Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updated (0.09s) [diff: ~tags]\n"}
+{"sequence":193,"elapsed":89.876130303,"at":"2026-11-07T04:52:19.747Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":194,"elapsed":89.87626217100001,"at":"2026-11-07T04:52:19.747Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"Outputs:\n"}
+{"sequence":195,"elapsed":89.87637017400002,"at":"2026-11-07T04:52:19.747Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":196,"elapsed":89.876426274,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":197,"elapsed":89.876460023,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"Resources:\n"}
+{"sequence":198,"elapsed":89.876487857,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"    ~ 1 updated\n"}
+{"sequence":199,"elapsed":89.876518096,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":200,"elapsed":89.876547303,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":201,"elapsed":89.876575863,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"Duration: 8s\n"}
+{"sequence":202,"elapsed":89.876605394,"at":"2026-11-07T04:52:19.748Z","type":"output","target":"local","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":203,"elapsed":90.07831718199999,"at":"2026-11-07T04:52:19.949Z","type":"command-end","target":"local","phase":"up-repair","exitCode":0,"timedOut":false}
+{"sequence":204,"elapsed":90.0872734,"at":"2026-11-07T04:52:19.958Z","type":"probe","target":"local","phase":"read-repair","method":"GET","status":200,"revision":"two"}
+{"sequence":205,"elapsed":90.087888729,"at":"2026-11-07T04:52:19.959Z","type":"command-start","target":"local","phase":"state-export","command":["pulumi","stack","export"]}
+{"sequence":206,"elapsed":90.624438746,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"{\n"}
+{"sequence":207,"elapsed":90.624568583,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"    \"version\": 3,\n"}
+{"sequence":208,"elapsed":90.62459865,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"    \"deployment\": {\n"}
+{"sequence":209,"elapsed":90.62462040700001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        \"manifest\": {\n"}
+{"sequence":210,"elapsed":90.624640839,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            \"time\": \"2026-11-07T04:52:19.747198683Z\",\n"}
+{"sequence":211,"elapsed":90.624661575,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            \"magic\": \"d540e88789f936dedbe50a295669c8332d4526ab86e83f1434c07707510d8880\",\n"}
+{"sequence":212,"elapsed":90.62469191400001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            \"version\": \"v3.273.0\"\n"}
+{"sequence":213,"elapsed":90.624711027,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        },\n"}
+{"sequence":214,"elapsed":90.624728665,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        \"secrets_providers\": {\n"}
+{"sequence":215,"elapsed":90.62474652700001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            \"type\": \"passphrase\",\n"}
+{"sequence":216,"elapsed":90.624764173,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            \"state\": {\n"}
+{"sequence":217,"elapsed":90.62479311700001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"salt\": \"v1:ZyiiJ+ebWro=:v1:vdHXIwUJFqTb/m/4:J4n1cyQ45KXSG+SIcGoDOJOvrtQgFw==\"\n"}
+{"sequence":218,"elapsed":90.624812699,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            }\n"}
+{"sequence":219,"elapsed":90.62482988000001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        },\n"}
+{"sequence":220,"elapsed":90.62484748700001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        \"resources\": [\n"}
+{"sequence":221,"elapsed":90.624865243,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            {\n"}
+{"sequence":222,"elapsed":90.62488724900001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot\",\n"}
+{"sequence":223,"elapsed":90.624905883,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"custom\": false,\n"}
+{"sequence":224,"elapsed":90.62492339,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"type\": \"pulumi:pulumi:Stack\",\n"}
+{"sequence":225,"elapsed":90.624940796,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"outputs\": {\n"}
+{"sequence":226,"elapsed":90.624960393,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"groupId\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":227,"elapsed":90.624978107,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":228,"elapsed":90.624995873,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"created\": \"2026-11-07T04:51:26.693051126Z\",\n"}
+{"sequence":229,"elapsed":90.625014124,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"modified\": \"2026-11-07T04:51:26.693051126Z\",\n"}
+{"sequence":230,"elapsed":90.625031974,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"sourcePosition\": \"project:///node_modules/@pulumi/runtime/stack.ts#38,19\",\n"}
+{"sequence":231,"elapsed":90.625049124,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"stackTrace\": [\n"}
+{"sequence":232,"elapsed":90.62507222400001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":233,"elapsed":90.62509072200001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/runtime/stack.ts#38,19\"\n"}
+{"sequence":234,"elapsed":90.62510803800001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":235,"elapsed":90.625125344,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":236,"elapsed":90.62514269600001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/cmd/run/run.ts#601,38\"\n"}
+{"sequence":237,"elapsed":90.625159851,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    }\n"}
+{"sequence":238,"elapsed":90.625177079,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                ]\n"}
+{"sequence":239,"elapsed":90.625194644,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            },\n"}
+{"sequence":240,"elapsed":90.625211752,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            {\n"}
+{"sequence":241,"elapsed":90.62522926400001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0\",\n"}
+{"sequence":242,"elapsed":90.625246677,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"custom\": true,\n"}
+{"sequence":243,"elapsed":90.62526438600001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"id\": \"2f0151a7-42a1-4c1c-8125-cc48e8ea6109\",\n"}
+{"sequence":244,"elapsed":90.62530820900001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"type\": \"pulumi:providers:azure-native\",\n"}
+{"sequence":245,"elapsed":90.62535150400001,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"inputs\": {\n"}
+{"sequence":246,"elapsed":90.625382864,"at":"2026-11-07T04:52:20.496Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"__internal\": {},\n"}
+{"sequence":247,"elapsed":90.62541036600001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"subscriptionId\": \"<subscription>\",\n"}
+{"sequence":248,"elapsed":90.62543005900001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"version\": \"3.30.0\"\n"}
+{"sequence":249,"elapsed":90.625447455,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":250,"elapsed":90.62546480500001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"outputs\": {\n"}
+{"sequence":251,"elapsed":90.625482891,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"subscriptionId\": \"<subscription>\",\n"}
+{"sequence":252,"elapsed":90.625508799,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"version\": \"3.30.0\"\n"}
+{"sequence":253,"elapsed":90.625526874,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":254,"elapsed":90.62554463000001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"created\": \"2026-11-07T04:51:32.844435227Z\",\n"}
+{"sequence":255,"elapsed":90.62556240500001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"modified\": \"2026-11-07T04:51:32.844435227Z\"\n"}
+{"sequence":256,"elapsed":90.625579581,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            },\n"}
+{"sequence":257,"elapsed":90.62559657999999,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            {\n"}
+{"sequence":258,"elapsed":90.62561462600002,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group\",\n"}
+{"sequence":259,"elapsed":90.625642145,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"custom\": true,\n"}
+{"sequence":260,"elapsed":90.62566939700001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":261,"elapsed":90.62568804600001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"type\": \"azure-native:resources:ResourceGroup\",\n"}
+{"sequence":262,"elapsed":90.625705334,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"inputs\": {\n"}
+{"sequence":263,"elapsed":90.625723385,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"azureApiVersion\": \"2024-03-01\",\n"}
+{"sequence":264,"elapsed":90.625741183,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"location\": \"eastus\",\n"}
+{"sequence":265,"elapsed":90.62575884900001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"resourceGroupName\": \"<group>\",\n"}
+{"sequence":266,"elapsed":90.62577681500001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"tags\": {\n"}
+{"sequence":267,"elapsed":90.625803281,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"expires\": \"<expiry>\",\n"}
+{"sequence":268,"elapsed":90.62582199100001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":269,"elapsed":90.625839422,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"revision\": \"two\",\n"}
+{"sequence":270,"elapsed":90.625857822,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"run\": \"<run>\"\n"}
+{"sequence":271,"elapsed":90.625875321,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    }\n"}
+{"sequence":272,"elapsed":90.625898111,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":273,"elapsed":90.625916302,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"outputs\": {\n"}
+{"sequence":274,"elapsed":90.62593379799999,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"azureApiVersion\": \"2024-03-01\",\n"}
+{"sequence":275,"elapsed":90.625952078,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":276,"elapsed":90.625969558,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"location\": \"eastus\",\n"}
+{"sequence":277,"elapsed":90.625987007,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"name\": \"<group>\",\n"}
+{"sequence":278,"elapsed":90.626004935,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"properties\": {\n"}
+{"sequence":279,"elapsed":90.62602257300001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"provisioningState\": \"Succeeded\"\n"}
+{"sequence":280,"elapsed":90.626039593,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":281,"elapsed":90.626056821,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"tags\": {\n"}
+{"sequence":282,"elapsed":90.62607471900002,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"expires\": \"<expiry>\",\n"}
+{"sequence":283,"elapsed":90.62609291400001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":284,"elapsed":90.626110275,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"revision\": \"two\",\n"}
+{"sequence":285,"elapsed":90.62613133,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"run\": \"<run>\"\n"}
+{"sequence":286,"elapsed":90.626149284,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":287,"elapsed":90.626166996,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"type\": \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":288,"elapsed":90.62618403,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":289,"elapsed":90.626201495,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"parent\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot\",\n"}
+{"sequence":290,"elapsed":90.626220078,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"provider\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::2f0151a7-42a1-4c1c-8125-cc48e8ea6109\",\n"}
+{"sequence":291,"elapsed":90.626242958,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"propertyDependencies\": {\n"}
+{"sequence":292,"elapsed":90.626261162,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"location\": [],\n"}
+{"sequence":293,"elapsed":90.62633270900001,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"resourceGroupName\": [],\n"}
+{"sequence":294,"elapsed":90.626403249,"at":"2026-11-07T04:52:20.497Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    \"tags\": []\n"}
+{"sequence":295,"elapsed":90.626422947,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":296,"elapsed":90.626440944,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"created\": \"2026-11-07T04:51:32.965666583Z\",\n"}
+{"sequence":297,"elapsed":90.62645876799999,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"modified\": \"2026-11-07T04:52:19.615331721Z\",\n"}
+{"sequence":298,"elapsed":90.626476802,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"sourcePosition\": \"project:///index.ts#4,15\",\n"}
+{"sequence":299,"elapsed":90.62649524400001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                \"stackTrace\": [\n"}
+{"sequence":300,"elapsed":90.626513064,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":301,"elapsed":90.626530969,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///index.ts#4,15\"\n"}
+{"sequence":302,"elapsed":90.62654856500001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":303,"elapsed":90.62656673800001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":304,"elapsed":90.626584543,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":305,"elapsed":90.626602688,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/ts-node/src/index.ts#1618,23\"\n"}
+{"sequence":306,"elapsed":90.626620398,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":307,"elapsed":90.626638107,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":308,"elapsed":90.626655584,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":309,"elapsed":90.626673188,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/ts-node/src/index.ts#1621,12\"\n"}
+{"sequence":310,"elapsed":90.62669079999999,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":311,"elapsed":90.62670852400001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":312,"elapsed":90.62673371100001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":313,"elapsed":90.626751915,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":314,"elapsed":90.626769013,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":315,"elapsed":90.626796512,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":316,"elapsed":90.626815424,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":317,"elapsed":90.626833065,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/cmd/run/run.ts#541,33\"\n"}
+{"sequence":318,"elapsed":90.6268505,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":319,"elapsed":90.626867929,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":320,"elapsed":90.626886365,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/runtime/stack.ts#79,28\"\n"}
+{"sequence":321,"elapsed":90.62690388700001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":322,"elapsed":90.62692111599999,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":323,"elapsed":90.626939246,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/resource.ts#1687,22\"\n"}
+{"sequence":324,"elapsed":90.62695665000001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                    }\n"}
+{"sequence":325,"elapsed":90.626973642,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"                ]\n"}
+{"sequence":326,"elapsed":90.626991171,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"            }\n"}
+{"sequence":327,"elapsed":90.627008745,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        ],\n"}
+{"sequence":328,"elapsed":90.62702620900001,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"        \"metadata\": {}\n"}
+{"sequence":329,"elapsed":90.62704325,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"    }\n"}
+{"sequence":330,"elapsed":90.627060578,"at":"2026-11-07T04:52:20.498Z","type":"output","target":"local","phase":"state-export","stream":"stdout","text":"}\n"}
+{"sequence":331,"elapsed":90.792997766,"at":"2026-11-07T04:52:20.664Z","type":"command-end","target":"local","phase":"state-export","exitCode":0,"timedOut":false}
+{"sequence":332,"elapsed":90.79576492300001,"at":"2026-11-07T04:52:20.667Z","type":"command-start","target":"local","phase":"state-remove","command":["pulumi","state","delete","urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group","--yes","--non-interactive"]}
+{"sequence":333,"elapsed":92.081183468,"at":"2026-11-07T04:52:21.952Z","type":"output","target":"local","phase":"state-remove","stream":"stdout","text":"Resource deleted\n"}
+{"sequence":334,"elapsed":92.23394346900001,"at":"2026-11-07T04:52:22.105Z","type":"command-end","target":"local","phase":"state-remove","exitCode":0,"timedOut":false}
+{"sequence":335,"elapsed":92.235373744,"at":"2026-11-07T04:52:22.106Z","type":"command-start","target":"local","phase":"import","command":["pulumi","import","azure-native:resources:ResourceGroup","group","/subscriptions/<subscription>/resourcegroups/<group>","--generate-code=false","--protect=false","--yes","--non-interactive","--provider","urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::2f0151a7-42a1-4c1c-8125-cc48e8ea6109"]}
+{"sequence":336,"elapsed":93.49415458499999,"at":"2026-11-07T04:52:23.365Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Previewing import (pilot):\n"}
+{"sequence":337,"elapsed":93.720671577,"at":"2026-11-07T04:52:23.592Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":338,"elapsed":95.681137594,"at":"2026-11-07T04:52:25.552Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"@ previewing import.....\n"}
+{"sequence":339,"elapsed":95.68131735700001,"at":"2026-11-07T04:52:25.552Z","type":"output","target":"local","phase":"import","stream":"stdout","text":" =  azure-native:resources:ResourceGroup group import \n"}
+{"sequence":340,"elapsed":95.758906502,"at":"2026-11-07T04:52:25.630Z","type":"http","target":"local","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":341,"elapsed":95.777927264,"at":"2026-11-07T04:52:25.649Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":342,"elapsed":95.77803901400002,"at":"2026-11-07T04:52:25.649Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Resources:\n"}
+{"sequence":343,"elapsed":95.778066283,"at":"2026-11-07T04:52:25.649Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"    = 1 to import\n"}
+{"sequence":344,"elapsed":95.778087901,"at":"2026-11-07T04:52:25.649Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":345,"elapsed":95.77810754500001,"at":"2026-11-07T04:52:25.649Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":346,"elapsed":95.778127043,"at":"2026-11-07T04:52:25.649Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Importing (pilot):\n"}
+{"sequence":347,"elapsed":96.039363151,"at":"2026-11-07T04:52:25.910Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":348,"elapsed":98.026542145,"at":"2026-11-07T04:52:27.898Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"@ importing.....\n"}
+{"sequence":349,"elapsed":98.026680054,"at":"2026-11-07T04:52:27.898Z","type":"output","target":"local","phase":"import","stream":"stdout","text":" =  azure-native:resources:ResourceGroup group importing (0s) \n"}
+{"sequence":350,"elapsed":98.101538818,"at":"2026-11-07T04:52:27.973Z","type":"http","target":"local","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":351,"elapsed":98.106128516,"at":"2026-11-07T04:52:27.977Z","type":"output","target":"local","phase":"import","stream":"stdout","text":" =  azure-native:resources:ResourceGroup group imported (0.08s) \n"}
+{"sequence":352,"elapsed":98.125152934,"at":"2026-11-07T04:52:27.996Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Outputs:\n"}
+{"sequence":353,"elapsed":98.12533904600001,"at":"2026-11-07T04:52:27.996Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":354,"elapsed":98.12541236500002,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":355,"elapsed":98.125455659,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Resources:\n"}
+{"sequence":356,"elapsed":98.125489458,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"    = 1 imported\n"}
+{"sequence":357,"elapsed":98.125518872,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":358,"elapsed":98.12554823500001,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":359,"elapsed":98.125577447,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"Duration: 3s\n"}
+{"sequence":360,"elapsed":98.125605322,"at":"2026-11-07T04:52:27.997Z","type":"output","target":"local","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":361,"elapsed":98.307064666,"at":"2026-11-07T04:52:28.178Z","type":"command-end","target":"local","phase":"import","exitCode":0,"timedOut":false}
+{"sequence":362,"elapsed":98.309415133,"at":"2026-11-07T04:52:28.181Z","type":"command-start","target":"local","phase":"preview-imported","command":["pulumi","preview","--non-interactive","--diff","--expect-no-changes"]}
+{"sequence":363,"elapsed":99.772643933,"at":"2026-11-07T04:52:29.644Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":364,"elapsed":101.204739953,"at":"2026-11-07T04:52:31.076Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"  pulumi:pulumi:Stack: (same)\n"}
+{"sequence":365,"elapsed":101.20488981999999,"at":"2026-11-07T04:52:31.076Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":366,"elapsed":107.512741449,"at":"2026-11-07T04:52:37.384Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"    --outputs:--\n"}
+{"sequence":367,"elapsed":107.51292201400001,"at":"2026-11-07T04:52:37.384Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"  ~ groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\" => \"/subscriptions/<subscription>/resourcegroups/<group>\"\n"}
+{"sequence":368,"elapsed":107.60295350800001,"at":"2026-11-07T04:52:37.474Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"Resources:\n"}
+{"sequence":369,"elapsed":107.603109284,"at":"2026-11-07T04:52:37.474Z","type":"output","target":"local","phase":"preview-imported","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":370,"elapsed":107.81041031800001,"at":"2026-11-07T04:52:37.682Z","type":"command-end","target":"local","phase":"preview-imported","exitCode":0,"timedOut":false}
+{"sequence":371,"elapsed":107.81175357900001,"at":"2026-11-07T04:52:37.683Z","type":"command-start","target":"local","phase":"destroy","command":["pulumi","destroy","--yes","--skip-preview","--non-interactive"]}
+{"sequence":372,"elapsed":109.001845856,"at":"2026-11-07T04:52:38.873Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Destroying (pilot):\n"}
+{"sequence":373,"elapsed":109.15550005499999,"at":"2026-11-07T04:52:39.027Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":374,"elapsed":110.153021374,"at":"2026-11-07T04:52:40.024Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"@ destroying....\n"}
+{"sequence":375,"elapsed":110.153241912,"at":"2026-11-07T04:52:40.024Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":" -  azure-native:resources:ResourceGroup group deleting (0s) \n"}
+{"sequence":376,"elapsed":110.212552377,"at":"2026-11-07T04:52:40.084Z","type":"http","target":"local","phase":"destroy","method":"DELETE","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":377,"elapsed":110.215444023,"at":"2026-11-07T04:52:40.087Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":" -  azure-native:resources:ResourceGroup group deleted (0.06s) \n"}
+{"sequence":378,"elapsed":110.21700720700001,"at":"2026-11-07T04:52:40.088Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":" -  pulumi:pulumi:Stack paired-lifecycle-pilot deleting (0s) \n"}
+{"sequence":379,"elapsed":110.23035623,"at":"2026-11-07T04:52:40.101Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":" -  pulumi:pulumi:Stack paired-lifecycle-pilot deleted (0.00s) \n"}
+{"sequence":380,"elapsed":110.230504937,"at":"2026-11-07T04:52:40.102Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":381,"elapsed":110.230552785,"at":"2026-11-07T04:52:40.102Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Resources:\n"}
+{"sequence":382,"elapsed":110.230596098,"at":"2026-11-07T04:52:40.102Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"    - 2 deleted\n"}
+{"sequence":383,"elapsed":110.23062936000001,"at":"2026-11-07T04:52:40.102Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":384,"elapsed":110.230662268,"at":"2026-11-07T04:52:40.102Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"Duration: 2s\n"}
+{"sequence":385,"elapsed":110.230697808,"at":"2026-11-07T04:52:40.102Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":386,"elapsed":110.23162673,"at":"2026-11-07T04:52:40.103Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"The resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. \n"}
+{"sequence":387,"elapsed":110.231717112,"at":"2026-11-07T04:52:40.103Z","type":"output","target":"local","phase":"destroy","stream":"stdout","text":"If you want to remove the stack completely, run `pulumi stack rm pilot`.\n"}
+{"sequence":388,"elapsed":110.40500589500002,"at":"2026-11-07T04:52:40.276Z","type":"command-end","target":"local","phase":"destroy","exitCode":0,"timedOut":false}
+{"sequence":389,"elapsed":110.415843259,"at":"2026-11-07T04:52:40.287Z","type":"probe","target":"local","phase":"post-destroy-read-0","method":"GET","status":404}
+{"sequence":390,"elapsed":110.422001357,"at":"2026-11-07T04:52:40.293Z","type":"probe","target":"local","phase":"cleanup-read","method":"GET","status":404}
+{"sequence":391,"elapsed":110.42582784900002,"at":"2026-11-07T04:52:40.297Z","type":"probe","target":"local","phase":"cleanup-absence","method":"GET","status":404}
+{"sequence":392,"elapsed":111.64248023500001,"at":"2026-11-07T04:52:41.514Z","type":"target-end","target":"local","ok":true,"cleanup":{"nativeDestroyAccepted":true,"nativeDestroy":true,"absent":true,"privateFilesRemoved":true}}
+{"sequence":393,"elapsed":111.645335018,"at":"2026-11-07T04:52:41.516Z","type":"target-start","target":"azure"}
+{"sequence":394,"elapsed":115.12869368300001,"at":"2026-11-07T04:52:45.000Z","type":"probe","target":"azure","phase":"preflight","method":"GET","status":404}
+{"sequence":395,"elapsed":115.131834831,"at":"2026-11-07T04:52:45.003Z","type":"command-start","target":"azure","phase":"version","command":["pulumi","version"]}
+{"sequence":396,"elapsed":115.61697144000001,"at":"2026-11-07T04:52:45.488Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"v3.273.0\n"}
+{"sequence":397,"elapsed":115.78362692200001,"at":"2026-11-07T04:52:45.655Z","type":"command-end","target":"azure","phase":"version","exitCode":0,"timedOut":false}
+{"sequence":398,"elapsed":115.785360583,"at":"2026-11-07T04:52:45.656Z","type":"command-start","target":"azure","phase":"dependencies","command":["npm","ci","--ignore-scripts","--no-audit"]}
+{"sequence":399,"elapsed":118.60747015999999,"at":"2026-11-07T04:52:48.479Z","type":"output","target":"azure","phase":"dependencies","stream":"stderr","text":"npm warn deprecated @opentelemetry/sdk-trace-node@2.12.0: Use @opentelemetry/sdk-trace package\n"}
+{"sequence":400,"elapsed":119.257017708,"at":"2026-11-07T04:52:49.128Z","type":"output","target":"azure","phase":"dependencies","stream":"stderr","text":"npm warn deprecated @opentelemetry/sdk-trace-base@2.12.0: Use @opentelemetry/sdk-trace package\n"}
+{"sequence":401,"elapsed":127.968878978,"at":"2026-11-07T04:52:57.840Z","type":"output","target":"azure","phase":"dependencies","stream":"stdout","text":"\n"}
+{"sequence":402,"elapsed":127.96904272100001,"at":"2026-11-07T04:52:57.840Z","type":"output","target":"azure","phase":"dependencies","stream":"stdout","text":"added 129 packages in 12s\n"}
+{"sequence":403,"elapsed":127.969088415,"at":"2026-11-07T04:52:57.840Z","type":"output","target":"azure","phase":"dependencies","stream":"stdout","text":"\n"}
+{"sequence":404,"elapsed":127.969118716,"at":"2026-11-07T04:52:57.840Z","type":"output","target":"azure","phase":"dependencies","stream":"stdout","text":"9 packages are looking for funding\n"}
+{"sequence":405,"elapsed":127.96956866400001,"at":"2026-11-07T04:52:57.841Z","type":"output","target":"azure","phase":"dependencies","stream":"stdout","text":"  run `npm fund` for details\n"}
+{"sequence":406,"elapsed":129.49046620500002,"at":"2026-11-07T04:52:59.362Z","type":"command-end","target":"azure","phase":"dependencies","exitCode":0,"timedOut":false}
+{"sequence":407,"elapsed":129.491808318,"at":"2026-11-07T04:52:59.363Z","type":"command-start","target":"azure","phase":"provider-install","command":["pulumi","plugin","install","resource","azure-native","3.30.0"]}
+{"sequence":408,"elapsed":130.172075125,"at":"2026-11-07T04:53:00.043Z","type":"command-end","target":"azure","phase":"provider-install","exitCode":0,"timedOut":false}
+{"sequence":409,"elapsed":130.174684653,"at":"2026-11-07T04:53:00.046Z","type":"command-start","target":"azure","phase":"stack-init","command":["pulumi","stack","init","pilot","--non-interactive"]}
+{"sequence":410,"elapsed":131.38032000799998,"at":"2026-11-07T04:53:01.251Z","type":"output","target":"azure","phase":"stack-init","stream":"stderr","text":"Created stack 'pilot'\n"}
+{"sequence":411,"elapsed":131.56879590499997,"at":"2026-11-07T04:53:01.440Z","type":"command-end","target":"azure","phase":"stack-init","exitCode":0,"timedOut":false}
+{"sequence":412,"elapsed":131.570793931,"at":"2026-11-07T04:53:01.442Z","type":"command-start","target":"azure","phase":"config-azure-native:subscriptionId","command":["pulumi","config","set","azure-native:subscriptionId","<subscription>","--non-interactive"]}
+{"sequence":413,"elapsed":132.21443312899999,"at":"2026-11-07T04:53:02.086Z","type":"command-end","target":"azure","phase":"config-azure-native:subscriptionId","exitCode":0,"timedOut":false}
+{"sequence":414,"elapsed":132.216124804,"at":"2026-11-07T04:53:02.087Z","type":"command-start","target":"azure","phase":"config-groupName","command":["pulumi","config","set","groupName","<group>","--non-interactive"]}
+{"sequence":415,"elapsed":132.88165261599997,"at":"2026-11-07T04:53:02.753Z","type":"command-end","target":"azure","phase":"config-groupName","exitCode":0,"timedOut":false}
+{"sequence":416,"elapsed":132.883711029,"at":"2026-11-07T04:53:02.755Z","type":"command-start","target":"azure","phase":"config-location","command":["pulumi","config","set","location","eastus","--non-interactive"]}
+{"sequence":417,"elapsed":133.52517756299997,"at":"2026-11-07T04:53:03.396Z","type":"command-end","target":"azure","phase":"config-location","exitCode":0,"timedOut":false}
+{"sequence":418,"elapsed":133.526886038,"at":"2026-11-07T04:53:03.398Z","type":"command-start","target":"azure","phase":"config-runId","command":["pulumi","config","set","runId","<run>","--non-interactive"]}
+{"sequence":419,"elapsed":134.16004206099998,"at":"2026-11-07T04:53:04.031Z","type":"command-end","target":"azure","phase":"config-runId","exitCode":0,"timedOut":false}
+{"sequence":420,"elapsed":134.161883147,"at":"2026-11-07T04:53:04.033Z","type":"command-start","target":"azure","phase":"config-expires","command":["pulumi","config","set","expires","<expiry>","--non-interactive"]}
+{"sequence":421,"elapsed":134.79859607699998,"at":"2026-11-07T04:53:04.670Z","type":"command-end","target":"azure","phase":"config-expires","exitCode":0,"timedOut":false}
+{"sequence":422,"elapsed":134.80060973599998,"at":"2026-11-07T04:53:04.672Z","type":"command-start","target":"azure","phase":"config-revision","command":["pulumi","config","set","revision","one","--non-interactive"]}
+{"sequence":423,"elapsed":135.42726199099997,"at":"2026-11-07T04:53:05.298Z","type":"command-end","target":"azure","phase":"config-revision","exitCode":0,"timedOut":false}
+{"sequence":424,"elapsed":135.42883721,"at":"2026-11-07T04:53:05.300Z","type":"command-start","target":"azure","phase":"preview-create","command":["pulumi","preview","--non-interactive","--diff"]}
+{"sequence":425,"elapsed":136.81532341699997,"at":"2026-11-07T04:53:06.686Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":426,"elapsed":138.261226156,"at":"2026-11-07T04:53:08.132Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"+ pulumi:pulumi:Stack: (create)\n"}
+{"sequence":427,"elapsed":138.26142678899998,"at":"2026-11-07T04:53:08.133Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":428,"elapsed":144.681788734,"at":"2026-11-07T04:53:14.553Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"    + azure-native:resources:ResourceGroup: (create)\n"}
+{"sequence":429,"elapsed":144.68205739,"at":"2026-11-07T04:53:14.553Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        [urn=urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group]\n"}
+{"sequence":430,"elapsed":144.682162794,"at":"2026-11-07T04:53:14.553Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        [provider=urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::04da6b54-80e4-46f7-96ec-b56ff0331ba9]\n"}
+{"sequence":431,"elapsed":144.682221603,"at":"2026-11-07T04:53:14.553Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        azureApiVersion  : \"2024-03-01\"\n"}
+{"sequence":432,"elapsed":144.68226485799997,"at":"2026-11-07T04:53:14.553Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        location         : \"eastus\"\n"}
+{"sequence":433,"elapsed":144.68237584,"at":"2026-11-07T04:53:14.553Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        resourceGroupName: \"<group>\"\n"}
+{"sequence":434,"elapsed":144.68241981999998,"at":"2026-11-07T04:53:14.554Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        tags             : {\n"}
+{"sequence":435,"elapsed":144.682450047,"at":"2026-11-07T04:53:14.554Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"            expires : \"<expiry>\"\n"}
+{"sequence":436,"elapsed":144.68249670299997,"at":"2026-11-07T04:53:14.554Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"            project : \"globalstack-paired-lifecycle\"\n"}
+{"sequence":437,"elapsed":144.682527108,"at":"2026-11-07T04:53:14.554Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"            revision: \"one\"\n"}
+{"sequence":438,"elapsed":144.68258036699999,"at":"2026-11-07T04:53:14.554Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"            run     : \"<run>\"\n"}
+{"sequence":439,"elapsed":144.682611888,"at":"2026-11-07T04:53:14.554Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"        }\n"}
+{"sequence":440,"elapsed":144.702104822,"at":"2026-11-07T04:53:14.573Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"    --outputs:--\n"}
+{"sequence":441,"elapsed":144.702241343,"at":"2026-11-07T04:53:14.573Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"    groupId: [unknown]\n"}
+{"sequence":442,"elapsed":144.78639932299998,"at":"2026-11-07T04:53:14.658Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"Resources:\n"}
+{"sequence":443,"elapsed":144.78656329199998,"at":"2026-11-07T04:53:14.658Z","type":"output","target":"azure","phase":"preview-create","stream":"stdout","text":"    + 2 to create\n"}
+{"sequence":444,"elapsed":145.017218381,"at":"2026-11-07T04:53:14.888Z","type":"command-end","target":"azure","phase":"preview-create","exitCode":0,"timedOut":false}
+{"sequence":445,"elapsed":145.02193029199998,"at":"2026-11-07T04:53:14.893Z","type":"command-start","target":"azure","phase":"up-create","command":["pulumi","up","--yes","--skip-preview","--non-interactive"]}
+{"sequence":446,"elapsed":146.41000801199996,"at":"2026-11-07T04:53:16.281Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"Updating (pilot):\n"}
+{"sequence":447,"elapsed":146.58161222699997,"at":"2026-11-07T04:53:16.453Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":448,"elapsed":147.83305901399999,"at":"2026-11-07T04:53:17.704Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"@ updating....\n"}
+{"sequence":449,"elapsed":147.83319817699999,"at":"2026-11-07T04:53:17.704Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":" +  pulumi:pulumi:Stack paired-lifecycle-pilot creating (0s) \n"}
+{"sequence":450,"elapsed":154.301272986,"at":"2026-11-07T04:53:24.172Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"@ updating.........\n"}
+{"sequence":451,"elapsed":154.301438268,"at":"2026-11-07T04:53:24.173Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":" +  azure-native:resources:ResourceGroup group creating (0s) \n"}
+{"sequence":452,"elapsed":155.77926071299999,"at":"2026-11-07T04:53:25.650Z","type":"http","target":"azure","phase":"up-create","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":404}
+{"sequence":453,"elapsed":158.33590856499998,"at":"2026-11-07T04:53:28.207Z","type":"http","target":"azure","phase":"up-create","method":"PUT","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":201}
+{"sequence":454,"elapsed":158.914799872,"at":"2026-11-07T04:53:28.786Z","type":"http","target":"azure","phase":"up-create","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":455,"elapsed":158.917806296,"at":"2026-11-07T04:53:28.789Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"@ updating........\n"}
+{"sequence":456,"elapsed":158.91798919299998,"at":"2026-11-07T04:53:28.789Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":" +  azure-native:resources:ResourceGroup group created (4s) \n"}
+{"sequence":457,"elapsed":159.043585332,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":" +  pulumi:pulumi:Stack paired-lifecycle-pilot created (11s) \n"}
+{"sequence":458,"elapsed":159.04372463299998,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"Outputs:\n"}
+{"sequence":459,"elapsed":159.043799658,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":460,"elapsed":159.04384712599997,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":461,"elapsed":159.04388274099998,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"Resources:\n"}
+{"sequence":462,"elapsed":159.043911027,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"    + 2 created\n"}
+{"sequence":463,"elapsed":159.043940739,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":464,"elapsed":159.043970156,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"Duration: 13s\n"}
+{"sequence":465,"elapsed":159.044007002,"at":"2026-11-07T04:53:28.915Z","type":"output","target":"azure","phase":"up-create","stream":"stdout","text":"\n"}
+{"sequence":466,"elapsed":159.25076199699998,"at":"2026-11-07T04:53:29.122Z","type":"command-end","target":"azure","phase":"up-create","exitCode":0,"timedOut":false}
+{"sequence":467,"elapsed":159.784951401,"at":"2026-11-07T04:53:29.656Z","type":"probe","target":"azure","phase":"read-create","method":"GET","status":200,"revision":"one"}
+{"sequence":468,"elapsed":159.78507829499998,"at":"2026-11-07T04:53:29.656Z","type":"portal-pending","target":"azure","phase":"created","reason":"Terminal/API run only; Azure Portal capture is pending"}
+{"sequence":469,"elapsed":159.78534545,"at":"2026-11-07T04:53:29.656Z","type":"command-start","target":"azure","phase":"preview-stable","command":["pulumi","preview","--non-interactive","--diff","--expect-no-changes"]}
+{"sequence":470,"elapsed":161.134637631,"at":"2026-11-07T04:53:31.006Z","type":"output","target":"azure","phase":"preview-stable","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":471,"elapsed":162.629489993,"at":"2026-11-07T04:53:32.501Z","type":"output","target":"azure","phase":"preview-stable","stream":"stdout","text":"  pulumi:pulumi:Stack: (same)\n"}
+{"sequence":472,"elapsed":162.62962429799998,"at":"2026-11-07T04:53:32.501Z","type":"output","target":"azure","phase":"preview-stable","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":473,"elapsed":169.065953651,"at":"2026-11-07T04:53:38.937Z","type":"output","target":"azure","phase":"preview-stable","stream":"stdout","text":"Resources:\n"}
+{"sequence":474,"elapsed":169.066125554,"at":"2026-11-07T04:53:38.937Z","type":"output","target":"azure","phase":"preview-stable","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":475,"elapsed":169.276776814,"at":"2026-11-07T04:53:39.148Z","type":"command-end","target":"azure","phase":"preview-stable","exitCode":0,"timedOut":false}
+{"sequence":476,"elapsed":169.278928273,"at":"2026-11-07T04:53:39.150Z","type":"command-start","target":"azure","phase":"refresh","command":["pulumi","refresh","--yes","--non-interactive"]}
+{"sequence":477,"elapsed":170.606261272,"at":"2026-11-07T04:53:40.477Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Previewing refresh (pilot):\n"}
+{"sequence":478,"elapsed":170.779653326,"at":"2026-11-07T04:53:40.651Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":479,"elapsed":171.78010746599998,"at":"2026-11-07T04:53:41.651Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"@ previewing refresh....\n"}
+{"sequence":480,"elapsed":171.780266467,"at":"2026-11-07T04:53:41.651Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing \n"}
+{"sequence":481,"elapsed":171.780353527,"at":"2026-11-07T04:53:41.651Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":482,"elapsed":171.78041273899998,"at":"2026-11-07T04:53:41.652Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing \n"}
+{"sequence":483,"elapsed":172.444754437,"at":"2026-11-07T04:53:42.316Z","type":"http","target":"azure","phase":"refresh","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":484,"elapsed":172.448971456,"at":"2026-11-07T04:53:42.320Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    azure-native:resources:ResourceGroup group  \n"}
+{"sequence":485,"elapsed":172.46291784399997,"at":"2026-11-07T04:53:42.334Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":486,"elapsed":172.46307252999998,"at":"2026-11-07T04:53:42.334Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Resources:\n"}
+{"sequence":487,"elapsed":172.46311626899998,"at":"2026-11-07T04:53:42.334Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":488,"elapsed":172.46314874099997,"at":"2026-11-07T04:53:42.334Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":489,"elapsed":172.463178196,"at":"2026-11-07T04:53:42.334Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Refreshing (pilot):\n"}
+{"sequence":490,"elapsed":172.61985140299998,"at":"2026-11-07T04:53:42.491Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":491,"elapsed":173.631356499,"at":"2026-11-07T04:53:43.502Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"@ refreshing....\n"}
+{"sequence":492,"elapsed":173.63162397600001,"at":"2026-11-07T04:53:43.503Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing (0s) \n"}
+{"sequence":493,"elapsed":173.631694894,"at":"2026-11-07T04:53:43.503Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":494,"elapsed":173.63185808999998,"at":"2026-11-07T04:53:43.503Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing (0s) \n"}
+{"sequence":495,"elapsed":173.908732246,"at":"2026-11-07T04:53:43.780Z","type":"http","target":"azure","phase":"refresh","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":496,"elapsed":173.913132849,"at":"2026-11-07T04:53:43.784Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    azure-native:resources:ResourceGroup group  \n"}
+{"sequence":497,"elapsed":173.931478955,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":498,"elapsed":173.931606034,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Outputs:\n"}
+{"sequence":499,"elapsed":173.931639435,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":500,"elapsed":173.931665252,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":501,"elapsed":173.931689227,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Resources:\n"}
+{"sequence":502,"elapsed":173.93171456199997,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":503,"elapsed":173.931771024,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":504,"elapsed":173.93179622399998,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"Duration: 2s\n"}
+{"sequence":505,"elapsed":173.931820224,"at":"2026-11-07T04:53:43.803Z","type":"output","target":"azure","phase":"refresh","stream":"stdout","text":"\n"}
+{"sequence":506,"elapsed":174.117855117,"at":"2026-11-07T04:53:43.989Z","type":"command-end","target":"azure","phase":"refresh","exitCode":0,"timedOut":false}
+{"sequence":507,"elapsed":174.122238208,"at":"2026-11-07T04:53:43.993Z","type":"command-start","target":"azure","phase":"config-revision","command":["pulumi","config","set","revision","two","--non-interactive"]}
+{"sequence":508,"elapsed":174.807593605,"at":"2026-11-07T04:53:44.679Z","type":"command-end","target":"azure","phase":"config-revision","exitCode":0,"timedOut":false}
+{"sequence":509,"elapsed":174.809314763,"at":"2026-11-07T04:53:44.680Z","type":"command-start","target":"azure","phase":"preview-update","command":["pulumi","preview","--non-interactive","--diff"]}
+{"sequence":510,"elapsed":176.221801266,"at":"2026-11-07T04:53:46.093Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":511,"elapsed":177.687704369,"at":"2026-11-07T04:53:47.559Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"  pulumi:pulumi:Stack: (same)\n"}
+{"sequence":512,"elapsed":177.68786932,"at":"2026-11-07T04:53:47.559Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":513,"elapsed":183.900193484,"at":"2026-11-07T04:53:53.771Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"    ~ azure-native:resources:ResourceGroup: (update)\n"}
+{"sequence":514,"elapsed":183.900399919,"at":"2026-11-07T04:53:53.771Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"        [id=/subscriptions/<subscription>/resourceGroups/<group>]\n"}
+{"sequence":515,"elapsed":183.900459835,"at":"2026-11-07T04:53:53.772Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"        [urn=urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group]\n"}
+{"sequence":516,"elapsed":183.90049630899998,"at":"2026-11-07T04:53:53.772Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"        [provider=urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::b282cfae-8869-45ec-9779-0237c8bd19dd]\n"}
+{"sequence":517,"elapsed":183.900524867,"at":"2026-11-07T04:53:53.772Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"      ~ tags: {\n"}
+{"sequence":518,"elapsed":183.90055482199998,"at":"2026-11-07T04:53:53.772Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"          ~ revision: \"one\" => \"two\"\n"}
+{"sequence":519,"elapsed":183.90058520499997,"at":"2026-11-07T04:53:53.772Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"        }\n"}
+{"sequence":520,"elapsed":184.027072854,"at":"2026-11-07T04:53:53.898Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"Resources:\n"}
+{"sequence":521,"elapsed":184.02723743399997,"at":"2026-11-07T04:53:53.898Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"    ~ 1 to update\n"}
+{"sequence":522,"elapsed":184.02733482999997,"at":"2026-11-07T04:53:53.898Z","type":"output","target":"azure","phase":"preview-update","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":523,"elapsed":184.275300424,"at":"2026-11-07T04:53:54.146Z","type":"command-end","target":"azure","phase":"preview-update","exitCode":0,"timedOut":false}
+{"sequence":524,"elapsed":184.27754353199998,"at":"2026-11-07T04:53:54.149Z","type":"command-start","target":"azure","phase":"up-update","command":["pulumi","up","--yes","--skip-preview","--non-interactive"]}
+{"sequence":525,"elapsed":185.630172051,"at":"2026-11-07T04:53:55.501Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"Updating (pilot):\n"}
+{"sequence":526,"elapsed":185.808254648,"at":"2026-11-07T04:53:55.679Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":527,"elapsed":193.47323701399998,"at":"2026-11-07T04:54:03.344Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"@ updating..........\n"}
+{"sequence":528,"elapsed":193.473424948,"at":"2026-11-07T04:54:03.345Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updating (0s) [diff: ~tags]\n"}
+{"sequence":529,"elapsed":195.20019917399998,"at":"2026-11-07T04:54:05.071Z","type":"http","target":"azure","phase":"up-update","method":"PUT","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":530,"elapsed":195.792885373,"at":"2026-11-07T04:54:05.664Z","type":"http","target":"azure","phase":"up-update","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":531,"elapsed":195.795113317,"at":"2026-11-07T04:54:05.666Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"@ updating......\n"}
+{"sequence":532,"elapsed":195.795218882,"at":"2026-11-07T04:54:05.666Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updated (2s) [diff: ~tags]\n"}
+{"sequence":533,"elapsed":195.93761301,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":534,"elapsed":195.937762726,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"Outputs:\n"}
+{"sequence":535,"elapsed":195.937815122,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":536,"elapsed":195.93785046600001,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":537,"elapsed":195.937921878,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"Resources:\n"}
+{"sequence":538,"elapsed":195.937961143,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"    ~ 1 updated\n"}
+{"sequence":539,"elapsed":195.938002978,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":540,"elapsed":195.938035939,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":541,"elapsed":195.938066468,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"Duration: 11s\n"}
+{"sequence":542,"elapsed":195.938098462,"at":"2026-11-07T04:54:05.809Z","type":"output","target":"azure","phase":"up-update","stream":"stdout","text":"\n"}
+{"sequence":543,"elapsed":196.143759544,"at":"2026-11-07T04:54:06.015Z","type":"command-end","target":"azure","phase":"up-update","exitCode":0,"timedOut":false}
+{"sequence":544,"elapsed":197.100171344,"at":"2026-11-07T04:54:06.971Z","type":"probe","target":"azure","phase":"read-update","method":"GET","status":200,"revision":"two"}
+{"sequence":545,"elapsed":197.10032889,"at":"2026-11-07T04:54:06.971Z","type":"portal-pending","target":"azure","phase":"updated","reason":"Terminal/API run only; Azure Portal capture is pending"}
+{"sequence":546,"elapsed":198.63285856,"at":"2026-11-07T04:54:08.504Z","type":"probe","target":"azure","phase":"inject-drift","method":"PATCH","status":200,"revision":"external"}
+{"sequence":547,"elapsed":198.633251401,"at":"2026-11-07T04:54:08.504Z","type":"command-start","target":"azure","phase":"refresh-drift","command":["pulumi","refresh","--yes","--non-interactive"]}
+{"sequence":548,"elapsed":199.86242337,"at":"2026-11-07T04:54:09.734Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"Previewing refresh (pilot):\n"}
+{"sequence":549,"elapsed":200.010323921,"at":"2026-11-07T04:54:09.881Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":550,"elapsed":201.037962973,"at":"2026-11-07T04:54:10.909Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"@ previewing refresh....\n"}
+{"sequence":551,"elapsed":201.038101854,"at":"2026-11-07T04:54:10.909Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing \n"}
+{"sequence":552,"elapsed":201.038338861,"at":"2026-11-07T04:54:10.909Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":553,"elapsed":201.03865639999998,"at":"2026-11-07T04:54:10.910Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing \n"}
+{"sequence":554,"elapsed":202.00343367099998,"at":"2026-11-07T04:54:11.875Z","type":"http","target":"azure","phase":"refresh-drift","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":555,"elapsed":202.00845784799998,"at":"2026-11-07T04:54:11.880Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"@ previewing refresh....\n"}
+{"sequence":556,"elapsed":202.008610747,"at":"2026-11-07T04:54:11.880Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group update [diff: ~tags]\n"}
+{"sequence":557,"elapsed":202.01966425499998,"at":"2026-11-07T04:54:11.891Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":558,"elapsed":202.019801648,"at":"2026-11-07T04:54:11.891Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"Resources:\n"}
+{"sequence":559,"elapsed":202.01985116599997,"at":"2026-11-07T04:54:11.891Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    ~ 1 to update\n"}
+{"sequence":560,"elapsed":202.019884187,"at":"2026-11-07T04:54:11.891Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":561,"elapsed":202.01992377199997,"at":"2026-11-07T04:54:11.891Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":562,"elapsed":202.01996111399998,"at":"2026-11-07T04:54:11.891Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"Refreshing (pilot):\n"}
+{"sequence":563,"elapsed":202.199807032,"at":"2026-11-07T04:54:12.071Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":564,"elapsed":203.22097537099998,"at":"2026-11-07T04:54:13.092Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"@ refreshing....\n"}
+{"sequence":565,"elapsed":203.221160089,"at":"2026-11-07T04:54:13.092Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":" ~  pulumi:pulumi:Stack paired-lifecycle-pilot refreshing (0s) \n"}
+{"sequence":566,"elapsed":203.221215803,"at":"2026-11-07T04:54:13.092Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot running \n"}
+{"sequence":567,"elapsed":203.22142491,"at":"2026-11-07T04:54:13.093Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group refreshing (0s) \n"}
+{"sequence":568,"elapsed":204.10638176199998,"at":"2026-11-07T04:54:13.977Z","type":"http","target":"azure","phase":"refresh-drift","method":"GET","path":"/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":569,"elapsed":204.111865971,"at":"2026-11-07T04:54:13.983Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"@ refreshing....\n"}
+{"sequence":570,"elapsed":204.1120307,"at":"2026-11-07T04:54:13.983Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updated (0.89s) [diff: ~tags]\n"}
+{"sequence":571,"elapsed":204.12585936799996,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":572,"elapsed":204.126007677,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"Outputs:\n"}
+{"sequence":573,"elapsed":204.12606286399998,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":574,"elapsed":204.12609733999997,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":575,"elapsed":204.126129306,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"Resources:\n"}
+{"sequence":576,"elapsed":204.12616109799998,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    ~ 1 updated\n"}
+{"sequence":577,"elapsed":204.12618868299998,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":578,"elapsed":204.12621839,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":579,"elapsed":204.12624997499998,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"Duration: 2s\n"}
+{"sequence":580,"elapsed":204.126276145,"at":"2026-11-07T04:54:13.997Z","type":"output","target":"azure","phase":"refresh-drift","stream":"stdout","text":"\n"}
+{"sequence":581,"elapsed":204.309181917,"at":"2026-11-07T04:54:14.180Z","type":"command-end","target":"azure","phase":"refresh-drift","exitCode":0,"timedOut":false}
+{"sequence":582,"elapsed":204.31223192299998,"at":"2026-11-07T04:54:14.183Z","type":"command-start","target":"azure","phase":"up-repair","command":["pulumi","up","--yes","--skip-preview","--non-interactive"]}
+{"sequence":583,"elapsed":205.721894826,"at":"2026-11-07T04:54:15.593Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"Updating (pilot):\n"}
+{"sequence":584,"elapsed":205.865448752,"at":"2026-11-07T04:54:15.737Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":585,"elapsed":213.502002068,"at":"2026-11-07T04:54:23.373Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"@ updating..........\n"}
+{"sequence":586,"elapsed":213.50214936799998,"at":"2026-11-07T04:54:23.373Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updating (0s) [diff: ~tags]\n"}
+{"sequence":587,"elapsed":215.464325083,"at":"2026-11-07T04:54:25.335Z","type":"http","target":"azure","phase":"up-repair","method":"PUT","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":588,"elapsed":215.865882572,"at":"2026-11-07T04:54:25.737Z","type":"http","target":"azure","phase":"up-repair","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":589,"elapsed":215.870462298,"at":"2026-11-07T04:54:25.742Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"@ updating......\n"}
+{"sequence":590,"elapsed":215.87058889099998,"at":"2026-11-07T04:54:25.742Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":" ~  azure-native:resources:ResourceGroup group updated (2s) [diff: ~tags]\n"}
+{"sequence":591,"elapsed":216.00318671699998,"at":"2026-11-07T04:54:25.874Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":592,"elapsed":216.003369267,"at":"2026-11-07T04:54:25.874Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"Outputs:\n"}
+{"sequence":593,"elapsed":216.003419264,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":594,"elapsed":216.003452047,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":595,"elapsed":216.003479444,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"Resources:\n"}
+{"sequence":596,"elapsed":216.003506959,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"    ~ 1 updated\n"}
+{"sequence":597,"elapsed":216.003532343,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":598,"elapsed":216.00355029099998,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":599,"elapsed":216.00356740099997,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"Duration: 11s\n"}
+{"sequence":600,"elapsed":216.00358422999997,"at":"2026-11-07T04:54:25.875Z","type":"output","target":"azure","phase":"up-repair","stream":"stdout","text":"\n"}
+{"sequence":601,"elapsed":216.210255234,"at":"2026-11-07T04:54:26.081Z","type":"command-end","target":"azure","phase":"up-repair","exitCode":0,"timedOut":false}
+{"sequence":602,"elapsed":217.04126589199998,"at":"2026-11-07T04:54:26.912Z","type":"probe","target":"azure","phase":"read-repair","method":"GET","status":200,"revision":"two"}
+{"sequence":603,"elapsed":217.041602235,"at":"2026-11-07T04:54:26.913Z","type":"command-start","target":"azure","phase":"state-export","command":["pulumi","stack","export"]}
+{"sequence":604,"elapsed":217.51697203399996,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"{\n"}
+{"sequence":605,"elapsed":217.517117811,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"    \"version\": 3,\n"}
+{"sequence":606,"elapsed":217.517152699,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"    \"deployment\": {\n"}
+{"sequence":607,"elapsed":217.517180175,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        \"manifest\": {\n"}
+{"sequence":608,"elapsed":217.51720687199997,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            \"time\": \"2026-11-07T04:54:25.874389096Z\",\n"}
+{"sequence":609,"elapsed":217.517299516,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            \"magic\": \"d540e88789f936dedbe50a295669c8332d4526ab86e83f1434c07707510d8880\",\n"}
+{"sequence":610,"elapsed":217.51735893599997,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            \"version\": \"v3.273.0\"\n"}
+{"sequence":611,"elapsed":217.51739095899998,"at":"2026-11-07T04:54:27.388Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        },\n"}
+{"sequence":612,"elapsed":217.51741802799998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        \"secrets_providers\": {\n"}
+{"sequence":613,"elapsed":217.517445369,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            \"type\": \"passphrase\",\n"}
+{"sequence":614,"elapsed":217.517471267,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            \"state\": {\n"}
+{"sequence":615,"elapsed":217.517496564,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"salt\": \"v1:z9dxGwPRjIA=:v1:90f6jX2cZnumeIsR:ekK/ENvmGUA6SXX7Isy/ns4qdbKrhg==\"\n"}
+{"sequence":616,"elapsed":217.51752215099998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            }\n"}
+{"sequence":617,"elapsed":217.517546953,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        },\n"}
+{"sequence":618,"elapsed":217.517571857,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        \"resources\": [\n"}
+{"sequence":619,"elapsed":217.51759677899997,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            {\n"}
+{"sequence":620,"elapsed":217.517622152,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot\",\n"}
+{"sequence":621,"elapsed":217.517647679,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"custom\": false,\n"}
+{"sequence":622,"elapsed":217.51767346699998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"type\": \"pulumi:pulumi:Stack\",\n"}
+{"sequence":623,"elapsed":217.51769860399997,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"outputs\": {\n"}
+{"sequence":624,"elapsed":217.517727372,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"groupId\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":625,"elapsed":217.51775266599998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":626,"elapsed":217.517778505,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"created\": \"2026-11-07T04:53:17.705398137Z\",\n"}
+{"sequence":627,"elapsed":217.517804112,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"modified\": \"2026-11-07T04:53:17.705398137Z\",\n"}
+{"sequence":628,"elapsed":217.51783030899998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"sourcePosition\": \"project:///node_modules/@pulumi/runtime/stack.ts#38,19\",\n"}
+{"sequence":629,"elapsed":217.517856734,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"stackTrace\": [\n"}
+{"sequence":630,"elapsed":217.517889296,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":631,"elapsed":217.517925292,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/runtime/stack.ts#38,19\"\n"}
+{"sequence":632,"elapsed":217.51795147899998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":633,"elapsed":217.517976638,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":634,"elapsed":217.518002308,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/cmd/run/run.ts#601,38\"\n"}
+{"sequence":635,"elapsed":217.518027386,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    }\n"}
+{"sequence":636,"elapsed":217.518052203,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                ]\n"}
+{"sequence":637,"elapsed":217.51807713699998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            },\n"}
+{"sequence":638,"elapsed":217.518102234,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            {\n"}
+{"sequence":639,"elapsed":217.518128508,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0\",\n"}
+{"sequence":640,"elapsed":217.518153441,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"custom\": true,\n"}
+{"sequence":641,"elapsed":217.51817994799998,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"id\": \"b282cfae-8869-45ec-9779-0237c8bd19dd\",\n"}
+{"sequence":642,"elapsed":217.518206147,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"type\": \"pulumi:providers:azure-native\",\n"}
+{"sequence":643,"elapsed":217.518231618,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"inputs\": {\n"}
+{"sequence":644,"elapsed":217.518256929,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"__internal\": {},\n"}
+{"sequence":645,"elapsed":217.518304378,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"subscriptionId\": \"<subscription>\",\n"}
+{"sequence":646,"elapsed":217.518346437,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"version\": \"3.30.0\"\n"}
+{"sequence":647,"elapsed":217.518375997,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":648,"elapsed":217.51840058,"at":"2026-11-07T04:54:27.389Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"outputs\": {\n"}
+{"sequence":649,"elapsed":217.518428289,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"subscriptionId\": \"<subscription>\",\n"}
+{"sequence":650,"elapsed":217.51846156899998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"version\": \"3.30.0\"\n"}
+{"sequence":651,"elapsed":217.51848705599997,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":652,"elapsed":217.51851142599998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"created\": \"2026-11-07T04:53:24.16880306Z\",\n"}
+{"sequence":653,"elapsed":217.518548041,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"modified\": \"2026-11-07T04:53:24.16880306Z\"\n"}
+{"sequence":654,"elapsed":217.51857332699998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            },\n"}
+{"sequence":655,"elapsed":217.518597354,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            {\n"}
+{"sequence":656,"elapsed":217.518622026,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"urn\": \"urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group\",\n"}
+{"sequence":657,"elapsed":217.518646507,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"custom\": true,\n"}
+{"sequence":658,"elapsed":217.51867335199998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":659,"elapsed":217.51869873,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"type\": \"azure-native:resources:ResourceGroup\",\n"}
+{"sequence":660,"elapsed":217.518723642,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"inputs\": {\n"}
+{"sequence":661,"elapsed":217.518747794,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"azureApiVersion\": \"2024-03-01\",\n"}
+{"sequence":662,"elapsed":217.518784437,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"location\": \"eastus\",\n"}
+{"sequence":663,"elapsed":217.518811041,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"resourceGroupName\": \"<group>\",\n"}
+{"sequence":664,"elapsed":217.518835635,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"tags\": {\n"}
+{"sequence":665,"elapsed":217.51886135599997,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"expires\": \"<expiry>\",\n"}
+{"sequence":666,"elapsed":217.51888689899997,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":667,"elapsed":217.51892021199998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"revision\": \"two\",\n"}
+{"sequence":668,"elapsed":217.51894580799998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"run\": \"<run>\"\n"}
+{"sequence":669,"elapsed":217.51897096399998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    }\n"}
+{"sequence":670,"elapsed":217.51900297499998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":671,"elapsed":217.51902841999998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"outputs\": {\n"}
+{"sequence":672,"elapsed":217.51905274799998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"azureApiVersion\": \"2024-03-01\",\n"}
+{"sequence":673,"elapsed":217.519079327,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":674,"elapsed":217.51910462,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"location\": \"eastus\",\n"}
+{"sequence":675,"elapsed":217.519131317,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"name\": \"<group>\",\n"}
+{"sequence":676,"elapsed":217.51915636799998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"properties\": {\n"}
+{"sequence":677,"elapsed":217.519180605,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"provisioningState\": \"Succeeded\"\n"}
+{"sequence":678,"elapsed":217.519205146,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":679,"elapsed":217.51922898799998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"tags\": {\n"}
+{"sequence":680,"elapsed":217.51925331599998,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"expires\": \"<expiry>\",\n"}
+{"sequence":681,"elapsed":217.51927796099997,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":682,"elapsed":217.51934020399997,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"revision\": \"two\",\n"}
+{"sequence":683,"elapsed":217.51936666,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"run\": \"<run>\"\n"}
+{"sequence":684,"elapsed":217.519391802,"at":"2026-11-07T04:54:27.390Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":685,"elapsed":217.51942853199998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"type\": \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":686,"elapsed":217.519455472,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":687,"elapsed":217.519480514,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"parent\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot\",\n"}
+{"sequence":688,"elapsed":217.519505836,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"provider\": \"urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::b282cfae-8869-45ec-9779-0237c8bd19dd\",\n"}
+{"sequence":689,"elapsed":217.51953938999998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"propertyDependencies\": {\n"}
+{"sequence":690,"elapsed":217.519563985,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"location\": [],\n"}
+{"sequence":691,"elapsed":217.51959976199998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"resourceGroupName\": [],\n"}
+{"sequence":692,"elapsed":217.519624452,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    \"tags\": []\n"}
+{"sequence":693,"elapsed":217.519648262,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                },\n"}
+{"sequence":694,"elapsed":217.51967319099998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"created\": \"2026-11-07T04:53:28.787923359Z\",\n"}
+{"sequence":695,"elapsed":217.519698345,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"modified\": \"2026-11-07T04:54:25.739045806Z\",\n"}
+{"sequence":696,"elapsed":217.51972368499997,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"sourcePosition\": \"project:///index.ts#4,15\",\n"}
+{"sequence":697,"elapsed":217.519747473,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                \"stackTrace\": [\n"}
+{"sequence":698,"elapsed":217.519771844,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":699,"elapsed":217.519796854,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///index.ts#4,15\"\n"}
+{"sequence":700,"elapsed":217.51982107799998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":701,"elapsed":217.519846315,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":702,"elapsed":217.51987057499997,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":703,"elapsed":217.51989597399998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/ts-node/src/index.ts#1618,23\"\n"}
+{"sequence":704,"elapsed":217.51992971599998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":705,"elapsed":217.519954616,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":706,"elapsed":217.51997954499998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":707,"elapsed":217.52000410699998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/ts-node/src/index.ts#1621,12\"\n"}
+{"sequence":708,"elapsed":217.52002795299998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":709,"elapsed":217.52005794899998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":710,"elapsed":217.52008286899996,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":711,"elapsed":217.52010723,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":712,"elapsed":217.520131613,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":713,"elapsed":217.520154904,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {},\n"}
+{"sequence":714,"elapsed":217.52017943599998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":715,"elapsed":217.520203445,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/cmd/run/run.ts#541,33\"\n"}
+{"sequence":716,"elapsed":217.520227765,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":717,"elapsed":217.52025095,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":718,"elapsed":217.52027476199999,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/runtime/stack.ts#79,28\"\n"}
+{"sequence":719,"elapsed":217.52033728199999,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    },\n"}
+{"sequence":720,"elapsed":217.52036587499998,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    {\n"}
+{"sequence":721,"elapsed":217.520392345,"at":"2026-11-07T04:54:27.391Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                        \"sourcePosition\": \"project:///node_modules/@pulumi/resource.ts#1687,22\"\n"}
+{"sequence":722,"elapsed":217.52041833299998,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                    }\n"}
+{"sequence":723,"elapsed":217.520446274,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"                ]\n"}
+{"sequence":724,"elapsed":217.52047516799996,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"            }\n"}
+{"sequence":725,"elapsed":217.52050076,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        ],\n"}
+{"sequence":726,"elapsed":217.520527499,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"        \"metadata\": {}\n"}
+{"sequence":727,"elapsed":217.520553143,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"    }\n"}
+{"sequence":728,"elapsed":217.520580123,"at":"2026-11-07T04:54:27.392Z","type":"output","target":"azure","phase":"state-export","stream":"stdout","text":"}\n"}
+{"sequence":729,"elapsed":217.682434922,"at":"2026-11-07T04:54:27.554Z","type":"command-end","target":"azure","phase":"state-export","exitCode":0,"timedOut":false}
+{"sequence":730,"elapsed":217.685263607,"at":"2026-11-07T04:54:27.556Z","type":"command-start","target":"azure","phase":"state-remove","command":["pulumi","state","delete","urn:pulumi:pilot::paired-lifecycle::azure-native:resources:ResourceGroup::group","--yes","--non-interactive"]}
+{"sequence":731,"elapsed":218.994823145,"at":"2026-11-07T04:54:28.866Z","type":"output","target":"azure","phase":"state-remove","stream":"stdout","text":"Resource deleted\n"}
+{"sequence":732,"elapsed":219.17977054499997,"at":"2026-11-07T04:54:29.051Z","type":"command-end","target":"azure","phase":"state-remove","exitCode":0,"timedOut":false}
+{"sequence":733,"elapsed":219.181978013,"at":"2026-11-07T04:54:29.053Z","type":"command-start","target":"azure","phase":"import","command":["pulumi","import","azure-native:resources:ResourceGroup","group","/subscriptions/<subscription>/resourcegroups/<group>","--generate-code=false","--protect=false","--yes","--non-interactive","--provider","urn:pulumi:pilot::paired-lifecycle::pulumi:providers:azure-native::default_3_30_0::b282cfae-8869-45ec-9779-0237c8bd19dd"]}
+{"sequence":734,"elapsed":220.516753564,"at":"2026-11-07T04:54:30.388Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Previewing import (pilot):\n"}
+{"sequence":735,"elapsed":220.78520302999996,"at":"2026-11-07T04:54:30.656Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":736,"elapsed":222.72664504899998,"at":"2026-11-07T04:54:32.598Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"@ previewing import.....\n"}
+{"sequence":737,"elapsed":222.726789232,"at":"2026-11-07T04:54:32.598Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":" =  azure-native:resources:ResourceGroup group import \n"}
+{"sequence":738,"elapsed":223.268822731,"at":"2026-11-07T04:54:33.140Z","type":"http","target":"azure","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":739,"elapsed":223.292461192,"at":"2026-11-07T04:54:33.164Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":740,"elapsed":223.293140358,"at":"2026-11-07T04:54:33.164Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Resources:\n"}
+{"sequence":741,"elapsed":223.293249893,"at":"2026-11-07T04:54:33.164Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"    = 1 to import\n"}
+{"sequence":742,"elapsed":223.29363858,"at":"2026-11-07T04:54:33.165Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":743,"elapsed":223.29380274,"at":"2026-11-07T04:54:33.165Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":744,"elapsed":223.29385538999998,"at":"2026-11-07T04:54:33.165Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Importing (pilot):\n"}
+{"sequence":745,"elapsed":223.53306953799998,"at":"2026-11-07T04:54:33.404Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":746,"elapsed":225.68876929299998,"at":"2026-11-07T04:54:35.560Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"@ importing.....\n"}
+{"sequence":747,"elapsed":225.688919986,"at":"2026-11-07T04:54:35.560Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":" =  azure-native:resources:ResourceGroup group importing (0s) \n"}
+{"sequence":748,"elapsed":226.26970068799997,"at":"2026-11-07T04:54:36.141Z","type":"http","target":"azure","phase":"import","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":200}
+{"sequence":749,"elapsed":226.27488864199998,"at":"2026-11-07T04:54:36.146Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":" =  azure-native:resources:ResourceGroup group imported (0.58s) \n"}
+{"sequence":750,"elapsed":226.291439789,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Outputs:\n"}
+{"sequence":751,"elapsed":226.291592682,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"    groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":752,"elapsed":226.291642934,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":753,"elapsed":226.291676465,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Resources:\n"}
+{"sequence":754,"elapsed":226.291708269,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"    = 1 imported\n"}
+{"sequence":755,"elapsed":226.291736504,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"    1 unchanged\n"}
+{"sequence":756,"elapsed":226.29176802599997,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":757,"elapsed":226.291935086,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"Duration: 3s\n"}
+{"sequence":758,"elapsed":226.291988359,"at":"2026-11-07T04:54:36.163Z","type":"output","target":"azure","phase":"import","stream":"stdout","text":"\n"}
+{"sequence":759,"elapsed":226.47471433999996,"at":"2026-11-07T04:54:36.346Z","type":"command-end","target":"azure","phase":"import","exitCode":0,"timedOut":false}
+{"sequence":760,"elapsed":226.47670084799998,"at":"2026-11-07T04:54:36.348Z","type":"command-start","target":"azure","phase":"preview-imported","command":["pulumi","preview","--non-interactive","--diff","--expect-no-changes"]}
+{"sequence":761,"elapsed":227.945627698,"at":"2026-11-07T04:54:37.817Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"Previewing update (pilot):\n"}
+{"sequence":762,"elapsed":229.39111922299998,"at":"2026-11-07T04:54:39.262Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"  pulumi:pulumi:Stack: (same)\n"}
+{"sequence":763,"elapsed":229.39127346,"at":"2026-11-07T04:54:39.262Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"    [urn=urn:pulumi:pilot::paired-lifecycle::pulumi:pulumi:Stack::paired-lifecycle-pilot]\n"}
+{"sequence":764,"elapsed":235.915515595,"at":"2026-11-07T04:54:45.787Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"    --outputs:--\n"}
+{"sequence":765,"elapsed":235.915686392,"at":"2026-11-07T04:54:45.787Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"  ~ groupId: \"/subscriptions/<subscription>/resourceGroups/<group>\" => \"/subscriptions/<subscription>/resourcegroups/<group>\"\n"}
+{"sequence":766,"elapsed":236.009566362,"at":"2026-11-07T04:54:45.881Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"Resources:\n"}
+{"sequence":767,"elapsed":236.009731545,"at":"2026-11-07T04:54:45.881Z","type":"output","target":"azure","phase":"preview-imported","stream":"stdout","text":"    2 unchanged\n"}
+{"sequence":768,"elapsed":236.212149996,"at":"2026-11-07T04:54:46.083Z","type":"command-end","target":"azure","phase":"preview-imported","exitCode":0,"timedOut":false}
+{"sequence":769,"elapsed":236.21436322899999,"at":"2026-11-07T04:54:46.085Z","type":"command-start","target":"azure","phase":"destroy","command":["pulumi","destroy","--yes","--skip-preview","--non-interactive"]}
+{"sequence":770,"elapsed":237.491418722,"at":"2026-11-07T04:54:47.363Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Destroying (pilot):\n"}
+{"sequence":771,"elapsed":237.636467786,"at":"2026-11-07T04:54:47.508Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":772,"elapsed":238.627396636,"at":"2026-11-07T04:54:48.498Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"@ destroying....\n"}
+{"sequence":773,"elapsed":238.62756635899999,"at":"2026-11-07T04:54:48.499Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":" -  azure-native:resources:ResourceGroup group deleting (0s) \n"}
+{"sequence":774,"elapsed":239.690350469,"at":"2026-11-07T04:54:49.561Z","type":"http","target":"azure","phase":"destroy","method":"DELETE","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2024-03-01","status":202}
+{"sequence":775,"elapsed":256.141528807,"at":"2026-11-07T04:55:06.013Z","type":"http","target":"azure","phase":"destroy","method":"GET","path":"/subscriptions/<subscription>/operationresults/<operation>?api-version=2024-03-01&t=<redacted>&c=<redacted>&s=<redacted>&h=<redacted>","status":200}
+{"sequence":776,"elapsed":256.143498262,"at":"2026-11-07T04:55:06.015Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"@ destroying....................\n"}
+{"sequence":777,"elapsed":256.143637539,"at":"2026-11-07T04:55:06.015Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":" -  azure-native:resources:ResourceGroup group deleted (17s) \n"}
+{"sequence":778,"elapsed":256.145158253,"at":"2026-11-07T04:55:06.016Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":" -  pulumi:pulumi:Stack paired-lifecycle-pilot deleting (0s) \n"}
+{"sequence":779,"elapsed":256.16019743199996,"at":"2026-11-07T04:55:06.031Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":" -  pulumi:pulumi:Stack paired-lifecycle-pilot deleted (0.00s) \n"}
+{"sequence":780,"elapsed":256.160383358,"at":"2026-11-07T04:55:06.031Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"    pulumi:pulumi:Stack paired-lifecycle-pilot  \n"}
+{"sequence":781,"elapsed":256.16044756,"at":"2026-11-07T04:55:06.032Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Resources:\n"}
+{"sequence":782,"elapsed":256.160484601,"at":"2026-11-07T04:55:06.032Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"    - 2 deleted\n"}
+{"sequence":783,"elapsed":256.160516798,"at":"2026-11-07T04:55:06.032Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":784,"elapsed":256.160548209,"at":"2026-11-07T04:55:06.032Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"Duration: 19s\n"}
+{"sequence":785,"elapsed":256.160578764,"at":"2026-11-07T04:55:06.032Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"\n"}
+{"sequence":786,"elapsed":256.161665204,"at":"2026-11-07T04:55:06.033Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"The resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. \n"}
+{"sequence":787,"elapsed":256.161754048,"at":"2026-11-07T04:55:06.033Z","type":"output","target":"azure","phase":"destroy","stream":"stdout","text":"If you want to remove the stack completely, run `pulumi stack rm pilot`.\n"}
+{"sequence":788,"elapsed":256.352222317,"at":"2026-11-07T04:55:06.223Z","type":"command-end","target":"azure","phase":"destroy","exitCode":0,"timedOut":false}
+{"sequence":789,"elapsed":257.921575231,"at":"2026-11-07T04:55:07.793Z","type":"probe","target":"azure","phase":"post-destroy-read-0","method":"GET","status":404}
+{"sequence":790,"elapsed":259.47422958,"at":"2026-11-07T04:55:09.345Z","type":"target-end","target":"azure","ok":true,"cleanup":{"nativeDestroyAccepted":true,"nativeDestroy":true,"absent":true,"fallbackDelete":false,"privateFilesRemoved":true}}
+{"sequence":791,"elapsed":259.476113424,"at":"2026-11-07T04:55:09.347Z","type":"run-end","ok":true,"portalEvidenceComplete":false}

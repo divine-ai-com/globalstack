@@ -1,0 +1,892 @@
+{"sequence":0,"elapsed":0.00005610500000000229,"at":"2026-11-07T05:07:07.998Z","type":"run-start","platform":"azure-bicep","revision":"0ed293215f9990d28574cced7f66f0b3678a234f","sourceDirty":false,"source":{"main.bicep":"14ee2cb7cfa2f2e8d8aa194abb501bff7e334cc7372683136a6ee8056dc89297"},"image":"sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186","portalCapture":"deferred","target":"both"}
+{"sequence":1,"elapsed":0.0033374499999999896,"at":"2026-11-07T05:07:08.002Z","type":"target-start","target":"local"}
+{"sequence":2,"elapsed":0.36134315100000003,"at":"2026-11-07T05:07:08.360Z","type":"probe","target":"local","phase":"preflight","method":"GET","status":404}
+{"sequence":3,"elapsed":0.362293141,"at":"2026-11-07T05:07:08.361Z","type":"command-start","target":"local","phase":"version","command":["/root/.azure/bin/bicep","--version"]}
+{"sequence":4,"elapsed":1.656721173,"at":"2026-11-07T05:07:09.655Z","type":"output","target":"local","phase":"version","stream":"stdout","text":"Bicep CLI version 0.48.1 (cec7951cf6)\n"}
+{"sequence":5,"elapsed":1.826749726,"at":"2026-11-07T05:07:09.825Z","type":"command-end","target":"local","phase":"version","exitCode":0,"timedOut":false}
+{"sequence":6,"elapsed":1.8281075259999997,"at":"2026-11-07T05:07:09.826Z","type":"command-start","target":"local","phase":"compile","command":["/root/.azure/bin/bicep","build","main.bicep","--outfile","/private/template.json"]}
+{"sequence":7,"elapsed":4.2715270180000005,"at":"2026-11-07T05:07:12.270Z","type":"command-end","target":"local","phase":"compile","exitCode":0,"timedOut":false}
+{"sequence":8,"elapsed":4.285569712,"at":"2026-11-07T05:07:12.284Z","type":"command-start","target":"local","phase":"cli-version","command":["/usr/bin/az","version"]}
+{"sequence":9,"elapsed":7.755320045,"at":"2026-11-07T05:07:15.754Z","type":"output","target":"local","phase":"cli-version","stream":"stdout","text":"{\n"}
+{"sequence":10,"elapsed":7.755473434000001,"at":"2026-11-07T05:07:15.754Z","type":"output","target":"local","phase":"cli-version","stream":"stdout","text":"  \"azure-cli\": \"2.92.0\",\n"}
+{"sequence":11,"elapsed":7.755519958000001,"at":"2026-11-07T05:07:15.754Z","type":"output","target":"local","phase":"cli-version","stream":"stdout","text":"  \"azure-cli-core\": \"2.92.0\",\n"}
+{"sequence":12,"elapsed":7.75555141,"at":"2026-11-07T05:07:15.754Z","type":"output","target":"local","phase":"cli-version","stream":"stdout","text":"  \"azure-cli-telemetry\": \"1.1.0\",\n"}
+{"sequence":13,"elapsed":7.755579824000001,"at":"2026-11-07T05:07:15.754Z","type":"output","target":"local","phase":"cli-version","stream":"stdout","text":"  \"extensions\": {}\n"}
+{"sequence":14,"elapsed":7.755608474000001,"at":"2026-11-07T05:07:15.754Z","type":"output","target":"local","phase":"cli-version","stream":"stdout","text":"}\n"}
+{"sequence":15,"elapsed":7.996493928,"at":"2026-11-07T05:07:15.995Z","type":"command-end","target":"local","phase":"cli-version","exitCode":0,"timedOut":false}
+{"sequence":16,"elapsed":8.010406346,"at":"2026-11-07T05:07:16.009Z","type":"command-start","target":"local","phase":"deploy-create","command":["/usr/bin/az","rest","--method","put","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json","--body","@/private/deployment.json"]}
+{"sequence":17,"elapsed":8.723553814,"at":"2026-11-07T05:07:16.722Z","type":"http","target":"local","phase":"deploy-create","method":"PUT","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":201}
+{"sequence":18,"elapsed":8.770421303000001,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"{\n"}
+{"sequence":19,"elapsed":8.77061089,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":20,"elapsed":8.770705691000002,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":21,"elapsed":8.770756730999999,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":22,"elapsed":8.770797746,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":23,"elapsed":8.770836743,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":24,"elapsed":8.77087377,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":25,"elapsed":8.770921735,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"      {\n"}
+{"sequence":26,"elapsed":8.770962961,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":27,"elapsed":8.771001544,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":28,"elapsed":8.771038351000001,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"        \"status\": 201\n"}
+{"sequence":29,"elapsed":8.771075239,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"      }\n"}
+{"sequence":30,"elapsed":8.771111435,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    ],\n"}
+{"sequence":31,"elapsed":8.771149602,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":32,"elapsed":8.771224786000001,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":33,"elapsed":8.771263798,"at":"2026-11-07T05:07:16.769Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":34,"elapsed":8.771309874,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":35,"elapsed":8.771349477,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":36,"elapsed":8.771387119000002,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"      }\n"}
+{"sequence":37,"elapsed":8.771650194,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    },\n"}
+{"sequence":38,"elapsed":8.771695820000001,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":39,"elapsed":8.771734221,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:16.719Z\"\n"}
+{"sequence":40,"elapsed":8.771777074,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"  },\n"}
+{"sequence":41,"elapsed":8.771816990000001,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":42,"elapsed":8.771863797,"at":"2026-11-07T05:07:16.770Z","type":"output","target":"local","phase":"deploy-create","stream":"stdout","text":"}\n"}
+{"sequence":43,"elapsed":9.033264240000001,"at":"2026-11-07T05:07:17.031Z","type":"command-end","target":"local","phase":"deploy-create","exitCode":0,"timedOut":false}
+{"sequence":44,"elapsed":9.035411191000001,"at":"2026-11-07T05:07:17.034Z","type":"command-start","target":"local","phase":"deploy-create-read-0","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":45,"elapsed":9.751840572,"at":"2026-11-07T05:07:17.750Z","type":"http","target":"local","phase":"deploy-create-read-0","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":46,"elapsed":9.798777932,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"{\n"}
+{"sequence":47,"elapsed":9.798949967,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":48,"elapsed":9.799003617,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":49,"elapsed":9.799046021,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":50,"elapsed":9.799085515,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":51,"elapsed":9.799124363,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":52,"elapsed":9.799195802,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":53,"elapsed":9.799245033000002,"at":"2026-11-07T05:07:17.797Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":54,"elapsed":9.799285038,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":55,"elapsed":9.799326493,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":56,"elapsed":9.799365709,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"        \"status\": 201\n"}
+{"sequence":57,"elapsed":9.799417858,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":58,"elapsed":9.799457128,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":59,"elapsed":9.799497051,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":60,"elapsed":9.799536064,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":61,"elapsed":9.79957625,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":62,"elapsed":9.79962835,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":63,"elapsed":9.799669187,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":64,"elapsed":9.79970793,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":65,"elapsed":9.799744445,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":66,"elapsed":9.799794448,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":67,"elapsed":9.799835664,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:16.719Z\"\n"}
+{"sequence":68,"elapsed":9.799872902,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"  },\n"}
+{"sequence":69,"elapsed":9.799913447000002,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":70,"elapsed":9.799951094,"at":"2026-11-07T05:07:17.798Z","type":"output","target":"local","phase":"deploy-create-read-0","stream":"stdout","text":"}\n"}
+{"sequence":71,"elapsed":10.051010154,"at":"2026-11-07T05:07:18.049Z","type":"command-end","target":"local","phase":"deploy-create-read-0","exitCode":0,"timedOut":false}
+{"sequence":72,"elapsed":10.060179448000001,"at":"2026-11-07T05:07:18.058Z","type":"probe","target":"local","phase":"read-create","method":"GET","status":200,"revision":"one"}
+{"sequence":73,"elapsed":10.061665134,"at":"2026-11-07T05:07:18.060Z","type":"command-start","target":"local","phase":"read-stable","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":74,"elapsed":10.788346034,"at":"2026-11-07T05:07:18.787Z","type":"http","target":"local","phase":"read-stable","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":75,"elapsed":10.83367267,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"{\n"}
+{"sequence":76,"elapsed":10.833815221,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":77,"elapsed":10.833860477,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":78,"elapsed":10.833911501000001,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":79,"elapsed":10.83394886,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":80,"elapsed":10.833985082000002,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":81,"elapsed":10.83402071,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":82,"elapsed":10.834068665,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"      {\n"}
+{"sequence":83,"elapsed":10.834104339,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":84,"elapsed":10.834136115000002,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":85,"elapsed":10.834201598,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"        \"status\": 201\n"}
+{"sequence":86,"elapsed":10.834239595000001,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"      }\n"}
+{"sequence":87,"elapsed":10.834271425,"at":"2026-11-07T05:07:18.832Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    ],\n"}
+{"sequence":88,"elapsed":10.834303446,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":89,"elapsed":10.834335781,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":90,"elapsed":10.83436808,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":91,"elapsed":10.834400036000002,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":92,"elapsed":10.834436483,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":93,"elapsed":10.834469736,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"      }\n"}
+{"sequence":94,"elapsed":10.834501183,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    },\n"}
+{"sequence":95,"elapsed":10.834534645,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":96,"elapsed":10.834567525,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:16.719Z\"\n"}
+{"sequence":97,"elapsed":10.834601200000002,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"  },\n"}
+{"sequence":98,"elapsed":10.834634708,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":99,"elapsed":10.83466814,"at":"2026-11-07T05:07:18.833Z","type":"output","target":"local","phase":"read-stable","stream":"stdout","text":"}\n"}
+{"sequence":100,"elapsed":11.111495218,"at":"2026-11-07T05:07:19.110Z","type":"command-end","target":"local","phase":"read-stable","exitCode":0,"timedOut":false}
+{"sequence":101,"elapsed":11.113549477000001,"at":"2026-11-07T05:07:19.112Z","type":"command-start","target":"local","phase":"read-group","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":102,"elapsed":11.823223571,"at":"2026-11-07T05:07:19.821Z","type":"http","target":"local","phase":"read-group","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":103,"elapsed":11.870668575,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"{\n"}
+{"sequence":104,"elapsed":11.870828595,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":105,"elapsed":11.870879401,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":106,"elapsed":11.870935244,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":107,"elapsed":11.870978739,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":108,"elapsed":11.871022861,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\"\n"}
+{"sequence":109,"elapsed":11.871055815,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  },\n"}
+{"sequence":110,"elapsed":11.871090217,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  \"tags\": {\n"}
+{"sequence":111,"elapsed":11.871182512999999,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"    \"expires\": \"<expiry>\",\n"}
+{"sequence":112,"elapsed":11.871240037,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"    \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":113,"elapsed":11.871276185000001,"at":"2026-11-07T05:07:19.869Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"    \"revision\": \"one\",\n"}
+{"sequence":114,"elapsed":11.871311758,"at":"2026-11-07T05:07:19.870Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"    \"run\": \"<run>\"\n"}
+{"sequence":115,"elapsed":11.871345306,"at":"2026-11-07T05:07:19.870Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  },\n"}
+{"sequence":116,"elapsed":11.871379357,"at":"2026-11-07T05:07:19.870Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":117,"elapsed":11.871411676,"at":"2026-11-07T05:07:19.870Z","type":"output","target":"local","phase":"read-group","stream":"stdout","text":"}\n"}
+{"sequence":118,"elapsed":12.146652184,"at":"2026-11-07T05:07:20.145Z","type":"command-end","target":"local","phase":"read-group","exitCode":0,"timedOut":false}
+{"sequence":119,"elapsed":12.151584863,"at":"2026-11-07T05:07:20.150Z","type":"command-start","target":"local","phase":"deploy-update","command":["/usr/bin/az","rest","--method","put","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json","--body","@/private/deployment.json"]}
+{"sequence":120,"elapsed":12.883436454,"at":"2026-11-07T05:07:20.882Z","type":"http","target":"local","phase":"deploy-update","method":"PUT","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":201}
+{"sequence":121,"elapsed":12.949759134,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"{\n"}
+{"sequence":122,"elapsed":12.949917807,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":123,"elapsed":12.949979703,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":124,"elapsed":12.950013551,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":125,"elapsed":12.950043795,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":126,"elapsed":12.950075392,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":127,"elapsed":12.950104788,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":128,"elapsed":12.950138567,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"      {\n"}
+{"sequence":129,"elapsed":12.950198386,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":130,"elapsed":12.950234413,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":131,"elapsed":12.950264872,"at":"2026-11-07T05:07:20.948Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"        \"status\": 200\n"}
+{"sequence":132,"elapsed":12.950293929999999,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"      }\n"}
+{"sequence":133,"elapsed":12.950322845,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    ],\n"}
+{"sequence":134,"elapsed":12.950353833000001,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":135,"elapsed":12.950385452,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":136,"elapsed":12.950416621,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":137,"elapsed":12.950446636,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":138,"elapsed":12.950477753000001,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":139,"elapsed":12.950506545,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"      }\n"}
+{"sequence":140,"elapsed":12.950535024,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    },\n"}
+{"sequence":141,"elapsed":12.950563614,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":142,"elapsed":12.950595658000001,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:20.880Z\"\n"}
+{"sequence":143,"elapsed":12.950625123,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"  },\n"}
+{"sequence":144,"elapsed":12.950657156000002,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":145,"elapsed":12.950706941,"at":"2026-11-07T05:07:20.949Z","type":"output","target":"local","phase":"deploy-update","stream":"stdout","text":"}\n"}
+{"sequence":146,"elapsed":13.211792957,"at":"2026-11-07T05:07:21.210Z","type":"command-end","target":"local","phase":"deploy-update","exitCode":0,"timedOut":false}
+{"sequence":147,"elapsed":13.217000437000001,"at":"2026-11-07T05:07:21.215Z","type":"command-start","target":"local","phase":"deploy-update-read-0","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":148,"elapsed":13.95239286,"at":"2026-11-07T05:07:21.951Z","type":"http","target":"local","phase":"deploy-update-read-0","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":149,"elapsed":13.997141104,"at":"2026-11-07T05:07:21.995Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"{\n"}
+{"sequence":150,"elapsed":13.9973519,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":151,"elapsed":13.997408598,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":152,"elapsed":13.997448353,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":153,"elapsed":13.997484236,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":154,"elapsed":13.997518042,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":155,"elapsed":13.997553425,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":156,"elapsed":13.997587922000001,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":157,"elapsed":13.997622942,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":158,"elapsed":13.99765695,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":159,"elapsed":13.997691751,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"        \"status\": 200\n"}
+{"sequence":160,"elapsed":13.997725186,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":161,"elapsed":13.997759104,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":162,"elapsed":13.997793137,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":163,"elapsed":13.997827509,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":164,"elapsed":13.997861372000001,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":165,"elapsed":13.997922162,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":166,"elapsed":13.997961365000002,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":167,"elapsed":13.997994439,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":168,"elapsed":13.998025705,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":169,"elapsed":13.998058482000001,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":170,"elapsed":13.998091431,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:20.880Z\"\n"}
+{"sequence":171,"elapsed":13.998122290000001,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"  },\n"}
+{"sequence":172,"elapsed":13.998184405,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":173,"elapsed":13.998232235,"at":"2026-11-07T05:07:21.996Z","type":"output","target":"local","phase":"deploy-update-read-0","stream":"stdout","text":"}\n"}
+{"sequence":174,"elapsed":14.257468462,"at":"2026-11-07T05:07:22.256Z","type":"command-end","target":"local","phase":"deploy-update-read-0","exitCode":0,"timedOut":false}
+{"sequence":175,"elapsed":14.27258673,"at":"2026-11-07T05:07:22.271Z","type":"probe","target":"local","phase":"read-update","method":"GET","status":200,"revision":"two"}
+{"sequence":176,"elapsed":14.288568865,"at":"2026-11-07T05:07:22.287Z","type":"probe","target":"local","phase":"inject-drift","method":"PATCH","status":200,"revision":"external"}
+{"sequence":177,"elapsed":14.28991551,"at":"2026-11-07T05:07:22.288Z","type":"command-start","target":"local","phase":"read-drift","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":178,"elapsed":15.016191558000001,"at":"2026-11-07T05:07:23.014Z","type":"http","target":"local","phase":"read-drift","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":179,"elapsed":15.065946986,"at":"2026-11-07T05:07:23.064Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"{\n"}
+{"sequence":180,"elapsed":15.066137438,"at":"2026-11-07T05:07:23.064Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":181,"elapsed":15.066218919,"at":"2026-11-07T05:07:23.064Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":182,"elapsed":15.066255992,"at":"2026-11-07T05:07:23.064Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":183,"elapsed":15.066288334000001,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":184,"elapsed":15.066317782,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\"\n"}
+{"sequence":185,"elapsed":15.066364219,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  },\n"}
+{"sequence":186,"elapsed":15.06639482,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  \"tags\": {\n"}
+{"sequence":187,"elapsed":15.066423695,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"    \"expires\": \"<expiry>\",\n"}
+{"sequence":188,"elapsed":15.066452653,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"    \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":189,"elapsed":15.066481771000001,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"    \"revision\": \"external\",\n"}
+{"sequence":190,"elapsed":15.06651122,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"    \"run\": \"<run>\"\n"}
+{"sequence":191,"elapsed":15.066539042,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  },\n"}
+{"sequence":192,"elapsed":15.066567730000001,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":193,"elapsed":15.066596018,"at":"2026-11-07T05:07:23.065Z","type":"output","target":"local","phase":"read-drift","stream":"stdout","text":"}\n"}
+{"sequence":194,"elapsed":15.355573662000001,"at":"2026-11-07T05:07:23.354Z","type":"command-end","target":"local","phase":"read-drift","exitCode":0,"timedOut":false}
+{"sequence":195,"elapsed":15.358692914,"at":"2026-11-07T05:07:23.357Z","type":"command-start","target":"local","phase":"deploy-repair","command":["/usr/bin/az","rest","--method","put","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json","--body","@/private/deployment.json"]}
+{"sequence":196,"elapsed":16.1115528,"at":"2026-11-07T05:07:24.110Z","type":"http","target":"local","phase":"deploy-repair","method":"PUT","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":201}
+{"sequence":197,"elapsed":16.16005319,"at":"2026-11-07T05:07:24.158Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"{\n"}
+{"sequence":198,"elapsed":16.160268518000002,"at":"2026-11-07T05:07:24.158Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":199,"elapsed":16.160359947,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":200,"elapsed":16.160405436,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":201,"elapsed":16.160442215,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":202,"elapsed":16.160479659,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":203,"elapsed":16.160513447,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":204,"elapsed":16.160545212000002,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"      {\n"}
+{"sequence":205,"elapsed":16.160600995,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":206,"elapsed":16.160635422000002,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":207,"elapsed":16.160665765,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"        \"status\": 200\n"}
+{"sequence":208,"elapsed":16.160693932,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"      }\n"}
+{"sequence":209,"elapsed":16.160741144,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    ],\n"}
+{"sequence":210,"elapsed":16.160771891,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":211,"elapsed":16.160805648,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":212,"elapsed":16.160836551,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":213,"elapsed":16.160862508,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":214,"elapsed":16.160895779,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":215,"elapsed":16.160926211,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"      }\n"}
+{"sequence":216,"elapsed":16.16095399,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    },\n"}
+{"sequence":217,"elapsed":16.160981982000003,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":218,"elapsed":16.161011184,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:24.109Z\"\n"}
+{"sequence":219,"elapsed":16.161038783,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"  },\n"}
+{"sequence":220,"elapsed":16.16106659,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":221,"elapsed":16.161093425,"at":"2026-11-07T05:07:24.159Z","type":"output","target":"local","phase":"deploy-repair","stream":"stdout","text":"}\n"}
+{"sequence":222,"elapsed":16.385612158,"at":"2026-11-07T05:07:24.384Z","type":"command-end","target":"local","phase":"deploy-repair","exitCode":0,"timedOut":false}
+{"sequence":223,"elapsed":16.387695258,"at":"2026-11-07T05:07:24.386Z","type":"command-start","target":"local","phase":"deploy-repair-read-0","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":224,"elapsed":17.150892866000003,"at":"2026-11-07T05:07:25.149Z","type":"http","target":"local","phase":"deploy-repair-read-0","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":225,"elapsed":17.198357439,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"{\n"}
+{"sequence":226,"elapsed":17.198485566,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":227,"elapsed":17.198513447,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":228,"elapsed":17.19853404,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":229,"elapsed":17.198552855000003,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":230,"elapsed":17.198571221999998,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":231,"elapsed":17.198589602,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":232,"elapsed":17.198607372999998,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":233,"elapsed":17.198626389,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":234,"elapsed":17.198644744000003,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":235,"elapsed":17.198662594,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"status\": 200\n"}
+{"sequence":236,"elapsed":17.198679789000003,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":237,"elapsed":17.198696985999998,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":238,"elapsed":17.198714648,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":239,"elapsed":17.198732329,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":240,"elapsed":17.198762543,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":241,"elapsed":17.198781263,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":242,"elapsed":17.198800662,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":243,"elapsed":17.19881867,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":244,"elapsed":17.19883655,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":245,"elapsed":17.198856209000002,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":246,"elapsed":17.198883470000002,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:24.109Z\"\n"}
+{"sequence":247,"elapsed":17.198902215999997,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"  },\n"}
+{"sequence":248,"elapsed":17.19892,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":249,"elapsed":17.198937341,"at":"2026-11-07T05:07:25.197Z","type":"output","target":"local","phase":"deploy-repair-read-0","stream":"stdout","text":"}\n"}
+{"sequence":250,"elapsed":17.436965985,"at":"2026-11-07T05:07:25.435Z","type":"command-end","target":"local","phase":"deploy-repair-read-0","exitCode":0,"timedOut":false}
+{"sequence":251,"elapsed":17.446045738000002,"at":"2026-11-07T05:07:25.444Z","type":"probe","target":"local","phase":"read-repair","method":"GET","status":200,"revision":"two"}
+{"sequence":252,"elapsed":17.447429811000003,"at":"2026-11-07T05:07:25.446Z","type":"command-start","target":"local","phase":"read-final","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":253,"elapsed":18.188064939,"at":"2026-11-07T05:07:26.186Z","type":"http","target":"local","phase":"read-final","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":254,"elapsed":18.232794605,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"{\n"}
+{"sequence":255,"elapsed":18.232937494,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":256,"elapsed":18.23298041,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":257,"elapsed":18.233012511000002,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":258,"elapsed":18.233043366,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":259,"elapsed":18.233075011,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    \"duration\": \"PT0S\",\n"}
+{"sequence":260,"elapsed":18.233104728999997,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    \"globalstackDeploymentSteps\": [\n"}
+{"sequence":261,"elapsed":18.233134079,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"      {\n"}
+{"sequence":262,"elapsed":18.233206419000002,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":263,"elapsed":18.233249725,"at":"2026-11-07T05:07:26.231Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"        \"operation\": \"PUT\",\n"}
+{"sequence":264,"elapsed":18.233280219,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"        \"status\": 200\n"}
+{"sequence":265,"elapsed":18.233311394,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"      }\n"}
+{"sequence":266,"elapsed":18.233355665999998,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    ],\n"}
+{"sequence":267,"elapsed":18.233385062,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":268,"elapsed":18.233427097,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":269,"elapsed":18.233455807000002,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":270,"elapsed":18.2334852,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"        \"type\": \"string\",\n"}
+{"sequence":271,"elapsed":18.233515727,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/resourceGroups/<group>\"\n"}
+{"sequence":272,"elapsed":18.233543797000003,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"      }\n"}
+{"sequence":273,"elapsed":18.233571796,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    },\n"}
+{"sequence":274,"elapsed":18.233601541,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":275,"elapsed":18.233629721,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:24.109Z\"\n"}
+{"sequence":276,"elapsed":18.233657399,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"  },\n"}
+{"sequence":277,"elapsed":18.233686508999998,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":278,"elapsed":18.233714510000002,"at":"2026-11-07T05:07:26.232Z","type":"output","target":"local","phase":"read-final","stream":"stdout","text":"}\n"}
+{"sequence":279,"elapsed":18.507663026000003,"at":"2026-11-07T05:07:26.506Z","type":"command-end","target":"local","phase":"read-final","exitCode":0,"timedOut":false}
+{"sequence":280,"elapsed":18.509598019000002,"at":"2026-11-07T05:07:26.508Z","type":"command-start","target":"local","phase":"destroy-group","command":["/usr/bin/az","rest","--method","delete","--url","https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":281,"elapsed":19.227861773,"at":"2026-11-07T05:07:27.226Z","type":"http","target":"local","phase":"destroy-group","method":"DELETE","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":282,"elapsed":19.275071518,"at":"2026-11-07T05:07:27.273Z","type":"output","target":"local","phase":"destroy-group","stream":"stdout","text":"{\n"}
+{"sequence":283,"elapsed":19.275242033999998,"at":"2026-11-07T05:07:27.273Z","type":"output","target":"local","phase":"destroy-group","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":284,"elapsed":19.275290855999998,"at":"2026-11-07T05:07:27.274Z","type":"output","target":"local","phase":"destroy-group","stream":"stdout","text":"  \"status\": \"Deleted\"\n"}
+{"sequence":285,"elapsed":19.275323954,"at":"2026-11-07T05:07:27.274Z","type":"output","target":"local","phase":"destroy-group","stream":"stdout","text":"}\n"}
+{"sequence":286,"elapsed":19.544512989999998,"at":"2026-11-07T05:07:27.543Z","type":"command-end","target":"local","phase":"destroy-group","exitCode":0,"timedOut":false}
+{"sequence":287,"elapsed":19.546297269,"at":"2026-11-07T05:07:27.545Z","type":"command-start","target":"local","phase":"destroy-deployment","command":["/usr/bin/az","rest","--method","delete","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":288,"elapsed":20.253081377999997,"at":"2026-11-07T05:07:28.251Z","type":"http","target":"local","phase":"destroy-deployment","method":"DELETE","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":202}
+{"sequence":289,"elapsed":20.557765429,"at":"2026-11-07T05:07:28.556Z","type":"command-end","target":"local","phase":"destroy-deployment","exitCode":0,"timedOut":false}
+{"sequence":290,"elapsed":20.573547432999998,"at":"2026-11-07T05:07:28.572Z","type":"probe","target":"local","phase":"post-destroy-read-0","method":"GET","status":404}
+{"sequence":291,"elapsed":20.578365212,"at":"2026-11-07T05:07:28.577Z","type":"probe","target":"local","phase":"cleanup-read","method":"GET","status":404}
+{"sequence":292,"elapsed":20.582578705,"at":"2026-11-07T05:07:28.581Z","type":"probe","target":"local","phase":"cleanup-absence","method":"GET","status":404}
+{"sequence":293,"elapsed":21.046044372,"at":"2026-11-07T05:07:29.044Z","type":"target-end","target":"local","ok":true,"cleanup":{"nativeDestroyAccepted":true,"nativeDestroy":true,"absent":true,"deploymentAbsent":true,"privateFilesRemoved":true}}
+{"sequence":294,"elapsed":21.04897479,"at":"2026-11-07T05:07:29.047Z","type":"target-start","target":"azure"}
+{"sequence":295,"elapsed":24.782396575,"at":"2026-11-07T05:07:32.781Z","type":"probe","target":"azure","phase":"preflight","method":"GET","status":404}
+{"sequence":296,"elapsed":24.782918142,"at":"2026-11-07T05:07:32.781Z","type":"command-start","target":"azure","phase":"version","command":["/root/.azure/bin/bicep","--version"]}
+{"sequence":297,"elapsed":25.823454161,"at":"2026-11-07T05:07:33.822Z","type":"output","target":"azure","phase":"version","stream":"stdout","text":"Bicep CLI version 0.48.1 (cec7951cf6)\n"}
+{"sequence":298,"elapsed":25.994847412,"at":"2026-11-07T05:07:33.993Z","type":"command-end","target":"azure","phase":"version","exitCode":0,"timedOut":false}
+{"sequence":299,"elapsed":25.996559561999998,"at":"2026-11-07T05:07:33.995Z","type":"command-start","target":"azure","phase":"compile","command":["/root/.azure/bin/bicep","build","main.bicep","--outfile","/private/template.json"]}
+{"sequence":300,"elapsed":28.417603221,"at":"2026-11-07T05:07:36.416Z","type":"command-end","target":"azure","phase":"compile","exitCode":0,"timedOut":false}
+{"sequence":301,"elapsed":28.422681855,"at":"2026-11-07T05:07:36.421Z","type":"command-start","target":"azure","phase":"cli-version","command":["/usr/bin/az","version"]}
+{"sequence":302,"elapsed":32.121617972,"at":"2026-11-07T05:07:40.120Z","type":"output","target":"azure","phase":"cli-version","stream":"stdout","text":"{\n"}
+{"sequence":303,"elapsed":32.121768777,"at":"2026-11-07T05:07:40.120Z","type":"output","target":"azure","phase":"cli-version","stream":"stdout","text":"  \"azure-cli\": \"2.92.0\",\n"}
+{"sequence":304,"elapsed":32.121808711,"at":"2026-11-07T05:07:40.120Z","type":"output","target":"azure","phase":"cli-version","stream":"stdout","text":"  \"azure-cli-core\": \"2.92.0\",\n"}
+{"sequence":305,"elapsed":32.121839959,"at":"2026-11-07T05:07:40.120Z","type":"output","target":"azure","phase":"cli-version","stream":"stdout","text":"  \"azure-cli-telemetry\": \"1.1.0\",\n"}
+{"sequence":306,"elapsed":32.121869615,"at":"2026-11-07T05:07:40.120Z","type":"output","target":"azure","phase":"cli-version","stream":"stdout","text":"  \"extensions\": {}\n"}
+{"sequence":307,"elapsed":32.121896639,"at":"2026-11-07T05:07:40.120Z","type":"output","target":"azure","phase":"cli-version","stream":"stdout","text":"}\n"}
+{"sequence":308,"elapsed":32.381380588,"at":"2026-11-07T05:07:40.380Z","type":"command-end","target":"azure","phase":"cli-version","exitCode":0,"timedOut":false}
+{"sequence":309,"elapsed":32.388093282,"at":"2026-11-07T05:07:40.386Z","type":"command-start","target":"azure","phase":"deploy-create","command":["/usr/bin/az","rest","--method","put","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json","--body","@/private/deployment.json"]}
+{"sequence":310,"elapsed":40.583339847000005,"at":"2026-11-07T05:07:48.582Z","type":"http","target":"azure","phase":"deploy-create","method":"PUT","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":201}
+{"sequence":311,"elapsed":40.636063078,"at":"2026-11-07T05:07:48.634Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"{\n"}
+{"sequence":312,"elapsed":40.636214028000005,"at":"2026-11-07T05:07:48.634Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":313,"elapsed":40.636264711,"at":"2026-11-07T05:07:48.634Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":314,"elapsed":40.636289767,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":315,"elapsed":40.636309833,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":316,"elapsed":40.636329975,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"correlationId\": \"4f05cc25-3824-45ef-bf2f-14c55ab4d4b0\",\n"}
+{"sequence":317,"elapsed":40.636353868,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":318,"elapsed":40.636385967,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"duration\": \"PT0.0000929S\",\n"}
+{"sequence":319,"elapsed":40.636425771,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":320,"elapsed":40.63645291,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":321,"elapsed":40.636472254,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":322,"elapsed":40.636491741,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":323,"elapsed":40.636511901,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":324,"elapsed":40.636530942,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      },\n"}
+{"sequence":325,"elapsed":40.636549871,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":326,"elapsed":40.636568854,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":327,"elapsed":40.636588089,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":328,"elapsed":40.636607292,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      },\n"}
+{"sequence":329,"elapsed":40.636636589,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":330,"elapsed":40.636654954,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":331,"elapsed":40.636672524,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":332,"elapsed":40.636689767,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      },\n"}
+{"sequence":333,"elapsed":40.636706915000005,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":334,"elapsed":40.63672466,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":335,"elapsed":40.63674227,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"value\": \"one\"\n"}
+{"sequence":336,"elapsed":40.636759524,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      },\n"}
+{"sequence":337,"elapsed":40.636776966999996,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":338,"elapsed":40.636796699,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":339,"elapsed":40.636816528000004,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":340,"elapsed":40.636833941,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      }\n"}
+{"sequence":341,"elapsed":40.636864517,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    },\n"}
+{"sequence":342,"elapsed":40.636883492,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":343,"elapsed":40.636900505999996,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      {\n"}
+{"sequence":344,"elapsed":40.63691861,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":345,"elapsed":40.63693586,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":346,"elapsed":40.636953180999996,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"          {\n"}
+{"sequence":347,"elapsed":40.636971040999995,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":348,"elapsed":40.636988171,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":349,"elapsed":40.637005633,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"            ],\n"}
+{"sequence":350,"elapsed":40.637023672000005,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":351,"elapsed":40.637046432000005,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"          }\n"}
+{"sequence":352,"elapsed":40.637064176,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"        ]\n"}
+{"sequence":353,"elapsed":40.637081261,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"      }\n"}
+{"sequence":354,"elapsed":40.637098033,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    ],\n"}
+{"sequence":355,"elapsed":40.63711557,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"provisioningState\": \"Accepted\",\n"}
+{"sequence":356,"elapsed":40.637133409,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":357,"elapsed":40.637187421,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:43.0732572Z\"\n"}
+{"sequence":358,"elapsed":40.637232583999996,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"  },\n"}
+{"sequence":359,"elapsed":40.637265647,"at":"2026-11-07T05:07:48.635Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":360,"elapsed":40.637295221,"at":"2026-11-07T05:07:48.636Z","type":"output","target":"azure","phase":"deploy-create","stream":"stdout","text":"}\n"}
+{"sequence":361,"elapsed":40.906469808000004,"at":"2026-11-07T05:07:48.905Z","type":"command-end","target":"azure","phase":"deploy-create","exitCode":0,"timedOut":false}
+{"sequence":362,"elapsed":40.909423869,"at":"2026-11-07T05:07:48.908Z","type":"command-start","target":"azure","phase":"deploy-create-read-0","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":363,"elapsed":43.47684356600001,"at":"2026-11-07T05:07:51.475Z","type":"http","target":"azure","phase":"deploy-create-read-0","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":364,"elapsed":43.535494510999996,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"{\n"}
+{"sequence":365,"elapsed":43.535649845,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":366,"elapsed":43.535690214,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":367,"elapsed":43.535722667,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":368,"elapsed":43.535753318000005,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":369,"elapsed":43.535783988000006,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"correlationId\": \"4f05cc25-3824-45ef-bf2f-14c55ab4d4b0\",\n"}
+{"sequence":370,"elapsed":43.53581418700001,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":371,"elapsed":43.535860052000004,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"duration\": \"PT7.7085125S\",\n"}
+{"sequence":372,"elapsed":43.535889215000005,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":373,"elapsed":43.535934690000005,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"outputResources\": [\n"}
+{"sequence":374,"elapsed":43.535962661,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":375,"elapsed":43.535992744000005,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":376,"elapsed":43.536021539000004,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":377,"elapsed":43.536048614,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":378,"elapsed":43.536076454,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":379,"elapsed":43.536105075,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":380,"elapsed":43.536133453000005,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":381,"elapsed":43.536189071,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":382,"elapsed":43.536229847,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":383,"elapsed":43.536258778000004,"at":"2026-11-07T05:07:51.534Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":384,"elapsed":43.536286729,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":385,"elapsed":43.53631551,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":386,"elapsed":43.536344521,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":387,"elapsed":43.536373902,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":388,"elapsed":43.536400504999996,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":389,"elapsed":43.536428453,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":390,"elapsed":43.536456141,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":391,"elapsed":43.536484371,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":392,"elapsed":43.536521749,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":393,"elapsed":43.536550574,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":394,"elapsed":43.536578494000004,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":395,"elapsed":43.536605910999995,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":396,"elapsed":43.536632652,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":397,"elapsed":43.536659999,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":398,"elapsed":43.536686540000005,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":399,"elapsed":43.53671378,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"one\"\n"}
+{"sequence":400,"elapsed":43.536742270000005,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":401,"elapsed":43.536771477,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":402,"elapsed":43.536799775,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":403,"elapsed":43.536827615,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":404,"elapsed":43.536854823,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":405,"elapsed":43.536883101,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":406,"elapsed":43.536923384000005,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":407,"elapsed":43.536952159,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":408,"elapsed":43.536981498,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":409,"elapsed":43.537009079,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":410,"elapsed":43.53703608,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"          {\n"}
+{"sequence":411,"elapsed":43.537064517,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":412,"elapsed":43.53709257,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":413,"elapsed":43.537127059,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"            ],\n"}
+{"sequence":414,"elapsed":43.537191480000004,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":415,"elapsed":43.537234134,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"          }\n"}
+{"sequence":416,"elapsed":43.537262153,"at":"2026-11-07T05:07:51.535Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"        ]\n"}
+{"sequence":417,"elapsed":43.537289451999996,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":418,"elapsed":43.537316624,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":419,"elapsed":43.537344655,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":420,"elapsed":43.537373159000005,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":421,"elapsed":43.53740021,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:50.7817697Z\"\n"}
+{"sequence":422,"elapsed":43.537429987,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"  },\n"}
+{"sequence":423,"elapsed":43.537459612999996,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":424,"elapsed":43.537486679000004,"at":"2026-11-07T05:07:51.536Z","type":"output","target":"azure","phase":"deploy-create-read-0","stream":"stdout","text":"}\n"}
+{"sequence":425,"elapsed":43.781960536,"at":"2026-11-07T05:07:51.780Z","type":"command-end","target":"azure","phase":"deploy-create-read-0","exitCode":0,"timedOut":false}
+{"sequence":426,"elapsed":44.155900138,"at":"2026-11-07T05:07:52.154Z","type":"probe","target":"azure","phase":"read-create","method":"GET","status":200,"revision":"one"}
+{"sequence":427,"elapsed":44.156059437,"at":"2026-11-07T05:07:52.154Z","type":"portal-pending","target":"azure","phase":"created","reason":"Terminal/API run only; Azure Portal capture is pending"}
+{"sequence":428,"elapsed":44.156895157,"at":"2026-11-07T05:07:52.155Z","type":"command-start","target":"azure","phase":"read-stable","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":429,"elapsed":46.248391843,"at":"2026-11-07T05:07:54.247Z","type":"http","target":"azure","phase":"read-stable","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":430,"elapsed":46.302853034,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"{\n"}
+{"sequence":431,"elapsed":46.303000004000005,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":432,"elapsed":46.303039817,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":433,"elapsed":46.303070863,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":434,"elapsed":46.30311032,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":435,"elapsed":46.30313769,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"correlationId\": \"4f05cc25-3824-45ef-bf2f-14c55ab4d4b0\",\n"}
+{"sequence":436,"elapsed":46.303190743,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":437,"elapsed":46.303225051,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"duration\": \"PT7.7085125S\",\n"}
+{"sequence":438,"elapsed":46.303257061000004,"at":"2026-11-07T05:07:54.301Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":439,"elapsed":46.303283478,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"outputResources\": [\n"}
+{"sequence":440,"elapsed":46.30331081,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      {\n"}
+{"sequence":441,"elapsed":46.303351065,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":442,"elapsed":46.303378973,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      }\n"}
+{"sequence":443,"elapsed":46.303404240000006,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    ],\n"}
+{"sequence":444,"elapsed":46.303429022,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":445,"elapsed":46.303454651,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":446,"elapsed":46.303481414000004,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":447,"elapsed":46.303508562000005,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":448,"elapsed":46.303533210000005,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      }\n"}
+{"sequence":449,"elapsed":46.303558313,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    },\n"}
+{"sequence":450,"elapsed":46.303583128999996,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":451,"elapsed":46.303608231,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":452,"elapsed":46.303633322,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":453,"elapsed":46.303659687,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":454,"elapsed":46.303687253999996,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      },\n"}
+{"sequence":455,"elapsed":46.303714172,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":456,"elapsed":46.303750734,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":457,"elapsed":46.303777682,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":458,"elapsed":46.303802881,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      },\n"}
+{"sequence":459,"elapsed":46.303828177,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":460,"elapsed":46.303864142,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":461,"elapsed":46.30388998,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":462,"elapsed":46.303915269,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      },\n"}
+{"sequence":463,"elapsed":46.303939652000004,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":464,"elapsed":46.303965399,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":465,"elapsed":46.303992379,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"value\": \"one\"\n"}
+{"sequence":466,"elapsed":46.304019511,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      },\n"}
+{"sequence":467,"elapsed":46.304046237,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":468,"elapsed":46.304072817,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":469,"elapsed":46.304098786000004,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":470,"elapsed":46.304124329,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      }\n"}
+{"sequence":471,"elapsed":46.304149439,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    },\n"}
+{"sequence":472,"elapsed":46.30420536,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":473,"elapsed":46.304233092000004,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      {\n"}
+{"sequence":474,"elapsed":46.304259501,"at":"2026-11-07T05:07:54.302Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":475,"elapsed":46.304287623,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":476,"elapsed":46.304315826,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"          {\n"}
+{"sequence":477,"elapsed":46.304352053,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":478,"elapsed":46.304380016,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":479,"elapsed":46.304414756,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"            ],\n"}
+{"sequence":480,"elapsed":46.304441204,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":481,"elapsed":46.304466196,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"          }\n"}
+{"sequence":482,"elapsed":46.304491736,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"        ]\n"}
+{"sequence":483,"elapsed":46.304517901,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"      }\n"}
+{"sequence":484,"elapsed":46.304544837,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    ],\n"}
+{"sequence":485,"elapsed":46.304572474000004,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":486,"elapsed":46.304599028999995,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":487,"elapsed":46.304625905,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:50.7817697Z\"\n"}
+{"sequence":488,"elapsed":46.304650460999994,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"  },\n"}
+{"sequence":489,"elapsed":46.304675316,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":490,"elapsed":46.304700956,"at":"2026-11-07T05:07:54.303Z","type":"output","target":"azure","phase":"read-stable","stream":"stdout","text":"}\n"}
+{"sequence":491,"elapsed":46.590558083000005,"at":"2026-11-07T05:07:54.589Z","type":"command-end","target":"azure","phase":"read-stable","exitCode":0,"timedOut":false}
+{"sequence":492,"elapsed":46.593641498,"at":"2026-11-07T05:07:54.592Z","type":"command-start","target":"azure","phase":"read-group","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":493,"elapsed":48.006899609,"at":"2026-11-07T05:07:56.005Z","type":"http","target":"azure","phase":"read-group","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":494,"elapsed":48.054873363,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"{\n"}
+{"sequence":495,"elapsed":48.054983132000004,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":496,"elapsed":48.055011402000005,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":497,"elapsed":48.055033304999995,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":498,"elapsed":48.055053224000005,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":499,"elapsed":48.05507286,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\"\n"}
+{"sequence":500,"elapsed":48.055106872,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  },\n"}
+{"sequence":501,"elapsed":48.055137699999996,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  \"tags\": {\n"}
+{"sequence":502,"elapsed":48.055192610999995,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"    \"expires\": \"<expiry>\",\n"}
+{"sequence":503,"elapsed":48.055233791999996,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"    \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":504,"elapsed":48.055261097,"at":"2026-11-07T05:07:56.053Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"    \"revision\": \"one\",\n"}
+{"sequence":505,"elapsed":48.055288762,"at":"2026-11-07T05:07:56.054Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"    \"run\": \"<run>\"\n"}
+{"sequence":506,"elapsed":48.055319933,"at":"2026-11-07T05:07:56.054Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  },\n"}
+{"sequence":507,"elapsed":48.055344891,"at":"2026-11-07T05:07:56.054Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":508,"elapsed":48.055371912000005,"at":"2026-11-07T05:07:56.054Z","type":"output","target":"azure","phase":"read-group","stream":"stdout","text":"}\n"}
+{"sequence":509,"elapsed":48.344105348999996,"at":"2026-11-07T05:07:56.342Z","type":"command-end","target":"azure","phase":"read-group","exitCode":0,"timedOut":false}
+{"sequence":510,"elapsed":48.346794961,"at":"2026-11-07T05:07:56.345Z","type":"command-start","target":"azure","phase":"deploy-update","command":["/usr/bin/az","rest","--method","put","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json","--body","@/private/deployment.json"]}
+{"sequence":511,"elapsed":54.756456263,"at":"2026-11-07T05:08:02.755Z","type":"http","target":"azure","phase":"deploy-update","method":"PUT","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":512,"elapsed":54.801324394000005,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"{\n"}
+{"sequence":513,"elapsed":54.801461393,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":514,"elapsed":54.801494454,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":515,"elapsed":54.801516966,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":516,"elapsed":54.801536829999996,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":517,"elapsed":54.801557019,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"correlationId\": \"95294689-47e1-420a-a707-cedb776a9816\",\n"}
+{"sequence":518,"elapsed":54.801576917,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":519,"elapsed":54.801595997999996,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"duration\": \"PT0.0009987S\",\n"}
+{"sequence":520,"elapsed":54.801626931,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":521,"elapsed":54.801646607,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":522,"elapsed":54.801664083000006,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":523,"elapsed":54.801682246999995,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":524,"elapsed":54.80170052,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":525,"elapsed":54.801718298,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      },\n"}
+{"sequence":526,"elapsed":54.801736144,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":527,"elapsed":54.801754116999994,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":528,"elapsed":54.801772195,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":529,"elapsed":54.801795084,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      },\n"}
+{"sequence":530,"elapsed":54.801813066,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":531,"elapsed":54.801830505,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":532,"elapsed":54.801848391,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":533,"elapsed":54.80191836,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      },\n"}
+{"sequence":534,"elapsed":54.801943423999994,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":535,"elapsed":54.801961090999995,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":536,"elapsed":54.801978856,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"value\": \"two\"\n"}
+{"sequence":537,"elapsed":54.801996095,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      },\n"}
+{"sequence":538,"elapsed":54.802013322,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":539,"elapsed":54.802031209,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":540,"elapsed":54.802048959,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":541,"elapsed":54.802066135000004,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      }\n"}
+{"sequence":542,"elapsed":54.802090885999995,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    },\n"}
+{"sequence":543,"elapsed":54.802108929,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":544,"elapsed":54.802126283,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      {\n"}
+{"sequence":545,"elapsed":54.802144118,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":546,"elapsed":54.80219538,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":547,"elapsed":54.802230885,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"          {\n"}
+{"sequence":548,"elapsed":54.802256164,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":549,"elapsed":54.802274491000006,"at":"2026-11-07T05:08:02.800Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":550,"elapsed":54.802292441,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"            ],\n"}
+{"sequence":551,"elapsed":54.802310211000005,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":552,"elapsed":54.802327428,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"          }\n"}
+{"sequence":553,"elapsed":54.802344608,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"        ]\n"}
+{"sequence":554,"elapsed":54.802364749,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"      }\n"}
+{"sequence":555,"elapsed":54.802391169,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    ],\n"}
+{"sequence":556,"elapsed":54.802420178,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"provisioningState\": \"Accepted\",\n"}
+{"sequence":557,"elapsed":54.802448964,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":558,"elapsed":54.802474191,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:58.9558498Z\"\n"}
+{"sequence":559,"elapsed":54.802491952000004,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"  },\n"}
+{"sequence":560,"elapsed":54.802509853000004,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":561,"elapsed":54.802526912000005,"at":"2026-11-07T05:08:02.801Z","type":"output","target":"azure","phase":"deploy-update","stream":"stdout","text":"}\n"}
+{"sequence":562,"elapsed":55.053100171,"at":"2026-11-07T05:08:03.051Z","type":"command-end","target":"azure","phase":"deploy-update","exitCode":0,"timedOut":false}
+{"sequence":563,"elapsed":55.056274056,"at":"2026-11-07T05:08:03.054Z","type":"command-start","target":"azure","phase":"deploy-update-read-0","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":564,"elapsed":57.631943842,"at":"2026-11-07T05:08:05.630Z","type":"http","target":"azure","phase":"deploy-update-read-0","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":565,"elapsed":57.684184943,"at":"2026-11-07T05:08:05.682Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"{\n"}
+{"sequence":566,"elapsed":57.684339424,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":567,"elapsed":57.684381518,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":568,"elapsed":57.684414468,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":569,"elapsed":57.684445713,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":570,"elapsed":57.684476956,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"correlationId\": \"95294689-47e1-420a-a707-cedb776a9816\",\n"}
+{"sequence":571,"elapsed":57.68450752,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":572,"elapsed":57.684536856,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"duration\": \"PT2.6278173S\",\n"}
+{"sequence":573,"elapsed":57.684567593,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":574,"elapsed":57.684598549,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":575,"elapsed":57.684628376,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":576,"elapsed":57.6846575,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":577,"elapsed":57.684687648,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":578,"elapsed":57.684717326,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":579,"elapsed":57.68474749600001,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":580,"elapsed":57.684795351,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":581,"elapsed":57.684828677999995,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":582,"elapsed":57.684858186,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":583,"elapsed":57.684889352,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":584,"elapsed":57.68493597,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":585,"elapsed":57.684966982,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":586,"elapsed":57.684994789,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":587,"elapsed":57.685022389,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":588,"elapsed":57.685050709,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":589,"elapsed":57.685077845,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"value\": \"two\"\n"}
+{"sequence":590,"elapsed":57.685104922,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":591,"elapsed":57.685132741000004,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":592,"elapsed":57.685205286,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":593,"elapsed":57.685250294999996,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":594,"elapsed":57.685278274000005,"at":"2026-11-07T05:08:05.683Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":595,"elapsed":57.685306641000004,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":596,"elapsed":57.685333318999994,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":597,"elapsed":57.685360804000005,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":598,"elapsed":57.685388652,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":599,"elapsed":57.685417238,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":600,"elapsed":57.685443747,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"          {\n"}
+{"sequence":601,"elapsed":57.68547055,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":602,"elapsed":57.685499003,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":603,"elapsed":57.685526732,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"            ],\n"}
+{"sequence":604,"elapsed":57.685555097,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":605,"elapsed":57.685584014,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"          }\n"}
+{"sequence":606,"elapsed":57.685623330000006,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"        ]\n"}
+{"sequence":607,"elapsed":57.68565043,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":608,"elapsed":57.68567767,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":609,"elapsed":57.685706603,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"provisioningState\": \"Running\",\n"}
+{"sequence":610,"elapsed":57.685735537,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":611,"elapsed":57.685776098000005,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:07:58.9558498Z\"\n"}
+{"sequence":612,"elapsed":57.68580810300001,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"  },\n"}
+{"sequence":613,"elapsed":57.685835854,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":614,"elapsed":57.685864857,"at":"2026-11-07T05:08:05.684Z","type":"output","target":"azure","phase":"deploy-update-read-0","stream":"stdout","text":"}\n"}
+{"sequence":615,"elapsed":57.963109218,"at":"2026-11-07T05:08:05.961Z","type":"command-end","target":"azure","phase":"deploy-update-read-0","exitCode":0,"timedOut":false}
+{"sequence":616,"elapsed":58.966952871000004,"at":"2026-11-07T05:08:06.965Z","type":"command-start","target":"azure","phase":"deploy-update-read-1","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":617,"elapsed":61.610706289,"at":"2026-11-07T05:08:09.609Z","type":"http","target":"azure","phase":"deploy-update-read-1","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":618,"elapsed":61.656053247,"at":"2026-11-07T05:08:09.654Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"{\n"}
+{"sequence":619,"elapsed":61.656198941,"at":"2026-11-07T05:08:09.654Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":620,"elapsed":61.656262238000004,"at":"2026-11-07T05:08:09.654Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":621,"elapsed":61.656304834000004,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":622,"elapsed":61.656353721,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":623,"elapsed":61.656387914,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"correlationId\": \"95294689-47e1-420a-a707-cedb776a9816\",\n"}
+{"sequence":624,"elapsed":61.656418598,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":625,"elapsed":61.656459014,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"duration\": \"PT6.9978875S\",\n"}
+{"sequence":626,"elapsed":61.656480466,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":627,"elapsed":61.656509305,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"outputResources\": [\n"}
+{"sequence":628,"elapsed":61.656540068000005,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      {\n"}
+{"sequence":629,"elapsed":61.656570259,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":630,"elapsed":61.656589932,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      }\n"}
+{"sequence":631,"elapsed":61.656607474,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    ],\n"}
+{"sequence":632,"elapsed":61.656624443,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":633,"elapsed":61.656652665,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":634,"elapsed":61.656670224,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":635,"elapsed":61.65668929500001,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":636,"elapsed":61.656706634,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      }\n"}
+{"sequence":637,"elapsed":61.656723635,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    },\n"}
+{"sequence":638,"elapsed":61.656740929,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":639,"elapsed":61.656757982,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":640,"elapsed":61.656781955999996,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":641,"elapsed":61.656812386999995,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":642,"elapsed":61.656839595,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      },\n"}
+{"sequence":643,"elapsed":61.656867041,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":644,"elapsed":61.656893753000006,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":645,"elapsed":61.656924685999996,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":646,"elapsed":61.656952278,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      },\n"}
+{"sequence":647,"elapsed":61.656970484,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":648,"elapsed":61.656987911,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":649,"elapsed":61.6570052,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":650,"elapsed":61.657022542,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      },\n"}
+{"sequence":651,"elapsed":61.657039653,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":652,"elapsed":61.657057074,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":653,"elapsed":61.657074617999996,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"value\": \"two\"\n"}
+{"sequence":654,"elapsed":61.657096025,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      },\n"}
+{"sequence":655,"elapsed":61.657124151000005,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":656,"elapsed":61.657192183,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":657,"elapsed":61.657243034,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":658,"elapsed":61.657272724,"at":"2026-11-07T05:08:09.655Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      }\n"}
+{"sequence":659,"elapsed":61.657298443,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    },\n"}
+{"sequence":660,"elapsed":61.657341567,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":661,"elapsed":61.657763537,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      {\n"}
+{"sequence":662,"elapsed":61.657821258000006,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":663,"elapsed":61.657844348,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":664,"elapsed":61.657863131999996,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"          {\n"}
+{"sequence":665,"elapsed":61.657881165,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":666,"elapsed":61.657898691,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":667,"elapsed":61.657916741,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"            ],\n"}
+{"sequence":668,"elapsed":61.657943565000004,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":669,"elapsed":61.657961921,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"          }\n"}
+{"sequence":670,"elapsed":61.657979367,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"        ]\n"}
+{"sequence":671,"elapsed":61.657996608000005,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"      }\n"}
+{"sequence":672,"elapsed":61.658013622,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    ],\n"}
+{"sequence":673,"elapsed":61.658031640000004,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":674,"elapsed":61.658049852000005,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":675,"elapsed":61.658067697,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:08:05.9537373Z\"\n"}
+{"sequence":676,"elapsed":61.658085140000004,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"  },\n"}
+{"sequence":677,"elapsed":61.658102858999996,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":678,"elapsed":61.65812034,"at":"2026-11-07T05:08:09.656Z","type":"output","target":"azure","phase":"deploy-update-read-1","stream":"stdout","text":"}\n"}
+{"sequence":679,"elapsed":61.927471581999995,"at":"2026-11-07T05:08:09.926Z","type":"command-end","target":"azure","phase":"deploy-update-read-1","exitCode":0,"timedOut":false}
+{"sequence":680,"elapsed":62.759116837,"at":"2026-11-07T05:08:10.757Z","type":"probe","target":"azure","phase":"read-update","method":"GET","status":200,"revision":"two"}
+{"sequence":681,"elapsed":62.759265381999995,"at":"2026-11-07T05:08:10.757Z","type":"portal-pending","target":"azure","phase":"updated","reason":"Terminal/API run only; Azure Portal capture is pending"}
+{"sequence":682,"elapsed":64.52045903,"at":"2026-11-07T05:08:12.519Z","type":"probe","target":"azure","phase":"inject-drift","method":"PATCH","status":200,"revision":"external"}
+{"sequence":683,"elapsed":64.52129675799999,"at":"2026-11-07T05:08:12.520Z","type":"command-start","target":"azure","phase":"read-drift","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":684,"elapsed":65.742370448,"at":"2026-11-07T05:08:13.741Z","type":"http","target":"azure","phase":"read-drift","method":"GET","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":200}
+{"sequence":685,"elapsed":65.79741547,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"{\n"}
+{"sequence":686,"elapsed":65.797541082,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\",\n"}
+{"sequence":687,"elapsed":65.79756976,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":688,"elapsed":65.79759217600001,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":689,"elapsed":65.797633728,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":690,"elapsed":65.79765498799999,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\"\n"}
+{"sequence":691,"elapsed":65.797672869,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  },\n"}
+{"sequence":692,"elapsed":65.797690636,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  \"tags\": {\n"}
+{"sequence":693,"elapsed":65.797711356,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"    \"expires\": \"<expiry>\",\n"}
+{"sequence":694,"elapsed":65.797730391,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"    \"project\": \"globalstack-paired-lifecycle\",\n"}
+{"sequence":695,"elapsed":65.797748246,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"    \"revision\": \"external\",\n"}
+{"sequence":696,"elapsed":65.797766025,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"    \"run\": \"<run>\"\n"}
+{"sequence":697,"elapsed":65.79778404500001,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  },\n"}
+{"sequence":698,"elapsed":65.797801909,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/resourceGroups\"\n"}
+{"sequence":699,"elapsed":65.797818874,"at":"2026-11-07T05:08:13.796Z","type":"output","target":"azure","phase":"read-drift","stream":"stdout","text":"}\n"}
+{"sequence":700,"elapsed":66.076670904,"at":"2026-11-07T05:08:14.075Z","type":"command-end","target":"azure","phase":"read-drift","exitCode":0,"timedOut":false}
+{"sequence":701,"elapsed":66.081183958,"at":"2026-11-07T05:08:14.079Z","type":"command-start","target":"azure","phase":"deploy-repair","command":["/usr/bin/az","rest","--method","put","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json","--body","@/private/deployment.json"]}
+{"sequence":702,"elapsed":72.62178476300001,"at":"2026-11-07T05:08:20.620Z","type":"http","target":"azure","phase":"deploy-repair","method":"PUT","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":703,"elapsed":72.672391405,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"{\n"}
+{"sequence":704,"elapsed":72.672537591,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":705,"elapsed":72.672578443,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":706,"elapsed":72.672611437,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":707,"elapsed":72.672642199,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":708,"elapsed":72.672672544,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"correlationId\": \"41ba451d-62f5-4045-b037-8afdf39c8b17\",\n"}
+{"sequence":709,"elapsed":72.672717259,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":710,"elapsed":72.67274826900001,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"duration\": \"PT0.0008659S\",\n"}
+{"sequence":711,"elapsed":72.672777111,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":712,"elapsed":72.67280549899999,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":713,"elapsed":72.672832983,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":714,"elapsed":72.672860635,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":715,"elapsed":72.672889879,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":716,"elapsed":72.672917859,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      },\n"}
+{"sequence":717,"elapsed":72.672944922,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":718,"elapsed":72.672972791,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":719,"elapsed":72.673000072,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":720,"elapsed":72.673027243,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      },\n"}
+{"sequence":721,"elapsed":72.673055644,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":722,"elapsed":72.673084072,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":723,"elapsed":72.673111879,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":724,"elapsed":72.673139119,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      },\n"}
+{"sequence":725,"elapsed":72.673216082,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":726,"elapsed":72.673256736,"at":"2026-11-07T05:08:20.671Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":727,"elapsed":72.673284885,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"value\": \"two\"\n"}
+{"sequence":728,"elapsed":72.67331316,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      },\n"}
+{"sequence":729,"elapsed":72.67334114600001,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":730,"elapsed":72.673368931,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":731,"elapsed":72.673409163,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":732,"elapsed":72.67343793299999,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      }\n"}
+{"sequence":733,"elapsed":72.67346452199999,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    },\n"}
+{"sequence":734,"elapsed":72.67349206099999,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":735,"elapsed":72.673518773,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      {\n"}
+{"sequence":736,"elapsed":72.673546449,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":737,"elapsed":72.673575656,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":738,"elapsed":72.673603392,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"          {\n"}
+{"sequence":739,"elapsed":72.673630563,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":740,"elapsed":72.67365718799999,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":741,"elapsed":72.673685325,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"            ],\n"}
+{"sequence":742,"elapsed":72.673713838,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":743,"elapsed":72.673748196,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"          }\n"}
+{"sequence":744,"elapsed":72.67377491399999,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"        ]\n"}
+{"sequence":745,"elapsed":72.673802513,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"      }\n"}
+{"sequence":746,"elapsed":72.673829703,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    ],\n"}
+{"sequence":747,"elapsed":72.673857677,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"provisioningState\": \"Accepted\",\n"}
+{"sequence":748,"elapsed":72.673888179,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":749,"elapsed":72.673931097,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:08:16.949895Z\"\n"}
+{"sequence":750,"elapsed":72.673958957,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"  },\n"}
+{"sequence":751,"elapsed":72.673986325,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":752,"elapsed":72.67401476200001,"at":"2026-11-07T05:08:20.672Z","type":"output","target":"azure","phase":"deploy-repair","stream":"stdout","text":"}\n"}
+{"sequence":753,"elapsed":72.958187997,"at":"2026-11-07T05:08:20.956Z","type":"command-end","target":"azure","phase":"deploy-repair","exitCode":0,"timedOut":false}
+{"sequence":754,"elapsed":72.961086752,"at":"2026-11-07T05:08:20.959Z","type":"command-start","target":"azure","phase":"deploy-repair-read-0","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":755,"elapsed":74.958338291,"at":"2026-11-07T05:08:22.957Z","type":"http","target":"azure","phase":"deploy-repair-read-0","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":756,"elapsed":75.004562563,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"{\n"}
+{"sequence":757,"elapsed":75.004735007,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":758,"elapsed":75.004791996,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":759,"elapsed":75.00482706300001,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":760,"elapsed":75.004869968,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":761,"elapsed":75.00490117899999,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"correlationId\": \"41ba451d-62f5-4045-b037-8afdf39c8b17\",\n"}
+{"sequence":762,"elapsed":75.004932724,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":763,"elapsed":75.00496269499999,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"duration\": \"PT5.5819585S\",\n"}
+{"sequence":764,"elapsed":75.00499246700001,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":765,"elapsed":75.005023389,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"outputResources\": [\n"}
+{"sequence":766,"elapsed":75.005053116,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":767,"elapsed":75.005086749,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":768,"elapsed":75.005117059,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":769,"elapsed":75.00514610100001,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":770,"elapsed":75.005229185,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":771,"elapsed":75.005265459,"at":"2026-11-07T05:08:23.003Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":772,"elapsed":75.005296605,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":773,"elapsed":75.005345768,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":774,"elapsed":75.005376754,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":775,"elapsed":75.005404484,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":776,"elapsed":75.005431551,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":777,"elapsed":75.005459569,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":778,"elapsed":75.005487265,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":779,"elapsed":75.00551557,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":780,"elapsed":75.005542484,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":781,"elapsed":75.005572565,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":782,"elapsed":75.005600695,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":783,"elapsed":75.005628517,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":784,"elapsed":75.005654569,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":785,"elapsed":75.005682363,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":786,"elapsed":75.00571080899999,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":787,"elapsed":75.005739556,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":788,"elapsed":75.005766749,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":789,"elapsed":75.005794471,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":790,"elapsed":75.005823546,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":791,"elapsed":75.00586319,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"two\"\n"}
+{"sequence":792,"elapsed":75.005892483,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      },\n"}
+{"sequence":793,"elapsed":75.005919636,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":794,"elapsed":75.00594661100001,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":795,"elapsed":75.00598459700001,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":796,"elapsed":75.006012763,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":797,"elapsed":75.006039754,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    },\n"}
+{"sequence":798,"elapsed":75.00606741600001,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":799,"elapsed":75.006095322,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      {\n"}
+{"sequence":800,"elapsed":75.006123836,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":801,"elapsed":75.00615208699999,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":802,"elapsed":75.00621885999999,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"          {\n"}
+{"sequence":803,"elapsed":75.00624934,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":804,"elapsed":75.006276798,"at":"2026-11-07T05:08:23.004Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":805,"elapsed":75.006306006,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"            ],\n"}
+{"sequence":806,"elapsed":75.00633446699999,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":807,"elapsed":75.006361773,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"          }\n"}
+{"sequence":808,"elapsed":75.006389296,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"        ]\n"}
+{"sequence":809,"elapsed":75.006416207,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"      }\n"}
+{"sequence":810,"elapsed":75.006443559,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    ],\n"}
+{"sequence":811,"elapsed":75.006470967,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":812,"elapsed":75.00649459899999,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":813,"elapsed":75.00651856,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:08:22.5318535Z\"\n"}
+{"sequence":814,"elapsed":75.00654082300001,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"  },\n"}
+{"sequence":815,"elapsed":75.006563313,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":816,"elapsed":75.006598033,"at":"2026-11-07T05:08:23.005Z","type":"output","target":"azure","phase":"deploy-repair-read-0","stream":"stdout","text":"}\n"}
+{"sequence":817,"elapsed":75.250941456,"at":"2026-11-07T05:08:23.249Z","type":"command-end","target":"azure","phase":"deploy-repair-read-0","exitCode":0,"timedOut":false}
+{"sequence":818,"elapsed":76.050956443,"at":"2026-11-07T05:08:24.049Z","type":"probe","target":"azure","phase":"read-repair","method":"GET","status":200,"revision":"two"}
+{"sequence":819,"elapsed":76.051954354,"at":"2026-11-07T05:08:24.050Z","type":"command-start","target":"azure","phase":"read-final","command":["/usr/bin/az","rest","--method","get","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":820,"elapsed":78.32980514100001,"at":"2026-11-07T05:08:26.328Z","type":"http","target":"azure","phase":"read-final","method":"GET","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":200}
+{"sequence":821,"elapsed":78.38694786,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"{\n"}
+{"sequence":822,"elapsed":78.38706618100001,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"  \"id\": \"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>\",\n"}
+{"sequence":823,"elapsed":78.38709528700001,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"  \"location\": \"eastus\",\n"}
+{"sequence":824,"elapsed":78.387117229,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"  \"name\": \"<group>\",\n"}
+{"sequence":825,"elapsed":78.38713738,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"  \"properties\": {\n"}
+{"sequence":826,"elapsed":78.387184084,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"correlationId\": \"41ba451d-62f5-4045-b037-8afdf39c8b17\",\n"}
+{"sequence":827,"elapsed":78.387236697,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"dependencies\": [],\n"}
+{"sequence":828,"elapsed":78.387277536,"at":"2026-11-07T05:08:26.385Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"duration\": \"PT5.5819585S\",\n"}
+{"sequence":829,"elapsed":78.387299546,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"mode\": \"Incremental\",\n"}
+{"sequence":830,"elapsed":78.387318873,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"outputResources\": [\n"}
+{"sequence":831,"elapsed":78.387338057,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      {\n"}
+{"sequence":832,"elapsed":78.387359104,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"id\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":833,"elapsed":78.387378191,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      }\n"}
+{"sequence":834,"elapsed":78.38739692300001,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    ],\n"}
+{"sequence":835,"elapsed":78.387416098,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"outputs\": {\n"}
+{"sequence":836,"elapsed":78.387434758,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      \"groupId\": {\n"}
+{"sequence":837,"elapsed":78.387462952,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":838,"elapsed":78.387486502,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"value\": \"/subscriptions/<subscription>/resourceGroups/<group>\"\n"}
+{"sequence":839,"elapsed":78.387504793,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      }\n"}
+{"sequence":840,"elapsed":78.38752199300001,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    },\n"}
+{"sequence":841,"elapsed":78.387543554,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"parameters\": {\n"}
+{"sequence":842,"elapsed":78.387560858,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      \"expires\": {\n"}
+{"sequence":843,"elapsed":78.38757835199999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":844,"elapsed":78.387596429,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"value\": \"<expiry>\"\n"}
+{"sequence":845,"elapsed":78.387613711,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      },\n"}
+{"sequence":846,"elapsed":78.387631102,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      \"groupName\": {\n"}
+{"sequence":847,"elapsed":78.387648795,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":848,"elapsed":78.387666443,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"value\": \"<group>\"\n"}
+{"sequence":849,"elapsed":78.387684075,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      },\n"}
+{"sequence":850,"elapsed":78.38770158199999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      \"location\": {\n"}
+{"sequence":851,"elapsed":78.387718893,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":852,"elapsed":78.387736119,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"value\": \"eastus\"\n"}
+{"sequence":853,"elapsed":78.38775335,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      },\n"}
+{"sequence":854,"elapsed":78.38777283499999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      \"revision\": {\n"}
+{"sequence":855,"elapsed":78.387790782,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":856,"elapsed":78.387808328,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"value\": \"two\"\n"}
+{"sequence":857,"elapsed":78.38782550799999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      },\n"}
+{"sequence":858,"elapsed":78.38784273,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      \"runId\": {\n"}
+{"sequence":859,"elapsed":78.387865659,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"type\": \"String\",\n"}
+{"sequence":860,"elapsed":78.387884074,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"value\": \"<run>\"\n"}
+{"sequence":861,"elapsed":78.38790137599999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      }\n"}
+{"sequence":862,"elapsed":78.38791880699999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    },\n"}
+{"sequence":863,"elapsed":78.387936101,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"providers\": [\n"}
+{"sequence":864,"elapsed":78.387953142,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      {\n"}
+{"sequence":865,"elapsed":78.387970912,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"namespace\": \"Microsoft.Resources\",\n"}
+{"sequence":866,"elapsed":78.387988302,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        \"resourceTypes\": [\n"}
+{"sequence":867,"elapsed":78.38800595400001,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"          {\n"}
+{"sequence":868,"elapsed":78.388023402,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"            \"locations\": [\n"}
+{"sequence":869,"elapsed":78.388040582,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"              \"eastus\"\n"}
+{"sequence":870,"elapsed":78.388058539,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"            ],\n"}
+{"sequence":871,"elapsed":78.38807613,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"            \"resourceType\": \"resourceGroups\"\n"}
+{"sequence":872,"elapsed":78.388093284,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"          }\n"}
+{"sequence":873,"elapsed":78.388112709,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"        ]\n"}
+{"sequence":874,"elapsed":78.388129856,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"      }\n"}
+{"sequence":875,"elapsed":78.38814690999999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    ],\n"}
+{"sequence":876,"elapsed":78.38819130099999,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"provisioningState\": \"Succeeded\",\n"}
+{"sequence":877,"elapsed":78.388224466,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"templateHash\": \"9922873965759736815\",\n"}
+{"sequence":878,"elapsed":78.388251173,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"    \"timestamp\": \"2026-11-07T05:08:22.5318535Z\"\n"}
+{"sequence":879,"elapsed":78.38827826,"at":"2026-11-07T05:08:26.386Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"  },\n"}
+{"sequence":880,"elapsed":78.388296731,"at":"2026-11-07T05:08:26.387Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"  \"type\": \"Microsoft.Resources/deployments\"\n"}
+{"sequence":881,"elapsed":78.388339211,"at":"2026-11-07T05:08:26.387Z","type":"output","target":"azure","phase":"read-final","stream":"stdout","text":"}\n"}
+{"sequence":882,"elapsed":78.635391505,"at":"2026-11-07T05:08:26.634Z","type":"command-end","target":"azure","phase":"read-final","exitCode":0,"timedOut":false}
+{"sequence":883,"elapsed":78.63843857100001,"at":"2026-11-07T05:08:26.637Z","type":"command-start","target":"azure","phase":"destroy-group","command":["/usr/bin/az","rest","--method","delete","--url","https://management.azure.com/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":884,"elapsed":80.18461379099999,"at":"2026-11-07T05:08:28.183Z","type":"http","target":"azure","phase":"destroy-group","method":"DELETE","path":"/subscriptions/<subscription>/resourcegroups/<group>?api-version=2021-04-01","status":202}
+{"sequence":885,"elapsed":80.500593773,"at":"2026-11-07T05:08:28.499Z","type":"command-end","target":"azure","phase":"destroy-group","exitCode":0,"timedOut":false}
+{"sequence":886,"elapsed":80.504296751,"at":"2026-11-07T05:08:28.503Z","type":"command-start","target":"azure","phase":"destroy-deployment","command":["/usr/bin/az","rest","--method","delete","--url","https://management.azure.com/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","--skip-authorization-header","--headers","@/private/headers.json","--output","json"]}
+{"sequence":887,"elapsed":87.853140743,"at":"2026-11-07T05:08:35.851Z","type":"http","target":"azure","phase":"destroy-deployment","method":"DELETE","path":"/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<group>?api-version=2022-09-01","status":202}
+{"sequence":888,"elapsed":88.19746814199999,"at":"2026-11-07T05:08:36.196Z","type":"command-end","target":"azure","phase":"destroy-deployment","exitCode":0,"timedOut":false}
+{"sequence":889,"elapsed":88.812957218,"at":"2026-11-07T05:08:36.811Z","type":"probe","target":"azure","phase":"post-destroy-read-0","method":"GET","status":404}
+{"sequence":890,"elapsed":90.039327387,"at":"2026-11-07T05:08:38.038Z","type":"target-end","target":"azure","ok":true,"cleanup":{"nativeDestroyAccepted":true,"nativeDestroy":true,"absent":true,"fallbackDelete":false,"deploymentAbsent":true,"privateFilesRemoved":true}}
+{"sequence":891,"elapsed":90.041347635,"at":"2026-11-07T05:08:38.040Z","type":"run-end","ok":true,"portalEvidenceComplete":false}

@@ -483,6 +483,11 @@ export class ResourceStore {
     return deployment ? deepClone(deployment) : null;
   }
 
+  deleteDeployment({ subscriptionId, resourceGroupName = null, deploymentName }) {
+    const id = normalizeDeploymentId(subscriptionId, resourceGroupName, deploymentName);
+    return this.deployments.delete(id.toLowerCase());
+  }
+
   putResource({ subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId = null, body = {}, apiVersion, capability }) {
     const id = normalizeResourceId(subscriptionId, resourceGroupName, providerNamespace, typePath, scopeId);
     const key = id.toLowerCase();

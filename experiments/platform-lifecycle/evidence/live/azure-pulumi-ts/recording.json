@@ -1,0 +1,15 @@
+{
+  "platform": "azure-pulumi-ts",
+  "startedAt": "2026-11-07T04:50:48.568Z",
+  "completedAt": "2026-11-07T04:55:11.711Z",
+  "exitCode": 0,
+  "eventCount": 792,
+  "video": "terminal-walkthrough.webm",
+  "sha256": "562a871a5b7056dace36d106a3143c599078b89ddbf02ebc97bc800f069fa658",
+  "eventSha256": "cfb358adc18ff07e20b4c0109c34f8590d3ced3e783d6006cfe880310313c6a3",
+  "kind": "Browser video of live sanitized command output and API observations, not Azure Portal",
+  "portalScreenshots": "pending",
+  "timing": "Actual capture speed; requested targets run sequentially",
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.65.0"
+}
