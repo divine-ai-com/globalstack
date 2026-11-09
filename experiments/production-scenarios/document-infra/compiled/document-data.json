@@ -1,0 +1,147 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "12512007868275199808"
+    }
+  },
+  "parameters": {
+    "accountName": {
+      "type": "string"
+    },
+    "workerIdentityName": {
+      "type": "string"
+    },
+    "publisherPrincipalId": {
+      "type": "string"
+    },
+    "roleAssignmentNames": {
+      "type": "array"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "containerNames": [
+      "landing",
+      "clean-projection",
+      "quarantine",
+      "event-deadletters"
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[parameters('accountName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "project": "globalstack-production-scenarios",
+        "run": "[parameters('runId')]"
+      },
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "properties": {
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true,
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": false
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', parameters('accountName'), 'default')]",
+      "properties": {
+        "isVersioningEnabled": true,
+        "deleteRetentionPolicy": {
+          "enabled": true,
+          "days": 7
+        },
+        "containerDeleteRetentionPolicy": {
+          "enabled": true,
+          "days": 7
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "containers",
+        "count": "[length(variables('containerNames'))]"
+      },
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}/{2}', parameters('accountName'), 'default', variables('containerNames')[copyIndex()])]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('accountName'), 'default')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]",
+      "name": "[parameters('roleAssignmentNames')[0]]",
+      "properties": {
+        "principalId": "[parameters('publisherPrincipalId')]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]",
+      "name": "[parameters('roleAssignmentNames')[1]]",
+      "properties": {
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('workerIdentityName')), '2023-01-31').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "accountId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('accountName'))]"
+    },
+    "blobEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('accountName')), '2023-05-01').primaryEndpoints.blob]"
+    },
+    "deployedContainerNames": {
+      "type": "array",
+      "value": "[variables('containerNames')]"
+    },
+    "uploadRoleId": {
+      "type": "string",
+      "value": "[extensionResourceId(resourceId('Microsoft.Storage/storageAccounts', parameters('accountName')), 'Microsoft.Authorization/roleAssignments', parameters('roleAssignmentNames')[0])]"
+    },
+    "workerRoleId": {
+      "type": "string",
+      "value": "[extensionResourceId(resourceId('Microsoft.Storage/storageAccounts', parameters('accountName')), 'Microsoft.Authorization/roleAssignments', parameters('roleAssignmentNames')[1])]"
+    }
+  }
+}

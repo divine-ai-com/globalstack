@@ -1,6 +1,6 @@
 # Production comparison status
 
-Updated 2026-11-08. This is an execution checklist, not a paper result or release certification.
+Updated 2026-11-09. This is an execution checklist, not a paper result or release certification.
 
 ## Completion gate
 
@@ -98,6 +98,21 @@ found that the application's tenant, clean-state, owner and group filter
 returned HTTP 501. A bounded general filter evaluator now passes the clean,
 unresolved, cross-tenant and denied-reader cases. The Search service, index
 and failure queue have not yet been deployed to Azure as part of this scenario.
+The document Search paired pilot is prepared, but has not run against Azure.
+Its identity, data and Search Bicep modules deploy in order on GlobalStack;
+their ownership-checked cleanup also passes against the local ARM server.
+The pilot runner records each Azure and local deployment stage, provisions
+both Search indexes and the Blob data source/indexer where supported, and
+reserves a USD 12 envelope within the existing USD 200 ceiling. It refuses
+a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
+session is currently unavailable in this workspace, so no paid resources
+were created for this preparation. The known local data-source HTTP 501 is
+still an open conformance failure, not a pass.
+The local deployment readback omitted its submitted parameters, which kept
+the ownership-checked cleanup from identifying the run. That response now
+includes nonsecure parameter values and omits secure values; a local lifecycle
+test verifies both cleanup and secret omission. Azure readback comparison is
+still pending.
 The Search module now gives its system-assigned identity Blob Data Reader only
 on the clean-projection container. A shared provisioner defines separate push
 and projection indexes, a managed-identity Blob data source with a tombstone
