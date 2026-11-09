@@ -13,7 +13,8 @@ export function postgresScope(manifest) {
   assert.equal(manifest.group, 'gs-conformance-pilot');
   const base = `/subscriptions/${manifest.subscription}/resourceGroups/${manifest.group}`;
   const server = `${base}/providers/Microsoft.DBforPostgreSQL/flexibleServers/gs${manifest.runId}-db`;
-  return { group: base, server, deployment: `${base}/providers/Microsoft.Resources/deployments/gs-document-postgres-${manifest.runId}` };
+  return { group: base, server, firewall: `${server}/firewallRules/pilot-egress`,
+    deployment: `${base}/providers/Microsoft.Resources/deployments/gs-document-postgres-${manifest.runId}` };
 }
 
 export function postgresClient(manifest, observe = () => {}, exchange = httpExchange) {
@@ -21,9 +22,9 @@ export function postgresClient(manifest, observe = () => {}, exchange = httpExch
   let token = manifest.token;
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
-    const allowed = method === 'GET' && [scope.group, `${scope.group}/resources`, scope.server, scope.deployment, `${scope.deployment}/operations`].includes(url.pathname)
-      || method === 'PUT' && url.pathname === scope.deployment
-      || method === 'DELETE' && [scope.server, scope.deployment].includes(url.pathname)
+    const allowed = method === 'GET' && [scope.group, `${scope.group}/resources`, scope.server, scope.firewall, scope.deployment, `${scope.deployment}/operations`].includes(url.pathname)
+      || method === 'PUT' && [scope.deployment, scope.firewall].includes(url.pathname)
+      || method === 'DELETE' && [scope.server, scope.firewall, scope.deployment].includes(url.pathname)
       || method === 'POST' && url.pathname === `${scope.deployment}/cancel`;
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed,
       'PostgreSQL request escaped the owned run scope');
@@ -78,6 +79,16 @@ export async function cleanupPostgres(manifest, request = postgresClient(manifes
   if (server.status === 200) {
     assert.equal(server.body.tags?.project, project, 'Server project mismatch');
     assert.equal(server.body.tags?.run, manifest.runId, 'Server run mismatch');
+    const firewall = await get(scope.firewall, '2024-08-01');
+    if (firewall.status === 200) {
+      assert.ok([200, 202, 204, 404].includes((await request('DELETE', path(scope.firewall, '2024-08-01'))).status));
+      while (true) {
+        const observed = await get(scope.firewall, '2024-08-01');
+        if (observed.status === 404) break;
+        assert.ok([200, 409].includes(observed.status));
+        await sleep(3000);
+      }
+    } else assert.equal(firewall.status, 404);
     assert.ok([200, 202, 204, 404].includes((await request('DELETE', path(scope.server, '2024-08-01'))).status));
   } else {
     assert.equal(server.status, 404);

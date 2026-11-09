@@ -10,6 +10,7 @@ test('PostgreSQL client rejects paths outside the owned group', async () => {
   const request = postgresClient(manifest, () => {}, async () => ({ status: 404 }));
   await assert.rejects(request('DELETE', `/subscriptions/${manifest.subscription}/resourceGroups/foreign?api-version=2022-09-01`), /escaped/);
   await assert.rejects(request('DELETE', `${scope.group}?api-version=2022-09-01`), /escaped/);
+  await assert.rejects(request('PUT', `${scope.server}/firewallRules/other?api-version=2024-08-01`), /escaped/);
 });
 
 test('foreign PostgreSQL server tags prevent deletion', async () => {
@@ -29,6 +30,7 @@ test('foreign PostgreSQL server tags prevent deletion', async () => {
 
 test('owned PostgreSQL server is removed and pilot group retained', async () => {
   let exists = true;
+  let firewallExists = true;
   let staleInventoryReads = 1;
   const request = async (method, path) => {
     const id = new URL(path, 'https://management.azure.com').pathname;
@@ -40,9 +42,12 @@ test('owned PostgreSQL server is removed and pilot group retained', async () => 
     }
     if (id === scope.server && method === 'DELETE') { exists = false; return { status: 202 }; }
     if (id === scope.server) return exists ? { status: 200, body: { tags } } : { status: 404 };
+    if (id === scope.firewall && method === 'DELETE') { firewallExists = false; return { status: 202 }; }
+    if (id === scope.firewall) return firewallExists ? { status: 200 } : { status: 404 };
     throw new Error('Unexpected cleanup request');
   };
   assert.deepEqual(await cleanupPostgres(manifest, request, { sleep: async () => {} }),
     { resourcesAbsent: true, deploymentsAbsent: true, groupPreserved: true });
   assert.equal(staleInventoryReads, -1, 'Cleanup must retry a stale child inventory after server deletion');
+  assert.equal(firewallExists, false, 'Temporary network access must be removed before deleting the server');
 });
