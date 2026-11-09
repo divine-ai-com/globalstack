@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "3a5036b9d7fc0da5aea107c017518b943f812f1b",
+  "startedAt": "2026-11-09T16:57:12.045Z",
+  "completedAt": "2026-11-09T17:10:09.841Z",
+  "stages": [
+    {
+      "stage": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    },
+    {
+      "stage": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    },
+    {
+      "stage": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    }
+  ],
+  "searchTraversal": [
+    {
+      "target": "azure",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    },
+    {
+      "target": "local",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    }
+  ],
+  "negativeWiring": [
+    {
+      "target": "azure",
+      "stages": [
+        {
+          "name": "data-source",
+          "status": 201,
+          "code": null
+        },
+        {
+          "name": "indexer",
+          "status": 401,
+          "code": ""
+        }
+      ],
+      "quarantineIndexed": false
+    },
+    {
+      "target": "local",
+      "stages": [
+        {
+          "name": "data-source",
+          "status": 201,
+          "code": null
+        },
+        {
+          "name": "indexer",
+          "status": 401,
+          "code": ""
+        }
+      ],
+      "quarantineIndexed": false
+    }
+  ],
+  "indexerRunAndStatusCalls": [
+    {
+      "target": "azure",
+      "phase": "projection-index-azure",
+      "method": "POST",
+      "status": 202,
+      "lastResult": null
+    },
+    {
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "POST",
+      "status": 202,
+      "lastResult": null
+    },
+    {
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "GET",
+      "status": 200,
+      "lastResult": "success"
+    },
+    {
+      "target": "local",
+      "phase": "projection-index-local",
+      "method": "POST",
+      "status": 202,
+      "lastResult": null
+    },
+    {
+      "target": "local",
+      "phase": "projection-delete-local",
+      "method": "POST",
+      "status": 202,
+      "lastResult": null
+    },
+    {
+      "target": "local",
+      "phase": "projection-delete-local",
+      "method": "GET",
+      "status": 200,
+      "lastResult": "success"
+    }
+  ],
+  "immediateInProgressStateCompared": false,
+  "cleanup": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "independentAzureInventory": {
+    "resources": 0,
+    "deployments": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 350,
+    "conservativeAllocatedAfterRunUsd": 301,
+    "actualAzureChargesMeasured": false
+  },
+  "fullWorkflowCompleted": false,
+  "rawPrivateTraceSha256": "f0ddc9ba684cc54c47f6833fe645a3ee36357119971452a88b68a9e143c3345f",
+  "publishedTraceSha256": "5cda4986093d770b173bc1509568997d662d922bb61d7bccad9dbf6b2120a04a",
+  "redaction": "Existing capture substitutions plus stable opaque aliases for remaining UUIDs and IPv4 addresses."
+}

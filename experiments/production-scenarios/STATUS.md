@@ -172,13 +172,13 @@ empty error code when creating the indexer. Both clean-index queries excluded
 the quarantine document. The [redacted trace](evidence/document-search-paired-20261109-wrong-container-retry/data-plane-trace.json)
 contains 36 Search and Blob requests. The Azure response appended a documentation
 link absent from GlobalStack at the captured revision. The local response was
-updated after capture to match this observed message; that text change has an
-offline test but no later paired run. Cleanup and independent Azure inventory
+updated after capture to match this observed message; a later paired recheck
+matched the HTTP 401 code and full message. Cleanup and independent Azure inventory
 found zero resources. The ledger is USD 265 of USD 300, leaving USD 35;
 actual Azure charges remain unmeasured.
 The owner subsequently raised the total ceiling to USD 350 on 2026-11-09.
-No new allocation was made, so USD 85 is currently unallocated.
-Across the three paired Search runs with live indexer execution, the clean
+At that checkpoint, USD 85 was unallocated. Subsequent paid runs are recorded
+below. Across the earlier three paired Search runs with live indexer execution, the clean
 document was first observed after 14.397 to 14.634 seconds on Azure and
 0.005 seconds on GlobalStack. Queries were polled at roughly five-second
 intervals, so these are first-observation times, not exact indexing latency.
@@ -191,7 +191,17 @@ The local runtime now accepts the run, exposes an `inProgress` result, and
 executes the job on a later event-loop turn. A deterministic local test holds
 the job to verify that the document remains absent before execution. This
 changes lifecycle ordering but is not a calibrated Azure delay, and it has not
-yet been tested in a new paired run.
+yet been measured at the intermediate status point in a paired run.
+The [paired async recheck](evidence/document-search-async-recheck-20261109/)
+used the changed local runtime. Both targets accepted `search.run` with HTTP
+202, later reported indexer `success`, indexed the clean projection, excluded
+quarantine, removed a soft-deleted document and rejected a wrong-container
+indexer at creation with the same HTTP 401 code and message. The runner did
+not read status immediately after HTTP 202, so it cannot establish parity
+for the intermediate `inProgress` state or indexing latency. Automatic cleanup
+and an independent Azure readback found zero resources and deployment records.
+The conservative ledger is now USD 301 of USD 350, with actual charges
+unmeasured and USD 49 of allowance unallocated.
 The local Search indexer reads Blob state through an in-process store call.
 The paired HTTP trace does not measure the internal Search-to-Blob request path
 or token exchange on Azure, so it cannot support an internal wire-level parity
