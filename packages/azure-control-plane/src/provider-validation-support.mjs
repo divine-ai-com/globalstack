@@ -55,6 +55,7 @@ export const putMissingParentResourceTypes = new Map([
   ['Microsoft.DBforMySQL/flexibleServers/databases', 'ResourceNotFound'],
   ['Microsoft.DBforPostgreSQL/flexibleServers/databases', 'ResourceNotFound'],
   ['Microsoft.DBforPostgreSQL/flexibleServers/administrators', 'ResourceNotFound'],
+  ['Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', 'ResourceNotFound'],
   ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases', 'ResourceNotFound'],
   ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers', 'ResourceNotFound'],
   ['Microsoft.EventHub/namespaces/eventhubs', 'ParentResourceNotFound'],

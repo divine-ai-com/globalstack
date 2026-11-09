@@ -314,7 +314,7 @@ export const tier1Capabilities = [
     tier: 1,
     awsAnalogue: 'RDS PostgreSQL',
     azureEquivalent: 'Azure Database for PostgreSQL Flexible Server',
-    resourceTypes: ['Microsoft.DBforPostgreSQL/flexibleServers', 'Microsoft.DBforPostgreSQL/flexibleServers/databases'],
+    resourceTypes: ['Microsoft.DBforPostgreSQL/flexibleServers', 'Microsoft.DBforPostgreSQL/flexibleServers/databases', 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules'],
     primaryModes: [supportLevels.GLOBALSTACK_FACADE],
     backingEngines: ['local-postgres'],
     implementedOperations: [
@@ -326,6 +326,10 @@ export const tier1Capabilities = [
       'Databases.Get',
       'Databases.List',
       'Databases.Delete',
+      'FirewallRules.ControlPlaneCreate',
+      'FirewallRules.ControlPlaneGet',
+      'FirewallRules.ControlPlaneList',
+      'FirewallRules.ControlPlaneDelete',
       'PostgresqlRoutes.RejectUnsupportedRoutes',
     ],
     contractTested: false,
@@ -333,7 +337,8 @@ export const tier1Capabilities = [
     realAzureCaptureRequired: ['firewall default behavior', 'server parameter validation', 'backup/HA errors'],
     knownGaps: [
       'Local PostgreSQL covers SQL data plane only.',
-      'No Azure maintenance, HA, backup, restore, firewall, or private link parity in MVP.',
+      'Firewall rules have a bounded ARM lifecycle only; SQL connection enforcement is not implemented.',
+      'No Azure maintenance, HA, backup, restore, or private link parity in MVP.',
     ],
   },
   {

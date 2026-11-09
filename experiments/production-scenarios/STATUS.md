@@ -310,6 +310,10 @@ authorized ceiling; actual Azure charges remain unmeasured. Worker and ingress
 SQL roles, application document flow, and private networking are still open.
 The local firewall gap is tracked in [#85](https://github.com/divine-ai-com/globalstack/issues/85),
 while the broader PostgreSQL data-plane gap remains in [#74](https://github.com/divine-ai-com/globalstack/issues/74).
+The firewall rule now has a local ARM create, read, list and delete path with
+single-address and invalid-range tests. It has not been replayed against Azure
+on this revision. No PostgreSQL wire endpoint enforces the rule yet, so #85
+remains open and this does not advance a full-scenario assertion.
 The [follow-up role pilot](evidence/document-postgres-roles-paired-20261109/)
 deployed the same PostgreSQL and two managed-identity resources on both targets.
 Azure created separate nonadmin SQL roles for the worker and ingress identities,
@@ -499,6 +503,23 @@ for this change.
    HTTP replays is Portal evidence.
 
 ## Remaining implementation and measurement
+
+The next development sequence follows the document's live critical path. Each
+step must use the unchanged application and IaC artifacts on both targets;
+passing a resource PUT alone is insufficient.
+
+| Handoff | Current evidence | Next acceptance condition |
+| --- | --- | --- |
+| Blob upload to Event Grid to Functions | Paired diagnostic delivery; production handler returned HTTP 500 | Complete application settings and observe a production orchestration start |
+| Functions to PostgreSQL | Azure Entra SQL login and schema passed; local ARM deployment passed | Local TLS SQL endpoint accepts the same client identity, enforces firewall access and commits a document revision |
+| Functions to scanner | Paired native ClamAV and YARA diagnostic calls passed | The production activity scans the event's exact Blob revision and records both decisions |
+| PostgreSQL outbox to Search | Paired projection indexer slice passed independently | A committed clean revision becomes searchable through the production outbox and projection paths |
+| Permanent failure to Service Bus | Local ARM queue deployment only | Unchanged SDK sends, receives and dead-letters a failed event over AMQP on both targets |
+| Client upload and query | Local application tests only | Authenticated ingress uploads, receives a correlated result and enforces tenant isolation on both targets |
+
+Private networking, negative cases, lifecycle capture, Portal evidence and the
+remaining IaC platforms follow the clean path. None is waived by an initial
+clean-path pass.
 
 The current paired worker supplies Storage and scanner settings for the
 component probe. Code inspection of `document-app/adapters.mjs` shows that the

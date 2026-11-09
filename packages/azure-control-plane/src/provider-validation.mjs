@@ -1838,6 +1838,19 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
     }
   }
 
+  if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules') {
+    const name = providerRoute?.typePath?.split('/').at(-1) ?? '';
+    const start = body.properties?.startIpAddress;
+    const end = body.properties?.endIpAddress;
+    const address = value => isIP(value) === 4 && value.split('.').every(part => Number(part) <= 255);
+    const ordered = address(start) && address(end)
+      && start.split('.').reduce((number, part) => number * 256 + Number(part), 0)
+        <= end.split('.').reduce((number, part) => number * 256 + Number(part), 0);
+    if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/.test(name) || !ordered) {
+      return envelopedError(400, 'InvalidParameterValue', 'A PostgreSQL firewall rule requires a name and an ordered IPv4 start and end address.');
+    }
+  }
+
   return null;
 }
 

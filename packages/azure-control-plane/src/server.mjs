@@ -257,6 +257,16 @@ export function createArmRequestHandler({
 } = {}) {
   void persist;
   const completedDeploymentDeletions = new Map();
+  const postgresFirewallType = 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules';
+  const postgresFirewallBody = resource => ({
+    properties: {
+      startIpAddress: resource.properties.startIpAddress,
+      endIpAddress: resource.properties.endIpAddress,
+    },
+    id: resource.id,
+    name: resource.name.split('/').at(-1),
+    type: postgresFirewallType,
+  });
 
   function putProviderResource({ providerRoute, apiVersion, body }) {
     providerRoute = normalizeProviderRoute(providerRoute);
@@ -432,6 +442,13 @@ export function createArmRequestHandler({
       if (!task.error) {
         result.resource = task.body;
       }
+    }
+    if (resourceType === postgresFirewallType) {
+      return {
+        status: 202,
+        body: { operation: 'UpsertServerFirewallRulesManagementOperation', startTime: new Date().toISOString() },
+        asyncOperation: true,
+      };
     }
     const storageCreatedOkTypes = new Set([
       'Microsoft.Storage/storageAccounts/queueServices/queues',
@@ -2116,9 +2133,9 @@ export function createArmRequestHandler({
               const notFound = azureNotFoundFor({ method, resourceType, providerRoute, store });
               return sendError(res, notFound.status, notFound.code, notFound.message);
             }
-            return sendJson(res, 200, {
-              value: store.listResourcesByType(providerRoute),
-            });
+            const resources = store.listResourcesByType(providerRoute);
+            return sendJson(res, 200, { value: resourceType === postgresFirewallType
+              ? resources.map(postgresFirewallBody) : resources });
           }
           const resource = store.getResource(providerRoute);
           if (!resource) {
@@ -2137,6 +2154,7 @@ export function createArmRequestHandler({
             }
             return sendJson(res, 200, apiManagementProductApiContract(resource, linkedApi));
           }
+          if (resourceType === postgresFirewallType) return sendJson(res, 200, postgresFirewallBody(resource));
           return sendJson(res, 200, resource);
         }
 
@@ -2182,6 +2200,15 @@ export function createArmRequestHandler({
               providerRoute,
               resourceType,
               resource: deletedResource,
+            });
+          }
+          if (resourceType === postgresFirewallType) {
+            const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+            const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
+            return sendJson(res, 202, { operation: 'DropServerFirewallRulesManagementOperation', startTime: new Date().toISOString() }, {
+              'azure-asyncoperation': operationUrl,
+              location: operationUrl,
+              'retry-after': '0',
             });
           }
           if (resourceType === 'Microsoft.ServiceBus/namespaces') {
