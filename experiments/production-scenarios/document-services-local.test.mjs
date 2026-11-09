@@ -1,11 +1,16 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import { test } from 'node:test';
+import { exportJWK, generateKeyPair, SignJWT } from 'jose';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
+import { createEmulatorRuntime } from '../../packages/azure-data-plane/src/emulator-runtime.mjs';
+import { createSearchRouterServer } from '../../packages/azure-data-plane/src/search-router.mjs';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import { cleanupDocumentSearch } from './document-search-cleanup.mjs';
+import { provisionDocumentSearch } from './document-app/search-provision.mjs';
 
 const subscription = '00000000-0000-0000-0000-000000000000';
 const group = `/subscriptions/${subscription}/resourceGroups/gs-document-services-test`;
@@ -31,11 +36,23 @@ async function compiled(name) {
 
 test('the three Search pilot modules deploy in dependency order and keep Blob access container-scoped', async t => {
   const store = new ResourceStore();
-  const arm = createArmServer({ store });
+  const tenant = '11111111-1111-4111-8111-111111111111';
+  const issuer = `https://sts.windows.net/${tenant}/`;
+  const pair = await generateKeyPair('RS256', { extractable: true });
+  const publicKey = { ...await exportJWK(pair.publicKey), kid: 'paired-local', alg: 'RS256', use: 'sig' };
+  const trust = { issuer, tenantId: tenant, subscriptionIds: [subscription], jwks: { keys: [publicKey] } };
+  const runtime = createEmulatorRuntime({ store, searchTokenTrusts: [trust], storageTokenTrusts: [trust] });
+  const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource });
+  const search = createSearchRouterServer(runtime.searchRouter);
+  const blob = createServer(runtime.storageRouter.blobHandler());
   await new Promise(resolve => arm.listen(0, '127.0.0.1', resolve));
+  for (const server of [search, blob]) await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(async () => {
-    arm.closeAllConnections();
-    await new Promise(resolve => arm.close(resolve));
+    for (const server of [blob, search, arm]) {
+      server.closeAllConnections();
+      await new Promise(resolve => server.close(resolve));
+    }
+    await runtime.dispose();
   });
   const request = (method, path, body) => httpExchange(`http://127.0.0.1:${arm.address().port}${path}`, {
     method, body, headers: { authorization: 'Bearer globalstack-local-token' },
@@ -74,6 +91,45 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   assert.equal(grant.status, 200);
   assert.equal(grant.body.properties.scope.toLowerCase(), projectionId.toLowerCase());
   assert.equal(grant.body.properties.principalId, service.body.identity.principalId);
+  const token = async audience => {
+    const now = Math.floor(Date.now() / 1000);
+    return new SignJWT({ iss: issuer, tid: tenant, oid: publisherPrincipalId, aud: audience,
+      iat: now, nbf: now - 1, exp: now + 300 }).setProtectedHeader({ alg: 'RS256', kid: 'paired-local' }).sign(pair.privateKey);
+  };
+  const searchToken = await token('https://search.azure.com/');
+  const storageToken = await token('https://storage.azure.com/');
+  const searchHost = `${serviceName}-search.search.windows.net`;
+  const searchCall = (method, path, body) => httpExchange(`http://127.0.0.1:${search.address().port}${path}?api-version=2025-09-01`, {
+    method, body, headers: { host: searchHost, authorization: `Bearer ${searchToken}` },
+  });
+  const steps = await provisionDocumentSearch({ endpoint: `https://${searchHost}`, storageResourceId: `${pilotGroup}/providers/Microsoft.Storage/storageAccounts/${storageAccountName}`,
+    credential: { async getToken() { return { token: searchToken }; } },
+    request: async (url, options) => {
+      const parsed = new URL(url);
+      const response = await httpExchange(`http://127.0.0.1:${search.address().port}${parsed.pathname}${parsed.search}`, {
+        method: options.method, body: JSON.parse(options.body), headers: { host: searchHost, authorization: options.headers.authorization },
+      });
+      return { status: response.status, json: async () => response.body };
+    },
+  });
+  assert.equal(steps.length, 4);
+  const accountHost = `${storageAccountName}.blob.core.windows.net`;
+  const upload = (container, id, body, deleted) => httpExchange(`http://127.0.0.1:${blob.address().port}/${container}/${id}.json`, {
+    method: 'PUT', body: Buffer.from(JSON.stringify(body)), headers: { host: accountHost, authorization: `Bearer ${storageToken}`,
+      'x-ms-version': '2023-11-03', 'x-ms-blob-type': 'BlockBlob', 'x-ms-meta-isdeleted': deleted ? 'true' : 'false',
+      'content-type': 'application/json' },
+  });
+  const query = id => searchCall('POST', "/indexes('document-projection')/docs/search", {
+    search: '*', filter: `document_id eq '${id}'`, select: 'document_id,revision_id', top: 2,
+  });
+  assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r1', extracted_text: 'clean' }, false)).status, 201);
+  assert.equal((await upload('quarantine', 'bad-1', { document_id: 'bad-1', extracted_text: 'excluded' }, false)).status, 201);
+  assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+  assert.equal((await query('doc-1')).body.value[0].revision_id, 'r1');
+  assert.equal((await query('bad-1')).body.value.length, 0);
+  assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2', deleted: 'true' }, true)).status, 201);
+  assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+  assert.equal((await query('doc-1')).body.value.length, 0);
   const cleanup = await cleanupDocumentSearch({ subscription, group: 'gs-conformance-pilot', runId,
     publisher: publisherPrincipalId, dataRoles, searchRoles }, request, { sleep: async () => {} });
   assert.equal(cleanup.resourcesAbsent, true);

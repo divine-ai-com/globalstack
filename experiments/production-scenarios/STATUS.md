@@ -151,7 +151,10 @@ Deletion markers contain no extracted text. The second paired Azure run
 accepted those Search objects, while the local router then returned HTTP 501
 for the data source. The local router now implements the bounded projection
 path and passes indexing, deletion, quarantine exclusion and revoked-reader
-tests. Paired live execution remains open ([#75](https://github.com/divine-ai-com/globalstack/issues/75)).
+tests. A local integration test deploys the compiled modules, sends signed
+workload tokens through the Blob and Search HTTP handlers, and observes clean
+indexing, quarantine exclusion and soft deletion. Paired Azure execution remains
+open ([#75](https://github.com/divine-ai-com/globalstack/issues/75)).
 The document ingress also emits multiword fuzzy queries as an all-`AND` Lucene
 chain. The local evaluator previously rejected that valid application shape;
 the bounded parser now returns the expected authorized hit and rejects other

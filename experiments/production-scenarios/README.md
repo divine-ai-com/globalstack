@@ -29,7 +29,9 @@ run was empty. Neither run uploaded a Blob or observed indexer execution.
 
 The local router now supports the document projection's managed-identity Blob
 data source, scheduled JSON indexer, on-demand execution and metadata
-soft deletion. A [third paired attempt](evidence/document-search-paired-20261109-traversal-attempt/summary.json)
+soft deletion. A local integration test deploys the compiled modules and uses
+signed workload tokens through the Blob and Search HTTP handlers to observe
+indexing, quarantine exclusion and deletion. A [third paired attempt](evidence/document-search-paired-20261109-traversal-attempt/summary.json)
 deployed the same three compiled modules successfully on both targets. Its
 first Azure Search readiness request returned an empty HTTP 401, so it stopped
 before provisioning indexes or uploading a Blob. The cause is unconfirmed.
