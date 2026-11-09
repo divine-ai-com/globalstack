@@ -214,7 +214,10 @@ test('Blob indexer reads only the granted projection container and honors metada
       fieldMappings: [{ sourceFieldName: '/document_id', targetFieldName: 'document_id' }],
     })).status, 201);
     assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
-    assert.equal((await call('GET', "/indexers('worker')/search.status")).body.lastResult.status, 'inProgress');
+    const firstStatus = (await call('GET', "/indexers('worker')/search.status")).body;
+    assert.equal(firstStatus.status, 'running');
+    assert.equal(firstStatus.lastResult, null);
+    assert.deepEqual(firstStatus.executionHistory, []);
     let found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
     assert.equal(found.body.value.length, 0);
     assert.equal(jobs.length, 1);
@@ -225,6 +228,7 @@ test('Blob indexer reads only the granted projection container and honors metada
 
     put('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2' }, true);
     assert.equal((await call('POST', "/indexers('worker')/search.run")).status, 202);
+    assert.equal((await call('GET', "/indexers('worker')/search.status")).body.lastResult.status, 'success');
     jobs.shift()();
     found = await call('POST', "/indexes('projection')/docs/search", { search: '*' });
     assert.equal(found.body.value.length, 0);

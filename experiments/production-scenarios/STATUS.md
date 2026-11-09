@@ -187,11 +187,12 @@ also records the delete observations. At the captured revisions, GlobalStack
 executed the indexer synchronously when `search.run` was called. This measured timing gap
 does not establish latency parity or scheduled-run timing; see
 [issue #84](https://github.com/divine-ai-com/globalstack/issues/84).
-The local runtime now accepts the run, exposes an `inProgress` result, and
-executes the job on a later event-loop turn. A deterministic local test holds
+The local runtime now accepts the run and executes the job on a later
+event-loop turn. A deterministic local test holds
 the job to verify that the document remains absent before execution. This
-changes lifecycle ordering but is not a calibrated Azure delay, and it has not
-yet been measured at the intermediate status point in a paired run.
+changes lifecycle ordering but is not a calibrated Azure delay. The subsequent
+paired first-read probe below shows that the local job can still complete before
+the first client status request.
 The [paired async recheck](evidence/document-search-async-recheck-20261109/)
 used the changed local runtime. Both targets accepted `search.run` with HTTP
 202, later reported indexer `success`, indexed the clean projection, excluded
@@ -217,6 +218,11 @@ define an Azure latency distribution or justify a fixed local delay.
 Automatic cleanup and independent Azure inventory found zero resources and
 deployment records. The conservative ledger is now USD 313 of USD 350,
 with USD 37 unallocated and actual charges unmeasured.
+The local status model now leaves `lastResult` and history empty until the first
+job finishes, then retains the previous completed result while a new job is
+pending. A deterministic local test covers both states. This corrects the field
+semantics seen in the Azure capture; it does not close the observed timing gap,
+and no paid paired rerun has verified this revision.
 The local Search indexer reads Blob state through an in-process store call.
 The paired HTTP trace does not measure the internal Search-to-Blob request path
 or token exchange on Azure, so it cannot support an internal wire-level parity
@@ -522,11 +528,11 @@ through committed metadata and both Search paths before testing failure cases.
 
 ## Budget and storage
 
-The private cumulative ledger currently records USD 265 in conservative envelopes
+The private cumulative ledger currently records USD 313 in conservative envelopes
 against the USD 350 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 85 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 37 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 

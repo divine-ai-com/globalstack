@@ -330,9 +330,8 @@ export class SearchRouter {
     if (indexer.pending) return;
     indexer.pending = true;
     const started = new Date().toISOString();
-    // Keep acceptance separate from execution so callers can observe inProgress.
-    indexer.lastResult = { status: 'inProgress', startTime: started, endTime: null, itemsProcessed: 0,
-      itemsFailed: 0, errors: [], warnings: [] };
+    // Azure reports the last completed run here, even while a new run is pending.
+    // The first run has no result or history until it completes.
     this.scheduleIndexerJob(() => {
       if (!indexer.pending || service.indexers.get(indexer.definition.name) !== indexer) return;
       indexer.pending = false;
