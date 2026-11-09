@@ -61,7 +61,7 @@ jobs:
             --memory 1g --cpus 2 --pids-limit 64 --tmpfs /tmp:rw,nosuid,nodev,size=268435456 \
             -v "$PWD/experiments/production-scenarios/document-app/scanner:/app:ro" \
             globalstack/document-scanner:ci python /app/test_worker.py
-          node --test experiments/production-scenarios/document-app/repository.test.mjs experiments/production-scenarios/document-app/ingress.test.mjs
+          node --test experiments/production-scenarios/document-app/repository.test.mjs experiments/production-scenarios/document-app/ingress.test.mjs experiments/production-scenarios/document-app/database-bootstrap.test.mjs
       - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - run: node experiments/paired-lifecycle/render-snapshots.mjs --check
       - run: node experiments/platform-lifecycle/render.mjs --check

@@ -244,6 +244,13 @@ child inventory, but separate recovery verified zero resources and the
 deployment record absent. The USD 12 allocation is cleanup-verified; actual
 billing remains unmeasured. PostgreSQL TLS/Entra data-plane access, schema
 initialization and the document worker path remain open ([#74](https://github.com/divine-ai-com/globalstack/issues/74)).
+The database ARM template makes the pilot service principal an administrator,
+but it does not create SQL roles for the worker and ingress identities. A
+bootstrap procedure now prepares separate nonadmin Entra roles and grants only
+the current application tables and operations. A local PostgreSQL privilege
+test passes, including denied access for an unrelated role. The procedure has
+not run against Azure or GlobalStack's PostgreSQL data plane, so the full
+application remains blocked on that paired validation.
 
 ## Latest scanner and worker checkpoint
 

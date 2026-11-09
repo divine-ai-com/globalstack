@@ -29,8 +29,9 @@ still requires idempotent replay and reconciliation.
 data source uses the Search service's managed identity and a custom metadata
 deletion policy; its scheduled indexer is a five-minute reconciliation path.
 The outbox push path is separate. Projection tombstones contain only the
-document ID and deletion marker. Local tests stop at the unimplemented Search
-data-source route, so neither indexer execution nor Azure parity is claimed.
+document ID and deletion marker. A bounded paired Search slice now covers
+manual indexing, quarantine exclusion and soft deletion. Its results do not
+establish scheduled-run timing or the complete document workflow.
 `currentSearchResults` checks current tenant, owner/group access, clean state and revision in
 PostgreSQL before returning authoritative content. An access row registered by ingress is required; a processed document with no access row is not returned. This prevents stale search
 results from becoming current application answers; it is not a replacement for
@@ -61,12 +62,24 @@ event-to-Function-to-Blob path without treating the still-incomplete production
 `documentUploaded` handler as successful. The marker contains a source hash,
 not document contents.
 
-The SQL file currently initializes a fresh experiment database. Upgrade
-migrations, complete outbox reconciliation, effective identity/network
+The SQL file currently initializes a fresh experiment database. The
+`database-bootstrap.mjs` procedure creates nonadmin Entra roles for the worker
+and ingress identities through Azure's documented PostgreSQL helper, migrates
+the schema, and grants each role only the tables and operations its current
+application path needs. A local PostgreSQL test verifies the SQL grants and
+denials. This procedure is not yet connected to a paired Azure deployment, and
+GlobalStack has not demonstrated the corresponding Entra SQL authentication.
+Upgrade migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows
 remain required. The Functions pool enforces PostgreSQL TLS verification and
 uses an Entra token or a Key Vault secret through managed credentials. No
 authentication or private-network success is claimed before deployment tests.
+
+Azure documents role creation through
+[`pgaadauth_create_principal_with_oid`](https://learn.microsoft.com/en-us/azure/postgresql/security/security-manage-entra-users#create-a-role-by-using-the-microsoft-entra-id-object-identifier).
+The helper must run against the `postgres` database, while schema migration and
+grants run against `documents`. The operator administrator is for provisioning;
+the worker and ingress remain separate nonadmin principals.
 
 Run the repository tests with Docker available:
 
