@@ -130,6 +130,21 @@ test('the three Search pilot modules deploy in dependency order and keep Blob ac
   assert.equal((await upload('clean-projection', 'doc-1', { document_id: 'doc-1', revision_id: 'r2', deleted: 'true' }, true)).status, 201);
   assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
   assert.equal((await query('doc-1')).body.value.length, 0);
+  const readGrantPath = `${projectionId}/providers/Microsoft.Authorization/roleAssignments/${searchRoles[3]}?api-version=2022-04-01`;
+  assert.ok([200, 204].includes((await request('DELETE', readGrantPath)).status));
+  assert.equal((await upload('clean-projection', 'doc-2', { document_id: 'doc-2', revision_id: 'r1' }, false)).status, 201);
+  assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+  const denied = await searchCall('GET', "/indexers('document-projection-indexer')/search.status");
+  assert.equal(denied.body.lastResult.status, 'transientFailure');
+  assert.equal((await query('doc-2')).body.value.length, 0);
+  const restored = await request('PUT', readGrantPath, { properties: {
+    principalId: service.body.identity.principalId, principalType: 'ServicePrincipal',
+    roleDefinitionId: `/subscriptions/${subscription}/providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1`,
+    description: `globalstack-production-scenarios:${runId}`,
+  } });
+  assert.ok([200, 201].includes(restored.status));
+  assert.equal((await searchCall('POST', "/indexers('document-projection-indexer')/search.run")).status, 202);
+  assert.equal((await query('doc-2')).body.value[0].document_id, 'doc-2');
   const cleanup = await cleanupDocumentSearch({ subscription, group: 'gs-conformance-pilot', runId,
     publisher: publisherPrincipalId, dataRoles, searchRoles }, request, { sleep: async () => {} });
   assert.equal(cleanup.resourcesAbsent, true);
