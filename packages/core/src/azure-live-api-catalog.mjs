@@ -22,6 +22,7 @@ export const defaultApiVersions = {
   'Microsoft.DBforMySQL/flexibleServers/databases': '2023-12-30',
   'Microsoft.DBforPostgreSQL/flexibleServers': '2023-06-01-preview',
   'Microsoft.DBforPostgreSQL/flexibleServers/databases': '2023-06-01-preview',
+  'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules': '2024-08-01',
   'Microsoft.DocumentDB/databaseAccounts': '2024-05-15',
   'Microsoft.DocumentDB/databaseAccounts/sqlDatabases': '2024-05-15',
   'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers': '2024-05-15',
