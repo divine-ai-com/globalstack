@@ -34,10 +34,12 @@ test('published PostgreSQL SQL pilot retains its paired result and cleanup proof
 test('PostgreSQL pair requires both firewall and SQL results', () => {
   const paired = { comparisonComplete: true, azureTerminalState: 'Succeeded', localTerminalState: 'Succeeded',
     cleanup: { resourcesAbsent: true, deploymentsAbsent: true },
+    localCleanup: { complete: true },
     firewall: { azure: { initialStatus: 202 }, local: { initialStatus: 201 } },
     sql: { azure: { connection: { status: 'passed' }, schema: { status: 'passed' } },
       local: { attempted: true, connection: { status: 'passed' }, schema: { status: 'passed' } } } };
   assert.equal(postgresSqlPairPassed(paired), true);
   assert.equal(postgresSqlPairPassed({ ...paired, sql: { ...paired.sql,
     local: { ...paired.sql.local, schema: { status: 'failed' } } } }), false);
+  assert.equal(postgresSqlPairPassed({ ...paired, localCleanup: { complete: false } }), false);
 });

@@ -327,6 +327,14 @@ forwarded `RESET ROLE` could restore a privileged session. It does not emulate p
 networking, cancellation or Azure SQL protocol behavior beyond this client
 path. Issue #85 and the broader SQL issue #74 remain open. This does not advance
 a full-scenario assertion.
+The PostgreSQL paired runner now has an explicit local SQL branch: it starts a
+disposable PostgreSQL container, opens the deployed server through the local
+TLS gateway with a synthetic administrator token, applies the unchanged schema
+migration and requires local teardown for a passing pair. Azure uses the
+runner's public IPv4 address while the local firewall rule uses loopback;
+these environment-specific source addresses are reported. This revised runner
+has not executed as a paid pair. The workspace's available Azure CLI profile
+failed a read-only account check, so no new Azure result or charge is claimed.
 The [follow-up role pilot](evidence/document-postgres-roles-paired-20261109/)
 deployed the same PostgreSQL and two managed-identity resources on both targets.
 Azure created separate nonadmin SQL roles for the worker and ingress identities,
