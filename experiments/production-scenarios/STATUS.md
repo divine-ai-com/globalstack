@@ -87,7 +87,7 @@ while Azure deleted its managed environment, before writing its final result.
 Independent Azure inventory later found zero resources and deployment records;
 local managed containers were absent. The cleanup ledger was reconciled manually.
 The authorized total was raised to USD 200 on 2026-11-08. The conservative
-allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09. The second and third Search pilots each reserved USD 12, leaving USD 8 unallocated. A read-only Cost Management query for the pilot group returned no current
+allocation ledger at that checkpoint totaled USD 169. A later PostgreSQL run raised it to USD 181. The first Search pilot reserved another USD 12. The owner then raised the ceiling to USD 225 on 2026-11-09. The second and third Search pilots each reserved USD 12. The owner then raised the ceiling to USD 300, leaving USD 83 unallocated. A read-only Cost Management query for the pilot group returned no current
 usage rows; a subscription-wide query was denied to the pilot identity. Actual
 Azure charges are therefore unmeasured, and the allocation ledger remains the
 run gate.
@@ -127,12 +127,12 @@ HTTP 401 with an empty body. No Search object or Blob was created through the
 data plane, and no indexer ran. The cause of the 401 is not established. The
 runner now refreshes workload tokens and allows a bounded retry of 401 during
 readiness. Cleanup and an independent Azure resource inventory found zero
-remaining test resources. The ledger is at USD 217 of the USD 225 ceiling;
+remaining test resources. The ledger is at USD 217 of the USD 300 ceiling;
 actual Azure charges remain unmeasured.
 The pilot runner records each Azure and local deployment stage, provisions
 both Search indexes and the Blob data source/indexer, and attempts projection
 upload, indexing, quarantine exclusion and soft deletion. It
-reserves a USD 12 envelope within the authorized USD 225 ceiling. It refuses
+reserves a USD 12 envelope within the authorized USD 300 ceiling. It refuses
 a nonempty Azure inventory and retains a cleanup watchdog. The Azure pilot
 session is restored in this workspace. Automatic cleanup verified zero
 task-owned resources and deployment records; actual Azure charges remain
@@ -400,10 +400,10 @@ through committed metadata and both Search paths before testing failure cases.
 ## Budget and storage
 
 The private cumulative ledger currently records USD 217 in conservative envelopes
-against the USD 225 authorization, including the initial allowance for earlier
+against the USD 300 authorization, including the initial allowance for earlier
 work. This is not measured billing or a provider-enforced spending cap. All ledger
 allocations have verified cleanup, including independent reconciliation after the
-interrupted paired event run. USD 8 remains unallocated under this conservative ledger.
+interrupted paired event run. USD 83 remains unallocated under this conservative ledger.
 The scoped hosting plans were removed. The operator's empty group is intentionally
 retained for subsequent scoped runs.
 

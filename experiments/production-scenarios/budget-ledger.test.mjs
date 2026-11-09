@@ -49,6 +49,15 @@ test('authorized USD 225 ceiling retains earlier allowances and permits a USD 12
   await confirmBudgetCleanup(path, 'bb2222222222');
 });
 
+test('authorized USD 300 ceiling retains earlier allocations and permits a USD 12 Search run', async t => {
+  const path = await ledger(t);
+  await writeFile(path, JSON.stringify({ schemaVersion: 1, totalAuthorizedUsd: 300, priorAllowanceUsd: 20,
+    allocations: [{ runId: 'aa1111111111', envelopeUsd: 197, purpose: 'earlier runs', cleanupVerified: true }] }));
+  assert.deepEqual(await reserveBudget(path, { runId: 'bb2222222222', envelopeUsd: 12, purpose: 'Search replay' }),
+    { totalAuthorizedUsd: 300, allocatedUsd: 229, remainingUnallocatedUsd: 71 });
+  await confirmBudgetCleanup(path, 'bb2222222222');
+});
+
 test('repeated recovery preserves the first cleanup verification time', async t => {
   const path = await ledger(t);
   await reserveBudget(path, { runId: 'aa1111111111', envelopeUsd: 12, purpose: 'paired run' });

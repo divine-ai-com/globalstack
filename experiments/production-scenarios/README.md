@@ -37,8 +37,8 @@ first Azure Search readiness request returned an empty HTTP 401, so it stopped
 before provisioning indexes or uploading a Blob. The cause is unconfirmed.
 The runner now checks token freshness and retries bounded 401 readiness
 responses. Cleanup and an independent Azure resource inventory both found no
-remaining test resources. The conservative budget ledger has USD 8 left under
-the USD 225 ceiling. None of these attempts completed the document business
+remaining test resources. The conservative budget ledger has USD 83 left under
+the USD 300 ceiling. None of these attempts completed the document business
 flow or captured Azure Portal screenshots.
 
 The runner requires an existing certificate-authenticated Azure CLI session
@@ -190,7 +190,7 @@ invalid/corrected index schemas, indexing, fuzzy and vector queries, and index
 deletion. Component results and videos cannot mark the 101 application
 assertions complete or substitute for Portal screenshots.
 
-Read-only preflight found no deployed resources and initially unregistered required providers. Registration requests were subsequently submitted for the twelve providers needed by scenario 1. A repeated Cost Management query returned no reported month-to-date rows after an initial HTTP 429. That is not proof of zero accrued charges or a real-time budget guarantee. Search Basic pricing was retrieved from Azure's retail API; the complete architecture still needs a bounded, SKU-specific cost sheet before paid provisioning. The total authorized ceiling at the time of this capture was USD 150; it is now USD 225.
+Read-only preflight found no deployed resources and initially unregistered required providers. Registration requests were subsequently submitted for the twelve providers needed by scenario 1. A repeated Cost Management query returned no reported month-to-date rows after an initial HTTP 429. That is not proof of zero accrued charges or a real-time budget guarantee. Search Basic pricing was retrieved from Azure's retail API; the complete architecture still needs a bounded, SKU-specific cost sheet before paid provisioning. The total authorized ceiling at the time of this capture was USD 150; it is now USD 300.
 
 The following remain required: actual application code and container images, effective identity/network configuration, safe full-stack ownership/cleanup controls, Azure deployment and live event-flow captures, equivalent local runtime execution, fixes for measured gaps, Portal evidence, and subsequent scenario 2 execution. No paid license or trial will be purchased. The Cosmos-backed application dashboard replaces Power BI at the owner's instruction; Power BI is not evaluated.
 
@@ -516,7 +516,7 @@ New hosting, Search and Storage runs reserve their respective USD 1, USD 2 and
 USD 1 envelopes in the same private
 `reports/production-scenarios/budget-ledger.json` before provisioning. The ledger
 starts with a conservative USD 20 allowance for earlier work, enforces the
-current authorized aggregate ceiling (USD 225), blocks overlapping allocations until cleanup is
+current authorized aggregate ceiling (USD 300), blocks overlapping allocations until cleanup is
 verified, and never refunds an envelope automatically from delayed billing.
 It is an execution guard, not an Azure spending limit or a measured invoice.
 If a watchdog performs cleanup after the runner exits, reconcile its verified
