@@ -41,7 +41,7 @@ assert.ok(!registerOwner || completeSettings, 'Ingress-owner setup requires comp
 assert.ok(detectionMarker === 'none' || registerOwner, 'Detection runs require registered owner setup');
 assert.ok(!ingressHealth || completeSettings, 'Ingress health requires the complete local dependency set');
 assert.ok(!ingressAuth || ingressHealth && registerOwner, 'Authenticated ingress requires the ingress runtime and production workflow');
-let ingressToken, ingressClaims;
+let ingressToken, ingressClaims, ingressPublicKeys;
 if (ingressAuth) {
   const audience = process.env.DOCUMENT_API_AUDIENCE;
   assert.match(audience ?? '', /^[a-f0-9-]{36}$/i);
@@ -55,6 +55,13 @@ if (ingressAuth) {
     && ['Documents.Upload', 'Documents.Read', 'Documents.Delete'].every(role => ingressClaims.roles?.includes(role))
     && ingressClaims.iss === `https://login.microsoftonline.com/${ingressClaims.tid}/v2.0`,
   'The existing API token lacks the required document roles');
+  const header = JSON.parse(Buffer.from(ingressToken.split('.')[0], 'base64url'));
+  const keysResponse = await fetch(`https://login.microsoftonline.com/${ingressClaims.tid}/discovery/v2.0/keys`,
+    { redirect: 'error', signal: AbortSignal.timeout(10000) });
+  assert.equal(keysResponse.status, 200, 'Microsoft public signing keys were unavailable');
+  ingressPublicKeys = (await keysResponse.json()).keys.filter(key => key.kty === 'RSA' && key.kid === header.kid
+    && typeof key.n === 'string' && typeof key.e === 'string' && !key.d);
+  assert.equal(ingressPublicKeys.length, 1, 'The API token signing key was not found exactly once');
 }
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
@@ -88,6 +95,7 @@ const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { en
 let runtime, backend, delegated, databaseContainer, ingressOrigin;
 const ingressPlatform = ingressHealth ? createNativeContainerAppPlatform({ identityService: identity,
   storageRouter: () => runtime.storageRouter, searchRouter: () => runtime.searchRouter, store,
+  ...(ingressAuth ? { entraJwks: { tenantId: ingressClaims.tid, keys: ingressPublicKeys } } : {}),
   blobEndpoints: ['STORAGE_ENDPOINT'], searchEndpoints: ['SEARCH_ENDPOINT'],
   postgresBackend: () => ({ ...delegated, mapDatabase: (_, database) => database,
     resolvePrincipal: createLocalPostgresPrincipalResolver(backend) }),

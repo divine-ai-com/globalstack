@@ -23,6 +23,7 @@ test('native Container App platform routes deployed Blob and Search origins over
     searchRouter: () => ({ services: new Map([['pilot-search', { resourceId: searchId }]]),
       handler: () => (req, res) => { res.writeHead(200); res.end(`search ${req.headers.host}`); } }),
     store: { resources }, blobEndpoints: ['STORAGE_ENDPOINT'], searchEndpoints: ['SEARCH_ENDPOINT'],
+    entraJwks: { tenantId: subscription, keys: [{ kty: 'RSA', kid: 'public-test-key', n: 'abc', e: 'AQAB' }] },
     observe: event => observed.push(event),
   });
   const resource = { id: `${group}/providers/Microsoft.App/containerApps/pilot-ingress`,
@@ -33,7 +34,7 @@ test('native Container App platform routes deployed Blob and Search origins over
   try {
     platform = await prepare({ resource, signal: new AbortController().signal, directory, gateway: '127.0.0.1' });
     assert.equal(platform.env.IDENTITY_HEADER, 'local-header');
-    assert.equal(platform.extraHosts.length, 2);
+    assert.equal(platform.extraHosts.length, 3);
     const ca = await readFile(join(directory, 'container-pilot-ingress-ca.pem'));
     for (const [setting, expected] of [['STORAGE_ENDPOINT', 'blob'], ['SEARCH_ENDPOINT', 'search']]) {
       const endpoint = new URL(platform.env[setting]);
@@ -48,7 +49,18 @@ test('native Container App platform routes deployed Blob and Search origins over
       assert.equal(result.status, 200);
       assert.equal(result.body, `${expected} ${endpoint.host}`);
     }
-    assert.deepEqual(observed.map(event => event.surface), ['blob-app', 'search']);
+    const keysEndpoint = new URL(platform.env.ENTRA_JWKS_URI);
+    const keys = await new Promise((done, fail) => {
+      const req = request(keysEndpoint, { ca, lookup: (_hostname, options, callback) => options.all
+        ? callback(null, [{ address: '127.0.0.1', family: 4 }]) : callback(null, '127.0.0.1', 4) }, res => {
+        let body = ''; res.setEncoding('utf8'); res.on('data', chunk => { body += chunk; });
+        res.on('end', () => done({ status: res.statusCode, body: JSON.parse(body) }));
+      });
+      req.on('error', fail); req.end();
+    });
+    assert.equal(keys.status, 200);
+    assert.deepEqual(keys.body.keys.map(key => key.kid), ['public-test-key']);
+    assert.deepEqual(observed.map(event => event.surface), ['blob-app', 'search', 'entra-public-keys']);
     await assert.rejects(prepare({ resource: { ...resource, properties: { template: { containers: [{ env: [
       { name: 'STORAGE_ENDPOINT', value: 'https://attacker.invalid/' },
     ] }] } } }, signal: new AbortController().signal, directory, gateway: '127.0.0.1' }));

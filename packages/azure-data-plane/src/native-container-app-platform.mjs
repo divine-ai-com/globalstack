@@ -15,7 +15,14 @@ const subscription = id => /^\/subscriptions\/([^/]+)\//i.exec(id ?? '')?.[1]?.t
 // Container Apps use the same workload code and declared Azure origins on both
 // targets. This local platform maps only deployed services in the app's subscription.
 export function createNativeContainerAppPlatform({ identityService, storageRouter, searchRouter, store,
-  blobEndpoints = [], searchEndpoints = [], postgresBackend = null, observe = () => {} }) {
+  blobEndpoints = [], searchEndpoints = [], postgresBackend = null, entraJwks = null, observe = () => {} }) {
+  if (entraJwks) {
+    assert.match(entraJwks.tenantId ?? '', /^[a-f0-9-]{36}$/i);
+    assert.ok(Array.isArray(entraJwks.keys) && entraJwks.keys.length > 0 && entraJwks.keys.length <= 32
+      && entraJwks.keys.every(key => key.kty === 'RSA' && typeof key.kid === 'string'
+        && typeof key.n === 'string' && typeof key.e === 'string' && !key.d),
+    'Only bounded public Microsoft RSA signing keys may be mirrored');
+  }
   return async ({ resource, signal, directory, gateway }) => {
     assert.equal(resource.type?.toLowerCase(), 'microsoft.app/containerapps');
     assert.ok(subscription(resource.id));
@@ -37,7 +44,7 @@ export function createNativeContainerAppPlatform({ identityService, storageRoute
       assert.ok(settings.DB_PORT === undefined || settings.DB_PORT === '5432');
     }
     const hostnames = [...new Set([...blobs.map(item => item.hostname), ...searches.map(item => item.hostname),
-      ...(postgresHost ? [postgresHost] : [])])];
+      ...(postgresHost ? [postgresHost] : []), ...(entraJwks ? ['login.microsoftonline.com'] : [])])];
     const servers = [];
     let binding;
     async function dispose() {
@@ -90,6 +97,19 @@ export function createNativeContainerAppPlatform({ identityService, storageRoute
           Promise.resolve(handler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
         }));
         env[item.setting] = `https://${item.hostname}:${port}`;
+      }
+      if (entraJwks) {
+        const path = `/${entraJwks.tenantId}/discovery/v2.0/keys`;
+        const payload = Buffer.from(JSON.stringify({ keys: entraJwks.keys }));
+        const port = await listen(createTlsServer(tls, (req, res) => {
+          if (String(req.headers.host ?? '').split(':')[0].toLowerCase() !== 'login.microsoftonline.com'
+            || req.method !== 'GET' || req.url !== path) { res.writeHead(404); res.end(); return; }
+          res.writeHead(200, { 'content-type': 'application/json', 'content-length': payload.length,
+            'cache-control': 'public, max-age=300' });
+          res.end(payload);
+          observe({ surface: 'entra-public-keys', method: 'GET', path, status: 200 });
+        }));
+        env.ENTRA_JWKS_URI = `https://login.microsoftonline.com:${port}${path}`;
       }
       if (postgresHost) {
         const server = createPostgresWireGateway({ tls, trust: identityService.trust,

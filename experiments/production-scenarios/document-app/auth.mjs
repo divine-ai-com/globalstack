@@ -34,6 +34,17 @@ export function tokenVerifier({ tenant, audience, clients }, keys) {
 }
 
 export function configuredTokenVerifier() {
-  return tokenVerifier({ tenant: process.env.ENTRA_TENANT_ID, audience: process.env.API_AUDIENCE,
-    clients: process.env.API_ALLOWED_CLIENTS?.split(',') });
+  const tenant = process.env.ENTRA_TENANT_ID;
+  const uri = process.env.ENTRA_JWKS_URI;
+  let keys;
+  if (uri) {
+    const url = new URL(uri);
+    assert.ok(url.protocol === 'https:' && url.hostname === 'login.microsoftonline.com'
+      && url.pathname === `/${tenant}/discovery/v2.0/keys`
+      && !url.username && !url.password && !url.search && !url.hash,
+    'The configured Entra signing-key endpoint must retain the tenant-specific Microsoft origin');
+    keys = createRemoteJWKSet(url, { timeoutDuration: 5000, cooldownDuration: 30000, cacheMaxAge: 10 * 60000 });
+  }
+  return tokenVerifier({ tenant, audience: process.env.API_AUDIENCE,
+    clients: process.env.API_ALLOWED_CLIENTS?.split(',') }, keys);
 }
