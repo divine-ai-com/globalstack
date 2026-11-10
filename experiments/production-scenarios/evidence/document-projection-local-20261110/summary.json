@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "target": "GlobalStack local runtime only",
+  "sourceRevision": "46da956",
+  "scope": "Harmless clean text upload through the production Function with harness-prepared owner access, followed by an explicit Search projection-indexer run",
+  "result": {
+    "productionEventGridState": "delivered",
+    "scannerDecision": "clean",
+    "postgresqlRevisions": 2,
+    "outboxDelivered": 1,
+    "outboxSuperseded": 1,
+    "pushSearchQueryMatchingDocuments": 1,
+    "projectionIndexerRunHttp": 202,
+    "projectionIndexerLastStatus": "success",
+    "projectionIndexerItemsProcessed": 1,
+    "projectionSearchQueryMatchingDocuments": 1,
+    "localCleanupComplete": true
+  },
+  "limits": [
+    "No corresponding live Azure end-to-end run",
+    "Production ingress was replaced by harness-owned database setup",
+    "The local Search indexer reads Blob state in process; no Search-to-Blob HTTP interaction was captured",
+    "Malware quarantine and Service Bus failure delivery were not exercised",
+    "No full-scenario acceptance score is claimed"
+  ]
+}

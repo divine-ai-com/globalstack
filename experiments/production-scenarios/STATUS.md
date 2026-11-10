@@ -739,3 +739,11 @@ pre-registered document ownership directly in the database, so this does not
 exercise production ingress. No live Azure end-to-end comparison was made for
 this revision. Malicious-file handling, projection indexer execution, and the
 failure queue remain unverified. The full-scenario assertion ledger is unchanged.
+
+A further [local projection run](evidence/document-projection-local-20261110/summary.json)
+used the same clean-document path and then explicitly invoked the deployed Search
+indexer. Its completed result was `success` with one processed item, and the
+projection index returned one matching document. The indexer currently reads
+Blob state inside the local process rather than through the Azure-compatible
+data-plane HTTP boundary. That interaction is not yet parity evidence. Azure
+comparison and the remaining scenario paths are still required.
