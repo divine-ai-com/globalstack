@@ -378,6 +378,11 @@ owner lookup, pending revision commit and outbox delivery through the
 restricted worker and ingress logins. Its delivery callback acknowledges a
 local pending event; Search, the live Functions process and paired Azure
 application execution remain untested on this path.
+An opt-in, admin-key-protected database diagnostic is now part of the actual
+document Functions image. It uses the production pool configuration and
+reports the connected role and document count without exposing connection
+errors. The next paired pilot must invoke this endpoint on both deployed
+workers and verify the restricted worker role. It is not yet paired evidence.
 
 ## Latest scanner and worker checkpoint
 

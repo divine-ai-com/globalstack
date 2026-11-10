@@ -62,6 +62,14 @@ event-to-Function-to-Blob path without treating the still-incomplete production
 `documentUploaded` handler as successful. The marker contains a source hash,
 not document contents.
 
+When `DOCUMENT_DATABASE_DIAGNOSTIC_ENABLED=true`, an admin-key-protected
+Function in the production worker image checks its PostgreSQL connection using
+the same managed-identity credential and pool configuration as the document
+handler. It returns the database role and a document count, or a generic
+unavailable response without the underlying SQL error. This endpoint is for
+short paired integration runs and is disabled by default. It has not yet run
+as a deployed Function on Azure or GlobalStack.
+
 The SQL file currently initializes a fresh experiment database. The
 `database-bootstrap.mjs` procedure creates nonadmin Entra roles for the worker
 and ingress identities through Azure's documented PostgreSQL helper, migrates

@@ -18,6 +18,7 @@ import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
 import { bootstrapDocumentDatabase } from './database-bootstrap.mjs';
 import { registerDocumentAccess } from './access.mjs';
 import { commitRevision, deliverNext, processingContext } from './repository.mjs';
+import { createDatabaseDiagnostic } from './database-diagnostic.mjs';
 
 const exec = promisify(execFile);
 
@@ -138,6 +139,11 @@ test('nonadmin Entra-shaped identities retain separate SQL permissions through t
       });
       assert.equal(delivered.state, 'delivered');
       await assert.rejects(ingressPool.query('SELECT * FROM document_outbox LIMIT 0'), /permission denied/);
+      const diagnosticPool = new pg.Pool({ ...adminConnection, user: 'worker-pilot',
+        password: () => token(workerId), database: 'documents' });
+      const diagnostic = createDatabaseDiagnostic({ openPool: async () => diagnosticPool });
+      assert.deepEqual(await diagnostic(), { status: 200,
+        jsonBody: { database: 'ready', role: 'worker-pilot', documents: 1 } });
     } finally { await Promise.all([workerPool.end(), ingressPool.end()]); }
     const wrongIdentity = client('worker-pilot', await token(randomUUID()));
     await assert.rejects(wrongIdentity.connect());

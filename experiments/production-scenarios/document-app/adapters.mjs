@@ -44,6 +44,14 @@ export async function closeClients() {
 async function createClients() {
   const config = applicationConfig();
   const credential = new DefaultAzureCredential({ managedIdentityClientId: process.env.AZURE_CLIENT_ID });
+  const pool = await createDatabasePool(credential);
+  return { config, credential, pool,
+    blobs: new BlobServiceClient(config.storageEndpoint, credential, { retryOptions: { maxTries: 3 } }),
+    search: new SearchClient(config.searchEndpoint, config.searchIndex, credential, { serviceVersion: '2024-07-01', retryOptions: { maxRetries: 2 } }),
+    bus: new ServiceBusClient(config.failuresNamespace, credential, { retryOptions: { maxRetries: 2 } }) };
+}
+
+export async function createDatabasePool(credential = new DefaultAzureCredential({ managedIdentityClientId: process.env.AZURE_CLIENT_ID })) {
   const authMode = required('DB_AUTH_MODE');
   assert.ok(['entra', 'key-vault'].includes(authMode));
   const ca = process.env.PGSSLROOTCERT ? await readFile(process.env.PGSSLROOTCERT, 'utf8') : undefined;
@@ -61,10 +69,7 @@ async function createClients() {
     port: Number(process.env.DB_PORT ?? 5432), password, ssl: { rejectUnauthorized: true, ...(ca ? { ca } : {}) },
     max: 5, connectionTimeoutMillis: 10000, statement_timeout: 10000, idle_in_transaction_session_timeout: 15000 });
   pool.on('error', () => console.error(JSON.stringify({ stage: 'database', outcome: 'idle_connection_error' })));
-  return { config, credential, pool,
-    blobs: new BlobServiceClient(config.storageEndpoint, credential, { retryOptions: { maxTries: 3 } }),
-    search: new SearchClient(config.searchEndpoint, config.searchIndex, credential, { serviceVersion: '2024-07-01', retryOptions: { maxRetries: 2 } }),
-    bus: new ServiceBusClient(config.failuresNamespace, credential, { retryOptions: { maxRetries: 2 } }) };
+  return pool;
 }
 
 function log(context, stage, input, extra = {}) {
