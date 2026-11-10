@@ -26,7 +26,9 @@ function allowsSource(store, serverId, sourceIp) {
   });
 }
 
-export function createPostgresArmConnectionResolver({ store, backend, serverHost }) {
+export function createPostgresArmConnectionResolver({ store, backend, serverHost,
+  mapDatabase = (server, database) => physicalDatabaseName('postgres', server, database),
+  resolvePrincipal = null }) {
   assert.ok(store?.resources instanceof Map && backend?.host && backend?.port && backend?.user);
   assert.match(serverHost ?? '', /^[a-z0-9][a-z0-9-]{2,62}\.postgres\.database\.azure\.com$/);
   const name = serverHost.split('.')[0];
@@ -41,15 +43,19 @@ export function createPostgresArmConnectionResolver({ store, backend, serverHost
     assert.equal(server.properties?.authConfig?.passwordAuth, 'Disabled');
     assert.equal(server.properties?.network?.publicNetworkAccess, 'Enabled');
     assert.ok(allowsSource(store, server.id, sourceIp), 'PostgreSQL firewall denies this source');
-    const admin = store.resources.get(`${lower(server.id)}/administrators/${lower(principalId)}`);
-    assert.ok(admin && lower(admin.properties?.principalName) === lower(user)
-      && lower(admin.properties?.tenantId) === lower(tenantId)
-      && admin.properties?.principalType === 'ServicePrincipal', 'PostgreSQL administrator identity does not match');
     const defaultDatabase = lower(database) === 'postgres';
     const db = defaultDatabase ? null : store.resources.get(`${lower(server.id)}/databases/${lower(database)}`);
     assert.ok(defaultDatabase || db && lower(db.type) === 'microsoft.dbforpostgresql/flexibleservers/databases',
       'PostgreSQL database is not deployed');
-    return { host: backend.host, port: backend.port, user: backend.user, password: backend.password,
-      database: defaultDatabase ? backend.database || 'postgres' : physicalDatabaseName('postgres', name, database), ssl: false };
+    const admin = store.resources.get(`${lower(server.id)}/administrators/${lower(principalId)}`);
+    const isAdmin = admin && lower(admin.properties?.principalName) === lower(user)
+      && lower(admin.properties?.tenantId) === lower(tenantId)
+      && admin.properties?.principalType === 'ServicePrincipal';
+    const identity = isAdmin ? { user: backend.user, password: backend.password }
+      : await resolvePrincipal?.({ user, principalId, tenantId, serverId: server.id });
+    assert.ok(identity?.user && identity?.password, 'PostgreSQL principal identity does not match');
+    assert.equal(identity.user, isAdmin ? backend.user : user, 'PostgreSQL backend role does not match');
+    return { host: backend.host, port: backend.port, user: identity.user, password: identity.password,
+      database: defaultDatabase ? 'postgres' : mapDatabase(name, database), ssl: false };
   };
 }

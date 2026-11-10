@@ -67,8 +67,14 @@ The SQL file currently initializes a fresh experiment database. The
 and ingress identities through Azure's documented PostgreSQL helper, migrates
 the schema, and grants each role only the tables and operations its current
 application path needs. A local PostgreSQL test verifies the SQL grants and
-denials. This procedure is not yet connected to a paired Azure deployment, and
-GlobalStack has not demonstrated the corresponding Entra SQL authentication.
+denials. A bounded Azure pilot created these roles and checked their grants.
+A local TLS-gateway test now runs the same bootstrap SQL against a disposable,
+isolated PostgreSQL backend, then connects as worker and ingress with separate
+locally signed identity tokens. It verifies denied role switching and denied
+ingress outbox access. The local administrator maps to a restricted database
+owner; the privileged backend login and principal-password catalog are not
+exposed to the Azure-shaped SQL client. The paired role runner is prepared to
+compare these paths, but the application worker has not used them in a live flow.
 Upgrade migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows
 remain required. The Functions pool enforces PostgreSQL TLS verification and

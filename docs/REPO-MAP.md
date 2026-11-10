@@ -113,6 +113,7 @@ flowchart TD
 - `packages/azure-data-plane/src/key-vault-router.mjs`
 - `packages/azure-data-plane/src/key-vault-token-auth.mjs`
 - `packages/azure-data-plane/src/kubernetes-router.mjs`
+- `packages/azure-data-plane/src/local-postgres-principals.mjs`
 - `packages/azure-data-plane/src/log-analytics-store.mjs`
 - `packages/azure-data-plane/src/managed-identity-service.mjs`
 - `packages/azure-data-plane/src/metric-store.mjs`

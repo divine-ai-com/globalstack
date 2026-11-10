@@ -352,6 +352,14 @@ SQL path was not attempted and the paired runner correctly exited nonzero.
 Automatic cleanup and independent Azure inventory found zero resources and
 deployment records. The conservative ledger is USD 289 of the USD 350 ceiling,
 with actual charges still unmeasured. No application process used these roles.
+The local role pilot now uses an isolated PostgreSQL backend with a restricted
+database-owner login. It installs the Azure-shaped role helper, runs the
+unchanged bootstrap SQL through the TLS gateway, and maps locally signed
+worker and ingress identity tokens to separate database logins. A Docker test
+proves granted reads, denied ingress outbox access, denied role escalation and
+rejection of wrong identity or a removed firewall rule. The revised paired
+role runner has not yet produced Azure evidence on this revision. The full
+document application still has no completed event-to-database flow.
 
 ## Latest scanner and worker checkpoint
 
