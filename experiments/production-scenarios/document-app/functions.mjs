@@ -7,6 +7,7 @@ import { createScannerDiagnostic } from './scanner-diagnostic.mjs';
 import { createUploadDiagnostic } from './upload-diagnostic.mjs';
 import { createEventDiagnostic } from './event-diagnostic.mjs';
 import { createDatabaseDiagnostic } from './database-diagnostic.mjs';
+import { existingOrchestrationStatus } from './durable-status.mjs';
 
 if (process.env.SCANNER_DIAGNOSTIC_ENABLED === 'true') {
   app.http('scannerDiagnostic', { route: 'scanner-diagnostic', methods: ['POST'], authLevel: 'admin', handler: createScannerDiagnostic() });
@@ -36,7 +37,7 @@ app.eventGrid('documentUploaded', {
     const { pool } = await clients();
     const input = await processingContext(pool, parsed);
     const client = df.getClient(context);
-    const existing = await client.getStatus(input.correlationId);
+    const existing = await existingOrchestrationStatus(client, input.correlationId);
     if (existing) {
       context.log(JSON.stringify({ stage: 'event_duplicate', correlationId: input.rootCorrelationId, processingId: input.correlationId, runtimeStatus: existing.runtimeStatus }));
       return;
