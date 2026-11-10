@@ -153,7 +153,7 @@ try {
     await runtime.containerAppRouter.lifecycle.settle();
     assert.equal(runtime.containerAppRouter.lifecycle.status(scannerId), 'running');
   }
-  let searchOutput, failuresOutput;
+  let searchOutput, failuresOutput, publisherToken;
   if (completeSettings) {
     searchOutput = await deploy('search', 'document-search', { ...common,
       publisherPrincipalId: { value: publisher }, workerIdentityName: { value: `${name}-worker` },
@@ -163,7 +163,7 @@ try {
       namespaceName: { value: `${name}-failures` }, location: common.location,
       workerIdentityName: { value: `${name}-worker` }, roleAssignmentNames: { value: Array.from({ length: 2 }, randomUUID) } });
     const now = Math.floor(Date.now() / 1000);
-    const publisherToken = await new SignJWT({ iss: publisherIssuer, aud: 'https://search.azure.com/',
+    publisherToken = await new SignJWT({ iss: publisherIssuer, aud: 'https://search.azure.com/',
       tid: sub, oid: publisher, iat: now, nbf: now - 1, exp: now + 300 })
       .setProtectedHeader({ alg: 'RS256', kid: 'local-publisher' }).sign(publisherKeys.privateKey);
     const searchServer = createServer(runtime.searchRouter.handler());
@@ -300,10 +300,26 @@ try {
             revisions: Number((await pool.query('SELECT count(*)::integer AS count FROM document_revisions')).rows[0].count),
             outbox: Number((await pool.query('SELECT count(*)::integer AS count FROM document_outbox')).rows[0].count),
           };
-          if (report.productionDatabaseRows.scanned && report.productionDatabaseRows.revisions) break;
+          const states = (await pool.query('SELECT delivery_state, count(*)::integer AS count FROM document_outbox GROUP BY delivery_state')).rows;
+          report.outboxStates = Object.fromEntries(states.map(row => [row.delivery_state, Number(row.count)]));
+          if (report.productionDatabaseRows.scanned && report.productionDatabaseRows.revisions
+            && report.outboxStates.delivered) break;
           await new Promise(done => setTimeout(done, 500));
         } while (Date.now() < rowDeadline);
       } finally { await pool.end(); }
+      assert.ok(report.productionDatabaseRows.scanned && report.productionDatabaseRows.revisions
+        && report.outboxStates.delivered, 'Production event did not complete metadata and Search delivery');
+      const searchServer = createServer(runtime.searchRouter.handler());
+      await new Promise(done => searchServer.listen(0, '127.0.0.1', done));
+      try {
+        const result = await httpExchange(`http://127.0.0.1:${searchServer.address().port}/indexes('documents')/docs/search?api-version=2025-09-01`, {
+          method: 'POST', body: { search: '*', filter: `document_id eq '${report.preRegisteredAccess.documentId}'`, top: 2 },
+          headers: { host: new URL(searchOutput.searchEndpoint.value).host, authorization: `Bearer ${publisherToken}` },
+        });
+        report.productionSearch = { status: result.status, count: result.body?.value?.length ?? null };
+        assert.equal(result.status, 200);
+        assert.equal(report.productionSearch.count, 1);
+      } finally { searchServer.closeAllConnections(); await new Promise(done => searchServer.close(done)); }
     }
     const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',
       body: { blobName: uploaded.body.blobName, etag: uploaded.body.etag }, headers });
