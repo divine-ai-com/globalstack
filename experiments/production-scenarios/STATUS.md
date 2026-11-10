@@ -700,3 +700,22 @@ empty at 10:44:56 UTC. The original timeout is retained separately from recovery
 The next recorded comparison has started with cumulative conservative allocations
 of USD 75, not measured Azure charges.
 The full-workflow ledger remains unchanged.
+
+## Paired document worker SQL diagnostic, 2026-11-10
+
+The [redacted paired result](evidence/document-worker-postgres-paired-20261110/summary.json)
+records the same host, PostgreSQL, and worker app templates deployed to Azure and
+GlobalStack from revision `2088045`. Both live Functions workers passed the health
+check and used the application SQL pool to return HTTP 200 with the same restricted
+worker role and zero document rows. Azure SQL role bootstrap and the local gateway
+connection succeeded. Temporary exact-IP firewall rules provided pilot access;
+private network behavior remains untested. Host and app validation returned HTTP
+200 on Azure but HTTP 501 locally, tracked in [#90](https://github.com/divine-ai-com/globalstack/issues/90).
+
+The cleanup watchdog removed the owned Azure worker, PostgreSQL server, identities,
+roles, firewall rules and deployment records. An independent subscription inventory
+returned zero resources. Local worker and database cleanup completed. The conservative
+allowance ledger is USD 362 of the authorized USD 500 ceiling; actual Azure charges
+have not been measured. Disk free space was approximately 55 GiB after cleanup.
+The Blob-to-scan-to-metadata-to-Search workflow and all 101 full-scenario assertions
+remain untested. The financial-research scenario has no paired end-to-end pass.
