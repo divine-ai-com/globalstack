@@ -16,6 +16,7 @@ import pg from 'pg';
 import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
   createLocalPostgresPrincipalResolver } from '../../packages/azure-data-plane/src/local-postgres-principals.mjs';
 import { bootstrapDocumentDatabase } from './document-app/database-bootstrap.mjs';
+import { registerDocumentAccess } from './document-app/access.mjs';
 
 const out = resolve(process.env.LOCAL_WORKER_RUN_DIR ?? `reports/production-scenarios/worker-template-${randomBytes(5).toString('hex')}`);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -23,9 +24,11 @@ const uploadProbe = process.env.LOCAL_UPLOAD_DIAGNOSTIC === 'true';
 const databaseProbe = process.env.LOCAL_DATABASE_DIAGNOSTIC === 'true';
 const scannerProbe = process.env.LOCAL_SCANNER_DEPENDENCY === 'true';
 const completeSettings = process.env.LOCAL_COMPLETE_SETTINGS === 'true';
+const registerOwner = process.env.LOCAL_REGISTER_INGRESS_OWNER === 'true';
 assert.ok(!scannerProbe || uploadProbe, 'Scanner dependency requires the document upload probe');
 assert.ok(!completeSettings || scannerProbe && databaseProbe && uploadProbe,
   'Complete settings require the database, upload, and scanner probes');
+assert.ok(!registerOwner || completeSettings, 'Ingress-owner setup requires complete worker settings');
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
 const scannerAudience = scannerProbe ? randomUUID() : null;
@@ -224,6 +227,17 @@ try {
     report.diagnosticFunctionDiscovered = discovered.body.some(item => item.name === 'documentEventDiagnostic');
     assert.ok(report.diagnosticFunctionDiscovered);
     const input = { tenant: 'pilot', text: 'Local document event diagnostic.' };
+    if (registerOwner) {
+      input.blobName = `pilot/${randomUUID()}.txt`;
+      const blobUrl = new URL(`landing/${input.blobName}`, data.blobEndpoint.value).href;
+      const pool = new pg.Pool({ ...delegated, database: 'documents' });
+      try {
+        const access = await registerDocumentAccess(pool,
+          { tenant: 'pilot', subject: randomUUID(), groups: [] },
+          { blobUrl, fileName: input.blobName.split('/').at(-1), uploadKey: randomUUID() });
+        report.preRegisteredAccess = { documentId: access.document_id, method: 'local harness database setup' };
+      } finally { await pool.end(); }
+    }
     const uploaded = await httpExchange(endpoint + '/api/upload-diagnostic', { method: 'POST', body: input, headers });
     report.upload = { status: uploaded.status, body: uploaded.body };
     assert.equal(uploaded.status, 201);
@@ -239,6 +253,24 @@ try {
     report.eventDelivery = runtime.storageEventDelivery.diagnostics.filter(item => item.eventId === event.event.id);
     assert.ok(report.eventDelivery.some(item => item.subscriptionId.endsWith('/document-diagnostic') && item.state === 'delivered'),
       'Event Grid did not deliver the diagnostic event');
+    if (registerOwner) {
+      const deadline = Date.now() + 30000;
+      while (Date.now() < deadline && !runtime.storageEventDelivery.diagnostics.some(item => item.eventId === event.event.id
+        && item.subscriptionId.endsWith('/document-revisions') && item.state === 'delivered')) {
+        await new Promise(done => setTimeout(done, 500));
+      }
+      report.productionEventDelivery = runtime.storageEventDelivery.diagnostics.filter(item => item.eventId === event.event.id
+        && item.subscriptionId.endsWith('/document-revisions')).map(item => ({ state: item.state, status: item.status }));
+      const pool = new pg.Pool({ ...delegated, database: 'documents' });
+      try {
+        report.productionDatabaseRows = {
+          access: Number((await pool.query('SELECT count(*)::integer AS count FROM document_access')).rows[0].count),
+          scanned: Number((await pool.query('SELECT count(*)::integer AS count FROM scanned_documents')).rows[0].count),
+          revisions: Number((await pool.query('SELECT count(*)::integer AS count FROM document_revisions')).rows[0].count),
+          outbox: Number((await pool.query('SELECT count(*)::integer AS count FROM document_outbox')).rows[0].count),
+        };
+      } finally { await pool.end(); }
+    }
     const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',
       body: { blobName: uploaded.body.blobName, etag: uploaded.body.etag }, headers });
     report.eventMarker = { status: marker.status, sourceSha256: marker.body?.sourceSha256 };
