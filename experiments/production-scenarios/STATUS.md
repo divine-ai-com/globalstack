@@ -747,3 +747,10 @@ projection index returned one matching document. The indexer currently reads
 Blob state inside the local process rather than through the Azure-compatible
 data-plane HTTP boundary. That interaction is not yet parity evidence. Azure
 comparison and the remaining scenario paths are still required.
+
+Two [local detection runs](evidence/document-detection-local-20261110/summary.json)
+then sent harmless YARA and EICAR markers through the production event path.
+Both were detected by the deployed scanner, recorded as `DETECTED` in PostgreSQL,
+copied byte-for-byte to quarantine, and excluded from both Search indexes.
+Disposable containers were removed after each run. Production ingress, live
+Azure end-to-end comparison, and Service Bus failure delivery remain open.
