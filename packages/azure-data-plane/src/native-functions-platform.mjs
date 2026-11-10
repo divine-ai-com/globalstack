@@ -44,11 +44,29 @@ export function resolveNativeBlobEndpoints({ settings, names, router, subscripti
   });
 }
 
+export function resolveNativeSearchEndpoints({ settings, names, router, subscriptionId }) {
+  assert.ok(Array.isArray(names) && names.length <= 8 && new Set(names).size === names.length);
+  return names.flatMap(setting => {
+    assert.match(setting, /^[A-Z][A-Z0-9_]{0,79}$/);
+    if (settings[setting] === undefined) return [];
+    const endpoint = new URL(settings[setting]);
+    assert.ok(endpoint.protocol === 'https:' && !endpoint.username && !endpoint.password
+      && !endpoint.port && !endpoint.search && !endpoint.hash && endpoint.pathname === '/');
+    const match = /^([a-z0-9][a-z0-9-]{1,59})\.search\.windows\.net$/.exec(endpoint.hostname);
+    assert.ok(match, `${setting} must name an Azure AI Search endpoint`);
+    const service = router.services.get(match[1]);
+    assert.ok(service && service.resourceId
+      && /^\/subscriptions\/([^/]+)\//i.exec(service.resourceId)?.[1]?.toLowerCase() === subscriptionId,
+    `${setting} must refer to a deployed Search service in the workload subscription`);
+    return [{ setting, hostname: endpoint.hostname, resourceId: service.resourceId }];
+  });
+}
+
 // Resolve transport from deployed resources. Application code and the declared
 // identity credential remain unchanged; endpoint and CA wiring belongs to the
 // local platform. Additional service origins must resolve to deployed apps.
-export function createNativeFunctionsPlatform({ identityService, storageRouter, store, containerAppRouter,
-  containerAppEndpoints = [], blobEndpoints = [], postgresBackend = null, observe = () => {} }) {
+export function createNativeFunctionsPlatform({ identityService, storageRouter, store, containerAppRouter, searchRouter,
+  containerAppEndpoints = [], blobEndpoints = [], searchEndpoints = [], postgresBackend = null, observe = () => {} }) {
   return async ({ resource, signal, directory }) => {
     const settings = Object.fromEntries((resource.properties?.siteConfig?.appSettings ?? []).map(item => [item.name, item.value]));
     assert.equal(settings.AzureWebJobsStorage__credential, 'managedidentity');
@@ -61,6 +79,8 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
     assert.ok(deployed && subscription(resource.id) && subscription(deployed.resourceId) === subscription(resource.id), 'Host storage must be deployed in the workload subscription');
     const applicationBlobs = resolveNativeBlobEndpoints({ settings, names: blobEndpoints, router, subscriptionId: subscription(resource.id) });
     const services = resolveNativeContainerAppEndpoints({ resource, store, settings, names: containerAppEndpoints });
+    const searches = resolveNativeSearchEndpoints({ settings, names: searchEndpoints,
+      router: searchRouter?.(), subscriptionId: subscription(resource.id) });
     const postgresHost = settings.DB_HOST;
     const backend = postgresHost && typeof postgresBackend === 'function' ? postgresBackend() : postgresBackend;
     if (postgresHost !== undefined) {
@@ -100,6 +120,7 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
       const certificate = join(directory, 'platform-ca.pem'), keyFile = join(directory, 'platform-key.pem');
       const hostnames = [...new Set([...['blob', 'queue', 'table'].map(surface => `${account}.${surface}.core.windows.net`),
         ...applicationBlobs.map(item => item.hostname), ...services.map(service => service.hostname),
+        ...searches.map(service => service.hostname),
         ...(postgresHost ? [postgresHost] : [])])];
       await exec('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certificate,
         '-days', '1', '-subj', '/CN=GlobalStack local storage', '-addext', `subjectAltName=${hostnames.map(hostname => `DNS:${hostname}`).join(',')}`], { signal, timeout: 10000 });
@@ -139,6 +160,16 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
             method: req.method, path: new URL(req.url, 'https://localhost').pathname,
             bearer: /^Bearer /i.test(req.headers.authorization ?? ''), status: res.statusCode }));
           Promise.resolve(appHandler(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
+        }), gateway);
+        env[service.setting] = `https://${service.hostname}:${port}`;
+      }
+      for (const service of searches) {
+        const port = await listen(createTlsServer(tls, (req, res) => {
+          if (String(req.headers.host ?? '').split(':')[0].toLowerCase() !== service.hostname) { res.writeHead(404); res.end(); return; }
+          res.once('finish', () => observe({ surface: 'search', resourceId: service.resourceId,
+            method: req.method, path: new URL(req.url, 'https://localhost').pathname,
+            bearer: /^Bearer /i.test(req.headers.authorization ?? ''), status: res.statusCode }));
+          Promise.resolve(searchRouter().handler()(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end(); });
         }), gateway);
         env[service.setting] = `https://${service.hostname}:${port}`;
       }

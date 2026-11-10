@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createServer } from 'node:http';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
@@ -17,6 +18,8 @@ import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
   createLocalPostgresPrincipalResolver } from '../../packages/azure-data-plane/src/local-postgres-principals.mjs';
 import { bootstrapDocumentDatabase } from './document-app/database-bootstrap.mjs';
 import { registerDocumentAccess } from './document-app/access.mjs';
+import { provisionDocumentSearch } from './document-app/search-provision.mjs';
+import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 
 const out = resolve(process.env.LOCAL_WORKER_RUN_DIR ?? `reports/production-scenarios/worker-template-${randomBytes(5).toString('hex')}`);
 await mkdir(out, { recursive: true, mode: 0o700 });
@@ -32,10 +35,15 @@ assert.ok(!registerOwner || completeSettings, 'Ingress-owner setup requires comp
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
 const scannerAudience = scannerProbe ? randomUUID() : null;
+const publisher = completeSettings ? randomUUID() : null;
+const publisherKeys = completeSettings ? await generateKeyPair('RS256') : null;
+const publisherIssuer = `https://publisher.${sub}.example/`;
+const publisherTrust = publisherKeys ? { issuer: publisherIssuer, tenantId: sub, subscriptionIds: [sub],
+  jwks: { keys: [{ ...await exportJWK(publisherKeys.publicKey), kid: 'local-publisher', alg: 'RS256', use: 'sig' }] } } : null;
 const identity = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub],
   ...(scannerProbe ? { applicationAudiences: [scannerAudience] } : {}),
   ...(databaseProbe ? { audiences: ['https://storage.azure.com', 'https://storage.azure.com/',
-    'https://ossrdbms-aad.database.windows.net'] } : {}) });
+    'https://ossrdbms-aad.database.windows.net', ...(completeSettings ? ['https://search.azure.com', 'https://search.azure.com/'] : [])] } : {}) });
 const images = new Map(), image = execFileSync('docker', ['image', 'inspect', process.env.LOCAL_WORKER_IMAGE_ID ?? 'globalstack/document-functions:pilot', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
 const imageReference = 'document-pilot@' + image; images.set(imageReference, image);
 const scannerImage = scannerProbe ? execFileSync('docker', ['image', 'inspect', 'globalstack/document-scanner:frozen-20261107', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim() : null;
@@ -56,9 +64,12 @@ const provision = createDockerFunctionsProvisioner({ images, directory: resolve(
     store, postgresBackend: () => ({ ...delegated, mapDatabase: (_, database) => database,
       resolvePrincipal: createLocalPostgresPrincipalResolver(backend) }),
     blobEndpoints: uploadProbe ? ['STORAGE_ENDPOINT'] : [],
+    ...(completeSettings ? { searchRouter: () => runtime.searchRouter, searchEndpoints: ['SEARCH_ENDPOINT'] } : {}),
     ...(scannerProbe ? { containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'] } : {}),
     observe: event => report.storage.push(event) }) });
-runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust], nativeFunctionsProvisioner: provision,
+runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
+  ...(completeSettings ? { searchTokenTrusts: [identity.trust, publisherTrust] } : {}),
+  nativeFunctionsProvisioner: provision,
   ...(scannerProbe ? { containerAppTokenTrusts: [{ ...identity.trust,
     configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` }],
   nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'scanner.private') }) } : {}) });
@@ -145,12 +156,30 @@ try {
   let searchOutput, failuresOutput;
   if (completeSettings) {
     searchOutput = await deploy('search', 'document-search', { ...common,
-      publisherPrincipalId: { value: randomUUID() }, workerIdentityName: { value: `${name}-worker` },
+      publisherPrincipalId: { value: publisher }, workerIdentityName: { value: `${name}-worker` },
       ingressIdentityName: { value: `${name}-ingress` }, storageAccountName: { value: `${name}docs` },
       roleAssignmentNames: { value: Array.from({ length: 5 }, randomUUID) } });
     failuresOutput = await deploy('failures', 'document-failures', {
       namespaceName: { value: `${name}-failures` }, location: common.location,
       workerIdentityName: { value: `${name}-worker` }, roleAssignmentNames: { value: Array.from({ length: 2 }, randomUUID) } });
+    const now = Math.floor(Date.now() / 1000);
+    const publisherToken = await new SignJWT({ iss: publisherIssuer, aud: 'https://search.azure.com/',
+      tid: sub, oid: publisher, iat: now, nbf: now - 1, exp: now + 300 })
+      .setProtectedHeader({ alg: 'RS256', kid: 'local-publisher' }).sign(publisherKeys.privateKey);
+    const searchServer = createServer(runtime.searchRouter.handler());
+    await new Promise(done => searchServer.listen(0, '127.0.0.1', done));
+    try {
+      report.searchProvision = await provisionDocumentSearch({ endpoint: searchOutput.searchEndpoint.value,
+        storageResourceId: data.accountId.value,
+        credential: { async getToken() { return { token: publisherToken }; } },
+        request: async (url, options) => {
+          const parsed = new URL(url);
+          const response = await httpExchange(`http://127.0.0.1:${searchServer.address().port}${parsed.pathname}${parsed.search}`,
+            { method: options.method, body: JSON.parse(options.body),
+              headers: { host: parsed.host, authorization: options.headers.authorization } });
+          return { status: response.status, json: async () => response.body };
+        } });
+    } finally { searchServer.closeAllConnections(); await new Promise(done => searchServer.close(done)); }
   }
   const applicationSettings = [];
   if (databaseProbe) applicationSettings.push(
@@ -263,12 +292,17 @@ try {
         && item.subscriptionId.endsWith('/document-revisions')).map(item => ({ state: item.state, status: item.status }));
       const pool = new pg.Pool({ ...delegated, database: 'documents' });
       try {
-        report.productionDatabaseRows = {
-          access: Number((await pool.query('SELECT count(*)::integer AS count FROM document_access')).rows[0].count),
-          scanned: Number((await pool.query('SELECT count(*)::integer AS count FROM scanned_documents')).rows[0].count),
-          revisions: Number((await pool.query('SELECT count(*)::integer AS count FROM document_revisions')).rows[0].count),
-          outbox: Number((await pool.query('SELECT count(*)::integer AS count FROM document_outbox')).rows[0].count),
-        };
+        const rowDeadline = Date.now() + 30000;
+        do {
+          report.productionDatabaseRows = {
+            access: Number((await pool.query('SELECT count(*)::integer AS count FROM document_access')).rows[0].count),
+            scanned: Number((await pool.query('SELECT count(*)::integer AS count FROM scanned_documents')).rows[0].count),
+            revisions: Number((await pool.query('SELECT count(*)::integer AS count FROM document_revisions')).rows[0].count),
+            outbox: Number((await pool.query('SELECT count(*)::integer AS count FROM document_outbox')).rows[0].count),
+          };
+          if (report.productionDatabaseRows.scanned && report.productionDatabaseRows.revisions) break;
+          await new Promise(done => setTimeout(done, 500));
+        } while (Date.now() < rowDeadline);
       } finally { await pool.end(); }
     }
     const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',

@@ -4,7 +4,7 @@ import { request } from 'node:https';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { blobHostMasterKeys, createNativeFunctionsPlatform, resolveNativeBlobEndpoints } from '../../azure-data-plane/src/native-functions-platform.mjs';
+import { blobHostMasterKeys, createNativeFunctionsPlatform, resolveNativeBlobEndpoints, resolveNativeSearchEndpoints } from '../../azure-data-plane/src/native-functions-platform.mjs';
 
 const subscriptionId = '11111111-1111-4111-8111-111111111111';
 const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/fixture/providers/Microsoft.Storage/storageAccounts/pilotdocs`;
@@ -37,6 +37,25 @@ test('native Function platform maps only a deployed Blob account in its subscrip
   assert.throws(() => resolveNativeBlobEndpoints({ ...valid,
     router: { account() { return { resourceId: resourceId.replace(subscriptionId, '22222222-2222-4222-8222-222222222222') }; } } }));
   assert.throws(() => resolveNativeBlobEndpoints({ ...valid, names: ['STORAGE_ENDPOINT', 'STORAGE_ENDPOINT'] }));
+});
+
+test('native Function platform maps only a deployed Search service in its subscription', () => {
+  const searchId = `/subscriptions/${subscriptionId}/resourceGroups/fixture/providers/Microsoft.Search/searchServices/pilot-search`;
+  const settings = { SEARCH_ENDPOINT: 'https://pilot-search.search.windows.net/' };
+  const names = ['SEARCH_ENDPOINT'];
+  const searchRouter = { services: new Map([['pilot-search', { resourceId: searchId }]]) };
+  const validSearch = { settings, names, router: searchRouter, subscriptionId };
+  assert.deepEqual(resolveNativeSearchEndpoints(validSearch), [{ setting: 'SEARCH_ENDPOINT',
+    hostname: 'pilot-search.search.windows.net', resourceId: searchId }]);
+  assert.deepEqual(resolveNativeSearchEndpoints({ ...validSearch, settings: {} }), []);
+  for (const endpoint of ['http://pilot-search.search.windows.net/',
+    'https://pilot-search.search.windows.net:8443/', 'https://pilot-search.search.windows.net/other',
+    'https://pilot-search.search.windows.net.evil.test/', 'https://unknown.search.windows.net/']) {
+    assert.throws(() => resolveNativeSearchEndpoints({ ...validSearch,
+      settings: { SEARCH_ENDPOINT: endpoint } }), endpoint);
+  }
+  assert.throws(() => resolveNativeSearchEndpoints({ ...validSearch,
+    router: { services: new Map([['pilot-search', { resourceId: searchId.replace(subscriptionId, '22222222-2222-4222-8222-222222222222') }]]) } }));
 });
 
 test('native platform routes a second deployed Blob endpoint over verified TLS', async () => {
