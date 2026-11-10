@@ -390,6 +390,9 @@ now points its database reconciler at the same disposable backend; a subsequent
 local run returned HTTP 200 as `worker-pilot`, recorded one accepted PostgreSQL
 connection and removed the worker and database containers. This run used
 uncommitted runner changes and is diagnostic only until a clean-source rerun.
+The [clean-source local rerun](evidence/document-native-postgres-local-20261110/)
+passed with the same HTTP 200 restricted-role result and verified cleanup.
+It remains a local component result, not a paired Azure worker result.
 
 ## Latest scanner and worker checkpoint
 
