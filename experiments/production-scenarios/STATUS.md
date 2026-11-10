@@ -580,10 +580,10 @@ passing a resource PUT alone is insufficient.
 
 | Handoff | Current evidence | Next acceptance condition |
 | --- | --- | --- |
-| Blob upload to Event Grid to Functions | Paired diagnostic delivery; production handler returned HTTP 500 | Complete application settings and observe a production orchestration start |
-| Functions to PostgreSQL | Both live workers passed the restricted SQL diagnostic; document revision writes are untested | Process an uploaded document through the production handler and verify committed metadata on both targets |
-| Functions to scanner | Paired native ClamAV and YARA diagnostic calls passed | The production activity scans the event's exact Blob revision and records both decisions |
-| PostgreSQL outbox to Search | Paired projection indexer slice passed independently | A committed clean revision becomes searchable through the production outbox and projection paths |
+| Blob upload to Event Grid to Functions | Production handler started a local orchestration for clean and detected uploads; the earlier Azure pair tested diagnostic delivery only | Run the same production event on Azure and compare the lifecycle |
+| Functions to PostgreSQL | Both live workers passed the restricted SQL diagnostic; local production runs committed clean and detected revisions | Verify production revision writes on Azure and compare role, status and timing |
+| Functions to scanner | Paired native ClamAV and YARA diagnostic calls passed; local production runs scanned the uploaded Blob revision | Verify the same production activity and scan decisions on Azure |
+| PostgreSQL outbox to Search | Paired projection indexer slice passed independently; local production clean and detected paths completed push and projection indexing | Verify the combined production path on Azure and measure Search-to-Blob transport (#83) |
 | Permanent failure to Service Bus | Local ARM queue deployment only | Unchanged SDK sends, receives and dead-letters a failed event over AMQP on both targets |
 | Client upload and query | Local application tests only | Authenticated ingress uploads, receives a correlated result and enforces tenant isolation on both targets |
 
@@ -591,19 +591,15 @@ Private networking, negative cases, lifecycle capture, Portal evidence and the
 remaining IaC platforms follow the clean path. None is waived by an initial
 clean-path pass.
 
-The current paired worker supplies Storage and scanner settings for the
-component probe. Code inspection of `document-app/adapters.mjs` shows that the
-production handler also needs quarantine and projection container settings,
-PostgreSQL connection and authentication settings, a Search endpoint and index,
-and a Service Bus namespace and failure queue. The paired SQL diagnostic supplies
-only the database settings. Other component probes provision portions of Search
-and Storage, but no complete deployment wires them to the production handler.
-This explains why the earlier event probe cannot be promoted to a full workflow;
-the exact exception behind its production handler HTTP 500 was not captured.
-The next full
-document run must provision those services, migrate the schema, configure
-worker identity and data access, then observe a clean document from upload
-through committed metadata and both Search paths before testing failure cases.
+The paired worker supplies only the settings needed for its bounded diagnostic.
+The newer local harness deploys the storage, scanner, PostgreSQL, Search and
+failure-queue ARM resources and passes their outputs to one native worker. It
+has demonstrated the clean and detected paths through both Search indexes.
+This is still not a complete deployment: the failure queue has no native AMQP
+transport, the production ingress API was replaced by harness setup, and the
+same combined configuration has not run on Azure. The next paired run must
+retain these local checks while comparing the unchanged IaC and application
+on live Azure, with automatic cleanup.
 
 1. Finish the document scenario Bicep stack, package publishing and independent
    application probes, including scanner deployment, private networking, identity
