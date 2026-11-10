@@ -768,3 +768,14 @@ indexes. Authenticated API read and search returned the document. The API calls
 used the native process origin, so Container App front-door authentication and
 network policy remain untested. No combined live Azure run or Service Bus
 failure flow passed. All disposable local containers were removed.
+
+The [front-door rerun](evidence/document-ingress-front-door-local-20261110/summary.json)
+deployed a Container App authentication policy and sent client traffic through
+GlobalStack's TLS front door. Missing and forged tokens returned 401. A valid
+app-only Entra token produced upload 202, read 200 and search 200 after the
+production event, scanner, PostgreSQL outbox, and both Search indexes completed.
+The first attempt exposed a GlobalStack 501 for the Azure-style
+`api://<application-id>` audience; the bounded parser fix allowed the rerun to
+pass. Local cleanup completed. The combined Azure run, delegated-user policy,
+private-network isolation, Service Bus failure path and Search-to-Blob HTTP
+transport are still open.

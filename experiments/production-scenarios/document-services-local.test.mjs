@@ -24,6 +24,7 @@ const templateHashes = {
   'document-postgres': { source: '8168db6da3382f9e442b9bf282d8972117423cead3da59d429ea18329f710280', compiled: '47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9' },
   'document-ingress-app': { source: '7e96605534e281ca7eba054f2e9742734eb745e61f8ba4a6772051ff9f7b901e', compiled: 'f47e42f72b7134d84ecf9f4e1c4558806bd122a4a0cc0b1192c44e06e54a5353' },
   'document-ingress-storage-grant': { source: '365ca39172e0f1012ca30d40decbdee8a5a1078268984d746feb52198c48bfaf', compiled: 'f1373743f5f3728bb651c59824ddff0c5d1cb4ba84496a0da7f6f0930d118e14' },
+  'document-ingress-auth': { source: 'b702d10e048f57c4bb9125fb2c0e13d1b2b9e362404d674a295caa62c9f07083', compiled: '3a18589bd4845ff217c99108cec5887502e2b4bd01eb1f62588f0c7ad70437a3' },
 };
 
 async function compiled(name) {
@@ -58,6 +59,19 @@ test('reviewed ingress upload grant is limited to the landing container', async 
   assert.match(grant.scope, /'default', 'landing'\)\]$/);
   assert.match(grant.properties.principalId, /parameters\('ingressIdentityName'\)/);
   assert.match(grant.properties.roleDefinitionId, /ba92f5b4-2d11-453d-a403-e96b0029c9fe/);
+});
+
+test('reviewed ingress authentication requires HTTPS and the allowed application principal', async () => {
+  const template = await compiled('document-ingress-auth');
+  const policy = template.resources.find(resource => resource.type === 'Microsoft.App/containerApps/authConfigs');
+  assert.ok(policy);
+  assert.equal(policy.properties.platform.enabled, true);
+  assert.equal(policy.properties.httpSettings.requireHttps, true);
+  assert.equal(policy.properties.globalValidation.unauthenticatedClientAction, 'Return401');
+  const aad = policy.properties.identityProviders.azureActiveDirectory;
+  assert.equal(aad.enabled, true);
+  assert.match(JSON.stringify(aad.validation.defaultAuthorizationPolicy.allowedApplications), /allowedClientId/);
+  assert.match(JSON.stringify(aad.validation.defaultAuthorizationPolicy.allowedPrincipals.identities), /allowedPrincipalId/);
 });
 
 test('the three Search pilot modules deploy in dependency order and keep Blob access container-scoped', async t => {

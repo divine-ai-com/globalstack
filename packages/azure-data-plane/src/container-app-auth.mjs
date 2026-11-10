@@ -3,6 +3,9 @@ import { createWorkloadClaimsVerifier } from './workload-token-auth.mjs';
 const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 const list = values => Array.isArray(values) && values.length > 0 && values.length <= 100
   && values.every(value => typeof value === 'string' && uuid.test(value));
+const audience = value => typeof value === 'string' && (uuid.test(value) || /^api:\/\//i.test(value) && uuid.test(value.slice(6)));
+const audienceList = values => Array.isArray(values) && values.length > 0 && values.length <= 100
+  && values.every(audience);
 const lower = value => String(value).toLowerCase();
 const failure = (status, code) => ({ status, code });
 
@@ -18,7 +21,7 @@ export function createContainerAppAuthorizer({ trusts = [] } = {}) {
     if (p?.platform?.enabled !== true || p?.globalValidation?.unauthenticatedClientAction !== 'Return401'
       || p?.httpSettings?.requireHttps !== true || aad?.enabled !== true
       || !uuid.test(aad?.registration?.clientId ?? '')
-      || !list(validation?.allowedAudiences) || !list(policy?.allowedApplications)
+      || !audienceList(validation?.allowedAudiences) || !list(policy?.allowedApplications)
       || !list(policy?.allowedPrincipals?.identities) || additionalClients !== undefined && !list(additionalClients)
       || (p.globalValidation.excludedPaths?.length ?? 0) > 0
       || (policy.allowedPrincipals.groups?.length ?? 0) > 0

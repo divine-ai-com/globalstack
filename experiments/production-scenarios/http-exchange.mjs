@@ -3,7 +3,7 @@ import { request as httpsRequest } from 'node:https';
 
 // Native requests preserve an explicitly configured Host header. Node fetch can
 // replace it with the connection address, which breaks local virtual-host routing.
-export function httpExchange(url, { method = 'GET', body, headers = {}, timeoutMs = 30000, maxResponseBytes = 8 * 1024 * 1024 } = {}) {
+export function httpExchange(url, { method = 'GET', body, headers = {}, timeoutMs = 30000, maxResponseBytes = 8 * 1024 * 1024, ca } = {}) {
   return new Promise((resolve, reject) => {
     const target = new URL(url);
     if (!['http:', 'https:'].includes(target.protocol) || target.username || target.password) return reject(new Error('Unsupported HTTP target'));
@@ -11,7 +11,8 @@ export function httpExchange(url, { method = 'GET', body, headers = {}, timeoutM
     const request = target.protocol === 'https:' ? httpsRequest : httpRequest;
     // Native CLI subprocesses can block long enough for a pooled socket to expire.
     // Use a fresh connection rather than retrying a potentially submitted mutation.
-    const req = request(target, { agent: false, method, signal: AbortSignal.timeout(timeoutMs), headers: {
+    const req = request(target, { agent: false, method, signal: AbortSignal.timeout(timeoutMs),
+      ...(target.protocol === 'https:' && ca ? { ca } : {}), headers: {
       'content-type': 'application/json', ...headers,
       ...(payload === undefined ? {} : { 'content-length': Buffer.byteLength(payload) }),
     } }, response => {

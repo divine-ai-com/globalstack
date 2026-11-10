@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
+import { createServer as createTlsServer } from 'node:https';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
@@ -85,7 +86,7 @@ const ingressReference = ingressImage ? `ingress-pilot@${ingressImage}` : null;
 if (ingressReference) images.set(ingressReference, ingressImage);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
-  scope: ingressAuth ? 'One local authenticated document API process and worker with deployed PostgreSQL, Blob, Event Grid, scanner and Search. The API check bypasses the Container App front door. No matching Azure full workflow or Service Bus failure path.'
+  scope: ingressAuth ? 'One local authenticated document API and worker with deployed PostgreSQL, Blob, Event Grid, scanner and Search. Client requests traverse the Container App TLS front door. No matching Azure full workflow or Service Bus failure path.'
     : completeSettings ? 'One local worker with deployed PostgreSQL, Blob, Event Grid, scanner, Search and failure-queue settings. No fresh Azure comparison or complete business workflow.'
     : scannerProbe ? 'One local worker with PostgreSQL, Blob, Event Grid and a deployed scanner dependency. No fresh Azure comparison or complete business workflow.'
     : databaseProbe && uploadProbe ? 'One local worker with managed-identity PostgreSQL and Blob access, plus Event Grid diagnostic delivery. No fresh Azure comparison or complete business workflow.'
@@ -93,7 +94,12 @@ const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { en
     : uploadProbe ? 'Local worker, document data and Event Grid modules with an actual managed-identity Blob upload. No fresh Azure comparison or complete business workflow.'
     : 'Local execution of the worker host/app Bicep templates previously used on Azure. New generated parameters, no fresh Azure comparison or complete business workflow.',
   startedAt: new Date().toISOString(), image, exchanges: [], storage: [], cleanup: false };
-let runtime, backend, delegated, databaseContainer, ingressOrigin;
+let runtime, backend, delegated, databaseContainer, ingressOrigin, ingressFrontDoor;
+let ingressFrontDoorUrl, ingressFrontDoorHost, ingressFrontDoorCa;
+const ingressExchange = (path, options = {}) => httpExchange(`${ingressFrontDoorUrl}${path}`, {
+  ...options, ca: ingressFrontDoorCa,
+  headers: { ...options.headers, host: ingressFrontDoorHost },
+});
 const ingressPlatform = ingressHealth ? createNativeContainerAppPlatform({ identityService: identity,
   storageRouter: () => runtime.storageRouter, searchRouter: () => runtime.searchRouter, store,
   ...(ingressAuth ? { entraJwks: { tenantId: ingressClaims.tid, keys: ingressPublicKeys } } : {}),
@@ -113,7 +119,10 @@ runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
   ...(completeSettings ? { searchTokenTrusts: [identity.trust, publisherTrust] } : {}),
   nativeFunctionsProvisioner: provision,
   ...(scannerProbe ? { containerAppTokenTrusts: [{ ...identity.trust,
-    configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` }],
+    configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` },
+  ...(ingressAuth ? [{ issuer: ingressClaims.iss, configurationIssuer: ingressClaims.iss,
+    tenantId: ingressClaims.tid, subscriptionIds: [sub],
+    jwks: { keys: ingressPublicKeys.map(key => ({ kty: 'RSA', kid: key.kid, n: key.n, e: key.e, alg: 'RS256', use: 'sig' })) } }] : [])],
   nativeContainerAppProvisioner: async args => {
     const provisioner = createDockerContainerAppProvisioner({ images, directory: resolve(out, 'container-apps.private'),
       ...(ingressPlatform ? { preparePlatform: platformArgs => platformArgs.resource.name.endsWith('-ingress')
@@ -261,6 +270,25 @@ try {
       imageReference: { value: ingressReference }, registryHost: { value: hostOutput.registryHost.value },
       publicIngress: { value: true }, applicationSettings: { value: ingressSettings } });
     const ingressId = `${group}/providers/Microsoft.App/containerApps/${name}-ingress`;
+    if (ingressAuth) {
+      await deploy('ingressAuth', 'document-ingress-auth', {
+        ingressName: { value: `${name}-ingress` }, tenantId: { value: ingressClaims.tid },
+        apiAudience: { value: apiAudience }, allowedClientId: { value: ingressClaims.azp },
+        allowedPrincipalId: { value: ingressClaims.oid },
+      });
+      const app = await request('GET', `${ingressId}?api-version=2025-01-01`);
+      ingressFrontDoorHost = app.body.properties.configuration.ingress.fqdn;
+      const keyFile = resolve(out, 'front-door-private.key');
+      const certFile = resolve(out, 'front-door-private.crt');
+      execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1',
+        '-subj', '/CN=localhost', '-addext', `subjectAltName=DNS:${ingressFrontDoorHost},IP:127.0.0.1`,
+        '-keyout', keyFile, '-out', certFile], { stdio: 'ignore' });
+      ingressFrontDoorCa = await readFile(certFile);
+      ingressFrontDoor = createTlsServer({ key: await readFile(keyFile), cert: ingressFrontDoorCa },
+        runtime.containerAppRouter.handler());
+      await new Promise(done => ingressFrontDoor.listen(0, '127.0.0.1', done));
+      ingressFrontDoorUrl = `https://127.0.0.1:${ingressFrontDoor.address().port}`;
+    }
     await runtime.containerAppRouter.lifecycle.settle();
     report.ingressRuntimeState = runtime.containerAppRouter.lifecycle.status(ingressId);
     assert.equal(report.ingressRuntimeState, 'running');
@@ -274,7 +302,7 @@ try {
       await request('PUT', `${database.serverId.value}/firewallRules/ingress-source?api-version=2024-08-01`,
         { properties: { startIpAddress: workerIp, endIpAddress: workerIp } });
       const denied = await Promise.all([undefined, 'Bearer a.b.c'].map(authorization =>
-        httpExchange(`${ingressOrigin}/documents`, { method: 'POST', body: Buffer.from('Denied request'),
+        ingressExchange('/documents', { method: 'POST', body: Buffer.from('Denied request'),
           headers: { ...(authorization ? { authorization } : {}), 'content-type': 'text/plain',
             'x-document-name': 'denied.txt', 'idempotency-key': randomUUID() } })));
       report.ingressAuthDenials = denied.map(result => result.status);
@@ -376,7 +404,7 @@ try {
     if (ingressAuth) {
       const uploadKey = randomUUID(), fileName = 'report.txt';
       const blobName = `${ingressClaims.tid}/${ingressClaims.oid.toLowerCase()}/${uploadKey}/${fileName}`;
-      const result = await httpExchange(`${ingressOrigin}/documents`, { method: 'POST', body: Buffer.from(input.text),
+      const result = await ingressExchange('/documents', { method: 'POST', body: Buffer.from(input.text),
         headers: { authorization: `Bearer ${ingressToken}`, 'content-type': 'text/plain',
           'x-document-name': fileName, 'idempotency-key': uploadKey } });
       report.ingressUpload = { status: result.status, body: result.body };
@@ -452,12 +480,12 @@ try {
         assert.equal(report.productionSearch.count, detectionMarker === 'none' ? 1 : 0);
         if (ingressAuth) {
           const auth = { authorization: `Bearer ${ingressToken}` };
-          const read = await httpExchange(`${ingressOrigin}/documents/${report.preRegisteredAccess.documentId}`,
+          const read = await ingressExchange(`/documents/${report.preRegisteredAccess.documentId}`,
             { headers: auth });
           report.ingressRead = { status: read.status, scanStatus: read.body?.scan_status };
           assert.equal(read.status, 200);
           assert.equal(report.ingressRead.scanStatus, 'CLEAN');
-          const query = await httpExchange(`${ingressOrigin}/search?q=diagnostic`, { headers: auth });
+          const query = await ingressExchange('/search?q=diagnostic', { headers: auth });
           report.ingressQuery = { status: query.status, count: query.body?.results?.length ?? null };
           assert.equal(query.status, 200);
           assert.equal(report.ingressQuery.count, 1);
@@ -522,6 +550,7 @@ try {
   assert.equal(runtime.nativeFunctionsLifecycle.status(siteId), 'stopped');
 } catch (error) { report.error = error.message; }
 finally {
+  if (ingressFrontDoor) { ingressFrontDoor.closeAllConnections(); await new Promise(done => ingressFrontDoor.close(done)); }
   try { await runtime.dispose(); identity.dispose(); report.cleanup = true; } catch { report.error ??= 'Local worker cleanup incomplete'; }
   if (databaseContainer) try { execFileSync('docker', ['rm', '-f', databaseContainer], { stdio: 'ignore' }); }
   catch { report.error ??= 'Local PostgreSQL cleanup incomplete'; }
