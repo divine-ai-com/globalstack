@@ -76,6 +76,16 @@ and records an actual managed-identity Blob write and delivery attempt. The
 current component probe lacks the downstream application settings. It records
 the Function's HTTP 500 as a failed delivery attempt, not an application pass.
 
+`LOCAL_DATABASE_DIAGNOSTIC=true` runs the document worker with the compiled
+host, PostgreSQL-identity and app modules. It starts a disposable PostgreSQL
+backend, bootstraps separate restricted SQL roles, then invokes the opt-in
+database diagnostic inside the native Functions process. A passing result
+requires its managed identity to obtain a PostgreSQL token, the TLS gateway
+to accept the worker role, and the worker to read the document access table.
+The runner removes its Function and database containers. This is a local
+component check; Azure worker login and the document event workflow remain
+separate paired gates.
+
 `node experiments/production-scenarios/worker-scanner-local.mjs` deploys the native
 Functions worker and scanner, then executes Azure SDK client commands inside the
 worker container. It checks managed-identity acquisition, real scanning, policy

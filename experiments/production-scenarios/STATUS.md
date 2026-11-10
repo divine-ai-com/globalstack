@@ -383,6 +383,13 @@ document Functions image. It uses the production pool configuration and
 reports the connected role and document count without exposing connection
 errors. The next paired pilot must invoke this endpoint on both deployed
 workers and verify the restricted worker role. It is not yet paired evidence.
+The local worker runner now invokes that diagnostic in a running Functions
+container against an isolated PostgreSQL backend. The first attempt reached
+the database but exposed a separate reconciler endpoint mismatch. The runner
+now points its database reconciler at the same disposable backend; a subsequent
+local run returned HTTP 200 as `worker-pilot`, recorded one accepted PostgreSQL
+connection and removed the worker and database containers. This run used
+uncommitted runner changes and is diagnostic only until a clean-source rerun.
 
 ## Latest scanner and worker checkpoint
 
