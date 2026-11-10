@@ -91,6 +91,18 @@ test('real Blob writes traverse the captured Bicep wiring into Storage Queue', a
   assert.equal((await events()).length, 3, 'Removing the subscription must disconnect delivery');
 });
 
+test('Put Blob persists the blob content type rather than the transport content type', async t => {
+  const { upload, exchange, events } = await fixture(t);
+  const path = '/event-landing/tenant/document.txt';
+  const written = await upload(path, 'document text', {
+    'content-type': 'application/octet-stream', 'x-ms-blob-content-type': 'text/plain' });
+  assert.equal(written.status, 201);
+  const properties = await exchange('blob', 'HEAD', path);
+  assert.equal(properties.status, 200);
+  assert.equal(properties.headers['content-type'], 'text/plain');
+  assert.equal((await events())[0].data.contentType, 'text/plain');
+});
+
 test('role revocation blocks real delivery; restoring it retries the original event', async t => {
   const { request, upload, events, runtime, advance } = await fixture(t);
   const original = (await request('GET', `${role}?api-version=2022-04-01`)).body;

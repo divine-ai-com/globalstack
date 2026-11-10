@@ -536,7 +536,7 @@ export class StorageDataPlaneRouter {
           blobName,
           containerName,
           metadata: Object.fromEntries(Object.entries(req.headers).filter(([name]) => name.startsWith('x-ms-meta-'))),
-          contentType: String(req.headers['content-type'] ?? 'application/octet-stream'),
+          contentType: String(req.headers['x-ms-blob-content-type'] ?? req.headers['content-type'] ?? 'application/octet-stream'),
           body,
           etag: `"0x${randomUUID().replaceAll('-', '')}"`,
           lastModified: nowUtc(),
