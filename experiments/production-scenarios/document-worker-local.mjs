@@ -3,7 +3,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { createServer as createTlsServer } from 'node:https';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { ResourceStore } from '../../packages/core/src/resource-store.mjs';
 import { createArmServer } from '../../packages/azure-control-plane/src/server.mjs';
@@ -551,6 +551,8 @@ try {
 } catch (error) { report.error = error.message; }
 finally {
   if (ingressFrontDoor) { ingressFrontDoor.closeAllConnections(); await new Promise(done => ingressFrontDoor.close(done)); }
+  await Promise.all(['front-door-private.key', 'front-door-private.crt'].map(file =>
+    rm(resolve(out, file), { force: true })));
   try { await runtime.dispose(); identity.dispose(); report.cleanup = true; } catch { report.error ??= 'Local worker cleanup incomplete'; }
   if (databaseContainer) try { execFileSync('docker', ['rm', '-f', databaseContainer], { stdio: 'ignore' }); }
   catch { report.error ??= 'Local PostgreSQL cleanup incomplete'; }
