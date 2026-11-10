@@ -720,3 +720,12 @@ allowance ledger is USD 362 of the authorized USD 500 ceiling; actual Azure char
 have not been measured. Disk free space was approximately 55 GiB after cleanup.
 The Blob-to-scan-to-metadata-to-Search workflow and all 101 full-scenario assertions
 remain untested. The financial-research scenario has no paired end-to-end pass.
+
+The [combined local worker probe](evidence/document-worker-blob-sql-local-20261110/summary.json)
+then used one live worker for the restricted SQL diagnostic, a managed-identity
+Blob upload, and Event Grid diagnostic delivery. The SQL request returned HTTP
+200, the upload HTTP 201, and the diagnostic subscription delivered its marker.
+The production document subscription was still retrying. This was local only;
+the handler's actual exception was not captured. The missing full production
+traversal is tracked in [#91](https://github.com/divine-ai-com/globalstack/issues/91).
+Disposable local containers were removed.
