@@ -443,6 +443,18 @@ try {
         report.productionSearch = { status: result.status, count: result.body?.value?.length ?? null };
         assert.equal(result.status, 200);
         assert.equal(report.productionSearch.count, detectionMarker === 'none' ? 1 : 0);
+        if (ingressAuth) {
+          const auth = { authorization: `Bearer ${ingressToken}` };
+          const read = await httpExchange(`${ingressOrigin}/documents/${report.preRegisteredAccess.documentId}`,
+            { headers: auth });
+          report.ingressRead = { status: read.status, scanStatus: read.body?.scan_status };
+          assert.equal(read.status, 200);
+          assert.equal(report.ingressRead.scanStatus, 'CLEAN');
+          const query = await httpExchange(`${ingressOrigin}/search?q=diagnostic`, { headers: auth });
+          report.ingressQuery = { status: query.status, count: query.body?.results?.length ?? null };
+          assert.equal(query.status, 200);
+          assert.equal(report.ingressQuery.count, 1);
+        }
         const searchHost = new URL(searchOutput.searchEndpoint.value).host;
         const indexerPath = "/indexers('document-projection-indexer')";
         const run = await httpExchange(`http://127.0.0.1:${searchServer.address().port}${indexerPath}/search.run?api-version=2025-09-01`, {
@@ -473,7 +485,15 @@ try {
     const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',
       body: { blobName: uploaded.body.blobName, etag: uploaded.body.etag }, headers });
     report.eventMarker = { status: marker.status, sourceSha256: marker.body?.sourceSha256 };
-    assert.equal(marker.status, 200);
+    if (ingressAuth) {
+      // The optional diagnostic lookup accepts only pilot/*.txt names. Check
+      // its recorded marker directly for the authenticated API's owner path.
+      assert.equal(marker.status, 400);
+      const etag = String(uploaded.body.etag).replace(/^"|"$/g, '');
+      const digest = createHash('sha256').update(JSON.stringify([uploaded.body.blobName, etag])).digest('hex');
+      report.eventMarker.markerPresent = runtime.storageRouter.account(`${name}docs`).blobs.has(`event-diagnostics\0${digest}.json`);
+      assert.equal(report.eventMarker.markerPresent, true);
+    } else assert.equal(marker.status, 200);
   }
   if (process.env.LOCAL_CAPTURE_WORKER_LOGS === 'true') {
     await new Promise(done => setTimeout(done, 1000));
