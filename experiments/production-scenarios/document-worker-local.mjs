@@ -10,6 +10,7 @@ import { createManagedIdentityService } from '../../packages/azure-data-plane/sr
 import { createDockerFunctionsProvisioner } from '../../packages/azure-data-plane/src/docker-functions-provisioner.mjs';
 import { createNativeFunctionsPlatform } from '../../packages/azure-data-plane/src/native-functions-platform.mjs';
 import { createFunctionsRouterServer } from '../../packages/azure-data-plane/src/functions-router.mjs';
+import { createDockerContainerAppProvisioner } from '../../packages/azure-data-plane/src/docker-container-app-provisioner.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import pg from 'pg';
 import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
@@ -20,16 +21,24 @@ const out = resolve(process.env.LOCAL_WORKER_RUN_DIR ?? `reports/production-scen
 await mkdir(out, { recursive: true, mode: 0o700 });
 const uploadProbe = process.env.LOCAL_UPLOAD_DIAGNOSTIC === 'true';
 const databaseProbe = process.env.LOCAL_DATABASE_DIAGNOSTIC === 'true';
+const scannerProbe = process.env.LOCAL_SCANNER_DEPENDENCY === 'true';
+assert.ok(!scannerProbe || uploadProbe, 'Scanner dependency requires the document upload probe');
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
+const scannerAudience = scannerProbe ? randomUUID() : null;
 const identity = await createManagedIdentityService({ store, tenantId: sub, subscriptionIds: [sub],
+  ...(scannerProbe ? { applicationAudiences: [scannerAudience] } : {}),
   ...(databaseProbe ? { audiences: ['https://storage.azure.com', 'https://storage.azure.com/',
     'https://ossrdbms-aad.database.windows.net'] } : {}) });
 const images = new Map(), image = execFileSync('docker', ['image', 'inspect', process.env.LOCAL_WORKER_IMAGE_ID ?? 'globalstack/document-functions:pilot', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim();
 const imageReference = 'document-pilot@' + image; images.set(imageReference, image);
+const scannerImage = scannerProbe ? execFileSync('docker', ['image', 'inspect', 'globalstack/document-scanner:frozen-20261107', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim() : null;
+const scannerReference = scannerImage ? `scanner-pilot@${scannerImage}` : null;
+if (scannerReference) images.set(scannerReference, scannerImage);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
-  scope: databaseProbe && uploadProbe ? 'One local worker with managed-identity PostgreSQL and Blob access, plus Event Grid diagnostic delivery. No fresh Azure comparison or complete business workflow.'
+  scope: scannerProbe ? 'One local worker with PostgreSQL, Blob, Event Grid and a deployed scanner dependency. No fresh Azure comparison or complete business workflow.'
+    : databaseProbe && uploadProbe ? 'One local worker with managed-identity PostgreSQL and Blob access, plus Event Grid diagnostic delivery. No fresh Azure comparison or complete business workflow.'
     : databaseProbe ? 'Local worker process, managed-identity PostgreSQL login and restricted SQL diagnostic. No fresh Azure comparison or complete business workflow.'
     : uploadProbe ? 'Local worker, document data and Event Grid modules with an actual managed-identity Blob upload. No fresh Azure comparison or complete business workflow.'
     : 'Local execution of the worker host/app Bicep templates previously used on Azure. New generated parameters, no fresh Azure comparison or complete business workflow.',
@@ -39,8 +48,13 @@ const provision = createDockerFunctionsProvisioner({ images, directory: resolve(
   preparePlatform: createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter,
     store, postgresBackend: () => ({ ...delegated, mapDatabase: (_, database) => database,
       resolvePrincipal: createLocalPostgresPrincipalResolver(backend) }),
-    blobEndpoints: uploadProbe ? ['STORAGE_ENDPOINT'] : [], observe: event => report.storage.push(event) }) });
-runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust], nativeFunctionsProvisioner: provision });
+    blobEndpoints: uploadProbe ? ['STORAGE_ENDPOINT'] : [],
+    ...(scannerProbe ? { containerAppRouter: () => runtime.containerAppRouter, containerAppEndpoints: ['SCANNER_ENDPOINT'] } : {}),
+    observe: event => report.storage.push(event) }) });
+runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust], nativeFunctionsProvisioner: provision,
+  ...(scannerProbe ? { containerAppTokenTrusts: [{ ...identity.trust,
+    configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` }],
+  nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'scanner.private') }) } : {}) });
 const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
 const facade = createFunctionsRouterServer(runtime.functionsRouter);
 try {
@@ -58,13 +72,15 @@ try {
       '--entrypoint', '/root/.azure/bin/bicep', 'globalstack/validation-runner:cli-pinned', 'build', `/fixture/${file}.bicep`, '--stdout'], { encoding: 'utf8', timeout: 60000 });
     report.templates[stage] = createHash('sha256').update(text).digest('hex');
     await writeFile(resolve(out, `${file}.json`), text);
+    const template = JSON.parse(text);
+    const supplied = { ...parameters, ...(Object.hasOwn(template.parameters ?? {}, 'runId') ? { runId: common.runId } : {}) };
     const result = await request('PUT', `${group}/providers/Microsoft.Resources/deployments/${file}?api-version=2025-04-01`, {
-      properties: { mode: 'Incremental', template: JSON.parse(text), parameters: { ...parameters, runId: common.runId } },
+      properties: { mode: 'Incremental', template, parameters: supplied },
     });
     assert.equal(result.body.properties.provisioningState, 'Succeeded');
     return result.body.properties.outputs;
   }
-  await deploy('host', 'worker-host', { ...common, publisherPrincipalId: { value: randomUUID() },
+  const hostOutput = await deploy('host', 'worker-host', { ...common, publisherPrincipalId: { value: randomUUID() },
     roleAssignmentNames: { value: Array.from({ length: 6 }, randomUUID) } });
   let database;
   if (databaseProbe) {
@@ -101,6 +117,24 @@ try {
   const data = uploadProbe ? await deploy('data', 'document-data', { accountName: { value: `${name}docs` },
     workerIdentityName: { value: `${name}-worker` }, publisherPrincipalId: { value: randomUUID() },
     roleAssignmentNames: { value: Array.from({ length: 2 }, randomUUID) }, location: common.location }) : null;
+  let scannerHostname;
+  if (scannerProbe) {
+    const scannerId = `${group}/providers/Microsoft.App/containerApps/${name}-scanner`;
+    const environmentId = `${group}/providers/Microsoft.App/managedEnvironments/${name}-scanner`;
+    await request('PUT', `${group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${name}-scanner?api-version=2023-01-31`,
+      { location: 'westus2', tags: { project: 'globalstack-production-scenarios', run: name } });
+    await request('PUT', `${environmentId}?api-version=2025-01-01`, { location: 'westus2', properties: {} });
+    const scanner = await deploy('scannerApp', 'scanner-app', {
+      serviceName: common.serviceName, location: common.location,
+      environmentId: { value: environmentId }, imageReference: { value: scannerReference },
+      registryHost: { value: hostOutput.registryHost.value }, publicIngress: { value: true } });
+    scannerHostname = scanner.hostname.value;
+    await deploy('scannerAuth', 'scanner-auth', {
+      scannerName: { value: `${name}-scanner` }, tenantId: { value: sub },
+      scannerAudience: { value: scannerAudience }, workerIdentityName: { value: `${name}-worker` } });
+    await runtime.containerAppRouter.lifecycle.settle();
+    assert.equal(runtime.containerAppRouter.lifecycle.status(scannerId), 'running');
+  }
   const applicationSettings = [];
   if (databaseProbe) applicationSettings.push(
     { name: 'DOCUMENT_DATABASE_DIAGNOSTIC_ENABLED', value: 'true' },
@@ -123,6 +157,9 @@ try {
     { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' },
     { name: 'DOCUMENT_EVENT_DIAGNOSTIC_ENABLED', value: 'true' });
   }
+  if (scannerProbe) applicationSettings.push(
+    { name: 'SCANNER_ENDPOINT', value: `https://${scannerHostname}` },
+    { name: 'SCANNER_SCOPE', value: `api://${scannerAudience}/.default` });
   await deploy('app', 'worker-app', { ...common, imageReference: { value: imageReference },
     applicationSettings: { value: applicationSettings } });
   const siteId = `${group}/providers/Microsoft.Web/sites/${name}-worker`;
