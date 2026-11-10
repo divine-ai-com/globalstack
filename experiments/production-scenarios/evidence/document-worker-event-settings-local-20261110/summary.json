@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "target": "GlobalStack local runtime only",
+  "attempts": [
+    {
+      "sourceRevision": "dbb047a111f15ce909f54ff17a582057e0006c4c",
+      "workerHealthHttp": 200,
+      "databaseDiagnosticHttp": 200,
+      "blobUploadDiagnosticHttp": 201,
+      "productionFunctionFailure": "Missing application setting QUARANTINE_CONTAINER",
+      "cleanupComplete": true
+    },
+    {
+      "sourceRevision": "4a35040e8a71252c829727469083e041f905f37c",
+      "workerHealthHttp": 200,
+      "databaseDiagnosticHttp": 200,
+      "blobUploadDiagnosticHttp": 201,
+      "productionFunctionFailure": "Missing application setting SCANNER_ENDPOINT",
+      "cleanupComplete": true
+    }
+  ],
+  "azurePairedRun": false,
+  "fullDocumentBusinessWorkflowCompleted": false
+}
