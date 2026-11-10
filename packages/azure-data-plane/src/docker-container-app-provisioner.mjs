@@ -45,8 +45,10 @@ export function containerAppRuntimeSpec(resource, images) {
 
 // ARM selects an approved image, never host paths, credentials or Docker flags.
 // This runs one bounded replica. It does not emulate registry IAM or autoscaling.
-export function createDockerContainerAppProvisioner({ images, directory, startupTimeoutMs = 120000 }) {
+export function createDockerContainerAppProvisioner({ images, directory, startupTimeoutMs = 120000,
+  preparePlatform = null }) {
   assert.ok(images instanceof Map);
+  assert.ok(preparePlatform === null || typeof preparePlatform === 'function');
   assert.ok(Number.isInteger(startupTimeoutMs) && startupTimeoutMs >= 1000 && startupTimeoutMs <= 180000);
   const root = resolve(directory);
   return async ({ resource, signal }) => {
@@ -55,29 +57,47 @@ export function createDockerContainerAppProvisioner({ images, directory, startup
     const space = await statfs(root);
     assert.ok(space.bavail * space.bsize >= 40 * 1024 ** 3, '40 GiB free required');
     const name = `gs-container-app-${randomUUID()}`, network = `${name}-network`;
-    let containerOwned = false, networkOwned = false;
+    let containerOwned = false, networkOwned = false, platform;
     async function dispose() {
       if (containerOwned) {
         try { await exec('docker', ['rm', '-f', name], { timeout: 20000 }); }
         catch (error) { if (!String(error.stderr ?? '').includes(`No such container: ${name}`)) throw error; }
         containerOwned = false;
       }
+      let platformError;
+      try { await platform?.dispose?.(); } catch (error) { platformError = error; }
+      platform = null;
       if (networkOwned) {
         try { await exec('docker', ['network', 'rm', network], { timeout: 20000 }); }
         catch (error) { if (!String(error.stderr ?? '').includes(`network ${network} not found`)) throw error; }
         networkOwned = false;
       }
+      if (platformError) throw platformError;
     }
     try {
       signal.throwIfAborted();
       assert.equal((await exec('docker', ['image', 'inspect', spec.image, '--format', '{{.Id}}'], { signal, timeout: 10000 })).stdout.trim(), spec.image);
       networkOwned = true;
       await exec('docker', ['network', 'create', '--internal', '--label', 'globalstack.managed=container-app', network], { signal, timeout: 20000 });
+      if (preparePlatform) {
+        const inspected = JSON.parse((await exec('docker', ['network', 'inspect', network], { signal, timeout: 10000 })).stdout)[0];
+        const gateway = inspected.IPAM.Config[0].Gateway;
+        platform = await preparePlatform({ resource, signal, directory: root, network, gateway });
+        assert.ok(platform && typeof platform.dispose === 'function', 'Prepared Container App platform requires cleanup');
+      }
+      const platformEnv = platform?.env ?? {};
+      assert.ok(Object.entries(platformEnv).every(([key, value]) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(key)
+        && typeof value === 'string' && !value.includes('\0')));
+      const env = { ...spec.env, ...platformEnv };
+      const hosts = platform?.extraHosts ?? [], mounts = platform?.mounts ?? [];
+      assert.ok(Array.isArray(hosts) && hosts.every(value => /^[a-z0-9.-]+:(?:\d{1,3}\.){3}\d{1,3}$/.test(value)));
+      assert.ok(Array.isArray(mounts) && mounts.every(value => typeof value === 'string' && value.endsWith(':ro')));
       containerOwned = true;
       await exec('docker', ['run', '-d', '--pull', 'never', '--name', name, '--network', network,
         '--label', 'globalstack.managed=container-app', '--memory', spec.memory, '--cpus', String(spec.cpu), '--pids-limit', '128',
         '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=1073741824',
-        ...Object.keys(spec.env).flatMap(key => ['-e', key]), spec.image], { signal, timeout: 20000, env: { ...process.env, ...spec.env } });
+        ...hosts.flatMap(value => ['--add-host', value]), ...mounts.flatMap(value => ['-v', value]),
+        ...Object.keys(env).flatMap(key => ['-e', key]), spec.image], { signal, timeout: 20000, env: { ...process.env, ...env } });
       const state = JSON.parse((await exec('docker', ['inspect', name], { signal, timeout: 10000 })).stdout)[0];
       const origin = `http://${state.NetworkSettings.Networks[network].IPAddress}:${spec.port}`;
       async function checkReady() {
