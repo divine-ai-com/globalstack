@@ -44,7 +44,8 @@ test('native Function platform maps only a deployed Search service in its subscr
   const settings = { SEARCH_ENDPOINT: 'https://pilot-search.search.windows.net/' };
   const names = ['SEARCH_ENDPOINT'];
   const searchRouter = { services: new Map([['pilot-search', { resourceId: searchId }]]) };
-  const validSearch = { settings, names, router: searchRouter, subscriptionId };
+  const store = { resources: new Map([[searchId.toLowerCase(), { type: 'Microsoft.Search/searchServices' }]]) };
+  const validSearch = { settings, names, router: searchRouter, store, subscriptionId };
   assert.deepEqual(resolveNativeSearchEndpoints(validSearch), [{ setting: 'SEARCH_ENDPOINT',
     hostname: 'pilot-search.search.windows.net', resourceId: searchId }]);
   assert.deepEqual(resolveNativeSearchEndpoints({ ...validSearch, settings: {} }), []);
@@ -56,6 +57,7 @@ test('native Function platform maps only a deployed Search service in its subscr
   }
   assert.throws(() => resolveNativeSearchEndpoints({ ...validSearch,
     router: { services: new Map([['pilot-search', { resourceId: searchId.replace(subscriptionId, '22222222-2222-4222-8222-222222222222') }]]) } }));
+  assert.throws(() => resolveNativeSearchEndpoints({ ...validSearch, store: { resources: new Map() } }));
 });
 
 test('native platform routes a second deployed Blob endpoint over verified TLS', async () => {

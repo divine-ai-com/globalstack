@@ -44,7 +44,7 @@ export function resolveNativeBlobEndpoints({ settings, names, router, subscripti
   });
 }
 
-export function resolveNativeSearchEndpoints({ settings, names, router, subscriptionId }) {
+export function resolveNativeSearchEndpoints({ settings, names, router, store, subscriptionId }) {
   assert.ok(Array.isArray(names) && names.length <= 8 && new Set(names).size === names.length);
   return names.flatMap(setting => {
     assert.match(setting, /^[A-Z][A-Z0-9_]{0,79}$/);
@@ -56,7 +56,8 @@ export function resolveNativeSearchEndpoints({ settings, names, router, subscrip
     assert.ok(match, `${setting} must name an Azure AI Search endpoint`);
     const service = router.services.get(match[1]);
     assert.ok(service && service.resourceId
-      && /^\/subscriptions\/([^/]+)\//i.exec(service.resourceId)?.[1]?.toLowerCase() === subscriptionId,
+      && /^\/subscriptions\/([^/]+)\//i.exec(service.resourceId)?.[1]?.toLowerCase() === subscriptionId
+      && store?.resources.get(service.resourceId.toLowerCase())?.type?.toLowerCase() === 'microsoft.search/searchservices',
     `${setting} must refer to a deployed Search service in the workload subscription`);
     return [{ setting, hostname: endpoint.hostname, resourceId: service.resourceId }];
   });
@@ -80,7 +81,7 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
     const applicationBlobs = resolveNativeBlobEndpoints({ settings, names: blobEndpoints, router, subscriptionId: subscription(resource.id) });
     const services = resolveNativeContainerAppEndpoints({ resource, store, settings, names: containerAppEndpoints });
     const searches = resolveNativeSearchEndpoints({ settings, names: searchEndpoints,
-      router: searchRouter?.(), subscriptionId: subscription(resource.id) });
+      router: searchRouter?.(), store, subscriptionId: subscription(resource.id) });
     const postgresHost = settings.DB_HOST;
     const backend = postgresHost && typeof postgresBackend === 'function' ? postgresBackend() : postgresBackend;
     if (postgresHost !== undefined) {
