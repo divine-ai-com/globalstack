@@ -22,7 +22,10 @@ await mkdir(out, { recursive: true, mode: 0o700 });
 const uploadProbe = process.env.LOCAL_UPLOAD_DIAGNOSTIC === 'true';
 const databaseProbe = process.env.LOCAL_DATABASE_DIAGNOSTIC === 'true';
 const scannerProbe = process.env.LOCAL_SCANNER_DEPENDENCY === 'true';
+const completeSettings = process.env.LOCAL_COMPLETE_SETTINGS === 'true';
 assert.ok(!scannerProbe || uploadProbe, 'Scanner dependency requires the document upload probe');
+assert.ok(!completeSettings || scannerProbe && databaseProbe && uploadProbe,
+  'Complete settings require the database, upload, and scanner probes');
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
 const scannerAudience = scannerProbe ? randomUUID() : null;
@@ -37,7 +40,8 @@ const scannerReference = scannerImage ? `scanner-pilot@${scannerImage}` : null;
 if (scannerReference) images.set(scannerReference, scannerImage);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
-  scope: scannerProbe ? 'One local worker with PostgreSQL, Blob, Event Grid and a deployed scanner dependency. No fresh Azure comparison or complete business workflow.'
+  scope: completeSettings ? 'One local worker with deployed PostgreSQL, Blob, Event Grid, scanner, Search and failure-queue settings. No fresh Azure comparison or complete business workflow.'
+    : scannerProbe ? 'One local worker with PostgreSQL, Blob, Event Grid and a deployed scanner dependency. No fresh Azure comparison or complete business workflow.'
     : databaseProbe && uploadProbe ? 'One local worker with managed-identity PostgreSQL and Blob access, plus Event Grid diagnostic delivery. No fresh Azure comparison or complete business workflow.'
     : databaseProbe ? 'Local worker process, managed-identity PostgreSQL login and restricted SQL diagnostic. No fresh Azure comparison or complete business workflow.'
     : uploadProbe ? 'Local worker, document data and Event Grid modules with an actual managed-identity Blob upload. No fresh Azure comparison or complete business workflow.'
@@ -135,6 +139,16 @@ try {
     await runtime.containerAppRouter.lifecycle.settle();
     assert.equal(runtime.containerAppRouter.lifecycle.status(scannerId), 'running');
   }
+  let searchOutput, failuresOutput;
+  if (completeSettings) {
+    searchOutput = await deploy('search', 'document-search', { ...common,
+      publisherPrincipalId: { value: randomUUID() }, workerIdentityName: { value: `${name}-worker` },
+      ingressIdentityName: { value: `${name}-ingress` }, storageAccountName: { value: `${name}docs` },
+      roleAssignmentNames: { value: Array.from({ length: 5 }, randomUUID) } });
+    failuresOutput = await deploy('failures', 'document-failures', {
+      namespaceName: { value: `${name}-failures` }, location: common.location,
+      workerIdentityName: { value: `${name}-worker` }, roleAssignmentNames: { value: Array.from({ length: 2 }, randomUUID) } });
+  }
   const applicationSettings = [];
   if (databaseProbe) applicationSettings.push(
     { name: 'DOCUMENT_DATABASE_DIAGNOSTIC_ENABLED', value: 'true' },
@@ -160,6 +174,11 @@ try {
   if (scannerProbe) applicationSettings.push(
     { name: 'SCANNER_ENDPOINT', value: `https://${scannerHostname}` },
     { name: 'SCANNER_SCOPE', value: `api://${scannerAudience}/.default` });
+  if (completeSettings) applicationSettings.push(
+    { name: 'SEARCH_ENDPOINT', value: searchOutput.searchEndpoint.value },
+    { name: 'SEARCH_INDEX', value: 'documents' },
+    { name: 'FAILURES_NAMESPACE', value: failuresOutput.namespaceHost.value },
+    { name: 'FAILURES_QUEUE', value: failuresOutput.queueName.value });
   await deploy('app', 'worker-app', { ...common, imageReference: { value: imageReference },
     applicationSettings: { value: applicationSettings } });
   const siteId = `${group}/providers/Microsoft.Web/sites/${name}-worker`;
