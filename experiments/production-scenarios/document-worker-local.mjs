@@ -550,9 +550,13 @@ try {
   assert.equal(runtime.nativeFunctionsLifecycle.status(siteId), 'stopped');
 } catch (error) { report.error = error.message; }
 finally {
-  if (ingressFrontDoor) { ingressFrontDoor.closeAllConnections(); await new Promise(done => ingressFrontDoor.close(done)); }
-  await Promise.all(['front-door-private.key', 'front-door-private.crt'].map(file =>
-    rm(resolve(out, file), { force: true })));
+  try {
+    if (ingressFrontDoor) { ingressFrontDoor.closeAllConnections(); await new Promise(done => ingressFrontDoor.close(done)); }
+  } catch { report.error ??= 'Local ingress front-door cleanup incomplete'; }
+  try {
+    await Promise.all(['front-door-private.key', 'front-door-private.crt'].map(file =>
+      rm(resolve(out, file), { force: true })));
+  } catch { report.error ??= 'Local front-door certificate cleanup incomplete'; }
   try { await runtime.dispose(); identity.dispose(); report.cleanup = true; } catch { report.error ??= 'Local worker cleanup incomplete'; }
   if (databaseContainer) try { execFileSync('docker', ['rm', '-f', databaseContainer], { stdio: 'ignore' }); }
   catch { report.error ??= 'Local PostgreSQL cleanup incomplete'; }
