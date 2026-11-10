@@ -1,6 +1,6 @@
 # Production comparison status
 
-Updated 2026-11-09. This is an execution checklist, not a paper result or release certification.
+Updated 2026-11-10. This is an execution checklist, not a paper result or release certification.
 
 ## Completion gate
 
@@ -332,9 +332,17 @@ disposable PostgreSQL container, opens the deployed server through the local
 TLS gateway with a synthetic administrator token, applies the unchanged schema
 migration and requires local teardown for a passing pair. Azure uses the
 runner's public IPv4 address while the local firewall rule uses loopback;
-these environment-specific source addresses are reported. This revised runner
-has not executed as a paid pair. The workspace's available Azure CLI profile
-failed a read-only account check, so no new Azure result or charge is claimed.
+these environment-specific source addresses are reported. The
+[2026-11-10 paid pair](evidence/document-postgres-sql-paired-20261110/)
+executed this revised runner. Both deployments returned HTTP 201 and reached
+`Succeeded`. Both firewall PUTs returned HTTP 202. Azure readback returned
+HTTP 200. Azure and local SQL both connected over verified TLS and created
+the four document tables. Automatic cleanup and an independent Azure
+inventory found zero resources and deployments; the local database container
+was removed. The conservative allocation ledger is USD 325 of the authorized
+USD 500 ceiling, with actual charges unmeasured. The local gateway used a
+synthetic administrator token and a backend login; nonadmin worker and ingress
+identities, private networking, and full application behavior remain untested.
 The [follow-up role pilot](evidence/document-postgres-roles-paired-20261109/)
 deployed the same PostgreSQL and two managed-identity resources on both targets.
 Azure created separate nonadmin SQL roles for the worker and ingress identities,
