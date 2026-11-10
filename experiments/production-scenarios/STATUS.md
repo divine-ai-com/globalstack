@@ -368,6 +368,11 @@ zero resources and deployments. The conservative ledger is USD 337 of USD
 500, with actual charges unmeasured. Azure did not run an application process
 with these identities, and the full document application still has no
 completed event-to-database flow.
+The native Functions platform now passes the restricted-principal resolver and
+isolated database mapping to its PostgreSQL gateway. A Docker-network test
+connected as the nonadmin worker with the platform-generated TLS certificate
+and read the document outbox. It did not start the actual Functions handler or
+exercise a Blob event, so it is transport evidence only.
 
 ## Latest scanner and worker checkpoint
 

@@ -11,6 +11,7 @@ import pg from 'pg';
 import { ResourceStore } from '../../../packages/core/src/resource-store.mjs';
 import { createPostgresArmConnectionResolver } from '../../../packages/azure-data-plane/src/postgres-arm-connection.mjs';
 import { createPostgresWireGateway } from '../../../packages/azure-data-plane/src/postgres-wire-gateway.mjs';
+import { createNativeFunctionsPlatform } from '../../../packages/azure-data-plane/src/native-functions-platform.mjs';
 import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
   createLocalPostgresPrincipalResolver } from
   '../../../packages/azure-data-plane/src/local-postgres-principals.mjs';
@@ -120,6 +121,38 @@ test('nonadmin Entra-shaped identities retain separate SQL permissions through t
     const wrongRole = client('ingress-pilot', await token(workerId));
     await assert.rejects(wrongRole.connect());
     wrongRole.connection?.stream?.destroy();
+    const storage = `${group}/providers/Microsoft.Storage/storageAccounts/pgprincipalhost`;
+    const storageRouter = { account: () => ({ resourceId: storage }),
+      blobHandler: () => (_req, res) => res.end(), queueHandler: () => (_req, res) => res.end(),
+      tableHandler: () => (_req, res) => res.end() };
+    const identityService = { trust: { jwks: { keys: [jwk] }, tenantId: tenant, issuer },
+      bind: () => ({ identityHeader: 'test-header', handler: (_req, res) => res.end(), revoke() {} }) };
+    const prepare = createNativeFunctionsPlatform({ identityService, storageRouter: () => storageRouter,
+      store, postgresBackend: () => ({ ...delegated, mapDatabase: (_, database) => database,
+        resolvePrincipal: createLocalPostgresPrincipalResolver(backend) }) });
+    const platform = await prepare({ resource: { id: `${group}/providers/Microsoft.Web/sites/pg-role-worker`,
+      name: 'pg-role-worker', properties: { siteConfig: { appSettings: [
+        { name: 'AzureWebJobsStorage__credential', value: 'managedidentity' },
+        { name: 'AzureWebJobsStorage__accountName', value: 'pgprincipalhost' },
+        { name: 'DB_HOST', value: host },
+        { name: 'DB_PORT', value: '5432' },
+      ] } } }, signal: new AbortController().signal, directory });
+    try {
+      const mapping = platform.extraHosts.find(item => item.startsWith(`${host}:`));
+      assert.ok(mapping);
+      const gatewayAddress = mapping.split(':')[1];
+      const prefix = gatewayAddress.split('.').slice(0, 2).join('.');
+      put(`${serverId}/firewallrules/native-source`, 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules',
+        { startIpAddress: `${prefix}.0.0`, endIpAddress: `${prefix}.255.255` });
+      const native = new pg.Client({ host: gatewayAddress, port: Number(platform.env.DB_PORT),
+        database: 'documents', user: 'worker-pilot', password: await token(workerId),
+        ssl: { ca: await readFile(join(directory, 'platform-ca.pem')), rejectUnauthorized: true,
+          servername: host }, connectionTimeoutMillis: 4000 });
+      await native.connect();
+      assert.equal((await native.query('SELECT current_user AS role')).rows[0].role, 'worker-pilot');
+      await native.query('SELECT * FROM document_outbox LIMIT 0');
+      await native.end();
+    } finally { await platform.dispose(); store.resources.delete(`${serverId}/firewallrules/native-source`); }
     store.resources.delete(`${serverId}/firewallrules/source`);
     const denied = client('worker-pilot', await token(workerId));
     await assert.rejects(denied.connect());

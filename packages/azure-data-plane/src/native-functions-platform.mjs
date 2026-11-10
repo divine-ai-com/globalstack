@@ -145,7 +145,10 @@ export function createNativeFunctionsPlatform({ identityService, storageRouter, 
       if (postgresHost) {
         const gatewayServer = createPostgresWireGateway({ tls, trust: identityService.trust,
           resolveConnection: createPostgresArmConnectionResolver({ store, backend,
-            serverHost: postgresHost }), observe: event => observe({ surface: 'postgres', ...event }) });
+            serverHost: postgresHost,
+            ...(backend.mapDatabase ? { mapDatabase: backend.mapDatabase } : {}),
+            resolvePrincipal: backend.resolvePrincipal ?? null }),
+          observe: event => observe({ surface: 'postgres', ...event }) });
         env.DB_PORT = String(await listen(gatewayServer, gateway));
       }
       signal.throwIfAborted();

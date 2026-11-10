@@ -73,8 +73,11 @@ isolated PostgreSQL backend, then connects as worker and ingress with separate
 locally signed identity tokens. It verifies denied role switching and denied
 ingress outbox access. The local administrator maps to a restricted database
 owner; the privileged backend login and principal-password catalog are not
-exposed to the Azure-shaped SQL client. The paired role runner is prepared to
-compare these paths, but the application worker has not used them in a live flow.
+exposed to the Azure-shaped SQL client. The paired role runner compared the
+bootstrap and grant paths on both targets. A second local test path connects
+as the restricted worker
+through the native Functions Docker network and its generated TLS certificate.
+The application worker process has not used this SQL path in a live flow.
 Upgrade migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows
 remain required. The Functions pool enforces PostgreSQL TLS verification and
