@@ -85,7 +85,8 @@ const ingressReference = ingressImage ? `ingress-pilot@${ingressImage}` : null;
 if (ingressReference) images.set(ingressReference, ingressImage);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
-  scope: completeSettings ? 'One local worker with deployed PostgreSQL, Blob, Event Grid, scanner, Search and failure-queue settings. No fresh Azure comparison or complete business workflow.'
+  scope: ingressAuth ? 'One local authenticated document API process and worker with deployed PostgreSQL, Blob, Event Grid, scanner and Search. The API check bypasses the Container App front door. No matching Azure full workflow or Service Bus failure path.'
+    : completeSettings ? 'One local worker with deployed PostgreSQL, Blob, Event Grid, scanner, Search and failure-queue settings. No fresh Azure comparison or complete business workflow.'
     : scannerProbe ? 'One local worker with PostgreSQL, Blob, Event Grid and a deployed scanner dependency. No fresh Azure comparison or complete business workflow.'
     : databaseProbe && uploadProbe ? 'One local worker with managed-identity PostgreSQL and Blob access, plus Event Grid diagnostic delivery. No fresh Azure comparison or complete business workflow.'
     : databaseProbe ? 'Local worker process, managed-identity PostgreSQL login and restricted SQL diagnostic. No fresh Azure comparison or complete business workflow.'
@@ -266,12 +267,18 @@ try {
     assert.ok(ingressOrigin);
     const health = await httpExchange(`${ingressOrigin}/health`);
     report.ingressHealth = { status: health.status, body: health.body,
-      scope: 'direct native worker readiness; ingress authentication and business API not exercised' };
+      scope: 'direct native worker readiness; Container App front door not exercised' };
     assert.equal(health.status, 200);
     if (ingressAuth) {
       const workerIp = new URL(ingressOrigin).hostname;
       await request('PUT', `${database.serverId.value}/firewallRules/ingress-source?api-version=2024-08-01`,
         { properties: { startIpAddress: workerIp, endIpAddress: workerIp } });
+      const denied = await Promise.all([undefined, 'Bearer a.b.c'].map(authorization =>
+        httpExchange(`${ingressOrigin}/documents`, { method: 'POST', body: Buffer.from('Denied request'),
+          headers: { ...(authorization ? { authorization } : {}), 'content-type': 'text/plain',
+            'x-document-name': 'denied.txt', 'idempotency-key': randomUUID() } })));
+      report.ingressAuthDenials = denied.map(result => result.status);
+      assert.deepEqual(report.ingressAuthDenials, [401, 401]);
     }
   }
   const applicationSettings = [];
