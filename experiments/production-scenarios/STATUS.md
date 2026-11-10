@@ -373,6 +373,11 @@ isolated database mapping to its PostgreSQL gateway. A Docker-network test
 connected as the nonadmin worker with the platform-generated TLS certificate
 and read the document outbox. It did not start the actual Functions handler or
 exercise a Blob event, so it is transport evidence only.
+The same local gateway test now runs the application's access registration,
+owner lookup, pending revision commit and outbox delivery through the
+restricted worker and ingress logins. Its delivery callback acknowledges a
+local pending event; Search, the live Functions process and paired Azure
+application execution remain untested on this path.
 
 ## Latest scanner and worker checkpoint
 

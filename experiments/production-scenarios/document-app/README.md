@@ -77,6 +77,10 @@ exposed to the Azure-shaped SQL client. The paired role runner compared the
 bootstrap and grant paths on both targets. A second local test path connects
 as the restricted worker
 through the native Functions Docker network and its generated TLS certificate.
+That test also runs the application repository's access registration, owner
+lookup, pending revision commit and outbox delivery under the separate
+restricted ingress and worker logins. It confirms the ingress login cannot
+read the outbox. The delivery callback is local and does not call Search.
 The application worker process has not used this SQL path in a live flow.
 Upgrade migrations, complete outbox reconciliation, effective identity/network
 configuration, real worker management in GlobalStack and live paired flows

@@ -16,6 +16,8 @@ import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
   createLocalPostgresPrincipalResolver } from
   '../../../packages/azure-data-plane/src/local-postgres-principals.mjs';
 import { bootstrapDocumentDatabase } from './database-bootstrap.mjs';
+import { registerDocumentAccess } from './access.mjs';
+import { commitRevision, deliverNext, processingContext } from './repository.mjs';
 
 const exec = promisify(execFile);
 
@@ -115,6 +117,28 @@ test('nonadmin Entra-shaped identities retain separate SQL permissions through t
     await ingress.query('SELECT * FROM scanned_documents LIMIT 0');
     await assert.rejects(ingress.query('SELECT * FROM document_outbox LIMIT 0'), /permission denied/);
     await ingress.end();
+    const workerPool = new pg.Pool({ ...adminConnection, user: 'worker-pilot', password: () => token(workerId), database: 'documents' });
+    const ingressPool = new pg.Pool({ ...adminConnection, user: 'ingress-pilot', password: () => token(ingressId), database: 'documents' });
+    try {
+      const input = { tenant: 'pilot', blobUrl: 'https://example.blob.core.windows.net/landing/pilot/report.txt',
+        fileName: 'report.txt', version: 'version-1', sequence: '01', status: 'pending' };
+      const principal = { tenant: 'pilot', subject: randomUUID(), groups: [] };
+      const uploadKey = randomUUID();
+      const access = await registerDocumentAccess(ingressPool, principal, { ...input, uploadKey, readGroups: [] });
+      assert.equal((await processingContext(workerPool, input)).rootCorrelationId, uploadKey);
+      const committed = await commitRevision(workerPool, { ...input, rootCorrelationId: uploadKey });
+      assert.equal(committed.documentId, access.document_id);
+      assert.equal((await ingressPool.query('SELECT scan_status FROM scanned_documents WHERE document_id=$1',
+        [access.document_id])).rows[0].scan_status, 'PENDING');
+      assert.equal((await workerPool.query('SELECT count(*)::integer AS count FROM document_outbox')).rows[0].count, 1);
+      const delivered = await deliverNext(workerPool, ({ operation, document }) => {
+        assert.equal(operation, 'delete');
+        assert.equal(document.document_id, access.document_id);
+        return { status: true, key: access.document_id };
+      });
+      assert.equal(delivered.state, 'delivered');
+      await assert.rejects(ingressPool.query('SELECT * FROM document_outbox LIMIT 0'), /permission denied/);
+    } finally { await Promise.all([workerPool.end(), ingressPool.end()]); }
     const wrongIdentity = client('worker-pilot', await token(randomUUID()));
     await assert.rejects(wrongIdentity.connect());
     wrongIdentity.connection?.stream?.destroy();
