@@ -67,7 +67,7 @@ const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { en
     : uploadProbe ? 'Local worker, document data and Event Grid modules with an actual managed-identity Blob upload. No fresh Azure comparison or complete business workflow.'
     : 'Local execution of the worker host/app Bicep templates previously used on Azure. New generated parameters, no fresh Azure comparison or complete business workflow.',
   startedAt: new Date().toISOString(), image, exchanges: [], storage: [], cleanup: false };
-let runtime, backend, delegated, databaseContainer;
+let runtime, backend, delegated, databaseContainer, ingressOrigin;
 const ingressPlatform = ingressHealth ? createNativeContainerAppPlatform({ identityService: identity,
   storageRouter: () => runtime.storageRouter, searchRouter: () => runtime.searchRouter, store,
   blobEndpoints: ['STORAGE_ENDPOINT'], searchEndpoints: ['SEARCH_ENDPOINT'],
@@ -87,9 +87,14 @@ runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
   nativeFunctionsProvisioner: provision,
   ...(scannerProbe ? { containerAppTokenTrusts: [{ ...identity.trust,
     configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` }],
-  nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'container-apps.private'),
-    ...(ingressPlatform ? { preparePlatform: args => args.resource.name.endsWith('-ingress')
-      ? ingressPlatform(args) : { env: {}, extraHosts: [], mounts: [], async dispose() {} } } : {}) }) } : {}) });
+  nativeContainerAppProvisioner: async args => {
+    const provisioner = createDockerContainerAppProvisioner({ images, directory: resolve(out, 'container-apps.private'),
+      ...(ingressPlatform ? { preparePlatform: platformArgs => platformArgs.resource.name.endsWith('-ingress')
+        ? ingressPlatform(platformArgs) : { env: {}, extraHosts: [], mounts: [], async dispose() {} } } : {}) });
+    const worker = await provisioner(args);
+    if (args.resource.name.endsWith('-ingress')) ingressOrigin = worker.origin;
+    return worker;
+  } } : {}) });
 const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
 const facade = createFunctionsRouterServer(runtime.functionsRouter);
 try {
@@ -228,8 +233,8 @@ try {
     await runtime.containerAppRouter.lifecycle.settle();
     report.ingressRuntimeState = runtime.containerAppRouter.lifecycle.status(ingressId);
     assert.equal(report.ingressRuntimeState, 'running');
-    const binding = runtime.containerAppRouter.nativeWorkers.get(ingressId.toLowerCase());
-    const health = await httpExchange(`${binding.origin}/health`);
+    assert.ok(ingressOrigin);
+    const health = await httpExchange(`${ingressOrigin}/health`);
     report.ingressHealth = { status: health.status, body: health.body,
       scope: 'direct native worker readiness; ingress authentication and business API not exercised' };
     assert.equal(health.status, 200);
