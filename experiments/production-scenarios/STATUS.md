@@ -585,7 +585,7 @@ passing a resource PUT alone is insufficient.
 | Functions to scanner | Paired native ClamAV and YARA diagnostic calls passed; local production runs scanned the uploaded Blob revision | Verify the same production activity and scan decisions on Azure |
 | PostgreSQL outbox to Search | Paired projection indexer slice passed independently; local production clean and detected paths completed push and projection indexing | Verify the combined production path on Azure and measure Search-to-Blob transport (#83) |
 | Permanent failure to Service Bus | Local ARM queue deployment only | Unchanged SDK sends, receives and dead-letters a failed event over AMQP on both targets |
-| Client upload and query | Local application tests only | Authenticated ingress uploads, receives a correlated result and enforces tenant isolation on both targets |
+| Client upload and query | Local native API process accepted an app-only Entra token, uploaded a clean document and returned it through read and search; the Container App front door was bypassed | Exercise front-door policy, delegated and denied principals, and the same client flow on Azure |
 
 Private networking, negative cases, lifecycle capture, Portal evidence and the
 remaining IaC platforms follow the clean path. None is waived by an initial
@@ -758,3 +758,13 @@ while the separate worker completed the clean path. This is not an authenticated
 ingress API result: the front door was not traversed and the harness still
 prepared the document owner row. Azure deployment and the client upload/query
 flow remain to be tested.
+
+The later [authenticated local ingress run](evidence/document-ingress-auth-local-20261110/summary.json)
+used an app-only Microsoft Entra token and mirrored only its public signing key
+into the isolated local network. The API denied missing and forged tokens,
+accepted the upload, and registered the owner without harness database setup.
+The production event reached the scanner, PostgreSQL, outbox, and both Search
+indexes. Authenticated API read and search returned the document. The API calls
+used the native process origin, so Container App front-door authentication and
+network policy remain untested. No combined live Azure run or Service Bus
+failure flow passed. All disposable local containers were removed.
