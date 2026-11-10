@@ -357,9 +357,17 @@ database-owner login. It installs the Azure-shaped role helper, runs the
 unchanged bootstrap SQL through the TLS gateway, and maps locally signed
 worker and ingress identity tokens to separate database logins. A Docker test
 proves granted reads, denied ingress outbox access, denied role escalation and
-rejection of wrong identity or a removed firewall rule. The revised paired
-role runner has not yet produced Azure evidence on this revision. The full
-document application still has no completed event-to-database flow.
+rejection of wrong identity or a removed firewall rule. The
+[2026-11-10 paired role run](evidence/document-postgres-roles-paired-20261110/)
+then deployed the same compiled template on both targets. Both temporary
+firewall PUTs returned HTTP 202. Azure created the two nonadmin roles and
+verified their SQL grants; the local gateway ran the unchanged bootstrap and
+logged in as both separate roles with locally signed tokens. Its denied-access
+checks passed. Automatic cleanup and an independent Azure inventory found
+zero resources and deployments. The conservative ledger is USD 337 of USD
+500, with actual charges unmeasured. Azure did not run an application process
+with these identities, and the full document application still has no
+completed event-to-database flow.
 
 ## Latest scanner and worker checkpoint
 
