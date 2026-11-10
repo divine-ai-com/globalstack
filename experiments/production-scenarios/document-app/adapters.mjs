@@ -123,11 +123,19 @@ export async function scanAndStore(input, context) {
   log(context, 'source_read_started', input);
   try {
     const { bytes, properties } = await sourceRevision(blobs, input);
+    log(context, 'source_read_completed', input, { contentType: properties.contentType, bytes: bytes.length });
     const token = await credential.getToken(config.scannerScope);
     const response = await fetch(`${config.scannerEndpoint}/scan`, { method: 'POST', body: bytes, redirect: 'error',
       headers: { authorization: `Bearer ${token.token}`, 'content-type': properties.contentType,
         'x-correlation-id': input.rootCorrelationId ?? input.correlationId }, signal: AbortSignal.timeout(90000) });
-    assert.equal(response.status, 200, 'Scanner request failed');
+    if (response.status !== 200) {
+      let code = 'unknown';
+      try {
+        const value = (await response.json()).error;
+        if (typeof value === 'string' && /^[a-z_]{1,64}$/.test(value)) code = value;
+      } catch { /* The scanner may return an empty error body. */ }
+      throw new Error(`Scanner request failed: HTTP ${response.status} (${code})`);
+    }
     const scan = await response.json();
     assert.equal(scan.sha256, createHash('sha256').update(bytes).digest('hex'), 'Scanner result does not refer to the downloaded bytes');
     assert.ok(['clean', 'detected'].includes(scan.status), 'Scanning or extraction is unresolved');
