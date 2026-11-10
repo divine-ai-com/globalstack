@@ -14,6 +14,11 @@ export function postgresScope(manifest) {
   const base = `/subscriptions/${manifest.subscription}/resourceGroups/${manifest.group}`;
   const server = `${base}/providers/Microsoft.DBforPostgreSQL/flexibleServers/gs${manifest.runId}-db`;
   return { group: base, server, firewall: `${server}/firewallRules/pilot-egress`,
+    workerFirewalls: `${server}/firewallRules`,
+    workerFirewall: index => {
+      assert.ok(Number.isInteger(index) && index >= 0 && index < 32);
+      return `${server}/firewallRules/worker-${manifest.runId}-${String(index).padStart(2, '0')}`;
+    },
     worker: `${base}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs${manifest.runId}-worker`,
     ingress: `${base}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/gs${manifest.runId}-ingress`,
     deployment: `${base}/providers/Microsoft.Resources/deployments/gs-document-postgres-${manifest.runId}` };
@@ -24,10 +29,12 @@ export function postgresClient(manifest, observe = () => {}, exchange = httpExch
   let token = manifest.token;
   return async (method, path, body) => {
     const url = new URL(path, 'https://management.azure.com');
+    const workerFirewall = Array.from({ length: 32 }, (_, index) => scope.workerFirewall(index)).includes(url.pathname);
     const allowed = method === 'GET' && [scope.group, `${scope.group}/resources`, scope.server, scope.firewall,
-      scope.worker, scope.ingress, scope.deployment, `${scope.deployment}/operations`].includes(url.pathname)
-      || method === 'PUT' && [scope.deployment, scope.firewall].includes(url.pathname)
-      || method === 'DELETE' && [scope.server, scope.firewall, scope.worker, scope.ingress, scope.deployment].includes(url.pathname)
+      scope.workerFirewalls, scope.worker, scope.ingress, scope.deployment, `${scope.deployment}/operations`].includes(url.pathname)
+      || method === 'GET' && workerFirewall
+      || method === 'PUT' && ([scope.deployment, scope.firewall].includes(url.pathname) || workerFirewall)
+      || method === 'DELETE' && ([scope.server, scope.firewall, scope.worker, scope.ingress, scope.deployment].includes(url.pathname) || workerFirewall)
       || method === 'POST' && url.pathname === `${scope.deployment}/cancel`;
     assert.ok(url.origin === 'https://management.azure.com' && !url.username && !url.password && !url.hash && allowed,
       'PostgreSQL request escaped the owned run scope');
@@ -82,6 +89,29 @@ export async function cleanupPostgres(manifest, request = postgresClient(manifes
   if (server.status === 200) {
     assert.equal(server.body.tags?.project, project, 'Server project mismatch');
     assert.equal(server.body.tags?.run, manifest.runId, 'Server run mismatch');
+    if (manifest.workerFirewallMode) {
+      const listed = await get(scope.workerFirewalls, '2024-08-01');
+      assert.equal(listed.status, 200, 'Worker firewall inventory unavailable');
+      assert.ok(Array.isArray(listed.body?.value) && !listed.body.nextLink && listed.body.value.length <= 33,
+        'Worker firewall inventory incomplete');
+      const owned = new Set([scope.firewall, ...Array.from({ length: 32 }, (_, index) => scope.workerFirewall(index))]
+        .map(id => id.toLowerCase()));
+      for (const rule of listed.body.value) {
+        assert.ok(owned.has(rule.id?.toLowerCase()), 'Foreign firewall rule would be deleted with the server');
+        if (rule.id?.toLowerCase() === scope.firewall.toLowerCase()) continue;
+        const index = Array.from({ length: 32 }, (_, number) => number)
+          .find(number => scope.workerFirewall(number).toLowerCase() === rule.id.toLowerCase());
+        assert.ok(index !== undefined);
+        const id = scope.workerFirewall(index);
+        assert.ok([200, 202, 204, 404].includes((await request('DELETE', path(id, '2024-08-01'))).status));
+        while (true) {
+          const observed = await get(id, '2024-08-01');
+          if (observed.status === 404) break;
+          assert.ok([200, 409].includes(observed.status));
+          await sleep(3000);
+        }
+      }
+    }
     const firewall = await get(scope.firewall, '2024-08-01');
     if (firewall.status === 200) {
       assert.ok([200, 202, 204, 404].includes((await request('DELETE', path(scope.firewall, '2024-08-01'))).status));
