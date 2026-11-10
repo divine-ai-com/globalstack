@@ -29,7 +29,8 @@ const images = new Map(), image = execFileSync('docker', ['image', 'inspect', pr
 const imageReference = 'document-pilot@' + image; images.set(imageReference, image);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
-  scope: databaseProbe ? 'Local worker process, managed-identity PostgreSQL login and restricted SQL diagnostic. No fresh Azure comparison or complete business workflow.'
+  scope: databaseProbe && uploadProbe ? 'One local worker with managed-identity PostgreSQL and Blob access, plus Event Grid diagnostic delivery. No fresh Azure comparison or complete business workflow.'
+    : databaseProbe ? 'Local worker process, managed-identity PostgreSQL login and restricted SQL diagnostic. No fresh Azure comparison or complete business workflow.'
     : uploadProbe ? 'Local worker, document data and Event Grid modules with an actual managed-identity Blob upload. No fresh Azure comparison or complete business workflow.'
     : 'Local execution of the worker host/app Bicep templates previously used on Azure. New generated parameters, no fresh Azure comparison or complete business workflow.',
   startedAt: new Date().toISOString(), image, exchanges: [], storage: [], cleanup: false };
@@ -100,22 +101,23 @@ try {
   const data = uploadProbe ? await deploy('data', 'document-data', { accountName: { value: `${name}docs` },
     workerIdentityName: { value: `${name}-worker` }, publisherPrincipalId: { value: randomUUID() },
     roleAssignmentNames: { value: Array.from({ length: 2 }, randomUUID) }, location: common.location }) : null;
+  const applicationSettings = [];
+  if (databaseProbe) applicationSettings.push(
+    { name: 'DOCUMENT_DATABASE_DIAGNOSTIC_ENABLED', value: 'true' },
+    { name: 'DB_AUTH_MODE', value: 'entra' },
+    { name: 'DB_HOST', value: database.databaseHost.value },
+    { name: 'DB_NAME', value: 'documents' },
+    { name: 'DB_USER', value: 'worker-pilot' },
+    { name: 'PGSSLROOTCERT', value: '/globalstack-platform-ca.pem' });
+  if (uploadProbe) applicationSettings.push(
+    { name: 'STORAGE_ENDPOINT', value: data.blobEndpoint.value },
+    { name: 'LANDING_CONTAINER', value: 'landing' },
+    { name: 'STORAGE_RESOURCE_ID', value: data.accountId.value },
+    { name: 'EVENT_DIAGNOSTICS_CONTAINER', value: 'event-diagnostics' },
+    { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' },
+    { name: 'DOCUMENT_EVENT_DIAGNOSTIC_ENABLED', value: 'true' });
   await deploy('app', 'worker-app', { ...common, imageReference: { value: imageReference },
-    ...(databaseProbe ? { applicationSettings: { value: [
-      { name: 'DOCUMENT_DATABASE_DIAGNOSTIC_ENABLED', value: 'true' },
-      { name: 'DB_AUTH_MODE', value: 'entra' },
-      { name: 'DB_HOST', value: database.databaseHost.value },
-      { name: 'DB_NAME', value: 'documents' },
-      { name: 'DB_USER', value: 'worker-pilot' },
-      { name: 'PGSSLROOTCERT', value: '/globalstack-platform-ca.pem' },
-    ] } } : uploadProbe ? { applicationSettings: { value: [
-      { name: 'STORAGE_ENDPOINT', value: data.blobEndpoint.value },
-      { name: 'LANDING_CONTAINER', value: 'landing' },
-      { name: 'STORAGE_RESOURCE_ID', value: data.accountId.value },
-      { name: 'EVENT_DIAGNOSTICS_CONTAINER', value: 'event-diagnostics' },
-      { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' },
-      { name: 'DOCUMENT_EVENT_DIAGNOSTIC_ENABLED', value: 'true' },
-    ] } } : {}) });
+    applicationSettings: { value: applicationSettings } });
   const siteId = `${group}/providers/Microsoft.Web/sites/${name}-worker`;
   await runtime.nativeFunctionsLifecycle.settle();
   report.nativeWorkerState = runtime.nativeFunctionsLifecycle.status(siteId);
