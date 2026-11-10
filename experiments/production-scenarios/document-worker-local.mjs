@@ -28,10 +28,13 @@ const databaseProbe = process.env.LOCAL_DATABASE_DIAGNOSTIC === 'true';
 const scannerProbe = process.env.LOCAL_SCANNER_DEPENDENCY === 'true';
 const completeSettings = process.env.LOCAL_COMPLETE_SETTINGS === 'true';
 const registerOwner = process.env.LOCAL_REGISTER_INGRESS_OWNER === 'true';
+const detectionMarker = process.env.LOCAL_DETECTION_MARKER ?? 'none';
+assert.ok(['none', 'yara', 'clamav'].includes(detectionMarker), 'Unknown harmless detection marker');
 assert.ok(!scannerProbe || uploadProbe, 'Scanner dependency requires the document upload probe');
 assert.ok(!completeSettings || scannerProbe && databaseProbe && uploadProbe,
   'Complete settings require the database, upload, and scanner probes');
 assert.ok(!registerOwner || completeSettings, 'Ingress-owner setup requires complete worker settings');
+assert.ok(detectionMarker === 'none' || registerOwner, 'Detection runs require registered owner setup');
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
 const scannerAudience = scannerProbe ? randomUUID() : null;
@@ -255,7 +258,12 @@ try {
     assert.ok(report.eventFunctionDiscovered);
     report.diagnosticFunctionDiscovered = discovered.body.some(item => item.name === 'documentEventDiagnostic');
     assert.ok(report.diagnosticFunctionDiscovered);
-    const input = { tenant: 'pilot', text: 'Local document event diagnostic.' };
+    const markerText = {
+      none: 'Local document event diagnostic.',
+      yara: 'PILOT_DOCUMENT_DETECTION_73261',
+      clamav: 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*',
+    };
+    const input = { tenant: 'pilot', text: markerText[detectionMarker] };
     if (registerOwner) {
       input.blobName = `pilot/${randomUUID()}.txt`;
       const blobUrl = new URL(`landing/${input.blobName}`, data.blobEndpoint.value).href;
@@ -309,6 +317,21 @@ try {
       } finally { await pool.end(); }
       assert.ok(report.productionDatabaseRows.scanned && report.productionDatabaseRows.revisions
         && report.outboxStates.delivered, 'Production event did not complete metadata and Search delivery');
+      const scannedPool = new pg.Pool({ ...delegated, database: 'documents' });
+      try {
+        const scanned = (await scannedPool.query('SELECT scan_status, malware_found FROM scanned_documents WHERE document_id=$1',
+          [report.preRegisteredAccess.documentId])).rows[0];
+        report.scanOutcome = { status: scanned?.scan_status, malwareFound: scanned?.malware_found };
+      } finally { await scannedPool.end(); }
+      assert.equal(report.scanOutcome.status, detectionMarker === 'none' ? 'CLEAN' : 'DETECTED');
+      if (detectionMarker !== 'none') {
+        assert.equal(report.scanOutcome.malwareFound, true);
+        const quarantineKey = `quarantine\0pilot/${report.preRegisteredAccess.documentId}/${uploaded.body.inputSha256}`;
+        const quarantined = runtime.storageRouter.account(`${name}docs`).blobs.get(quarantineKey);
+        report.quarantine = { present: Boolean(quarantined), sha256: quarantined
+          ? createHash('sha256').update(quarantined.body).digest('hex') : null };
+        assert.equal(report.quarantine.sha256, uploaded.body.inputSha256);
+      }
       const searchServer = createServer(runtime.searchRouter.handler());
       await new Promise(done => searchServer.listen(0, '127.0.0.1', done));
       try {
@@ -318,7 +341,7 @@ try {
         });
         report.productionSearch = { status: result.status, count: result.body?.value?.length ?? null };
         assert.equal(result.status, 200);
-        assert.equal(report.productionSearch.count, 1);
+        assert.equal(report.productionSearch.count, detectionMarker === 'none' ? 1 : 0);
         const searchHost = new URL(searchOutput.searchEndpoint.value).host;
         const indexerPath = "/indexers('document-projection-indexer')";
         const run = await httpExchange(`http://127.0.0.1:${searchServer.address().port}${indexerPath}/search.run?api-version=2025-09-01`, {
@@ -343,7 +366,7 @@ try {
         });
         report.projectionSearch = { status: projection.status, count: projection.body?.value?.length ?? null };
         assert.equal(projection.status, 200);
-        assert.equal(report.projectionSearch.count, 1);
+        assert.equal(report.projectionSearch.count, detectionMarker === 'none' ? 1 : 0);
       } finally { searchServer.closeAllConnections(); await new Promise(done => searchServer.close(done)); }
     }
     const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',
