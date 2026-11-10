@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "2088045fa3b4cde4e703974edc0f94dc26b315bb",
+  "startedAt": "2026-11-10T16:58:26.151Z",
+  "completedAt": "2026-11-10T17:14:01.642Z",
+  "templateSha256": {
+    "host": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+    "database": "3d8df512cfb980f904077b16ade70768491bfca597cf1f2f45dd250867fb61d4",
+    "app": "0a9b65e63376a4b6a0e213f80d7e49586d0f8b5d28e7ae04c87fe9c28d255589"
+  },
+  "controlPlane": {
+    "hostDeployment": { "azure": "Succeeded", "globalstack": "Succeeded" },
+    "databaseDeployment": { "azure": "Succeeded", "globalstack": "Succeeded" },
+    "appDeployment": { "azure": "Succeeded", "globalstack": "Succeeded" },
+    "hostValidationHttp": { "azure": 200, "globalstack": 501 },
+    "appValidationHttp": { "azure": 200, "globalstack": 501 },
+    "globalstackValidationError": "GlobalStackValidationNotImplemented"
+  },
+  "liveWorker": {
+    "azureHealthHttp": 200,
+    "globalstackHealthHttp": 200,
+    "azureDatabaseDiagnostic": { "http": 200, "database": "ready", "role": "gs89c52926d0ac_worker", "documents": 0 },
+    "globalstackDatabaseDiagnostic": { "http": 200, "database": "ready", "role": "gs89c52926d0ac_worker", "documents": 0 }
+  },
+  "cleanup": {
+    "azureWorkerResourcesAbsent": true,
+    "azurePostgresResourcesAbsent": true,
+    "azureSubscriptionResourceCount": 0,
+    "localCleanupComplete": true,
+    "pilotResourceGroupPreserved": true
+  },
+  "budget": {
+    "authorizedCeilingUsd": 500,
+    "conservativeAllocatedTotalUsd": 362,
+    "actualAzureChargesMeasured": false
+  },
+  "scope": {
+    "fullDocumentBusinessWorkflowCompleted": false,
+    "portalEvidenceComplete": false,
+    "privateNetworkConformanceTested": false,
+    "azureWorkerToPostgresRestrictedLoginObserved": true,
+    "globalstackWorkerToPostgresRestrictedLoginObserved": true
+  }
+}
