@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "target": "GlobalStack local runtime only",
+  "sourceRevision": "85ed2e7",
+  "scope": "Ingress Container App deployment and direct native-process readiness alongside the local clean-document worker run",
+  "result": {
+    "ingressArmDeployment": "Succeeded",
+    "ingressNativeRuntime": "running",
+    "ingressDirectHealthHttp": 200,
+    "workerCleanPathPushSearchMatches": 1,
+    "workerCleanPathProjectionSearchMatches": 1,
+    "localCleanupComplete": true
+  },
+  "limits": [
+    "The ingress health request was sent to the native process origin, not through the configured Container App front door",
+    "No authenticated ingress upload, query, update or delete request was made",
+    "The document ownership row was still prepared by the harness",
+    "No corresponding live Azure end-to-end run",
+    "No full-scenario acceptance score is claimed"
+  ]
+}

@@ -750,3 +750,11 @@ Both were detected by the deployed scanner, recorded as `DETECTED` in PostgreSQL
 copied byte-for-byte to quarantine, and excluded from both Search indexes.
 Disposable containers were removed after each run. Production ingress, live
 Azure end-to-end comparison, and Service Bus failure delivery remain open.
+
+The [local ingress readiness run](evidence/document-ingress-local-20261110/summary.json)
+deployed the new ingress Container App template and started its native process.
+The process returned HTTP 200 from `/health` through a direct internal check,
+while the separate worker completed the clean path. This is not an authenticated
+ingress API result: the front door was not traversed and the harness still
+prepared the document owner row. Azure deployment and the client upload/query
+flow remain to be tested.
