@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -180,6 +180,22 @@ try {
       body: { blobName: uploaded.body.blobName, etag: uploaded.body.etag }, headers });
     report.eventMarker = { status: marker.status, sourceSha256: marker.body?.sourceSha256 };
     assert.equal(marker.status, 200);
+  }
+  if (process.env.LOCAL_CAPTURE_WORKER_LOGS === 'true') {
+    await new Promise(done => setTimeout(done, 1000));
+    const native = runtime.functionsRouter.nativeWorkers.get(siteId.toLowerCase());
+    const address = new URL(native.origin).hostname;
+    const candidates = execFileSync('docker', ['ps', '--format', '{{.Names}}', '--filter', 'label=globalstack.managed=functions'],
+      { encoding: 'utf8', timeout: 10000 }).trim().split('\n').filter(Boolean);
+    const owned = candidates.filter(name => {
+      const info = JSON.parse(execFileSync('docker', ['inspect', name], { encoding: 'utf8', timeout: 10000 }))[0];
+      return Object.values(info.NetworkSettings.Networks).some(network => network.IPAddress === address);
+    });
+    assert.equal(owned.length, 1, 'Cannot identify the owned native worker for private log capture');
+    const logs = spawnSync('docker', ['logs', '--tail', '150', owned[0]],
+      { encoding: 'utf8', timeout: 10000, maxBuffer: 256 * 1024 });
+    assert.equal(logs.status, 0, 'Native worker log capture failed');
+    report.workerLogsPrivate = `${logs.stdout}${logs.stderr}`.slice(-65536);
   }
   await request('DELETE', siteId + '?api-version=2023-12-01'); await runtime.nativeFunctionsLifecycle.settle();
   assert.equal(runtime.nativeFunctionsLifecycle.status(siteId), 'stopped');
