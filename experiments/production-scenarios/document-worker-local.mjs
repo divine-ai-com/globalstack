@@ -12,6 +12,7 @@ import { createDockerFunctionsProvisioner } from '../../packages/azure-data-plan
 import { createNativeFunctionsPlatform } from '../../packages/azure-data-plane/src/native-functions-platform.mjs';
 import { createFunctionsRouterServer } from '../../packages/azure-data-plane/src/functions-router.mjs';
 import { createDockerContainerAppProvisioner } from '../../packages/azure-data-plane/src/docker-container-app-provisioner.mjs';
+import { createNativeContainerAppPlatform } from '../../packages/azure-data-plane/src/native-container-app-platform.mjs';
 import { httpExchange } from './http-exchange.mjs';
 import pg from 'pg';
 import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
@@ -29,12 +30,14 @@ const scannerProbe = process.env.LOCAL_SCANNER_DEPENDENCY === 'true';
 const completeSettings = process.env.LOCAL_COMPLETE_SETTINGS === 'true';
 const registerOwner = process.env.LOCAL_REGISTER_INGRESS_OWNER === 'true';
 const detectionMarker = process.env.LOCAL_DETECTION_MARKER ?? 'none';
+const ingressHealth = process.env.LOCAL_INGRESS_HEALTH === 'true';
 assert.ok(['none', 'yara', 'clamav'].includes(detectionMarker), 'Unknown harmless detection marker');
 assert.ok(!scannerProbe || uploadProbe, 'Scanner dependency requires the document upload probe');
 assert.ok(!completeSettings || scannerProbe && databaseProbe && uploadProbe,
   'Complete settings require the database, upload, and scanner probes');
 assert.ok(!registerOwner || completeSettings, 'Ingress-owner setup requires complete worker settings');
 assert.ok(detectionMarker === 'none' || registerOwner, 'Detection runs require registered owner setup');
+assert.ok(!ingressHealth || completeSettings, 'Ingress health requires the complete local dependency set');
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
 const scannerAudience = scannerProbe ? randomUUID() : null;
@@ -52,6 +55,9 @@ const imageReference = 'document-pilot@' + image; images.set(imageReference, ima
 const scannerImage = scannerProbe ? execFileSync('docker', ['image', 'inspect', 'globalstack/document-scanner:frozen-20261107', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim() : null;
 const scannerReference = scannerImage ? `scanner-pilot@${scannerImage}` : null;
 if (scannerReference) images.set(scannerReference, scannerImage);
+const ingressImage = ingressHealth ? execFileSync('docker', ['image', 'inspect', 'globalstack/document-ingress:pilot', '--format', '{{.Id}}'], { encoding: 'utf8' }).trim() : null;
+const ingressReference = ingressImage ? `ingress-pilot@${ingressImage}` : null;
+if (ingressReference) images.set(ingressReference, ingressImage);
 const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   sourceDirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
   scope: completeSettings ? 'One local worker with deployed PostgreSQL, Blob, Event Grid, scanner, Search and failure-queue settings. No fresh Azure comparison or complete business workflow.'
@@ -62,6 +68,12 @@ const report = { sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { en
     : 'Local execution of the worker host/app Bicep templates previously used on Azure. New generated parameters, no fresh Azure comparison or complete business workflow.',
   startedAt: new Date().toISOString(), image, exchanges: [], storage: [], cleanup: false };
 let runtime, backend, delegated, databaseContainer;
+const ingressPlatform = ingressHealth ? createNativeContainerAppPlatform({ identityService: identity,
+  storageRouter: () => runtime.storageRouter, searchRouter: () => runtime.searchRouter, store,
+  blobEndpoints: ['STORAGE_ENDPOINT'], searchEndpoints: ['SEARCH_ENDPOINT'],
+  postgresBackend: () => ({ ...delegated, mapDatabase: (_, database) => database,
+    resolvePrincipal: createLocalPostgresPrincipalResolver(backend) }),
+  observe: event => report.storage.push(event) }) : null;
 const provision = createDockerFunctionsProvisioner({ images, directory: resolve(out, 'workers.private'),
   preparePlatform: createNativeFunctionsPlatform({ identityService: identity, storageRouter: () => runtime.storageRouter,
     store, postgresBackend: () => ({ ...delegated, mapDatabase: (_, database) => database,
@@ -75,7 +87,9 @@ runtime = createEmulatorRuntime({ store, storageTokenTrusts: [identity.trust],
   nativeFunctionsProvisioner: provision,
   ...(scannerProbe ? { containerAppTokenTrusts: [{ ...identity.trust,
     configurationIssuer: `https://login.microsoftonline.com/${sub}/v2.0` }],
-  nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'scanner.private') }) } : {}) });
+  nativeContainerAppProvisioner: createDockerContainerAppProvisioner({ images, directory: resolve(out, 'container-apps.private'),
+    ...(ingressPlatform ? { preparePlatform: args => args.resource.name.endsWith('-ingress')
+      ? ingressPlatform(args) : { env: {}, extraHosts: [], mounts: [], async dispose() {} } } : {}) }) } : {}) });
 const arm = createArmServer({ store, onResourcePut: runtime.syncResource, onResourceDelete: runtime.unsyncResource, functionsRouter: runtime.functionsRouter });
 const facade = createFunctionsRouterServer(runtime.functionsRouter);
 try {
@@ -183,6 +197,42 @@ try {
           return { status: response.status, json: async () => response.body };
         } });
     } finally { searchServer.closeAllConnections(); await new Promise(done => searchServer.close(done)); }
+  }
+  if (ingressHealth) {
+    const apiAudience = randomUUID(), allowedClient = randomUUID();
+    const ingressSettings = [
+      { name: 'ENTRA_TENANT_ID', value: sub },
+      { name: 'API_AUDIENCE', value: apiAudience },
+      { name: 'API_ALLOWED_CLIENTS', value: allowedClient },
+      { name: 'DB_AUTH_MODE', value: 'entra' },
+      { name: 'DB_HOST', value: database.databaseHost.value },
+      { name: 'DB_NAME', value: 'documents' },
+      { name: 'DB_USER', value: 'ingress-pilot' },
+      { name: 'STORAGE_ENDPOINT', value: data.blobEndpoint.value },
+      { name: 'STORAGE_RESOURCE_ID', value: data.accountId.value },
+      { name: 'LANDING_CONTAINER', value: 'landing' },
+      { name: 'QUARANTINE_CONTAINER', value: 'quarantine' },
+      { name: 'PROJECTION_CONTAINER', value: 'clean-projection' },
+      { name: 'SCANNER_ENDPOINT', value: `https://${scannerHostname}` },
+      { name: 'SCANNER_SCOPE', value: `api://${scannerAudience}/.default` },
+      { name: 'SEARCH_ENDPOINT', value: searchOutput.searchEndpoint.value },
+      { name: 'SEARCH_INDEX', value: 'documents' },
+      { name: 'FAILURES_NAMESPACE', value: failuresOutput.namespaceHost.value },
+      { name: 'FAILURES_QUEUE', value: failuresOutput.queueName.value },
+    ];
+    await deploy('ingressApp', 'document-ingress-app', { ...common,
+      environmentId: { value: `${group}/providers/Microsoft.App/managedEnvironments/${name}-scanner` },
+      imageReference: { value: ingressReference }, registryHost: { value: hostOutput.registryHost.value },
+      publicIngress: { value: true }, applicationSettings: { value: ingressSettings } });
+    const ingressId = `${group}/providers/Microsoft.App/containerApps/${name}-ingress`;
+    await runtime.containerAppRouter.lifecycle.settle();
+    report.ingressRuntimeState = runtime.containerAppRouter.lifecycle.status(ingressId);
+    assert.equal(report.ingressRuntimeState, 'running');
+    const binding = runtime.containerAppRouter.nativeWorkers.get(ingressId.toLowerCase());
+    const health = await httpExchange(`${binding.origin}/health`);
+    report.ingressHealth = { status: health.status, body: health.body,
+      scope: 'direct native worker readiness; ingress authentication and business API not exercised' };
+    assert.equal(health.status, 200);
   }
   const applicationSettings = [];
   if (databaseProbe) applicationSettings.push(
