@@ -81,6 +81,7 @@ test('authenticated ingress uses actual Blob SDK and PostgreSQL for upload, repl
   assert.equal(repeated.status, 202);
   assert.equal((await repeated.json()).etag, uploaded.etag);
   assert.equal((await pool.query('SELECT * FROM document_access')).rowCount, 1);
+  assert.equal(new URL((await pool.query('SELECT blob_url FROM document_access')).rows[0].blob_url).port, '');
   const different = await fetch(`${endpoint}/documents`, { method: 'POST', headers, body: 'Changed content' });
   assert.equal(different.status, 409);
   const path = `${endpoint}/documents/${uploaded.documentId}`;

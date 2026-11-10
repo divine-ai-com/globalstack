@@ -40,8 +40,16 @@ function fileName(req) {
 function ownedBlob(application, access) {
   const url = new URL(access.blob_url), base = new URL(application.config.storageEndpoint);
   const prefix = `/${application.config.landingContainer}/`;
-  if (url.username || url.password || url.origin !== base.origin || !url.pathname.startsWith(prefix) || url.search || url.hash) throw new AccessError(503, 'document_location_invalid');
+  if (url.username || url.password || url.protocol !== base.protocol || url.hostname !== base.hostname || url.port
+    || !url.pathname.startsWith(prefix) || url.search || url.hash) throw new AccessError(503, 'document_location_invalid');
   return application.blobs.getContainerClient(application.config.landingContainer).getBlockBlobClient(decodeURIComponent(url.pathname.slice(prefix.length)));
+}
+function canonicalBlobUrl(blob) {
+  const url = new URL(blob.url);
+  // The local transport may add a port. Document identity must use the Azure
+  // resource URL that Event Grid publishes for the same Blob.
+  url.port = '';
+  return url.href;
 }
 function condition(req) {
   const etag = req.headers['if-match'];
@@ -75,7 +83,7 @@ export function documentHandler({ verify = configuredTokenVerifier(), getClients
         const { bytes, type, sha256 } = await documentBytes(req);
         const application = await getClients(), { blobs, pool, config } = application;
         const blob = blobs.getContainerClient(config.landingContainer).getBlockBlobClient(`${principal.tenant}/${principal.subject}/${uploadKey}/${name}`);
-        const access = await registerDocumentAccess(pool, principal, { blobUrl: blob.url, fileName: name, uploadKey, readGroups: groups });
+        const access = await registerDocumentAccess(pool, principal, { blobUrl: canonicalBlobUrl(blob), fileName: name, uploadKey, readGroups: groups });
         let properties;
         try {
           properties = await blob.uploadData(bytes, { conditions: { ifNoneMatch: '*' },
