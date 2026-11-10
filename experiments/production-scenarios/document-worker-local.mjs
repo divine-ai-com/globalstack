@@ -319,6 +319,31 @@ try {
         report.productionSearch = { status: result.status, count: result.body?.value?.length ?? null };
         assert.equal(result.status, 200);
         assert.equal(report.productionSearch.count, 1);
+        const searchHost = new URL(searchOutput.searchEndpoint.value).host;
+        const indexerPath = "/indexers('document-projection-indexer')";
+        const run = await httpExchange(`http://127.0.0.1:${searchServer.address().port}${indexerPath}/search.run?api-version=2025-09-01`, {
+          method: 'POST', headers: { host: searchHost, authorization: `Bearer ${publisherToken}` },
+        });
+        assert.equal(run.status, 202);
+        const indexerDeadline = Date.now() + 10000;
+        do {
+          const status = await httpExchange(`http://127.0.0.1:${searchServer.address().port}${indexerPath}/search.status?api-version=2025-09-01`, {
+            headers: { host: searchHost, authorization: `Bearer ${publisherToken}` },
+          });
+          assert.equal(status.status, 200);
+          report.projectionIndexer = { runStatus: run.status, status: status.body?.lastResult?.status ?? null,
+            itemsProcessed: status.body?.lastResult?.itemsProcessed ?? null };
+          if (report.projectionIndexer.status) break;
+          await new Promise(done => setTimeout(done, 100));
+        } while (Date.now() < indexerDeadline);
+        assert.equal(report.projectionIndexer.status, 'success');
+        const projection = await httpExchange(`http://127.0.0.1:${searchServer.address().port}/indexes('document-projection')/docs/search?api-version=2025-09-01`, {
+          method: 'POST', body: { search: '*', filter: `document_id eq '${report.preRegisteredAccess.documentId}'`, top: 2 },
+          headers: { host: searchHost, authorization: `Bearer ${publisherToken}` },
+        });
+        report.projectionSearch = { status: projection.status, count: projection.body?.value?.length ?? null };
+        assert.equal(projection.status, 200);
+        assert.equal(report.projectionSearch.count, 1);
       } finally { searchServer.closeAllConnections(); await new Promise(done => searchServer.close(done)); }
     }
     const marker = await httpExchange(endpoint + '/api/event-diagnostic-status', { method: 'POST',
