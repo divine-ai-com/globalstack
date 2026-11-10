@@ -729,3 +729,13 @@ The production document subscription was still retrying. This was local only;
 the handler's actual exception was not captured. The missing full production
 traversal is tracked in [#91](https://github.com/divine-ai-com/globalstack/issues/91).
 Disposable local containers were removed.
+
+The later [local clean-document traversal](evidence/document-clean-local-20261110/summary.json)
+used a production Event Grid subscription rather than the diagnostic subscription.
+One harmless upload reached the deployed scanner, committed metadata in PostgreSQL,
+delivered one outbox revision to the Search push index, and returned one matching
+Search document. An older revision was correctly superseded. The local harness
+pre-registered document ownership directly in the database, so this does not
+exercise production ingress. No live Azure end-to-end comparison was made for
+this revision. Malicious-file handling, projection indexer execution, and the
+failure queue remain unverified. The full-scenario assertion ledger is unchanged.
