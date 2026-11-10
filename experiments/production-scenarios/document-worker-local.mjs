@@ -109,13 +109,20 @@ try {
     { name: 'DB_NAME', value: 'documents' },
     { name: 'DB_USER', value: 'worker-pilot' },
     { name: 'PGSSLROOTCERT', value: '/globalstack-platform-ca.pem' });
-  if (uploadProbe) applicationSettings.push(
+  if (uploadProbe) {
+    const containers = data.deployedContainerNames.value;
+    assert.ok(['landing', 'quarantine', 'clean-projection'].every(name => containers.includes(name)),
+      'Document containers must come from the deployed data module');
+    applicationSettings.push(
     { name: 'STORAGE_ENDPOINT', value: data.blobEndpoint.value },
     { name: 'LANDING_CONTAINER', value: 'landing' },
+    { name: 'QUARANTINE_CONTAINER', value: 'quarantine' },
+    { name: 'PROJECTION_CONTAINER', value: 'clean-projection' },
     { name: 'STORAGE_RESOURCE_ID', value: data.accountId.value },
     { name: 'EVENT_DIAGNOSTICS_CONTAINER', value: 'event-diagnostics' },
     { name: 'DOCUMENT_UPLOAD_DIAGNOSTIC_ENABLED', value: 'true' },
     { name: 'DOCUMENT_EVENT_DIAGNOSTIC_ENABLED', value: 'true' });
+  }
   await deploy('app', 'worker-app', { ...common, imageReference: { value: imageReference },
     applicationSettings: { value: applicationSettings } });
   const siteId = `${group}/providers/Microsoft.Web/sites/${name}-worker`;
