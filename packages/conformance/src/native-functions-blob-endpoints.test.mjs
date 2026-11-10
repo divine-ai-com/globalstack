@@ -60,12 +60,16 @@ test('native Function platform maps only a deployed Search service in its subscr
   assert.throws(() => resolveNativeSearchEndpoints({ ...validSearch, store: { resources: new Map() } }));
 });
 
-test('native platform routes a second deployed Blob endpoint over verified TLS', async () => {
+test('native platform routes deployed Blob and Search endpoints over verified TLS', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'globalstack-blob-platform-'));
   const hostAccount = 'pilotworkerhost';
   const appId = `/subscriptions/${subscriptionId}/resourceGroups/fixture/providers/Microsoft.Web/sites/pilot-worker`;
   const resources = new Map([[hostAccount, { resourceId: resourceId.replace('pilotdocs', hostAccount) }],
     ['pilotdocs', { resourceId }]]);
+  const searchId = `/subscriptions/${subscriptionId}/resourceGroups/fixture/providers/Microsoft.Search/searchServices/pilot-search`;
+  const store = { resources: new Map([[searchId.toLowerCase(), { type: 'Microsoft.Search/searchServices' }]]) };
+  const searchRouter = { services: new Map([['pilot-search', { resourceId: searchId }]]),
+    handler: () => (req, res) => { res.writeHead(200, { 'content-type': 'text/plain' }); res.end(`${req.headers.host} ${req.url}`); } };
   const storageRouter = { account: name => resources.get(name), blobHandler: () => (req, res) => {
     res.writeHead(200, { 'content-type': 'text/plain' }); res.end(req.headers.host);
   }, queueHandler: () => (_req, res) => { res.writeHead(200); res.end(); },
@@ -73,7 +77,8 @@ test('native platform routes a second deployed Blob endpoint over verified TLS',
   const identityService = { bind: () => ({ identityHeader: 'private-test-header',
     handler: (_req, res) => { res.writeHead(403); res.end(); }, revoke() {} }) };
   const prepare = createNativeFunctionsPlatform({ identityService, storageRouter: () => storageRouter,
-    blobEndpoints: ['STORAGE_ENDPOINT'] });
+    searchRouter: () => searchRouter, store,
+    blobEndpoints: ['STORAGE_ENDPOINT'], searchEndpoints: ['SEARCH_ENDPOINT'] });
   let platform;
   try {
     platform = await prepare({ resource: { id: appId, name: 'pilot-worker', properties: {
@@ -81,6 +86,7 @@ test('native platform routes a second deployed Blob endpoint over verified TLS',
         { name: 'AzureWebJobsStorage__credential', value: 'managedidentity' },
         { name: 'AzureWebJobsStorage__accountName', value: hostAccount },
         { name: 'STORAGE_ENDPOINT', value: 'https://pilotdocs.blob.core.windows.net/' },
+        { name: 'SEARCH_ENDPOINT', value: 'https://pilot-search.search.windows.net/' },
       ] },
     } }, signal: new AbortController().signal, directory });
     const endpoint = new URL(platform.env.STORAGE_ENDPOINT);
@@ -100,6 +106,19 @@ test('native platform routes a second deployed Blob endpoint over verified TLS',
     });
     assert.equal(response.status, 200);
     assert.equal(response.body, `${endpoint.hostname}:${endpoint.port}`);
+    const searchEndpoint = new URL(platform.env.SEARCH_ENDPOINT);
+    assert.equal(searchEndpoint.hostname, 'pilot-search.search.windows.net');
+    const searchResponse = await new Promise((done, fail) => {
+      const req = request(new URL('/indexes?api-version=2025-09-01', searchEndpoint), { ca,
+        lookup: (_name, options, callback) => options.all
+          ? callback(null, [{ address: gateway, family: 4 }]) : callback(null, gateway, 4) }, res => {
+        let body = ''; res.setEncoding('utf8'); res.on('data', chunk => { body += chunk; });
+        res.on('end', () => done({ status: res.statusCode, body }));
+      });
+      req.on('error', fail); req.end();
+    });
+    assert.equal(searchResponse.status, 200);
+    assert.equal(searchResponse.body, `${searchEndpoint.host} /indexes?api-version=2025-09-01`);
   } finally {
     await platform?.dispose();
     await rm(directory, { recursive: true, force: true });
