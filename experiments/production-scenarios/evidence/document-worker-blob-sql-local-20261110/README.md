@@ -1,0 +1,5 @@
+# Combined local Blob, Event Grid, and SQL worker probe
+
+One live local Functions worker used the same deployed app configuration for the restricted PostgreSQL diagnostic and the managed-identity Blob upload diagnostic. The SQL diagnostic returned HTTP 200, the upload returned HTTP 201, and the diagnostic Event Grid subscription delivered a correlated marker. The production `documentUploaded` subscription was still retrying. This run did not invoke the complete document processing workflow successfully and had no Azure counterpart.
+
+The run used source revision `9a755ebc3a5fb9c6852ed3a8824bb186501de7fd`. The disposable worker and PostgreSQL containers were removed. The private operator trace contains request details; `summary.json` records the reviewed, non-sensitive outcomes. The next paired step must supply scanner, Search, queue, and remaining application settings, then observe the production event handler's actual response and database revision state. The cause of the current production retry is not yet established by this probe.
