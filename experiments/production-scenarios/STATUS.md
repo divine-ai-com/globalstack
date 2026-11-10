@@ -581,7 +581,7 @@ passing a resource PUT alone is insufficient.
 | Handoff | Current evidence | Next acceptance condition |
 | --- | --- | --- |
 | Blob upload to Event Grid to Functions | Paired diagnostic delivery; production handler returned HTTP 500 | Complete application settings and observe a production orchestration start |
-| Functions to PostgreSQL | Azure Entra SQL login and schema passed; local ARM deployment passed | Local TLS SQL endpoint accepts the same client identity, enforces firewall access and commits a document revision |
+| Functions to PostgreSQL | Both live workers passed the restricted SQL diagnostic; document revision writes are untested | Process an uploaded document through the production handler and verify committed metadata on both targets |
 | Functions to scanner | Paired native ClamAV and YARA diagnostic calls passed | The production activity scans the event's exact Blob revision and records both decisions |
 | PostgreSQL outbox to Search | Paired projection indexer slice passed independently | A committed clean revision becomes searchable through the production outbox and projection paths |
 | Permanent failure to Service Bus | Local ARM queue deployment only | Unchanged SDK sends, receives and dead-letters a failed event over AMQP on both targets |
@@ -595,11 +595,12 @@ The current paired worker supplies Storage and scanner settings for the
 component probe. Code inspection of `document-app/adapters.mjs` shows that the
 production handler also needs quarantine and projection container settings,
 PostgreSQL connection and authentication settings, a Search endpoint and index,
-and a Service Bus namespace and failure queue. The containers exist, but their
-settings are absent from this component deployment. PostgreSQL, Search and
-Service Bus are not provisioned by the current document modules. This explains
-why the probe cannot be promoted to a full workflow; the exact exception behind
-the production handler's HTTP 500 has not yet been captured. The next full
+and a Service Bus namespace and failure queue. The paired SQL diagnostic supplies
+only the database settings. Other component probes provision portions of Search
+and Storage, but no complete deployment wires them to the production handler.
+This explains why the earlier event probe cannot be promoted to a full workflow;
+the exact exception behind its production handler HTTP 500 was not captured.
+The next full
 document run must provision those services, migrate the schema, configure
 worker identity and data access, then observe a clean document from upload
 through committed metadata and both Search paths before testing failure cases.
