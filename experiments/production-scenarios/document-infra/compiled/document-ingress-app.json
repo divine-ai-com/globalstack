@@ -1,0 +1,123 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "809170780947071397"
+    }
+  },
+  "parameters": {
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "environmentId": {
+      "type": "string"
+    },
+    "imageReference": {
+      "type": "string"
+    },
+    "registryHost": {
+      "type": "string"
+    },
+    "applicationSettings": {
+      "type": "array"
+    },
+    "publicIngress": {
+      "type": "bool",
+      "defaultValue": false
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2025-01-01",
+      "name": "[format('{0}-ingress', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "project": "globalstack-production-scenarios",
+        "run": "[parameters('runId')]"
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-ingress', parameters('serviceName'))))]": {}
+        }
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('environmentId')]",
+        "configuration": {
+          "activeRevisionsMode": "Single",
+          "registries": [
+            {
+              "server": "[parameters('registryHost')]",
+              "identity": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-ingress', parameters('serviceName')))]"
+            }
+          ],
+          "ingress": {
+            "external": "[parameters('publicIngress')]",
+            "targetPort": 8080,
+            "transport": "http",
+            "allowInsecure": false
+          }
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "document-ingress",
+              "image": "[parameters('imageReference')]",
+              "resources": {
+                "cpu": 1,
+                "memory": "2Gi"
+              },
+              "env": "[concat(createArray(createObject('name', 'PORT', 'value', '8080'), createObject('name', 'AZURE_CLIENT_ID', 'value', reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-ingress', parameters('serviceName'))), '2023-01-31').clientId)), parameters('applicationSettings'))]",
+              "probes": [
+                {
+                  "type": "Startup",
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  },
+                  "periodSeconds": 3,
+                  "timeoutSeconds": 2,
+                  "failureThreshold": 60
+                },
+                {
+                  "type": "Readiness",
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  },
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 2,
+                  "failureThreshold": 3
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 1,
+            "maxReplicas": 1
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "hostname": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', format('{0}-ingress', parameters('serviceName'))), '2025-01-01').configuration.ingress.fqdn]"
+    },
+    "ingressId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.App/containerApps', format('{0}-ingress', parameters('serviceName')))]"
+    }
+  }
+}

@@ -22,6 +22,7 @@ const templateHashes = {
   'document-search': { source: '2a0785b1e12fcc3edbe9fcffff550d9ba44fc0fed0ffb1c8b3c14a3fd4148ef1', compiled: '73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8' },
   'document-failures': { source: '625a9049cf275bd6a299ac8a157064e57abe3bc69b2f5cf1428107bf41f57eb3', compiled: '3219de7e24875bea97bf758567ea5b23ff1bff25217ec9c49e0a1d60f5f255d6' },
   'document-postgres': { source: '8168db6da3382f9e442b9bf282d8972117423cead3da59d429ea18329f710280', compiled: '47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9' },
+  'document-ingress-app': { source: '7e96605534e281ca7eba054f2e9742734eb745e61f8ba4a6772051ff9f7b901e', compiled: 'f47e42f72b7134d84ecf9f4e1c4558806bd122a4a0cc0b1192c44e06e54a5353' },
 };
 
 async function compiled(name) {
@@ -34,6 +35,20 @@ async function compiled(name) {
   assert.equal(hash(output), templateHashes[name].compiled, 'Compiled ARM fixture changed without review');
   return JSON.parse(output);
 }
+
+test('reviewed ingress template declares a bounded identity-backed Container App', async () => {
+  const template = await compiled('document-ingress-app');
+  const app = template.resources.find(resource => resource.type === 'Microsoft.App/containerApps');
+  assert.ok(app);
+  assert.equal(app.identity.type, 'UserAssigned');
+  assert.equal(app.properties.configuration.ingress.allowInsecure, false);
+  assert.equal(app.properties.configuration.ingress.external, "[parameters('publicIngress')]");
+  assert.equal(app.properties.template.scale.minReplicas, 1);
+  assert.equal(app.properties.template.scale.maxReplicas, 1);
+  assert.equal(app.properties.template.containers[0].image, "[parameters('imageReference')]");
+  assert.equal(app.properties.template.containers[0].probes[1].httpGet.path, '/health');
+  assert.ok(app.properties.template.containers[0].env.includes("parameters('applicationSettings')"));
+});
 
 test('the three Search pilot modules deploy in dependency order and keep Blob access container-scoped', async t => {
   const store = new ResourceStore();
