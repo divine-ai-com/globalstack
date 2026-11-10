@@ -23,6 +23,7 @@ const templateHashes = {
   'document-failures': { source: '625a9049cf275bd6a299ac8a157064e57abe3bc69b2f5cf1428107bf41f57eb3', compiled: '3219de7e24875bea97bf758567ea5b23ff1bff25217ec9c49e0a1d60f5f255d6' },
   'document-postgres': { source: '8168db6da3382f9e442b9bf282d8972117423cead3da59d429ea18329f710280', compiled: '47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9' },
   'document-ingress-app': { source: '7e96605534e281ca7eba054f2e9742734eb745e61f8ba4a6772051ff9f7b901e', compiled: 'f47e42f72b7134d84ecf9f4e1c4558806bd122a4a0cc0b1192c44e06e54a5353' },
+  'document-ingress-storage-grant': { source: '365ca39172e0f1012ca30d40decbdee8a5a1078268984d746feb52198c48bfaf', compiled: 'f1373743f5f3728bb651c59824ddff0c5d1cb4ba84496a0da7f6f0930d118e14' },
 };
 
 async function compiled(name) {
@@ -48,6 +49,15 @@ test('reviewed ingress template declares a bounded identity-backed Container App
   assert.equal(app.properties.template.containers[0].image, "[parameters('imageReference')]");
   assert.equal(app.properties.template.containers[0].probes[1].httpGet.path, '/health');
   assert.ok(app.properties.template.containers[0].env.includes("parameters('applicationSettings')"));
+});
+
+test('reviewed ingress upload grant is limited to the landing container', async () => {
+  const template = await compiled('document-ingress-storage-grant');
+  const grant = template.resources.find(resource => resource.type === 'Microsoft.Authorization/roleAssignments');
+  assert.ok(grant);
+  assert.match(grant.scope, /'default', 'landing'\)\]$/);
+  assert.match(grant.properties.principalId, /parameters\('ingressIdentityName'\)/);
+  assert.match(grant.properties.roleDefinitionId, /ba92f5b4-2d11-453d-a403-e96b0029c9fe/);
 });
 
 test('the three Search pilot modules deploy in dependency order and keep Blob access container-scoped', async t => {

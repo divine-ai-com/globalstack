@@ -20,6 +20,7 @@ import { installLocalPostgresPrincipalCatalog, createLocalPostgresAdministrator,
 import { bootstrapDocumentDatabase } from './document-app/database-bootstrap.mjs';
 import { registerDocumentAccess } from './document-app/access.mjs';
 import { provisionDocumentSearch } from './document-app/search-provision.mjs';
+import { azureCli } from './azure-session.mjs';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 
 const out = resolve(process.env.LOCAL_WORKER_RUN_DIR ?? `reports/production-scenarios/worker-template-${randomBytes(5).toString('hex')}`);
@@ -31,6 +32,7 @@ const completeSettings = process.env.LOCAL_COMPLETE_SETTINGS === 'true';
 const registerOwner = process.env.LOCAL_REGISTER_INGRESS_OWNER === 'true';
 const detectionMarker = process.env.LOCAL_DETECTION_MARKER ?? 'none';
 const ingressHealth = process.env.LOCAL_INGRESS_HEALTH === 'true';
+const ingressAuth = process.env.LOCAL_INGRESS_AUTH === 'true';
 assert.ok(['none', 'yara', 'clamav'].includes(detectionMarker), 'Unknown harmless detection marker');
 assert.ok(!scannerProbe || uploadProbe, 'Scanner dependency requires the document upload probe');
 assert.ok(!completeSettings || scannerProbe && databaseProbe && uploadProbe,
@@ -38,6 +40,22 @@ assert.ok(!completeSettings || scannerProbe && databaseProbe && uploadProbe,
 assert.ok(!registerOwner || completeSettings, 'Ingress-owner setup requires complete worker settings');
 assert.ok(detectionMarker === 'none' || registerOwner, 'Detection runs require registered owner setup');
 assert.ok(!ingressHealth || completeSettings, 'Ingress health requires the complete local dependency set');
+assert.ok(!ingressAuth || ingressHealth && registerOwner, 'Authenticated ingress requires the ingress runtime and production workflow');
+let ingressToken, ingressClaims;
+if (ingressAuth) {
+  const audience = process.env.DOCUMENT_API_AUDIENCE;
+  assert.match(audience ?? '', /^[a-f0-9-]{36}$/i);
+  assert.ok(process.env.PAIRED_AZURE_CONFIG_DIR && process.env.PAIRED_AZURE_CERTIFICATE_FILE,
+    'Authenticated ingress requires the existing certificate-backed Azure CLI session');
+  ingressToken = azureCli(process.env.PAIRED_AZURE_CONFIG_DIR,
+    ['account', 'get-access-token', '--resource', `api://${audience}`]).accessToken;
+  ingressClaims = JSON.parse(Buffer.from(ingressToken.split('.')[1], 'base64url'));
+  assert.ok([audience, `api://${audience}`].includes(ingressClaims.aud)
+    && ingressClaims.idtyp === 'app' && typeof ingressClaims.azp === 'string'
+    && ['Documents.Upload', 'Documents.Read', 'Documents.Delete'].every(role => ingressClaims.roles?.includes(role))
+    && ingressClaims.iss === `https://login.microsoftonline.com/${ingressClaims.tid}/v2.0`,
+  'The existing API token lacks the required document roles');
+}
 const sub = '00000000-0000-0000-0000-000000000000', group = `/subscriptions/${sub}/resourceGroups/worker-template`;
 const store = new ResourceStore();
 const scannerAudience = scannerProbe ? randomUUID() : null;
@@ -204,9 +222,13 @@ try {
     } finally { searchServer.closeAllConnections(); await new Promise(done => searchServer.close(done)); }
   }
   if (ingressHealth) {
-    const apiAudience = randomUUID(), allowedClient = randomUUID();
+    if (ingressAuth) await deploy('ingressStorageGrant', 'document-ingress-storage-grant', {
+      accountName: { value: `${name}docs` }, ingressIdentityName: { value: `${name}-ingress` },
+      roleAssignmentName: { value: randomUUID() }, runId: common.runId });
+    const apiAudience = ingressAuth ? process.env.DOCUMENT_API_AUDIENCE : randomUUID();
+    const allowedClient = ingressAuth ? ingressClaims.azp : randomUUID();
     const ingressSettings = [
-      { name: 'ENTRA_TENANT_ID', value: sub },
+      { name: 'ENTRA_TENANT_ID', value: ingressAuth ? ingressClaims.tid : sub },
       { name: 'API_AUDIENCE', value: apiAudience },
       { name: 'API_ALLOWED_CLIENTS', value: allowedClient },
       { name: 'DB_AUTH_MODE', value: 'entra' },
@@ -238,6 +260,11 @@ try {
     report.ingressHealth = { status: health.status, body: health.body,
       scope: 'direct native worker readiness; ingress authentication and business API not exercised' };
     assert.equal(health.status, 200);
+    if (ingressAuth) {
+      const workerIp = new URL(ingressOrigin).hostname;
+      await request('PUT', `${database.serverId.value}/firewallRules/ingress-source?api-version=2024-08-01`,
+        { properties: { startIpAddress: workerIp, endIpAddress: workerIp } });
+    }
   }
   const applicationSettings = [];
   if (databaseProbe) applicationSettings.push(
@@ -319,7 +346,7 @@ try {
       clamav: 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*',
     };
     const input = { tenant: 'pilot', text: markerText[detectionMarker] };
-    if (registerOwner) {
+    if (registerOwner && !ingressAuth) {
       input.blobName = `pilot/${randomUUID()}.txt`;
       const blobUrl = new URL(`landing/${input.blobName}`, data.blobEndpoint.value).href;
       const pool = new pg.Pool({ ...delegated, database: 'documents' });
@@ -330,7 +357,18 @@ try {
         report.preRegisteredAccess = { documentId: access.document_id, method: 'local harness database setup' };
       } finally { await pool.end(); }
     }
-    const uploaded = await httpExchange(endpoint + '/api/upload-diagnostic', { method: 'POST', body: input, headers });
+    let uploaded;
+    if (ingressAuth) {
+      const uploadKey = randomUUID(), fileName = 'report.txt';
+      const blobName = `${ingressClaims.tid}/${ingressClaims.oid.toLowerCase()}/${uploadKey}/${fileName}`;
+      const result = await httpExchange(`${ingressOrigin}/documents`, { method: 'POST', body: Buffer.from(input.text),
+        headers: { authorization: `Bearer ${ingressToken}`, 'content-type': 'text/plain',
+          'x-document-name': fileName, 'idempotency-key': uploadKey } });
+      report.ingressUpload = { status: result.status, body: result.body };
+      assert.equal(result.status, 202, `Authenticated ingress upload failed: ${result.body?.error ?? result.status}`);
+      report.preRegisteredAccess = { documentId: result.body.documentId, method: 'authenticated ingress API' };
+      uploaded = { status: 201, body: { blobName, inputSha256: result.body.sha256, etag: result.body.etag } };
+    } else uploaded = await httpExchange(endpoint + '/api/upload-diagnostic', { method: 'POST', body: input, headers });
     report.upload = { status: uploaded.status, body: uploaded.body };
     assert.equal(uploaded.status, 201);
     assert.equal(uploaded.body.inputSha256, createHash('sha256').update(input.text).digest('hex'));

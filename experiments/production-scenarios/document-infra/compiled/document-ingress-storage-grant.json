@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "5693626428530792956"
+    }
+  },
+  "parameters": {
+    "accountName": {
+      "type": "string"
+    },
+    "ingressIdentityName": {
+      "type": "string"
+    },
+    "roleAssignmentName": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('accountName'), 'default', 'landing')]",
+      "name": "[parameters('roleAssignmentName')]",
+      "properties": {
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('ingressIdentityName')), '2023-01-31').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "landingRoleId": {
+      "type": "string",
+      "value": "[extensionResourceId(resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('accountName'), 'default', 'landing'), 'Microsoft.Authorization/roleAssignments', parameters('roleAssignmentName'))]"
+    }
+  }
+}
