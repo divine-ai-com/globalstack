@@ -1,0 +1,146 @@
+{
+  "reason": "Observed nested Azure App Service plan creation throttle (429); cancel promptly rather than leave a successful sibling plan allocated during retries.",
+  "events": [
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T11:48:35.202Z",
+      "completedAt": "2026-11-07T11:48:36.060Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "1fd4a0cb9270"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T11:41:30.5678272Z",
+          "duration": "PT6M57.8642487S",
+          "correlationId": "d371cdd5-eec6-4ced-bee4-e3b82b154f2d",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T11:48:36.068Z",
+      "completedAt": "2026-11-07T11:48:36.733Z",
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations/ABEED78A104D4268",
+            "operationId": "ABEED78A104D4268",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2026-11-07T11:41:44.4032173Z",
+              "duration": "PT4.3539039S",
+              "trackingId": "5884b26f-9d35-4c91-94cd-d1c379877af5",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress",
+                "resourceType": "Microsoft.Web/serverfarms",
+                "resourceName": "<service>-ingress"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations/ACFB80F4653B02D3",
+            "operationId": "ACFB80F4653B02D3",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2026-11-07T11:41:44.4032173Z",
+              "duration": "PT4M33.7371761S",
+              "trackingId": "eded0f1d-c82d-419f-bad5-af890bc61c35",
+              "statusCode": 429,
+              "statusMessage": {
+                "status": "Failed",
+                "error": {
+                  "code": "429",
+                  "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists.",
+                  "details": [
+                    {
+                      "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists."
+                    },
+                    {
+                      "code": "429"
+                    },
+                    {}
+                  ]
+                }
+              },
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker",
+                "resourceType": "Microsoft.Web/serverfarms",
+                "resourceName": "<service>-worker"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/cancel?api-version=2025-04-01",
+      "status": 204,
+      "startedAt": "2026-11-07T11:48:36.733Z",
+      "completedAt": "2026-11-07T11:48:44.761Z",
+      "body": null
+    }
+  ]
+}

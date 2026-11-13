@@ -1,0 +1,18 @@
+{
+  "sourceRevision": "53b8218605af4b87f55ce1e9125f01b32c8319a5",
+  "scope": "Foundation only. All four selected resource checks match after loop fix. Output type casing differs and is not normalized away. Azure resources and deployment history removed. No effective network isolation or application workflow tested.",
+  "files": {
+    "compiled-template.json": {
+      "sha256": "0954c17ceb1c860427ee666a71f0849026472472a7a08018d301bb51889e7c50",
+      "bytes": 4375
+    },
+    "result.json": {
+      "sha256": "9f6ecff1b25fbf83b2c691040569ad0af4dd753baae65b16367b7af43cba593f",
+      "bytes": 84432
+    },
+    "events.ndjson": {
+      "sha256": "0864eeb06243c3f136674009b3dce2cfc09898e38233037233200cb5294674bf",
+      "bytes": 84129
+    }
+  }
+}

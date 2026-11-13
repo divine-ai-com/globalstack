@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "8af209b9725bc28ab37f5cc263e9db3152aa6409",
+  "startedAt": "2026-11-09T14:26:03.765Z",
+  "completedAt": "2026-11-09T14:38:55.706Z",
+  "scope": "Bounded positive Search projection and wrong-container indexer creation on Azure and GlobalStack",
+  "infrastructureStages": [
+    {
+      "name": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    }
+  ],
+  "positiveProjectionTraversal": [
+    {
+      "target": "azure",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    },
+    {
+      "target": "local",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    }
+  ],
+  "wrongContainer": {
+    "sourceContainer": "quarantine",
+    "searchIdentityReadGrant": "clean-projection only",
+    "stages": [
+      {
+        "target": "azure",
+        "stages": [
+          {
+            "name": "data-source",
+            "status": 201,
+            "code": null
+          },
+          {
+            "name": "indexer",
+            "status": 401,
+            "code": ""
+          }
+        ],
+        "quarantineIndexed": false
+      },
+      {
+        "target": "local",
+        "stages": [
+          {
+            "name": "data-source",
+            "status": 201,
+            "code": null
+          },
+          {
+            "name": "indexer",
+            "status": 401,
+            "code": ""
+          }
+        ],
+        "quarantineIndexed": false
+      }
+    ],
+    "errorMessagesEqualAtCapturedRevision": false,
+    "messageDifference": "Azure appended a documentation link that GlobalStack did not return at this revision."
+  },
+  "comparisonCompleteForThisSlice": true,
+  "fullDocumentWorkflowCompleted": false,
+  "cleanup": {
+    "taskResourcesAbsent": true,
+    "deploymentRecordsAbsent": true,
+    "pilotGroupPreserved": true,
+    "independentAzureResourceInventoryCount": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 300,
+    "thisRunConservativeAllowanceUsd": 12,
+    "cumulativeConservativeAllowanceUsd": 265,
+    "remainingConservativeAllowanceUsd": 35,
+    "actualAzureChargesMeasured": false
+  },
+  "portalScreenshotsCaptured": false,
+  "videoCaptured": false
+}

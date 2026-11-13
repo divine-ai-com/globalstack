@@ -270,3 +270,21 @@ a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/eviden
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:663
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:720
 a17705afbd1ee0b0503fe501b075a29290e26bbb:docs/research/globalstack/claims/evidence/public-3.json:generic-api-key:788
+# Reviewed historical README placeholder, not a credential. The current example uses an environment variable.
+905f53bc84e05cebd98df776a40d1459be558553:README.md:curl-auth-header:54
+# Public Azurite development key in the hash-verified historical source snapshot.
+2efa47b84647b862fe80721442e9f53d993dfa92:docs/research/globalstack/claims/evidence/product-source/92848b5b6910340dd79abe4935ebe3bbc141d3a2041f30f9288ae4f77656d1a0.txt:generic-api-key:5
+
+# Historical source expression reads a runtime response property, not a credential.
+2339cf42aad8fcaf2ba871dcbab0c8e3f8b18dc0:docs/research/globalstack/claims/evidence/public-source/851feedad082c35086b603d03b9870380b26a7fe65ce6d862b9137ef3fc42eb2.txt:generic-api-key:190
+
+# Local Table pagination cursors for the synthetic NativePartitions fixture.
+# These continuation headers identify a page; they cannot authorize a request.
+experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2316
+f4c1effae13cf4a22397445a2f61d6782dc289a7:experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2316
+experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2317
+f4c1effae13cf4a22397445a2f61d6782dc289a7:experiments/production-scenarios/evidence/version-readiness-2205374/result.json:generic-api-key:2317
+
+# Historical SHA-256 of the compiled scanner auth template, not a credential.
+# The current manifest separates paths and digests. Retain only this exact finding.
+e953a7b2545f82dce64f583fca6dc45cf73c1626:experiments/production-scenarios/evidence/scanner-native-4e0904c/SHA256SUMS.json:generic-api-key:2

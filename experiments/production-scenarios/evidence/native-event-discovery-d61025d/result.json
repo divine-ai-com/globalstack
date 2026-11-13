@@ -1,0 +1,27 @@
+{
+  "scope": "Local native Functions Event Grid component; no Azure comparison or full application success",
+  "sourceRevision": "d61025dd9c074ba9608f46e34fae5d3b8b7c6691",
+  "sourceDirty": false,
+  "imageDigest": "sha256:9f06f0a7a3c4a6c839c00b30f159ae239d8ad2a5e491db992715bf23ea2690d2",
+  "functionDiscoveredFromHost": [
+    "documentUploaded"
+  ],
+  "functionChildArmPutCount": 0,
+  "blobUploadStatus": 201,
+  "delivery": [
+    {
+      "attempts": 1,
+      "state": "exhausted",
+      "reason": "NativeEventGridHttp500"
+    }
+  ],
+  "functionExecutions": [
+    "Failed"
+  ],
+  "workerHealthReady": true,
+  "durableWorkerStarted": true,
+  "hostLeaseAcquired": true,
+  "expectedApplicationFailurePersisted": true,
+  "businessWorkflowCompleted": false,
+  "localCleanupVerified": true
+}

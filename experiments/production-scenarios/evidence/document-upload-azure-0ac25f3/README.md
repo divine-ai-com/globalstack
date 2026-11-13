@@ -1,0 +1,7 @@
+# Paired document upload attempt
+
+Clean source revision `0ac25f3d98e6fa0fc7169477c9eb7dfc62ca17bf` compiled each Bicep module once and submitted it to Azure, then GlobalStack, with deployment-specific parameter values. Both targets accepted the document data and Event Grid modules and the worker-app update. Azure's health route returned 200 before the update. After the update, the first two Azure Function discovery requests returned the old route list without `uploadDiagnostic`; the next 19 returned 401. The bounded runner stopped before any Blob upload and recorded `azure upload diagnostic did not become available`.
+
+The public [summary](summary.json) reports only measured stage outcomes. It does not claim that the update was the cause of the route behavior, or that Azure and GlobalStack event delivery matched. The raw timestamped API trace and management observations remain in the private run directory because they contain generated resource details. Automatic ownership-checked cleanup completed, and a separate Azure CLI readback found zero resources and zero deployment records in the preserved pilot group. The USD 12 run allowance raised the conservative allocated total to USD 145 of the authorized USD 150; it is not an Azure invoice or measured spend. No Portal screenshot was captured.
+
+The follow-up runner creates document storage before the Function app and supplies its final settings on first deployment. A [local-only test](../document-upload-local-77d7294/) validates that sequence, but a fresh Azure attempt is still required to assess it.

@@ -1,0 +1,22 @@
+{
+  "sourceRevision": "0c09247b921ea702dd0bfc799e37f6b1bcdada0f",
+  "scope": "Azure publishes and executes the unchanged document Functions image. Both local deployments report success but the local HTTP route returns 404. Native runtime provisioning is not implemented by this capture. No complete business workflow. Azure resources, scoped roles and deployment histories removed.",
+  "files": {
+    "worker-app.json": {
+      "sha256": "a90e79e1d7e397e7bc6b3941e2c2d7ffdc91b0ca17929ffaffcc1817272aa547",
+      "bytes": 3057
+    },
+    "result.json": {
+      "sha256": "d560f0bcbd134989e70e56e90383b57c052bfba139ab3432bf072eeddf42b499",
+      "bytes": 201080
+    },
+    "worker-host.json": {
+      "sha256": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+      "bytes": 5953
+    },
+    "events.ndjson": {
+      "sha256": "6c2f22b5536afa6414b5b9d16a83e575c01357b2d1574133e0ec88530dd777af",
+      "bytes": 206616
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "target": "GlobalStack local runtime with an app-only token issued by Microsoft Entra",
+  "sourceRevision": "69da7be",
+  "scope": "Authenticated application API process, Blob upload, production Event Grid, scanner, PostgreSQL, outbox, push and projection Search, API read and API search",
+  "result": {
+    "missingTokenHttp": 401,
+    "forgedTokenHttp": 401,
+    "publicSigningKeyRequestHttp": 200,
+    "authenticatedUploadHttp": 202,
+    "productionEventGridState": "delivered",
+    "scannerDecision": "clean",
+    "postgresqlAccessRows": 1,
+    "postgresqlScannedRows": 1,
+    "outboxDeliveredRows": 1,
+    "pushSearchMatchingDocuments": 1,
+    "projectionIndexerStatus": "success",
+    "projectionSearchMatchingDocuments": 1,
+    "authenticatedDocumentReadHttp": 200,
+    "authenticatedApiSearchHttp": 200,
+    "authenticatedApiSearchMatchingDocuments": 1,
+    "localCleanupComplete": true
+  },
+  "limits": [
+    "The local API requests used the native process origin, bypassing Container App front-door authentication and network policy",
+    "No corresponding combined live Azure deployment or application request was run",
+    "The public Entra signing key was mirrored into the isolated local network; no private key or access token was published",
+    "Delegated-user tokens, cross-tenant access, update and delete behavior were not exercised in this run",
+    "Service Bus failure delivery and private networking remain unverified",
+    "The local Search indexer reads Blob state in process; Search-to-Blob HTTP interaction remains unmeasured",
+    "No full-scenario acceptance score is claimed"
+  ]
+}

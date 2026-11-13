@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "target": "GlobalStack local runtime only",
+  "sourceRevision": "2e87683",
+  "scope": "Harmless clean text upload with harness-prepared owner access; production Event Grid handler, scanner, PostgreSQL outbox, and push Search index",
+  "result": {
+    "workerHealthHttp": 200,
+    "restrictedDatabaseDiagnosticHttp": 200,
+    "blobUploadHttp": 201,
+    "productionEventGridState": "delivered",
+    "scannerDecision": "clean",
+    "databaseRows": {
+      "access": 1,
+      "scanned": 1,
+      "revisions": 2,
+      "outbox": 2
+    },
+    "outboxStates": {
+      "delivered": 1,
+      "superseded": 1
+    },
+    "searchIndexWriteHttp": 200,
+    "searchQueryHttp": 200,
+    "searchQueryMatchingDocuments": 1,
+    "searchProvisioningSteps": 4,
+    "localCleanupComplete": true
+  },
+  "limits": [
+    "No matching live Azure end-to-end run at this revision",
+    "Owner access was registered by the local harness, not the production ingress API",
+    "No malicious-file quarantine or YARA and ClamAV failure path was exercised",
+    "Projection indexer execution and Service Bus failure queue were not verified",
+    "No full-scenario acceptance score is claimed"
+  ]
+}

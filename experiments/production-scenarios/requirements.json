@@ -1,0 +1,1030 @@
+{
+  "schemaVersion": 1,
+  "status": "planned; no complete scenario results",
+  "sources": [
+    {
+      "scenario": 1,
+      "description": "Owner-supplied architectural blueprint",
+      "sha256": "7eac5baa2f648eb4ad009446339468890b4a5a855bd0acf2c4283791636391f9"
+    },
+    {
+      "scenario": 2,
+      "description": "Owner-supplied architectural blueprint",
+      "sha256": "da9e24f2ad29f865259592a831c128bd42f8b644a30f8218687ba8fdb2f43bf6"
+    }
+  ],
+  "authorizedTotalUsd": 500,
+  "powerBi": "Replaced with Cosmos-backed application dashboard at owner instruction; Power BI not evaluated",
+  "assertions": [
+    {
+      "id": "DOC.flow.upload-authorization",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Unauthorized upload is denied without blob creation",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.upload-limits",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Oversized and unsupported files are rejected",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.blob-created-event",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "The uploaded blob generates the expected filtered event",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.filter-denial",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "An upload outside the configured container does not start processing",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.orchestrator-start",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A real Durable orchestration starts for the matching blob version",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.clamav-clean",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "ClamAV scans the actual clean bytes with recorded signature version",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.yara-clean",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "YARA scans the same bytes with recorded rules",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.clamav-detect",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A harmless ClamAV detection fixture is quarantined",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.yara-detect",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A harmless YARA detection fixture is quarantined",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.scanner-unavailable",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "An unavailable engine cannot label the document clean",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.text-extraction",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "TXT PDF and DOCX return their actual text and provenance",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.ocr",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "An image-only PDF produces checked OCR text",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.parser-failure",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Malformed encrypted and empty inputs receive explicit outcomes",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.sql-transaction",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Metadata and outbox commit atomically",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.duplicate-delivery",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Duplicate deliveries do not duplicate logical records",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.out-of-order",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Stale processing does not overwrite a newer revision",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.outbox-recovery",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A restart between SQL commit and indexing recovers the change",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.push-indexing",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Each clean document becomes queryable through the push path",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.blob-indexer",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "The clean projection is processed by an actual supported indexer",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.fuzzy-query",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Misspelled terms resolve through full Lucene fuzzy queries",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.tenant-isolation",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Cross-tenant documents cannot be retrieved",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.acl-isolation",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A same-tenant unauthorized principal cannot retrieve a document",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.update",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Content changes replace all stale search revisions",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.delete",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Deleted sources disappear from metadata view and search",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.dead-letter",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A permanent failure reaches an actual Service Bus DLQ",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.dlq-replay",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Replaying a corrected failure completes exactly one logical result",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.eventgrid-deadletter",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Undeliverable Event Grid events reach their configured destination",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.retry-bounds",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Transient failures retry within configured bounds",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.broken-filter",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A wrong container filter is detected by the end-to-end assertion",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.broken-sql-reference",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A wrong database reference prevents clean completion",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.broken-role",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Removing a required role breaks the expected hop",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.broken-index",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "An incorrect index reference causes an observable indexing failure",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.repair",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Fixing each injected fault restores the live event path",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.network-denial",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Public and unauthorized backend paths are denied",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.key-vault",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Managed identity obtains only authorized secrets",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.latency",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "All eligible documents and queries meet the registered pilot latency targets",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.concurrency",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Bounded concurrent uploads preserve state and isolation",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.telemetry",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "A correlation ID connects upload event scan SQL index and query",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.flow.security-logs",
+      "scenario": 1,
+      "category": "flow",
+      "assertion": "Logs contain no credentials or unnecessary document content",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.compile",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "The pinned native IaC compiler validates the frozen source",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.invalid-input",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "Deliberate invalid configurations retain Azure-first paired error evidence",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.deploy",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "The unchanged template deploys and every runtime reaches health",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.repeat",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "A repeated apply has the registered idempotent behavior",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.update",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "A supported configuration change reaches effective runtime state",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.drift",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "Detected external drift is repaired without changing the application",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.restart",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "Runtime restart preserves durable state and replay correctness",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.rollback",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "A bad application revision can be rolled back with state intact",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.portal",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "Actual Portal captures show created updated and deleted resources",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.recording",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "Original live recordings and aligned replay have checked hashes",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "DOC.lifecycle.cleanup",
+      "scenario": 1,
+      "category": "lifecycle",
+      "assertion": "All task-owned resources and external dependencies are verified deleted",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.jwt-valid",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Valid issuer audience scope and expiry allow access",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.jwt-invalid",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Missing expired wrong-audience and unauthorized tokens are rejected",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.waf",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Configured WAF blocks the test request while benign traffic passes",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.rate-limit",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Per-principal throttle returns bounded retry behavior",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.backend-forwarding",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "APIM actually forwards to the private Container Apps application",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.backend-bypass",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Direct unauthorized backend access is denied",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.https-ingress",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Authenticated document and query APIs complete over HTTPS",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.wss",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Authenticated WSS handshake streaming cancellation and expiry work",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.source-storage",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Filings are stored with hash version and ACL",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.extraction",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Text tables and scanned pages retain checked provenance",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.embeddings",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Actual embedding output matches declared dimensions and model version",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.indexing",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Every expected chunk is indexed with metadata and ACL",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.bad-vector",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Invalid vector dimensions fail explicitly",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.hybrid-retrieval",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Keyword and vector retrieval both influence the measured result",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.semantic-ranking",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Configured semantic ranking is exercised and observed",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.tenant-isolation",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Another tenant cannot retrieve source chunks or audits",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.acl-isolation",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Unauthorized same-tenant documents are excluded",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.agent-separation",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Distinct agent steps and tool permissions are observed",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.financial-arithmetic",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Decimal computations match ground-truth periods currencies and units",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.citations",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Every material claim refers to an accessible source page",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.abstention",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Missing or conflicting evidence causes the specified abstention",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.input-moderation",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Input category moderation causes the defined policy decision",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.prompt-shields",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "User and document injection fixtures receive separate Prompt Shields checks",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.output-moderation",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Output safety checks run before answer release",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.numeric-validation",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "An unsupported metric is blocked or corrected independently of moderation",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.audit",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Successful answers have matching durable Cosmos audit records",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.audit-outage",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Cosmos write failure cannot return an unaudited success",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.audit-idempotency",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Retry and cancellation do not duplicate logical audits",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.dashboard",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "The Cosmos-backed dashboard shows authorized real audit aggregates",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.model-outage",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Model timeout and throttling have bounded retries and visible outcomes",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.safety-outage",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Content Safety outage follows the registered fail-closed policy",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.bad-backend",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "A wrong APIM backend is detected by integration assertions",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.bad-search-reference",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "A wrong Search reference breaks retrieval and is detected",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.role-denial",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Revoked service identity permissions break the intended hop",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.repair",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Restored configuration recovers each deliberately broken path",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.update-delete",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Updated and deleted filings remove stale chunks and citations",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.latency",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "The registered ingestion retrieval response and WSS targets are measured",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.quota-cap",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Step token request and concurrency caps are enforced",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.secrets",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "No access token or API key appears in responses or logs",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.flow.telemetry",
+      "scenario": 2,
+      "category": "flow",
+      "assertion": "Request agent tool safety audit and response share correlation",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.compile",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "The pinned native IaC compiler validates the frozen source",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.invalid-input",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "Deliberate invalid configurations retain Azure-first paired error evidence",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.deploy",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "The unchanged template deploys and every runtime reaches health",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.repeat",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "A repeated apply has the registered idempotent behavior",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.update",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "A supported configuration change reaches effective runtime state",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.drift",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "Detected external drift is repaired without changing the application",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.restart",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "Runtime restart preserves durable state and replay correctness",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.rollback",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "A bad application revision can be rolled back with state intact",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.portal",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "Actual Portal captures show created updated and deleted resources",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.recording",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "Original live recordings and aligned replay have checked hashes",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    },
+    {
+      "id": "RAG.lifecycle.cleanup",
+      "scenario": 2,
+      "category": "lifecycle",
+      "assertion": "All task-owned resources and external dependencies are verified deleted",
+      "required": true,
+      "azure": "not-run",
+      "globalstack": "not-run",
+      "evidence": []
+    }
+  ]
+}

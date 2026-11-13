@@ -1,0 +1,14 @@
+{
+  "sourceRevision": "5f124427fc5a5c16f020d5bd89c859b186370c19",
+  "scope": "Azure hosting resources created and removed. Local subscription setup succeeds, but the post-CLI local deployment request ends with ECONNRESET. This attempt is transport failure evidence, not runtime parity evidence.",
+  "files": {
+    "result.json": {
+      "sha256": "072edd86260f48fdc81cb1b8b4c63219622b8fd9f8199d1a79469fe34a69ce9f",
+      "bytes": 146307
+    },
+    "events.ndjson": {
+      "sha256": "104377a3a4a944e5998387bb4d35718230e2eb5ebbd55d63457a1240cf200227",
+      "bytes": 151517
+    }
+  }
+}

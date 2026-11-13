@@ -1,0 +1,15 @@
+{
+  "scope": "Azure-first Storage API range diagnostic before the fix. Not full scenario, native IaC lifecycle or Portal evidence.",
+  "revision": "d3e3eadda638729c9e87a2e969b9fcee0a3f5716",
+  "sourceDirty": false,
+  "files": {
+    "result.json": {
+      "sha256": "bc7b8bc291e09480b48bbbbf5cebbd5bb06191b512814b70433dae27e537dc28",
+      "bytes": 220789
+    },
+    "events.ndjson": {
+      "sha256": "605d3a3e03231b48767badbb5ee5817076f398145a80d4ba619b6df735713f61",
+      "bytes": 300459
+    }
+  }
+}

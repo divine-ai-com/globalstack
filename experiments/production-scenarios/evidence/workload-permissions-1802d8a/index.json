@@ -1,0 +1,14 @@
+{
+  "scope": "Read-only permission preflight denies proceeding with full managed-identity deployment. No resource creation or deletion attempted.",
+  "sourceRevision": "1802d8aac971a19c92d3e4d83df0169e70169d5e",
+  "files": {
+    "result.json": {
+      "sha256": "69d3760488ba10451cf9144445dbe85eb5614f009b115f59641b22e507326e54",
+      "bytes": 3776
+    },
+    "events.ndjson": {
+      "sha256": "d9dfbbe84d9a967996be5a1527091d3afe05100dfc561e9450ab4d78ddc1639a",
+      "bytes": 3671
+    }
+  }
+}

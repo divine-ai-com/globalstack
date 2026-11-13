@@ -1,0 +1,11 @@
+{
+  "scope": "Local legacy Search router diagnostic only. No live Azure comparison.",
+  "sourceRevision": "b1c0d860950a91f7ea66d776da3dc93c3853e514",
+  "method": "GET",
+  "path": "/indexes?api-version=2024-07-01",
+  "credential": "deliberately invalid synthetic bearer",
+  "status": 200,
+  "body": {
+    "value": []
+  }
+}

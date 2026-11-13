@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 1,
+  "scope": "Redacted Search and Blob request status trace",
+  "requests": [
+    {
+      "at": "2026-11-09T14:36:54.475Z",
+      "target": "azure",
+      "phase": "search-readiness-azure",
+      "method": "GET",
+      "path": "/indexes?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:36:58.880Z",
+      "target": "azure",
+      "phase": "provision-search-azure",
+      "method": "PUT",
+      "path": "/indexes('documents')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:01.049Z",
+      "target": "azure",
+      "phase": "provision-search-azure",
+      "method": "PUT",
+      "path": "/indexes('document-projection')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:02.219Z",
+      "target": "azure",
+      "phase": "provision-search-azure",
+      "method": "PUT",
+      "path": "/datasources('document-projection-source')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:05.350Z",
+      "target": "azure",
+      "phase": "provision-search-azure",
+      "method": "PUT",
+      "path": "/indexers('document-projection-indexer')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:05.362Z",
+      "target": "local",
+      "phase": "provision-search-local",
+      "method": "PUT",
+      "path": "/indexes('documents')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:05.366Z",
+      "target": "local",
+      "phase": "provision-search-local",
+      "method": "PUT",
+      "path": "/indexes('document-projection')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:05.372Z",
+      "target": "local",
+      "phase": "provision-search-local",
+      "method": "PUT",
+      "path": "/datasources('document-projection-source')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:05.378Z",
+      "target": "local",
+      "phase": "provision-search-local",
+      "method": "PUT",
+      "path": "/indexers('document-projection-indexer')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:06.601Z",
+      "target": "azure",
+      "phase": "projection-upload-azure",
+      "method": "PUT",
+      "path": "/clean-projection/doc-<run>.json",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:07.591Z",
+      "target": "azure",
+      "phase": "projection-upload-azure",
+      "method": "PUT",
+      "path": "/quarantine/quarantine-<run>.json",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:08.623Z",
+      "target": "azure",
+      "phase": "projection-index-azure",
+      "method": "POST",
+      "path": "/indexers('document-projection-indexer')/search.run?api-version=2025-09-01",
+      "status": 202,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:10.939Z",
+      "target": "azure",
+      "phase": "projection-index-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:16.967Z",
+      "target": "azure",
+      "phase": "projection-index-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:23.020Z",
+      "target": "azure",
+      "phase": "projection-index-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:24.069Z",
+      "target": "azure",
+      "phase": "projection-index-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:25.052Z",
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "PUT",
+      "path": "/clean-projection/doc-<run>.json",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:26.357Z",
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "POST",
+      "path": "/indexers('document-projection-indexer')/search.run?api-version=2025-09-01",
+      "status": 202,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:27.357Z",
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:33.610Z",
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.774Z",
+      "target": "azure",
+      "phase": "projection-delete-azure",
+      "method": "GET",
+      "path": "/indexers('document-projection-indexer')/search.status?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.783Z",
+      "target": "local",
+      "phase": "projection-upload-local",
+      "method": "PUT",
+      "path": "/clean-projection/doc-<run>.json",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.787Z",
+      "target": "local",
+      "phase": "projection-upload-local",
+      "method": "PUT",
+      "path": "/quarantine/quarantine-<run>.json",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.790Z",
+      "target": "local",
+      "phase": "projection-index-local",
+      "method": "POST",
+      "path": "/indexers('document-projection-indexer')/search.run?api-version=2025-09-01",
+      "status": 202,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.795Z",
+      "target": "local",
+      "phase": "projection-index-local",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.799Z",
+      "target": "local",
+      "phase": "projection-index-local",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.802Z",
+      "target": "local",
+      "phase": "projection-delete-local",
+      "method": "PUT",
+      "path": "/clean-projection/doc-<run>.json",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.805Z",
+      "target": "local",
+      "phase": "projection-delete-local",
+      "method": "POST",
+      "path": "/indexers('document-projection-indexer')/search.run?api-version=2025-09-01",
+      "status": 202,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.808Z",
+      "target": "local",
+      "phase": "projection-delete-local",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:34.810Z",
+      "target": "local",
+      "phase": "projection-delete-local",
+      "method": "GET",
+      "path": "/indexers('document-projection-indexer')/search.status?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:35.832Z",
+      "target": "azure",
+      "phase": "wrong-container-source-azure",
+      "method": "PUT",
+      "path": "/datasources('quarantine-probe-source')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:37.615Z",
+      "target": "azure",
+      "phase": "wrong-container-indexer-azure",
+      "method": "PUT",
+      "path": "/indexers('quarantine-probe-indexer')?api-version=2025-09-01",
+      "status": 401,
+      "code": ""
+    },
+    {
+      "at": "2026-11-09T14:37:38.654Z",
+      "target": "azure",
+      "phase": "wrong-container-indexer-azure",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:38.658Z",
+      "target": "local",
+      "phase": "wrong-container-source-local",
+      "method": "PUT",
+      "path": "/datasources('quarantine-probe-source')?api-version=2025-09-01",
+      "status": 201,
+      "code": null
+    },
+    {
+      "at": "2026-11-09T14:37:38.662Z",
+      "target": "local",
+      "phase": "wrong-container-indexer-local",
+      "method": "PUT",
+      "path": "/indexers('quarantine-probe-indexer')?api-version=2025-09-01",
+      "status": 401,
+      "code": ""
+    },
+    {
+      "at": "2026-11-09T14:37:38.665Z",
+      "target": "local",
+      "phase": "wrong-container-indexer-local",
+      "method": "POST",
+      "path": "/indexes('document-projection')/docs/search?api-version=2025-09-01",
+      "status": 200,
+      "code": null
+    }
+  ]
+}

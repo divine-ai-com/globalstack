@@ -1,0 +1,46 @@
+{
+  "scope": "One local authenticated document API and worker with deployed PostgreSQL, Blob, Event Grid, scanner and Search. Client requests traverse the Container App TLS front door. No matching Azure full workflow or Service Bus failure path.",
+  "authentication": {
+    "missingTokenStatus": 401,
+    "forgedTokenStatus": 401,
+    "validUploadStatus": 202,
+    "readStatus": 200,
+    "queryStatus": 200,
+    "queryHits": 1
+  },
+  "eventDelivery": [
+    {
+      "state": "delivered"
+    }
+  ],
+  "databaseRows": {
+    "access": 1,
+    "scanned": 1,
+    "revisions": 2,
+    "outbox": 2
+  },
+  "outboxStates": {
+    "delivered": 1,
+    "superseded": 1
+  },
+  "scanOutcome": {
+    "status": "CLEAN",
+    "malwareFound": false
+  },
+  "searchPush": {
+    "status": 200,
+    "count": 1
+  },
+  "searchIndexer": {
+    "runStatus": 202,
+    "status": "success",
+    "itemsProcessed": 1
+  },
+  "searchProjection": {
+    "status": 200,
+    "count": 1
+  },
+  "localCleanupComplete": true,
+  "azurePairRun": false,
+  "serviceBusFailurePathRun": false
+}

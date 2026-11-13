@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "9a755ebc3a5fb9c6852ed3a8824bb186501de7fd",
+  "sourceDirty": false,
+  "target": "GlobalStack local runtime only",
+  "nativeWorkerState": "running",
+  "workerHealthHttp": 200,
+  "databaseDiagnostic": { "http": 200, "database": "ready", "role": "worker-pilot", "documents": 0 },
+  "blobUploadDiagnosticHttp": 201,
+  "eventDiagnosticSubscription": "delivered",
+  "productionDocumentSubscription": "retrying",
+  "eventMarkerHttp": 200,
+  "nativeFunctionsDiscovered": ["documentUploaded", "documentEventDiagnostic"],
+  "localCleanupComplete": true,
+  "azurePairedRun": false,
+  "fullDocumentBusinessWorkflowCompleted": false
+}

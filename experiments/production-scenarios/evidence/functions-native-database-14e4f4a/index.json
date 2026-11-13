@@ -1,0 +1,14 @@
+{
+  "scope": "Native image adapter diagnostic only. Signed Key Vault secret reads and native PostgreSQL TLS. No full workflow or Azure database comparison.",
+  "sourceRevision": "14e4f4a4332a324a0af8dd1a5ffcbb5629edc8c7",
+  "files": {
+    "result.json": {
+      "sha256": "7c3a8336168504b36c054b731634aafbec7dc28d7d9d6546e03f13e526ed78e4",
+      "bytes": 60691
+    },
+    "host.log": {
+      "sha256": "ac6bc700b9a3cbed90c28dac91ddb84fb76dcbcabdde4a422dc5912ce5e6886c",
+      "bytes": 73864
+    }
+  }
+}

@@ -1,0 +1,329 @@
+{
+  "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T07:31:44.476Z",
+  "roleName": "Azure Service Bus Data Receiver",
+  "roleId": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+  "scope": "Temporary listed workload grant to the existing pilot identity in its dedicated group. No paid resources or data access tested.",
+  "businessWorkflowCompleted": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "dbaf520c-129b-4560-b8eb-2b9786a7f2e8",
+        "x-ms-correlation-request-id": "dbaf520c-129b-4560-b8eb-2b9786a7f2e8"
+      },
+      "at": "2026-11-08T07:31:45.641Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "value": [
+          {
+            "properties": {
+              "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+              "principalId": "<pilot-principal>",
+              "principalType": "ServicePrincipal",
+              "scope": "/subscriptions/<subscription>/resourcegroups/<group>",
+              "condition": null,
+              "conditionVersion": null,
+              "createdOn": "2026-11-07T21:49:33.2830249Z",
+              "updatedOn": "2026-11-07T21:49:33.2830249Z",
+              "createdBy": "<principal>",
+              "updatedBy": "<principal>",
+              "delegatedManagedIdentityResourceId": null,
+              "description": null
+            },
+            "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Authorization/roleAssignments/2a39bfcb-d8e3-44f7-a433-c0424d966d17",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "name": "2a39bfcb-d8e3-44f7-a433-c0424d966d17"
+          },
+          {
+            "properties": {
+              "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/f58310d9-a9f6-439a-9e8d-f62e7b41a168",
+              "principalId": "<pilot-principal>",
+              "principalType": "ServicePrincipal",
+              "scope": "/subscriptions/<subscription>/resourcegroups/<group>",
+              "condition": "(\n  (!(ActionMatches{'Microsoft.Authorization/roleAssignments/write'}))\n  OR\n  (\n    @Request[Microsoft.Authorization/roleAssignments:RoleDefinitionId] ForAnyOfAnyValues:GuidEquals {7f951dda-4ed3-4680-a7ca-43fe172d538d, 8311e382-0749-4cb8-b61a-304f252e45ec, 4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0, 69a216fc-b8fb-44d8-bc22-1f3c2cd27a39, 4633458b-17de-408a-b874-0445c86b69e6, 8ebe5a00-799e-43f5-93ac-243d3dce84a7, 1407120a-92aa-4202-b7e9-c0e197c71c8f, 7ca78c08-252a-4471-8644-bb5ff32d4ba0, 17d1049b-9a84-46fb-8f53-869881c3d3ab, ba92f5b4-2d11-453d-a403-e96b0029c9fe, b7e6dc6d-f1e8-4753-8033-0f276bb0955b, 974c5e8b-45b9-4653-ba55-5f855dd0fb88, 0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3}\n    AND\n    @Request[Microsoft.Authorization/roleAssignments:PrincipalType] ForAnyOfAnyValues:StringEqualsIgnoreCase {'ServicePrincipal'}\n  )\n)\nAND\n(\n  (!(ActionMatches{'Microsoft.Authorization/roleAssignments/delete'}))\n  OR\n  (\n    @Resource[Microsoft.Authorization/roleAssignments:RoleDefinitionId] ForAnyOfAnyValues:GuidEquals {7f951dda-4ed3-4680-a7ca-43fe172d538d, 8311e382-0749-4cb8-b61a-304f252e45ec, 4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0, 69a216fc-b8fb-44d8-bc22-1f3c2cd27a39, 4633458b-17de-408a-b874-0445c86b69e6, 8ebe5a00-799e-43f5-93ac-243d3dce84a7, 1407120a-92aa-4202-b7e9-c0e197c71c8f, 7ca78c08-252a-4471-8644-bb5ff32d4ba0, 17d1049b-9a84-46fb-8f53-869881c3d3ab, ba92f5b4-2d11-453d-a403-e96b0029c9fe, b7e6dc6d-f1e8-4753-8033-0f276bb0955b, 974c5e8b-45b9-4653-ba55-5f855dd0fb88, 0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3}\n    AND\n    @Resource[Microsoft.Authorization/roleAssignments:PrincipalType] ForAnyOfAnyValues:StringEqualsIgnoreCase {'ServicePrincipal'}\n  )\n)",
+              "conditionVersion": "2.0",
+              "createdOn": "2026-11-08T07:22:41.8582871Z",
+              "updatedOn": "2026-11-08T07:25:03.4126666Z",
+              "createdBy": "<principal>",
+              "updatedBy": "<principal>",
+              "delegatedManagedIdentityResourceId": null,
+              "description": null
+            },
+            "id": "/subscriptions/<subscription>/resourcegroups/<group>/providers/Microsoft.Authorization/roleAssignments/99761560-3cdb-4017-9a75-dfb536e13f0b",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "name": "99761560-3cdb-4017-9a75-dfb536e13f0b"
+          },
+          {
+            "properties": {
+              "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+              "principalId": "<principal>",
+              "principalType": "User",
+              "scope": "/subscriptions/<subscription>",
+              "condition": null,
+              "conditionVersion": null,
+              "createdOn": "2026-11-06T20:01:08.1949939Z",
+              "updatedOn": "2026-11-06T20:01:08.1949939Z",
+              "createdBy": "<principal>",
+              "updatedBy": "<principal>",
+              "delegatedManagedIdentityResourceId": null,
+              "description": null
+            },
+            "id": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleAssignments/19d644e6-f5fe-4a26-97cc-74a4e7bdda4e",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "name": "19d644e6-f5fe-4a26-97cc-74a4e7bdda4e"
+          }
+        ]
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "0d796ef8-7601-4209-84c4-0d08406cd9fd",
+        "x-ms-correlation-request-id": "45cae54f-cc8b-4c63-a6b5-18126d55266f"
+      },
+      "at": "2026-11-08T07:31:46.766Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment '7820de0b-2293-4cf2-95ea-170b07016f76' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "4ce1eec4-137c-478e-90bb-cfb77c955215",
+        "x-ms-correlation-request-id": "4999631b-3846-4150-94e7-3f4900481965"
+      },
+      "at": "2026-11-08T07:31:47.034Z"
+    },
+    {
+      "target": "azure",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "request": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+          "principalId": "<pilot-principal>",
+          "principalType": "ServicePrincipal",
+          "description": "Disposable GlobalStack delegation probe. Remove after read verification."
+        }
+      },
+      "status": 201,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+          "principalId": "<pilot-principal>",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourceGroups/<group>",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T07:31:47.6671844Z",
+          "updatedOn": "2026-11-08T07:31:48.7512038Z",
+          "createdBy": null,
+          "updatedBy": "<pilot-principal>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "Disposable GlobalStack delegation probe. Remove after read verification."
+        },
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "7820de0b-2293-4cf2-95ea-170b07016f76"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "e6439ad5-5865-4e0d-92c8-8c3f758de5e1",
+        "x-ms-correlation-request-id": "e5c30572-b3a5-4390-8d6e-47872a410a66"
+      },
+      "at": "2026-11-08T07:31:50.320Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+          "principalId": "<pilot-principal>",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourceGroups/<group>",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T07:31:48.7512038Z",
+          "updatedOn": "2026-11-08T07:31:48.7512038Z",
+          "createdBy": "<pilot-principal>",
+          "updatedBy": "<pilot-principal>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "Disposable GlobalStack delegation probe. Remove after read verification."
+        },
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "7820de0b-2293-4cf2-95ea-170b07016f76"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "822569df-6965-4002-bfae-572748b73532",
+        "x-ms-correlation-request-id": "7c18e024-fc45-46e4-81e6-ff1c9b051ace"
+      },
+      "at": "2026-11-08T07:31:50.595Z"
+    },
+    {
+      "target": "local",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "request": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+          "principalId": "<pilot-principal>",
+          "principalType": "ServicePrincipal",
+          "description": "Disposable GlobalStack delegation probe. Remove after read verification."
+        }
+      },
+      "status": 400,
+      "body": {
+        "error": {
+          "code": "InvalidRequestContent",
+          "message": "The content of your request was not valid, and the original object could not be deserialized. Exception message: 'Required property 'roleDefinitionId' not found in JSON. Path 'properties'.'",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "at": "2026-11-08T07:31:50.603Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+          "principalId": "<pilot-principal>",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourceGroups/<group>",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T07:31:48.7512038Z",
+          "updatedOn": "2026-11-08T07:31:48.7512038Z",
+          "createdBy": "<pilot-principal>",
+          "updatedBy": "<pilot-principal>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "Disposable GlobalStack delegation probe. Remove after read verification."
+        },
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "7820de0b-2293-4cf2-95ea-170b07016f76"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "b43cfcc9-176e-4a49-a579-4002b84f18e9",
+        "x-ms-correlation-request-id": "577cc515-a541-4b6a-a00d-11e941e4af01"
+      },
+      "at": "2026-11-08T07:31:50.859Z"
+    },
+    {
+      "target": "azure",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "properties": {
+          "roleDefinitionId": "/subscriptions/<subscription>/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0",
+          "principalId": "<pilot-principal>",
+          "principalType": "ServicePrincipal",
+          "scope": "/subscriptions/<subscription>/resourceGroups/<group>",
+          "condition": null,
+          "conditionVersion": null,
+          "createdOn": "2026-11-08T07:31:48.7512038Z",
+          "updatedOn": "2026-11-08T07:31:51.2667686Z",
+          "createdBy": "<pilot-principal>",
+          "updatedBy": "<pilot-principal>",
+          "delegatedManagedIdentityResourceId": null,
+          "description": "Disposable GlobalStack delegation probe. Remove after read verification."
+        },
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76",
+        "type": "Microsoft.Authorization/roleAssignments",
+        "name": "7820de0b-2293-4cf2-95ea-170b07016f76"
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "b1cb3bb9-7b8e-4b6d-97be-573c656add9c",
+        "x-ms-correlation-request-id": "21ad384b-caf2-4204-9cd9-31651e63de2b"
+      },
+      "at": "2026-11-08T07:31:53.867Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "RoleAssignmentNotFound",
+          "message": "The role assignment '7820de0b-2293-4cf2-95ea-170b07016f76' is not found."
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9a66c5a3-dcaf-48af-a5ad-d25aaf165778",
+        "x-ms-correlation-request-id": "41132e3a-adfa-4226-9ab1-d971ed66a3c5"
+      },
+      "at": "2026-11-08T07:31:54.135Z"
+    },
+    {
+      "target": "local",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/roleAssignments/7820de0b-2293-4cf2-95ea-170b07016f76?api-version=2022-04-01",
+      "status": 204,
+      "body": null,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "at": "2026-11-08T07:31:54.141Z"
+    }
+  ],
+  "cleanup": true,
+  "localSetup": {
+    "status": 201,
+    "body": {
+      "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+      "name": "<group>",
+      "type": "Microsoft.Resources/resourceGroups",
+      "location": "westus2",
+      "tags": {},
+      "properties": {
+        "provisioningState": "Succeeded"
+      }
+    },
+    "headers": {
+      "content-type": "application/json"
+    }
+  },
+  "error": "local rejected the delegated assignment",
+  "completedAt": "2026-11-08T07:31:54.142Z"
+}

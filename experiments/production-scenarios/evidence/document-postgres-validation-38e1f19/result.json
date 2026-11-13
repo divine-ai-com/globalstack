@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "revision": "38e1f1989b984dadb8aaa35c1811ffe5746128da",
+  "sourceDirty": false,
+  "templateSha256": "47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9",
+  "scope": "Provider-level validation of an Entra-only PostgreSQL document template. No resource deployment or data-plane test.",
+  "startedAt": "2026-11-08T19:16:41.763Z",
+  "targets": {
+    "azure": {
+      "observations": [
+        {
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-document-postgres-<run>",
+            "name": "gs-document-postgres-<run>",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "templateHash": "3574208768556269524",
+              "parameters": {
+                "serviceName": {
+                  "type": "String",
+                  "value": "<service>"
+                },
+                "location": {
+                  "type": "String",
+                  "value": "westus2"
+                },
+                "runId": {
+                  "type": "String",
+                  "value": "<run>"
+                },
+                "tenantId": {
+                  "type": "String",
+                  "value": "<tenant>"
+                },
+                "administratorObjectId": {
+                  "type": "String",
+                  "value": "<pilot-principal>"
+                },
+                "administratorName": {
+                  "type": "String",
+                  "value": "globalstack-conformance-pilot"
+                }
+              },
+              "extensions": [],
+              "mode": "Incremental",
+              "provisioningState": "Succeeded",
+              "timestamp": "2026-11-08T19:16:42.5690009Z",
+              "duration": "PT0S",
+              "correlationId": "db1b5877-707c-40e7-814c-04ee89a65fd8",
+              "providers": [
+                {
+                  "namespace": "Microsoft.DBforPostgreSQL",
+                  "resourceTypes": [
+                    {
+                      "resourceType": "flexibleServers",
+                      "locations": [
+                        "westus2"
+                      ]
+                    },
+                    {
+                      "resourceType": "flexibleServers/administrators",
+                      "locations": [
+                        null
+                      ]
+                    },
+                    {
+                      "resourceType": "flexibleServers/databases",
+                      "locations": [
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "dependsOn": [
+                    {
+                      "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db",
+                      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+                      "resourceName": "<service>-db"
+                    }
+                  ],
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db/administrators/<pilot-principal>",
+                  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/administrators",
+                  "resourceName": "<service>-db/<pilot-principal>"
+                },
+                {
+                  "dependsOn": [
+                    {
+                      "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db",
+                      "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+                      "resourceName": "<service>-db"
+                    }
+                  ],
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db/databases/documents",
+                  "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+                  "resourceName": "<service>-db/documents"
+                }
+              ],
+              "validatedResources": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db/administrators/<pilot-principal>"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db/databases/documents"
+                }
+              ],
+              "validationLevel": "Provider"
+            }
+          },
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "x-ms-request-id": "db1b5877-707c-40e7-814c-04ee89a65fd8",
+            "x-ms-correlation-request-id": "db1b5877-707c-40e7-814c-04ee89a65fd8"
+          }
+        }
+      ],
+      "terminal": true
+    },
+    "local": {
+      "observations": [
+        {
+          "status": 200,
+          "body": {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-document-postgres-<run>",
+            "name": "gs-document-postgres-<run>",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "validationLevel": "Provider",
+              "mode": "Incremental",
+              "parameters": {
+                "serviceName": {
+                  "type": "String",
+                  "value": "<service>"
+                },
+                "location": {
+                  "type": "String",
+                  "value": "westus2"
+                },
+                "runId": {
+                  "type": "String",
+                  "value": "<run>"
+                },
+                "tenantId": {
+                  "type": "String",
+                  "value": "<tenant>"
+                },
+                "administratorObjectId": {
+                  "type": "String",
+                  "value": "<pilot-principal>"
+                },
+                "administratorName": {
+                  "type": "String",
+                  "value": "globalstack-conformance-pilot"
+                }
+              },
+              "validatedResources": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db/administrators/<pilot-principal>"
+                },
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<service>-db/databases/documents"
+                }
+              ],
+              "timestamp": "2026-11-08T19:16:42.963Z",
+              "duration": "PT0S",
+              "correlationId": "50256202-32e3-4a85-91d6-661c5cf56450"
+            }
+          },
+          "headers": {
+            "content-type": "application/json"
+          }
+        }
+      ],
+      "terminal": true
+    }
+  },
+  "noResourcesCreated": true,
+  "azureResourceCountAfter": 0,
+  "deploymentRecordStatus": 404,
+  "completedAt": "2026-11-08T19:16:47.973Z"
+}

@@ -1,0 +1,1167 @@
+WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+
+MS_FUNCTION_LOGS 4,,mesh-placeholder,,RuntimeVersionInventory,Functions.Linux.RuntimeInventory,"runtime=node;actualVersion=22.23.4;probeStatus=success","Runtime version inventory.",4.1055.300.3,2026-11-07T17:50:11.955Z,,"",,,,,,
+info: Host.Triggers.DurableTask[0]
+      Using the default storage provider: AzureStorage.
+warn: Host.Triggers.DurableTask[0]
+      Durable Functions Distributed Tracing V2 is GA now! Learn how to enable the feature by visiting aka.ms/durable-distributed-tracing. To disable this message, you can configure distributedTracingEnabled to "true" and version to "V2" or "None". Setting it to "None" would in effect disable the feature.
+info: Host.Triggers.Warmup[0]
+      Initializing Warmup Extension.
+info: Host.Triggers.DurableTask[0]
+      Durable extension configuration loaded: {"defaultVersion":null,"versionMatchStrategy":"CurrentOrOlder","versionFailureStrategy":"Reject","httpSettings":{"defaultAsyncRequestSleepTimeMilliseconds":30000,"useForwardedHost":false},"hubName":"DocumentPilot","storageProvider":{"connectionName":null,"connectionStringName":null,"controlQueueBatchSize":32,"partitionCount":4,"controlQueueBufferThreshold":256,"controlQueueVisibilityTimeout":"00:05:00","workItemQueueVisibilityTimeout":"00:05:00","trackingStoreConnectionName":null,"trackingStoreConnectionStringName":null,"trackingStoreNamePrefix":null,"fetchLargeMessagesAutomatically":true,"maxQueuePollingInterval":"00:00:30","useLegacyPartitionManagement":false,"useTablePartitionManagement":true,"allowReplayingTerminalInstances":false,"partitionTableOperationTimeout":"00:00:02","queueClientMessageEncoding":"UTF8","useInstanceTableEtag":false},"tracing":{"traceInputsAndOutputs":false,"allowVerboseLinuxTelemetry":false,"traceReplayEvents":false,"distributedTracingEnabled":false,"distributedTracingProtocol":"HttpCorrelationProtocol","version":"V1","includeInstanceIdInOperationName":false},"notifications":{"eventGrid":null},"maxConcurrentActivityFunctions":2,"maxConcurrentOrchestratorFunctions":4,"maxConcurrentEntityFunctions":20,"localRpcEndpointEnabled":null,"maxEntityOperationBatchSize":5000,"extendedSessionsEnabled":false,"extendedSessionIdleTimeoutInSeconds":30,"maxOrchestrationActions":100000,"overridableExistingInstanceStates":"NonRunningStates","entityMessageReorderWindowInMinutes":0,"useGracefulShutdown":false,"rollbackEntityOperationsOnExceptions":true,"throwStatusExceptionsOnRaiseEvent":null,"useAppLease":true,"storeInputsInOrchestrationHistory":false,"appLeaseOptions":{"renewInterval":"00:00:25","acquireInterval":"00:05:00","leaseInterval":"00:01:00"},"maxGrpcMessageSizeInBytes":4194304,"grpcHttpClientTimeout":"00:01:40"}. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2.
+info: Microsoft.Azure.WebJobs.Extensions.EventGrid.Config.EventGridExtensionConfigProvider[0]
+      registered EventGrid Endpoint = https://localhost/runtime/webhooks/eventgrid
+info: Host.Startup[503]
+      Initializing Host. OperationId: '6bf4d7ea-eba3-4924-bae4-383590a5c2a0'.
+info: Host.Startup[504]
+      Host initialization: ConsecutiveErrors=0, StartupCount=1, OperationId=6bf4d7ea-eba3-4924-bae4-383590a5c2a0
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ScriptJobHostOptions
+      {
+        "FileWatchingEnabled": true,
+        "FileLoggingMode": "DebugOnly",
+        "FunctionTimeout": "00:05:00",
+        "TelemetryMode": "ApplicationInsights"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      LoggerFilterOptions
+      {
+        "MinLevel": "None",
+        "Rules": [
+          {
+            "ProviderName": null,
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": "None",
+            "Filter": null
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          },
+          {
+            "ProviderName": null,
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          },
+          {
+            "ProviderName": null,
+            "CategoryName": "Host.Function.ToolingConsoleLog",
+            "LogLevel": "Information",
+            "Filter": null
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": "None",
+            "Filter": null
+          },
+          {
+            "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+            "CategoryName": null,
+            "LogLevel": null,
+            "Filter": "<AddFilter>b__0"
+          }
+        ]
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      HttpWorkerOptions
+      {
+        "Type": 0,
+        "Description": null,
+        "Arguments": null,
+        "Port": 40483,
+        "IsPortManuallySet": false,
+        "EnableForwardingHttpRequest": false,
+        "EnableProxyingHttpRequest": false,
+        "InitializationTimeout": "00:00:30",
+        "CustomRoutesEnabled": false,
+        "Http": null
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ScriptJobHostOptions
+      {
+        "FileWatchingEnabled": true,
+        "FileLoggingMode": "DebugOnly",
+        "FunctionTimeout": "00:05:00",
+        "TelemetryMode": "ApplicationInsights"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      FunctionResultAggregatorOptions
+      {
+        "BatchSize": 1000,
+        "FlushTimeout": "00:00:30",
+        "IsEnabled": true
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ConcurrencyOptions
+      {
+        "DynamicConcurrencyEnabled": false,
+        "MaximumFunctionConcurrency": 500,
+        "CPUThreshold": 0.8,
+        "SnapshotPersistenceEnabled": true
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      DurableTaskOptions
+      {
+        "HubName": "DocumentPilot",
+        "DefaultVersion": null,
+        "VersionMatchStrategy": "CurrentOrOlder",
+        "VersionFailureStrategy": "Reject",
+        "MaxConcurrentActivityFunctions": 2,
+        "MaxConcurrentOrchestratorFunctions": 4,
+        "MaxConcurrentEntityFunctions": null,
+        "MaxEntityOperationBatchSize": null,
+        "ExtendedSessionsEnabled": false,
+        "ExtendedSessionIdleTimeoutInSeconds": 30,
+        "MaxOrchestrationActions": 100000,
+        "OverridableExistingInstanceStates": "NonRunningStates",
+        "EntityMessageReorderWindowInMinutes": 30,
+        "UseGracefulShutdown": false,
+        "RollbackEntityOperationsOnExceptions": true,
+        "ThrowStatusExceptionsOnRaiseEvent": null,
+        "UseAppLease": true,
+        "StoreInputsInOrchestrationHistory": false,
+        "LocalRpcEndpointEnabled": null,
+        "MaxGrpcMessageSizeInBytes": 4194304,
+        "GrpcHttpClientTimeout": "00:01:40",
+        "HttpSettings": {
+          "DefaultAsyncRequestSleepTimeMilliseconds": 30000,
+          "UseForwardedHost": false
+        },
+        "Tracing": {
+          "TraceInputsAndOutputs": false,
+          "AllowVerboseLinuxTelemetry": false,
+          "TraceReplayEvents": false,
+          "DistributedTracingEnabled": false,
+          "DistributedTracingProtocol": "HttpCorrelationProtocol",
+          "Version": 1,
+          "IncludeInstanceIdInOperationName": false
+        },
+        "Notifications": {
+          "EventGrid": null
+        },
+        "AppLeaseOptions": {
+          "RenewInterval": "00:00:25",
+          "AcquireInterval": "00:05:00",
+          "LeaseInterval": "00:01:00"
+        }
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      SingletonOptions
+      {
+        "LockPeriod": "00:00:15",
+        "ListenerLockPeriod": "00:01:00",
+        "LockAcquisitionTimeout": "10675199.02:48:05.4775807",
+        "LockAcquisitionPollingInterval": "00:00:05",
+        "ListenerLockRecoveryPollingInterval": "00:01:00"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      TimerTriggerPlatformOptions
+      {
+        "NonCronScheduleBehavior": "Allow"
+      }
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ScaleOptions
+      {
+        "ScaleMetricsMaxAge": "00:02:00",
+        "ScaleMetricsSampleInterval": "00:00:10",
+        "MetricsPurgeEnabled": true,
+        "IsTargetScalingEnabled": true,
+        "IsRuntimeScalingEnabled": false
+      }
+info: Microsoft.Azure.WebJobs.Hosting.JobHostService[0]
+      Starting JobHost
+info: Host.Startup[401]
+      Starting Host (HostId=ef407782166c-2137340777, InstanceId=6186e6c2-e27f-42f2-a1c8-2437deac64d9, Version=4.1055.300.3, ProcessId=10, AppDomainId=1, InDebugMode=False, InDiagnosticMode=False, FunctionsExtensionVersion=(null))
+info: Host.Startup[314]
+      Loading functions metadata
+info: Host.Startup[326]
+      Reading functions metadata (Custom)
+info: Host.Startup[327]
+      0 functions found (Custom)
+info: Host.Startup[315]
+      8 functions loaded
+info: Host.Startup[0]
+      Generating 8 job function(s)
+info: Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcFunctionInvocationDispatcher[0]
+      Worker process started and initialized.
+info: Host.Startup[0]
+      Found the following functions:
+      Host.Functions.deliverIndexChanges
+      Host.Functions.documentUploaded
+      Host.Functions.documentWorkflow
+      Host.Functions.recordProcessingFailure
+      Host.Functions.retryIndexChanges
+      Host.Functions.scanAndStore
+      Host.Functions.settleDocumentFailures
+      Host.Functions.workerHealth
+      
+info: Microsoft.Azure.WebJobs.Script.WebHost.WebScriptHostHttpRoutesManager[0]
+      Initializing function HTTP routes
+      Mapped function route 'api/health' [GET] to 'workerHealth'
+      
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      HttpOptions
+      {
+        "DynamicThrottlesEnabled": false,
+        "EnableChunkedRequestBinding": false,
+        "MaxConcurrentRequests": -1,
+        "MaxOutstandingRequests": -1,
+        "RoutePrefix": "api"
+      }
+info: Host.Startup[412]
+      Host initialized (231ms)
+info: Host.Triggers.DurableTask[0]
+      Starting task hub worker. Extension GUID 165f9939-667f-4570-a14f-795b1d9909a0. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 0.
+info: Host.Triggers.Timer[5]
+      The next 5 occurrences of the 'retryIndexChanges' schedule (Cron: '0,15,30,45 * * * * *') will be:
+      11/07/2026 17:50:30Z
+      11/07/2026 17:50:45Z
+      11/07/2026 17:51:00Z
+      11/07/2026 17:51:15Z
+      11/07/2026 17:51:30Z
+      
+info: Host.Triggers.Timer[5]
+      The next 5 occurrences of the 'settleDocumentFailures' schedule (Cron: '0,15,30,45 * * * * *') will be:
+      11/07/2026 17:50:30Z
+      11/07/2026 17:50:45Z
+      11/07/2026 17:51:00Z
+      11/07/2026 17:51:15Z
+      11/07/2026 17:51:30Z
+      
+info: Host.Triggers.DurableTask[0]
+      Opened local http RPC endpoint: http://127.0.0.1:17071/durabletask/. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 1.
+info: Host.Triggers.DurableTask[0]
+      Task hub worker started. Latency: 00:00:00.7948797. Extension GUID 165f9939-667f-4570-a14f-795b1d9909a0. InstanceId: . Function: . HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 2.
+info: Host.Startup[413]
+      Host started (1067ms)
+info: Host.Startup[0]
+      Job host started
+info: Function.workerHealth[1]
+      Executing 'Functions.workerHealth' (Reason='This function was programmatically called via the host APIs.', Id=16ed9391-ac19-4855-8884-601555d93372)
+info: Function.workerHealth[2]
+      Executed 'Functions.workerHealth' (Succeeded, Id=16ed9391-ac19-4855-8884-601555d93372, Duration=121ms)
+info: Host.General[337]
+      Host lock lease acquired by instance ID '00000000000000000000000046F94820'.
+info: Function.settleDocumentFailures[1]
+      Executing 'Functions.settleDocumentFailures' (Reason='Timer fired at 2026-11-07T17:50:30.0050871+00:00', Id=03e0e6d6-ea06-4ca9-bddb-a775971a57d1)
+info: Function.retryIndexChanges[1]
+      Executing 'Functions.retryIndexChanges' (Reason='Timer fired at 2026-11-07T17:50:30.0051031+00:00', Id=7bbb21ad-e5d9-4330-85d9-2d0fc210f58d)
+fail: Function.settleDocumentFailures[3]
+      Executed 'Functions.settleDocumentFailures' (Failed, Id=03e0e6d6-ea06-4ca9-bddb-a775971a57d1, Duration=60ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.settleDocumentFailures
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Function.retryIndexChanges[3]
+      Executed 'Functions.retryIndexChanges' (Failed, Id=7bbb21ad-e5d9-4330-85d9-2d0fc210f58d, Duration=60ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.retryIndexChanges
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.retryIndexChanges
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.settleDocumentFailures
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "eventgrid",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Function.documentUploaded[1]
+      Executing 'Functions.documentUploaded' (Reason='EventGrid trigger fired at 2026-11-07T17:50:41.8647002+00:00', Id=6b167e10-2c46-40df-8f9f-397bbe46cb9f)
+fail: Function.documentUploaded[3]
+      Executed 'Functions.documentUploaded' (Failed, Id=6b167e10-2c46-40df-8f9f-397bbe46cb9f, Duration=69ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.documentUploaded
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at handler (file:///home/site/wwwroot/functions.mjs:14:41)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+          at new Promise (<anonymous>)
+          at __awaiter (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:117:12)
+          at InvocationModel.invokeFunction (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:218:16)
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.documentUploaded
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at handler (file:///home/site/wwwroot/functions.mjs:14:41)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+          at new Promise (<anonymous>)
+          at __awaiter (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:117:12)
+          at InvocationModel.invokeFunction (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:218:16)
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "durabletask",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Microsoft.Azure.WebJobs.Script.WebHost.Authentication.AuthenticationLevelHandler[12]
+      AuthenticationScheme: WebJobsAuthLevel was challenged.
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "durabletask",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=746eb36d-7d6d-4726-aa43-036b68b08a11)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' started. IsReplay: False. Input: (Redacted 58 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 3. TaskEventId: -1
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' scheduled. Reason: documentWorkflow. IsReplay: False. State: Scheduled. RuntimeStatus: Pending. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 4. TargetInstanceId: (null).
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=746eb36d-7d6d-4726-aa43-036b68b08a11, Duration=169ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 5.
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' started. IsReplay: False. Input: (Redacted 60 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 6. TaskEventId: 0
+info: Function.scanAndStore[1]
+      Executing 'Functions.scanAndStore' (Reason='(null)', Id=b6e6d11d-0779-4f5c-a7ee-671c0ccc1e82)
+fail: Function.scanAndStore[3]
+      Executed 'Functions.scanAndStore' (Failed, Id=b6e6d11d-0779-4f5c-a7ee-671c0ccc1e82, Duration=13ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.scanAndStore
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.scanAndStore
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' failed with an error. Reason: System.Exception
+      . IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 7. TaskEventId: 0
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=cdb1fd86-bc11-465c-95ec-b2300612bfb1)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=cdb1fd86-bc11-465c-95ec-b2300612bfb1, Duration=41ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 8.
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "durabletask",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=a638e5b4-e9fe-4178-bde2-d4661f8b54bb)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=a638e5b4-e9fe-4178-bde2-d4661f8b54bb, Duration=11ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 9.
+info: Function.retryIndexChanges[1]
+      Executing 'Functions.retryIndexChanges' (Reason='Timer fired at 2026-11-07T17:50:45.0010980+00:00', Id=3a55278b-1ecc-4b32-be22-0eabfb44bbe7)
+info: Function.settleDocumentFailures[1]
+      Executing 'Functions.settleDocumentFailures' (Reason='Timer fired at 2026-11-07T17:50:45.0010980+00:00', Id=3eb7bbb1-5a9e-4558-9a66-62c9a738dcea)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' started. IsReplay: False. Input: (Redacted 60 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 10. TaskEventId: 2
+info: Function.scanAndStore[1]
+      Executing 'Functions.scanAndStore' (Reason='(null)', Id=c86aecda-1f70-40a8-a976-0df1da73a3ed)
+fail: Function.retryIndexChanges[3]
+      Executed 'Functions.retryIndexChanges' (Failed, Id=3a55278b-1ecc-4b32-be22-0eabfb44bbe7, Duration=8ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.retryIndexChanges
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Function.settleDocumentFailures[3]
+      Executed 'Functions.settleDocumentFailures' (Failed, Id=3eb7bbb1-5a9e-4558-9a66-62c9a738dcea, Duration=9ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.settleDocumentFailures
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Function.scanAndStore[3]
+      Executed 'Functions.scanAndStore' (Failed, Id=c86aecda-1f70-40a8-a976-0df1da73a3ed, Duration=6ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.scanAndStore
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.retryIndexChanges
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.settleDocumentFailures
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.scanAndStore
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' failed with an error. Reason: System.Exception
+      . IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 11. TaskEventId: 2
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=b5fa55a3-8774-4e7c-b913-170eaf5e921c)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=b5fa55a3-8774-4e7c-b913-170eaf5e921c, Duration=8ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 12.
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=7477ca24-2e19-4bb6-9278-0ac78461427e)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=7477ca24-2e19-4bb6-9278-0ac78461427e, Duration=9ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 13.
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' started. IsReplay: False. Input: (Redacted 60 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 14. TaskEventId: 4
+info: Function.scanAndStore[1]
+      Executing 'Functions.scanAndStore' (Reason='(null)', Id=4409efdb-e5cc-4ea1-9338-aacf0530a0c9)
+fail: Function.scanAndStore[3]
+      Executed 'Functions.scanAndStore' (Failed, Id=4409efdb-e5cc-4ea1-9338-aacf0530a0c9, Duration=5ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.scanAndStore
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.scanAndStore
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'scanAndStore (Activity)' failed with an error. Reason: System.Exception
+      . IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 15. TaskEventId: 4
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=41b6d6d6-f086-4288-9c4e-6580c769fff2)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=41b6d6d6-f086-4288-9c4e-6580c769fff2, Duration=32ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 16.
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=c8f301c0-12df-4125-8137-c8a62ef895e6)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' scheduled. Reason: documentWorkflow. IsReplay: False. State: Scheduled. RuntimeStatus: Pending. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 17. TargetInstanceId: (null).
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=c8f301c0-12df-4125-8137-c8a62ef895e6, Duration=12ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 18.
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' started. IsReplay: False. Input: (Redacted 60 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 19. TaskEventId: 6
+info: Function.recordProcessingFailure[1]
+      Executing 'Functions.recordProcessingFailure' (Reason='(null)', Id=c8cd600b-c425-470c-82fb-d170b3be0fa7)
+fail: Function.recordProcessingFailure[3]
+      Executed 'Functions.recordProcessingFailure' (Failed, Id=c8cd600b-c425-470c-82fb-d170b3be0fa7, Duration=6ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.recordProcessingFailure
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.recordProcessingFailure
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' failed with an error. Reason: System.Exception
+      . IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 20. TaskEventId: 6
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=2e4e1dc1-674b-4a75-a4b6-3de5e68f444d)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=2e4e1dc1-674b-4a75-a4b6-3de5e68f444d, Duration=10ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 21.
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "durabletask",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=e928bb1b-454e-4e62-a3a7-c1a45960ebdc)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=e928bb1b-454e-4e62-a3a7-c1a45960ebdc, Duration=10ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 22.
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' started. IsReplay: False. Input: (Redacted 60 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 23. TaskEventId: 8
+info: Function.recordProcessingFailure[1]
+      Executing 'Functions.recordProcessingFailure' (Reason='(null)', Id=01ade3f2-27f2-43b9-9cf7-b8a39d850572)
+fail: Function.recordProcessingFailure[3]
+      Executed 'Functions.recordProcessingFailure' (Failed, Id=01ade3f2-27f2-43b9-9cf7-b8a39d850572, Duration=3ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.recordProcessingFailure
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.recordProcessingFailure
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' failed with an error. Reason: System.Exception
+      . IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 24. TaskEventId: 8
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=faa1b461-6af0-4959-9a84-6982c1a597cc)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=faa1b461-6af0-4959-9a84-6982c1a597cc, Duration=10ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 25.
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "durabletask",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=9612e581-838a-4175-ac87-21d5011f9f1f)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=9612e581-838a-4175-ac87-21d5011f9f1f, Duration=9ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 26.
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' started. IsReplay: False. Input: (Redacted 60 characters). State: Started. RuntimeStatus: Running. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 27. TaskEventId: 10
+info: Function.recordProcessingFailure[1]
+      Executing 'Functions.recordProcessingFailure' (Reason='(null)', Id=c4f78528-538b-4818-baf4-55a1ff869614)
+fail: Function.recordProcessingFailure[3]
+      Executed 'Functions.recordProcessingFailure' (Failed, Id=c4f78528-538b-4818-baf4-55a1ff869614, Duration=4ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.recordProcessingFailure
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.recordProcessingFailure
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'recordProcessingFailure (Activity)' failed with an error. Reason: System.Exception
+      . IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 28. TaskEventId: 10
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=625c004c-8d86-4ec2-91d4-dfd1bf5ce2bf)
+info: Function.documentWorkflow[2]
+      Executed 'Functions.documentWorkflow' (Succeeded, Id=625c004c-8d86-4ec2-91d4-dfd1bf5ce2bf, Duration=12ms)
+info: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' awaited. IsReplay: False. State: Awaited. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 29.
+info: Function.documentWorkflow[1]
+      Executing 'Functions.documentWorkflow' (Reason='(null)', Id=0d44e103-f8a1-4240-8406-3ac191617abf)
+fail: Host.Triggers.DurableTask[0]
+      probe-428aacc141: Function 'documentWorkflow (Orchestrator)' failed with an error. Reason: DurableTask.Core.Exceptions.OrchestrationFailureException
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.OutOfProcOrchestrationShim.ScheduleDurableTaskEvents(OrchestrationInvocationResult result) in /_/src/WebJobs.Extensions.DurableTask/Listener/OutOfProcOrchestrationShim.cs:line 105
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.OutOfProcOrchestrationShim.HandleDurableTaskReplay(OrchestrationInvocationResult executionJson) in /_/src/WebJobs.Extensions.DurableTask/Listener/OutOfProcOrchestrationShim.cs:line 69
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.TaskOrchestrationShim.TraceAndReplay(Object result, Exception ex) in /_/src/WebJobs.Extensions.DurableTask/Listener/TaskOrchestrationShim.cs:line 242
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.TaskOrchestrationShim.InvokeUserCodeAndHandleResults(RegisteredFunctionInfo orchestratorInfo, OrchestrationContext innerContext) in /_/src/WebJobs.Extensions.DurableTask/Listener/TaskOrchestrationShim.cs:line 181. IsReplay: False. State: Failed. RuntimeStatus: Failed. HubName: DocumentPilot. AppName: . SlotName: . ExtensionVersion: 3.15.2. SequenceNumber: 30. TaskEventId: -1
+fail: Function.documentWorkflow[3]
+      Executed 'Functions.documentWorkflow' (Failed, Id=0d44e103-f8a1-4240-8406-3ac191617abf, Duration=29ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.documentWorkflow
+       ---> DurableTask.Core.Exceptions.OrchestrationFailureException: Orchestrator function 'documentWorkflow' failed: Activity function 'recordProcessingFailure' failed:  Missing application setting STORAGE_ENDPOINT 
+       {"$type":"System.Exception, System.Private.CoreLib","ClassName":"System.Exception","Message":" Missing application setting STORAGE_ENDPOINT","Data":null,"InnerException":{"$type":"Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException, Microsoft.Azure.WebJobs.Script","IsUserException":false,"RemoteStackTrace":"AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT\n    at required (file:///home/site/wwwroot/adapters.mjs:13:10)\n    at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)\n    at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)\n    at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)\n    at clients (file:///home/site/wwwroot/adapters.mjs:32:35)\n    at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)\n    at handler (file:///home/site/wwwroot/functions.mjs:45:92)\n    at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)\n    at Generator.next (<anonymous>)\n    at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71","RemoteMessage":"Missing application setting STORAGE_ENDPOINT","RemoteTypeName":null,"Message":"Result: Failure\nType: \nException: Missing application setting STORAGE_ENDPOINT\nStack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT\n    at required (file:///home/site/wwwroot/adapters.mjs:13:10)\n    at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)\n    at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)\n    at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)\n    at clients (file:///home/site/wwwroot/adapters.mjs:32:35)\n    at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)\n    at handler (file:///home/site/wwwroot/functions.mjs:45:92)\n    at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)\n    at Generator.next (<anonymous>)\n    at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71","Data":{"$type":"System.Collections.ListDictionaryInternal, System.Private.CoreLib"},"InnerException":null,"HelpLink":null,"Source":"System.Private.CoreLib","HResult":-2146233088,"StackTrace":"   at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103\n   at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82\n   at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315"},"HelpURL":null,"StackTraceString":null,"RemoteStackTraceString":null,"RemoteStackIndex":0,"ExceptionMethod":null,"HResult":-2146233088,"Source":null,"WatsonBuckets":null}
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.OutOfProcOrchestrationShim.ScheduleDurableTaskEvents(OrchestrationInvocationResult result) in /_/src/WebJobs.Extensions.DurableTask/Listener/OutOfProcOrchestrationShim.cs:line 105
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.OutOfProcOrchestrationShim.HandleDurableTaskReplay(OrchestrationInvocationResult executionJson) in /_/src/WebJobs.Extensions.DurableTask/Listener/OutOfProcOrchestrationShim.cs:line 69
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.TaskOrchestrationShim.TraceAndReplay(Object result, Exception ex) in /_/src/WebJobs.Extensions.DurableTask/Listener/TaskOrchestrationShim.cs:line 242
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.TaskOrchestrationShim.InvokeUserCodeAndHandleResults(RegisteredFunctionInfo orchestratorInfo, OrchestrationContext innerContext) in /_/src/WebJobs.Extensions.DurableTask/Listener/TaskOrchestrationShim.cs:line 181
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.<>c__DisplayClass89_0.<<OrchestrationMiddleware>b__2>d.MoveNext() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 875
+      --- End of stack trace from previous location ---
+         at Microsoft.Azure.WebJobs.Host.Executors.TriggeredFunctionExecutor`1.<>c__DisplayClass7_0.<<TryExecuteAsync>b__0>d.MoveNext() in /_/src/Microsoft.Azure.WebJobs.Host/Executors/TriggeredFunctionExecutor.cs:line 51
+      --- End of stack trace from previous location ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.documentWorkflow
+       ---> DurableTask.Core.Exceptions.OrchestrationFailureException: Orchestrator function 'documentWorkflow' failed: Activity function 'recordProcessingFailure' failed:  Missing application setting STORAGE_ENDPOINT 
+       {"$type":"System.Exception, System.Private.CoreLib","ClassName":"System.Exception","Message":" Missing application setting STORAGE_ENDPOINT","Data":null,"InnerException":{"$type":"Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException, Microsoft.Azure.WebJobs.Script","IsUserException":false,"RemoteStackTrace":"AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT\n    at required (file:///home/site/wwwroot/adapters.mjs:13:10)\n    at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)\n    at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)\n    at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)\n    at clients (file:///home/site/wwwroot/adapters.mjs:32:35)\n    at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)\n    at handler (file:///home/site/wwwroot/functions.mjs:45:92)\n    at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)\n    at Generator.next (<anonymous>)\n    at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71","RemoteMessage":"Missing application setting STORAGE_ENDPOINT","RemoteTypeName":null,"Message":"Result: Failure\nType: \nException: Missing application setting STORAGE_ENDPOINT\nStack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT\n    at required (file:///home/site/wwwroot/adapters.mjs:13:10)\n    at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)\n    at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)\n    at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)\n    at clients (file:///home/site/wwwroot/adapters.mjs:32:35)\n    at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)\n    at handler (file:///home/site/wwwroot/functions.mjs:45:92)\n    at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)\n    at Generator.next (<anonymous>)\n    at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71","Data":{"$type":"System.Collections.ListDictionaryInternal, System.Private.CoreLib"},"InnerException":null,"HelpLink":null,"Source":"System.Private.CoreLib","HResult":-2146233088,"StackTrace":"   at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103\n   at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82\n   at Microsoft.Azure.WebJobs.Script.Description.FunctionGenerator.Coerce[T](Task`1 src) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionGenerator.cs:line 225\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532\n   at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315"},"HelpURL":null,"StackTraceString":null,"RemoteStackTraceString":null,"RemoteStackIndex":0,"ExceptionMethod":null,"HResult":-2146233088,"Source":null,"WatsonBuckets":null}
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.OutOfProcOrchestrationShim.ScheduleDurableTaskEvents(OrchestrationInvocationResult result) in /_/src/WebJobs.Extensions.DurableTask/Listener/OutOfProcOrchestrationShim.cs:line 105
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.OutOfProcOrchestrationShim.HandleDurableTaskReplay(OrchestrationInvocationResult executionJson) in /_/src/WebJobs.Extensions.DurableTask/Listener/OutOfProcOrchestrationShim.cs:line 69
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.TaskOrchestrationShim.TraceAndReplay(Object result, Exception ex) in /_/src/WebJobs.Extensions.DurableTask/Listener/TaskOrchestrationShim.cs:line 242
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.TaskOrchestrationShim.InvokeUserCodeAndHandleResults(RegisteredFunctionInfo orchestratorInfo, OrchestrationContext innerContext) in /_/src/WebJobs.Extensions.DurableTask/Listener/TaskOrchestrationShim.cs:line 181
+         at Microsoft.Azure.WebJobs.Extensions.DurableTask.DurableTaskExtension.<>c__DisplayClass89_0.<<OrchestrationMiddleware>b__2>d.MoveNext() in /_/src/WebJobs.Extensions.DurableTask/DurableTaskExtension.cs:line 875
+      --- End of stack trace from previous location ---
+         at Microsoft.Azure.WebJobs.Host.Executors.TriggeredFunctionExecutor`1.<>c__DisplayClass7_0.<<TryExecuteAsync>b__0>d.MoveNext() in /_/src/Microsoft.Azure.WebJobs.Host/Executors/TriggeredFunctionExecutor.cs:line 51
+      --- End of stack trace from previous location ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+info: Microsoft.Azure.WebJobs.Hosting.OptionsLoggingService[0]
+      ExtensionSystemOptions
+      {
+        "extensionName": "durabletask",
+        "webhookAuthorizationLevel": "System"
+      }
+info: Function.retryIndexChanges[1]
+      Executing 'Functions.retryIndexChanges' (Reason='Timer fired at 2026-11-07T17:51:00.0009988+00:00', Id=2c90e853-113b-4d5d-9169-11f007de5b23)
+info: Function.settleDocumentFailures[1]
+      Executing 'Functions.settleDocumentFailures' (Reason='Timer fired at 2026-11-07T17:51:00.0007905+00:00', Id=ddca315d-0acc-4ed0-91cd-e3672cf07b00)
+fail: Function.retryIndexChanges[3]
+      Executed 'Functions.retryIndexChanges' (Failed, Id=2c90e853-113b-4d5d-9169-11f007de5b23, Duration=5ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.retryIndexChanges
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Function.settleDocumentFailures[3]
+      Executed 'Functions.settleDocumentFailures' (Failed, Id=ddca315d-0acc-4ed0-91cd-e3672cf07b00, Duration=5ms)
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.settleDocumentFailures
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.retryIndexChanges
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+fail: Host.Results[0]
+      Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: Functions.settleDocumentFailures
+       ---> Microsoft.Azure.WebJobs.Script.Workers.Rpc.RpcException: Result: Failure
+      Type: 
+      Exception: Missing application setting STORAGE_ENDPOINT
+      Stack: AssertionError [ERR_ASSERTION]: Missing application setting STORAGE_ENDPOINT
+          at required (file:///home/site/wwwroot/adapters.mjs:13:10)
+          at endpoint (file:///home/site/wwwroot/adapters.mjs:17:17)
+          at applicationConfig (file:///home/site/wwwroot/adapters.mjs:23:29)
+          at createClients (file:///home/site/wwwroot/adapters.mjs:44:18)
+          at clients (file:///home/site/wwwroot/adapters.mjs:32:35)
+          at drainOutbox (file:///home/site/wwwroot/adapters.mjs:147:49)
+          at handler (file:///home/site/wwwroot/functions.mjs:45:92)
+          at InvocationModel.<anonymous> (/home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:220:46)
+          at Generator.next (<anonymous>)
+          at /home/site/wwwroot/node_modules/@azure/functions/dist/azure-functions.js:121:71
+         at Microsoft.Azure.WebJobs.Script.Description.WorkerFunctionInvoker.InvokeCore(Object[] parameters, FunctionInvocationContext context) in /src/azure-functions-host/src/WebJobs.Script.Grpc/WorkerFunctionInvoker.cs:line 103
+         at Microsoft.Azure.WebJobs.Script.Description.FunctionInvokerBase.Invoke(Object[] parameters) in /src/azure-functions-host/src/WebJobs.Script/Description/FunctionInvokerBase.cs:line 82
+         at Microsoft.Azure.WebJobs.Host.Executors.VoidTaskMethodInvoker`2.InvokeAsync(TReflected instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/VoidTaskMethodInvoker.cs:line 20
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionInvoker`2.InvokeAsync(Object instance, Object[] arguments) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionInvoker.cs:line 53
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.InvokeWithTimeoutAsync(IFunctionInvoker invoker, ParameterHelper parameterHelper, CancellationTokenSource timeoutTokenSource, CancellationTokenSource functionCancellationTokenSource, Boolean throwOnTimeout, TimeSpan timerInterval, IFunctionInstance instance) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 590
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithWatchersAsync(IFunctionInstanceEx instance, ParameterHelper parameterHelper, ILogger logger, CancellationTokenSource functionCancellationTokenSource) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 532
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 315
+         --- End of inner exception stack trace ---
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.ExecuteWithLoggingAsync(IFunctionInstanceEx instance, FunctionStartedMessage message, FunctionInstanceLogEntry instanceLogEntry, ParameterHelper parameterHelper, ILogger logger, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 361
+         at Microsoft.Azure.WebJobs.Host.Executors.FunctionExecutor.TryExecuteAsync(IFunctionInstance functionInstance, CancellationToken cancellationToken) in /_/src/Microsoft.Azure.WebJobs.Host/Executors/FunctionExecutor.cs:line 113
+

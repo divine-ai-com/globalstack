@@ -9,8 +9,15 @@ import { platforms } from './platforms.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
-const platform = args.find(arg => arg.startsWith('--platform='))?.slice(11);
-assert.ok(platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
+const validationOnly = args.includes('--validation-only');
+const searchComponent = args.includes('--search-component');
+const storageComponent = args.includes('--storage-component');
+const webComponent = args.includes('--web-component');
+const scannerComponent = args.includes('--scanner-component');
+const workerScanner = args.includes('--worker-scanner');
+assert.ok([validationOnly, searchComponent, storageComponent, webComponent, scannerComponent, workerScanner].filter(Boolean).length <= 1, 'Select only one scenario runner');
+const platform = validationOnly ? `document-${process.env.VALIDATION_COMPONENT ?? 'search'}-validation` : searchComponent ? 'search-component' : storageComponent ? 'storage-component' : webComponent ? 'web-component' : scannerComponent ? 'scanner-component' : workerScanner ? 'worker-scanner' : args.find(arg => arg.startsWith('--platform='))?.slice(11);
+assert.ok(validationOnly || searchComponent || storageComponent || webComponent || scannerComponent || workerScanner || platforms.some(item => item.id === platform), 'Select --platform=<registered ID>');
 const modulePath = process.env.PAIRED_PLAYWRIGHT_MODULE;
 assert.ok(modulePath?.startsWith('/'), 'Absolute path to installed playwright-core/index.mjs required');
 const { chromium } = await import(pathToFileURL(modulePath).href);
@@ -19,7 +26,13 @@ await mkdir(root, { recursive: true, mode: 0o700 });
 const space = await statfs(root);
 assert.ok(space.bavail * space.bsize >= 40 * 1024 ** 3, '40 GiB reserve required');
 const runDir = resolve(root, 'run');
-const template = await readFile(resolve(here, 'walkthrough.html'), 'utf8');
+let template = await readFile(resolve(here, 'walkthrough.html'), 'utf8');
+if (validationOnly) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep-compiled template; direct ARM validation against both targets.').replace('Empty resource group only.', 'Search foundation validation only. No application deployment or event-flow claim.');
+if (searchComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep-compiled template; Azure-first Search component deployment and requests.').replace('Empty resource group only.', 'Search component only. Full applications and Portal evidence remain pending.');
+if (storageComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'Azure-first Storage API contract requests, then identical local requests.').replace('Empty resource group only.', 'Storage component diagnostics. Not a native IaC deployment or Portal recording.');
+if (webComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'One Bicep template; Azure-first Linux hosting plan lifecycle.').replace('Empty resource group only.', 'P0v3 and EP1 plans only. No application runtime or Portal evidence.');
+if (scannerComponent) template = template.replace('Same fixture hashes and tool image for both targets.', 'Identical compiled templates and scanner image; Azure-first ingress observations.').replace('Empty resource group only.', 'Scanner component only. Worker traversal, full applications and Portal evidence remain pending.');
+if (workerScanner) template = template.replace('Same fixture hashes and tool image for both targets.', 'Identical compiled templates and images; generated endpoints are external configuration.').replace('Empty resource group only.', 'Actual Functions handler and scanner component. Event Grid, full applications and Portal evidence remain pending.');
 const events = async () => {
   try { return (await readFile(resolve(runDir, 'events.ndjson'), 'utf8')).split('\n').filter(Boolean).flatMap(line => { try { return [JSON.parse(line)]; } catch { return []; } }); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
@@ -43,7 +56,10 @@ try {
   await page.waitForTimeout(500);
   console.log(`Walkthrough: ${root}`);
   exitCode = await new Promise((done, fail) => {
-    const child = spawn(process.execPath, [resolve(here, 'run.mjs'), ...args], { env: { ...process.env, PAIRED_RUN_DIR: runDir }, stdio: 'inherit' });
+    const runner = validationOnly ? resolve(here, '../production-scenarios/validate-search.mjs')
+      : searchComponent ? resolve(here, '../production-scenarios/search-component.mjs')
+      : storageComponent ? resolve(here, '../production-scenarios/storage-component.mjs') : webComponent ? resolve(here, '../production-scenarios/web-component.mjs') : scannerComponent ? resolve(here, '../production-scenarios/scanner-azure.mjs') : workerScanner ? resolve(here, '../production-scenarios/worker-scanner-paired.mjs') : resolve(here, 'run.mjs');
+    const child = spawn(process.execPath, [runner, ...args], { env: { ...process.env, PAIRED_RUN_DIR: runDir }, stdio: 'inherit' });
     child.on('error', fail); child.on('exit', code => done(code ?? 1));
   });
   await page.waitForTimeout(1500);
@@ -58,6 +74,6 @@ const captured = await events();
 const replay = template.replace('<!--CAPTURE-->', `<script id="capture" type="application/json">${JSON.stringify(captured).replaceAll('<', '\\u003c')}</script>`);
 await writeFile(resolve(root, 'replay.html'), replay, { mode: 0o600 });
 const digest = async name => createHash('sha256').update(await readFile(resolve(root, name))).digest('hex');
-await writeFile(resolve(root, 'recording.json'), JSON.stringify({ platform, startedAt, completedAt: new Date().toISOString(), exitCode, eventCount: captured.length, video: 'terminal-walkthrough.webm', sha256: await digest('terminal-walkthrough.webm'), eventSha256: await digest('run/events.ndjson'), kind: 'Browser video of live sanitized command output and API observations, not Azure Portal', portalScreenshots: 'pending', timing: 'Actual capture speed; requested targets run sequentially', browserVersion, playwrightVersion: JSON.parse(await readFile(resolve(dirname(modulePath), 'package.json'), 'utf8')).version }, null, 2) + '\n');
+await writeFile(resolve(root, 'recording.json'), JSON.stringify({ platform, startedAt, completedAt: new Date().toISOString(), exitCode, eventCount: captured.length, video: 'terminal-walkthrough.webm', sha256: await digest('terminal-walkthrough.webm'), eventSha256: await digest('run/events.ndjson'), kind: 'Browser video of live command output and partially redacted API observations, not Azure Portal', privacyLimitations: 'Tenant, client, resource-group and resource names may remain visible.', portalScreenshots: 'pending', timing: 'Actual capture speed; requested targets run sequentially', browserVersion, playwrightVersion: JSON.parse(await readFile(resolve(dirname(modulePath), 'package.json'), 'utf8')).version }, null, 2) + '\n');
 console.log(`Recorded video and replay: ${root}`);
 process.exitCode = exitCode;

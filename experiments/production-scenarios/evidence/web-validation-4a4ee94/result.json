@@ -1,0 +1,1164 @@
+{
+  "schemaVersion": 1,
+  "revision": "4a4ee94e275b23dce5424de4f6da31f5cb41735a",
+  "sourceDirty": false,
+  "source": {
+    "web-validation.bicep": "4def170c191b0c858a6eca36b597a94fb8843af7575d90dfcdb3b9193cd352c4",
+    "web-plans.bicep": "b07c65611b9044d438f280d4eaa04c578327c13a5d9986cfe7a941cdef2a533e"
+  },
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "startedAt": "2026-11-07T08:46:48.980Z",
+  "scope": "Bicep-compiled web foundation ARM validation, not full scenario deployment or integration.",
+  "transport": "Native Bicep compilation followed by direct ARM validation requests, not a native deployment CLI trace.",
+  "attempts": [
+    {
+      "phase": "web-hosting-westus2",
+      "validationLevel": "Provider",
+      "requestSha256": "819f760aad9a5b468ae5d5e914ddb312f3f944182c7fade309f7943bfab1a5d7",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "web-hosting-westus2",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T08:46:54.126Z",
+          "completedAt": "2026-11-07T08:46:59.530Z",
+          "request": {
+            "location": "westus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "10333790161749648357"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "document-hosting",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "5459198238252862264"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "linux",
+                            "sku": {
+                              "name": "P0v3",
+                              "tier": "PremiumV3",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "perSiteScaling": false,
+                              "elasticScaleEnabled": false
+                            }
+                          },
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-worker', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "elastic",
+                            "sku": {
+                              "name": "EP1",
+                              "tier": "ElasticPremium",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "maximumElasticWorkerCount": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gs5e5e1ce9d259"
+                },
+                "location": {
+                  "value": "westus2"
+                }
+              }
+            }
+          },
+          "status": 400,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "2612",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 07 Nov 2026 08:46:58 GMT",
+            "expires": "-1",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "8b8a35ec-f313-4a32-a219-a8aab768615d",
+            "x-ms-failure-cause": "gateway",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+            "x-ms-ratelimit-remaining-subscription-writes": "199",
+            "x-ms-request-id": "8b8a35ec-f313-4a32-a219-a8aab768615d",
+            "x-ms-routing-request-id": "UAECENTRAL:20261107T084659Z:8b8a35ec-f313-4a32-a219-a8aab768615d",
+            "x-msedge-ref": "Ref A: EF91E1C3FA9644D9B17A1D736DAA798A Ref B: AUH211051121029 Ref C: 2026-11-07T08:46:54Z"
+          },
+          "body": {
+            "error": {
+              "code": "InvalidTemplateDeployment",
+              "message": "The template deployment '<deployment>' is not valid according to the validation procedure. The following resource provider(s) - 'Microsoft.Web/serverFarms (2024-11-01)' reported preflight validation errors. Tracking id is '8b8a35ec-f313-4a32-a219-a8aab768615d'. See inner errors for details.",
+              "details": [
+                {
+                  "code": "ValidationForMultipleResourcesFailed",
+                  "message": "Validation failed for multiple resources. Check 'Error.Details[]' for more information.",
+                  "details": [
+                    {
+                      "code": "SubscriptionIsOverQuotaForSku",
+                      "message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (P0v3 App Service instances): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (P0v3 App Service instances): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.\r\nSuggested next steps: To request a quota increase, go to the Azure portal Quotas page (https://aka.ms/azure-quota), set Provider to App Service, then create a New Quota Request. Alternatively, try a different region or a lower App Service Plan SKU or worker count. For more information, see https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits."
+                    },
+                    {
+                      "code": "SubscriptionIsOverQuotaForSku",
+                      "message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (EP1 App Service instances): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (EP1 App Service instances): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed.\r\nSuggested next steps: To request a quota increase, go to the Azure portal Quotas page (https://aka.ms/azure-quota), set Provider to App Service, then create a New Quota Request. Alternatively, try a different region or a lower App Service Plan SKU or worker count. For more information, see https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "polls": [],
+          "terminalObserved": true
+        },
+        {
+          "target": "local",
+          "phase": "web-hosting-westus2",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T08:46:59.534Z",
+          "completedAt": "2026-11-07T08:46:59.589Z",
+          "request": {
+            "location": "westus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "10333790161749648357"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "document-hosting",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "5459198238252862264"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "linux",
+                            "sku": {
+                              "name": "P0v3",
+                              "tier": "PremiumV3",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "perSiteScaling": false,
+                              "elasticScaleEnabled": false
+                            }
+                          },
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-worker', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "elastic",
+                            "sku": {
+                              "name": "EP1",
+                              "tier": "ElasticPremium",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "maximumElasticWorkerCount": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gs5e5e1ce9d259"
+                },
+                "location": {
+                  "value": "westus2"
+                }
+              }
+            }
+          },
+          "status": 501,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "320",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 08:46:59 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackValidationNotImplemented",
+              "message": "Provider validation for Microsoft.Web/serverfarms is not implemented.",
+              "additionalInfo": [
+                {
+                  "type": "TemplateViolation",
+                  "info": {
+                    "path": "properties.template.resources"
+                  }
+                }
+              ]
+            }
+          },
+          "polls": [],
+          "terminalObserved": true
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    },
+    {
+      "phase": "web-hosting-eastus2",
+      "validationLevel": "Provider",
+      "requestSha256": "c229df3bcce4c79669e1b848da2292c201181e20f1f2b1dbf2eb470c54376896",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "web-hosting-eastus2",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T08:46:59.596Z",
+          "completedAt": "2026-11-07T08:47:03.715Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "10333790161749648357"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "document-hosting",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "5459198238252862264"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "linux",
+                            "sku": {
+                              "name": "P0v3",
+                              "tier": "PremiumV3",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "perSiteScaling": false,
+                              "elasticScaleEnabled": false
+                            }
+                          },
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-worker', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "elastic",
+                            "sku": {
+                              "name": "EP1",
+                              "tier": "ElasticPremium",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "maximumElasticWorkerCount": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gs5e5e1ce9d259"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 400,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "1696",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 07 Nov 2026 08:47:03 GMT",
+            "expires": "-1",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "71a30aee-b49c-4b7b-8157-cd63bf7a1e69",
+            "x-ms-failure-cause": "gateway",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+            "x-ms-ratelimit-remaining-subscription-writes": "199",
+            "x-ms-request-id": "71a30aee-b49c-4b7b-8157-cd63bf7a1e69",
+            "x-ms-routing-request-id": "UAENORTH:20261107T084703Z:71a30aee-b49c-4b7b-8157-cd63bf7a1e69",
+            "x-msedge-ref": "Ref A: 350EFE6012DC484DA7F2AB504F9C5A6A Ref B: AUH211051121029 Ref C: 2026-11-07T08:46:59Z"
+          },
+          "body": {
+            "error": {
+              "code": "InvalidTemplateDeployment",
+              "message": "The template deployment '<deployment>' is not valid according to the validation procedure. The following resource provider(s) - 'Microsoft.Web/serverFarms (2024-11-01)' reported preflight validation errors. Tracking id is '71a30aee-b49c-4b7b-8157-cd63bf7a1e69'. See inner errors for details.",
+              "details": [
+                {
+                  "code": "ValidationForMultipleResourcesFailed",
+                  "message": "Validation failed for multiple resources. Check 'Error.Details[]' for more information.",
+                  "details": [
+                    {
+                      "code": "SubscriptionIsOverQuotaForSku",
+                      "message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (P0v3 VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (P0v3 VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed."
+                    },
+                    {
+                      "code": "SubscriptionIsOverQuotaForSku",
+                      "message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (EP1 VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (EP1 VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "polls": [],
+          "terminalObserved": true
+        },
+        {
+          "target": "local",
+          "phase": "web-hosting-eastus2",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T08:47:03.720Z",
+          "completedAt": "2026-11-07T08:47:03.742Z",
+          "request": {
+            "location": "eastus2",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "10333790161749648357"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "document-hosting",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "5459198238252862264"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "linux",
+                            "sku": {
+                              "name": "P0v3",
+                              "tier": "PremiumV3",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "perSiteScaling": false,
+                              "elasticScaleEnabled": false
+                            }
+                          },
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-worker', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "elastic",
+                            "sku": {
+                              "name": "EP1",
+                              "tier": "ElasticPremium",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "maximumElasticWorkerCount": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gs5e5e1ce9d259"
+                },
+                "location": {
+                  "value": "eastus2"
+                }
+              }
+            }
+          },
+          "status": 501,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "320",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 08:47:03 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackValidationNotImplemented",
+              "message": "Provider validation for Microsoft.Web/serverfarms is not implemented.",
+              "additionalInfo": [
+                {
+                  "type": "TemplateViolation",
+                  "info": {
+                    "path": "properties.template.resources"
+                  }
+                }
+              ]
+            }
+          },
+          "polls": [],
+          "terminalObserved": true
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    },
+    {
+      "phase": "web-hosting-canadacentral",
+      "validationLevel": "Provider",
+      "requestSha256": "02b7635fa93a28f45180f7596b80287b4db9c0316135fff360a6921245d71c78",
+      "targets": [
+        {
+          "target": "azure",
+          "phase": "web-hosting-canadacentral",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T08:47:03.751Z",
+          "completedAt": "2026-11-07T08:47:07.347Z",
+          "request": {
+            "location": "canadacentral",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "10333790161749648357"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "document-hosting",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "5459198238252862264"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "linux",
+                            "sku": {
+                              "name": "P0v3",
+                              "tier": "PremiumV3",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "perSiteScaling": false,
+                              "elasticScaleEnabled": false
+                            }
+                          },
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-worker', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "elastic",
+                            "sku": {
+                              "name": "EP1",
+                              "tier": "ElasticPremium",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "maximumElasticWorkerCount": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gs5e5e1ce9d259"
+                },
+                "location": {
+                  "value": "canadacentral"
+                }
+              }
+            }
+          },
+          "status": 400,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "1696",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 07 Nov 2026 08:47:06 GMT",
+            "expires": "-1",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-cache": "CONFIG_NOCACHE",
+            "x-content-type-options": "nosniff",
+            "x-ms-correlation-request-id": "feacc803-14f4-4f5b-b786-ed5f4aa19918",
+            "x-ms-failure-cause": "gateway",
+            "x-ms-ratelimit-remaining-subscription-global-writes": "2999",
+            "x-ms-ratelimit-remaining-subscription-writes": "199",
+            "x-ms-request-id": "feacc803-14f4-4f5b-b786-ed5f4aa19918",
+            "x-ms-routing-request-id": "UAECENTRAL:20261107T084707Z:feacc803-14f4-4f5b-b786-ed5f4aa19918",
+            "x-msedge-ref": "Ref A: 5E6F01B8A0F74777A57259B3306DCD55 Ref B: AUH211051121029 Ref C: 2026-11-07T08:47:03Z"
+          },
+          "body": {
+            "error": {
+              "code": "InvalidTemplateDeployment",
+              "message": "The template deployment '<deployment>' is not valid according to the validation procedure. The following resource provider(s) - 'Microsoft.Web/serverFarms (2024-11-01)' reported preflight validation errors. Tracking id is 'feacc803-14f4-4f5b-b786-ed5f4aa19918'. See inner errors for details.",
+              "details": [
+                {
+                  "code": "ValidationForMultipleResourcesFailed",
+                  "message": "Validation failed for multiple resources. Check 'Error.Details[]' for more information.",
+                  "details": [
+                    {
+                      "code": "SubscriptionIsOverQuotaForSku",
+                      "message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (P0v3 VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (P0v3 VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed."
+                    },
+                    {
+                      "code": "SubscriptionIsOverQuotaForSku",
+                      "message": "Operation cannot be completed without additional quota. \r\nAdditional details - Location:  \r\nCurrent Limit (EP1 VMs): 0 \r\nCurrent Usage: 0\r\nAmount required for this deployment (EP1 VMs): 1 \r\n(Minimum) New Limit that you should request to enable this deployment: 1. \r\nNote that if you experience multiple scaling operations failing (in addition to this one) and need to accommodate the aggregate quota requirements of these operations, you will need to request a higher quota limit than the one currently displayed."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "polls": [],
+          "terminalObserved": true
+        },
+        {
+          "target": "local",
+          "phase": "web-hosting-canadacentral",
+          "method": "POST",
+          "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+          "startedAt": "2026-11-07T08:47:07.349Z",
+          "completedAt": "2026-11-07T08:47:07.357Z",
+          "request": {
+            "location": "canadacentral",
+            "properties": {
+              "mode": "Incremental",
+              "validationLevel": "Provider",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                  "_generator": {
+                    "name": "bicep",
+                    "version": "0.48.1.52935",
+                    "templateHash": "10333790161749648357"
+                  }
+                },
+                "parameters": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "serviceName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2025-04-01",
+                    "name": "[parameters('groupName')]",
+                    "location": "[parameters('location')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2025-04-01",
+                    "name": "document-hosting",
+                    "resourceGroup": "[parameters('groupName')]",
+                    "properties": {
+                      "expressionEvaluationOptions": {
+                        "scope": "inner"
+                      },
+                      "mode": "Incremental",
+                      "parameters": {
+                        "serviceName": {
+                          "value": "[parameters('serviceName')]"
+                        },
+                        "location": {
+                          "value": "[parameters('location')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "metadata": {
+                          "_generator": {
+                            "name": "bicep",
+                            "version": "0.48.1.52935",
+                            "templateHash": "5459198238252862264"
+                          }
+                        },
+                        "parameters": {
+                          "serviceName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "linux",
+                            "sku": {
+                              "name": "P0v3",
+                              "tier": "PremiumV3",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "perSiteScaling": false,
+                              "elasticScaleEnabled": false
+                            }
+                          },
+                          {
+                            "type": "Microsoft.Web/serverfarms",
+                            "apiVersion": "2024-11-01",
+                            "name": "[format('{0}-worker', parameters('serviceName'))]",
+                            "location": "[parameters('location')]",
+                            "kind": "elastic",
+                            "sku": {
+                              "name": "EP1",
+                              "tier": "ElasticPremium",
+                              "capacity": 1
+                            },
+                            "properties": {
+                              "reserved": true,
+                              "maximumElasticWorkerCount": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "dependsOn": [
+                      "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                    ]
+                  }
+                ]
+              },
+              "parameters": {
+                "groupName": {
+                  "value": "<group>"
+                },
+                "serviceName": {
+                  "value": "gs5e5e1ce9d259"
+                },
+                "location": {
+                  "value": "canadacentral"
+                }
+              }
+            }
+          },
+          "status": 501,
+          "headers": {
+            "connection": "keep-alive",
+            "content-length": "320",
+            "content-type": "application/json",
+            "date": "Sat, 07 Nov 2026 08:47:07 GMT",
+            "keep-alive": "timeout=5"
+          },
+          "body": {
+            "error": {
+              "code": "GlobalStackValidationNotImplemented",
+              "message": "Provider validation for Microsoft.Web/serverfarms is not implemented.",
+              "additionalInfo": [
+                {
+                  "type": "TemplateViolation",
+                  "info": {
+                    "path": "properties.template.resources"
+                  }
+                }
+              ]
+            }
+          },
+          "polls": [],
+          "terminalObserved": true
+        }
+      ],
+      "sameStatusAndErrorCode": false
+    }
+  ],
+  "probes": [
+    {
+      "target": "azure",
+      "phase": "group-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T08:47:07.358Z",
+      "completedAt": "2026-11-07T08:47:08.130Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "cache-control": "no-cache",
+        "content-length": "112",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sat, 07 Nov 2026 08:47:07 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-cache": "CONFIG_NOCACHE",
+        "x-content-type-options": "nosniff",
+        "x-ms-correlation-request-id": "353aae4b-0f09-461b-8ed8-5683fd74f81c",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "3749",
+        "x-ms-ratelimit-remaining-subscription-reads": "249",
+        "x-ms-request-id": "353aae4b-0f09-461b-8ed8-5683fd74f81c",
+        "x-ms-routing-request-id": "UAECENTRAL:20261107T084708Z:353aae4b-0f09-461b-8ed8-5683fd74f81c",
+        "x-msedge-ref": "Ref A: B839C619CD2B4174AD3D488217CD5C73 Ref B: AUH211051121029 Ref C: 2026-11-07T08:47:07Z"
+      },
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "deployment-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T08:47:08.131Z",
+      "completedAt": "2026-11-07T08:47:08.780Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "cache-control": "no-cache",
+        "content-length": "111",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sat, 07 Nov 2026 08:47:08 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-cache": "CONFIG_NOCACHE",
+        "x-content-type-options": "nosniff",
+        "x-ms-correlation-request-id": "5a4a4cf1-8aaa-4588-9598-a3e05da09cb4",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "3749",
+        "x-ms-ratelimit-remaining-subscription-reads": "249",
+        "x-ms-request-id": "5a4a4cf1-8aaa-4588-9598-a3e05da09cb4",
+        "x-ms-routing-request-id": "QATARCENTRAL:20261107T084708Z:5a4a4cf1-8aaa-4588-9598-a3e05da09cb4",
+        "x-msedge-ref": "Ref A: A11BFF207846448082FA788C7440F06A Ref B: AUH211051121023 Ref C: 2026-11-07T08:47:08Z"
+      },
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment '<deployment>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "group-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T08:47:08.781Z",
+      "completedAt": "2026-11-07T08:47:08.788Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "connection": "keep-alive",
+        "content-length": "144",
+        "content-type": "application/json",
+        "date": "Sat, 07 Nov 2026 08:47:08 GMT",
+        "keep-alive": "timeout=5"
+      },
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group <group> was not found.",
+          "details": []
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "deployment-absence",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "startedAt": "2026-11-07T08:47:08.788Z",
+      "completedAt": "2026-11-07T08:47:08.794Z",
+      "request": null,
+      "status": 404,
+      "headers": {
+        "connection": "keep-alive",
+        "content-length": "150",
+        "content-type": "application/json",
+        "date": "Sat, 07 Nov 2026 08:47:08 GMT",
+        "keep-alive": "timeout=5"
+      },
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment '<deployment>' could not be found.",
+          "details": []
+        }
+      }
+    }
+  ],
+  "portalEvidenceComplete": false,
+  "provisioningPerformed": false,
+  "compiledSha256": "50fac19dbf61fd920ed03f36e697fc9f031b139f678324b61286800b91940892",
+  "noResourcesCreated": true,
+  "statusCodeParityObserved": false,
+  "validationTerminalsComplete": true,
+  "completedAt": "2026-11-07T08:47:08.796Z",
+  "fullProtocolParityEvaluated": false
+}

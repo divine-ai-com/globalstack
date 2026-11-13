@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "24875abe98e8c7bd65bd59355f4d384fd28889a9",
+  "startedAt": "2026-11-09T13:49:18.625Z",
+  "completedAt": "2026-11-09T14:02:29.811Z",
+  "scope": "Document Search identity, Storage and Search deployment, index/data-source provisioning, Blob projection traversal, and immediate cleanup. No full document workflow.",
+  "stages": [
+    {
+      "name": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    }
+  ],
+  "searchReadinessHttpStatusAzure": 200,
+  "searchObjects": {
+    "azure": [
+      {
+        "name": "push-index",
+        "status": 201
+      },
+      {
+        "name": "projection-index",
+        "status": 201
+      },
+      {
+        "name": "projection-data-source",
+        "status": 201
+      },
+      {
+        "name": "projection-indexer",
+        "status": 201
+      }
+    ],
+    "globalstack": [
+      {
+        "name": "push-index",
+        "status": 201
+      },
+      {
+        "name": "projection-index",
+        "status": 201
+      },
+      {
+        "name": "projection-data-source",
+        "status": 201
+      },
+      {
+        "name": "projection-indexer",
+        "status": 201
+      }
+    ]
+  },
+  "traversal": [
+    {
+      "target": "azure",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    },
+    {
+      "target": "globalstack",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    }
+  ],
+  "comparisonCompleteForThisSearchSlice": true,
+  "fullDocumentWorkflowCompleted": false,
+  "cleanup": {
+    "taskResourcesAbsent": true,
+    "deploymentRecordsAbsent": true,
+    "pilotGroupPreserved": true,
+    "independentAzureResourceInventoryCount": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 300,
+    "thisRunConservativeAllowanceUsd": 12,
+    "cumulativeConservativeAllowanceUsd": 241,
+    "remainingConservativeAllowanceUsd": 59,
+    "actualAzureChargesMeasured": false
+  },
+  "portalScreenshotsCaptured": false,
+  "videoCaptured": false
+}

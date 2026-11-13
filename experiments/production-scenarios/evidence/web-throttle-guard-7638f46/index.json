@@ -1,0 +1,21 @@
+{
+  "scope": "Live provider throttle triggered automatic cancellation and verified cleanup. Not a completed paired lifecycle or application pass.",
+  "files": {
+    "result.json": {
+      "sha256": "4ce06e37616503c928c4bb5341be059c40cfd0a716121bce0b3b09c4d813335f",
+      "bytes": 64722
+    },
+    "events.ndjson": {
+      "sha256": "d4957e5b041ffe5dbf94c7d2af3c9a4db266da636436e7285609f5c2a628c39d",
+      "bytes": 75074
+    },
+    "compiled-template.json": {
+      "sha256": "cf92a03f88569e2717aee11c5914b737aaf35ea780f799cace8c6ca85a5a3b68",
+      "bytes": 3228
+    },
+    "recording.json": {
+      "sha256": "37d25549c669dbbda704e37a50dd5096f9d44b4c814a8c3c261f244cab331ab6",
+      "bytes": 638
+    }
+  }
+}

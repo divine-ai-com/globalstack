@@ -1,0 +1,9 @@
+{
+  "scope": "Local synthetic baseline only. Upload and subscription accepted; no queue delivery during the one-second observation. Static inspection finds no Storage event emitter or StorageQueue destination dispatcher. Not an Azure latency comparison.",
+  "files": {
+    "result.json": {
+      "sha256": "f66fa7a9807e5aa6f045aafee2296821fa04cb139ad36f61b345053bfe3c191e",
+      "bytes": 20811
+    }
+  }
+}

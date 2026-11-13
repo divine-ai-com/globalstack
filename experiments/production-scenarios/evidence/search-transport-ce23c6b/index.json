@@ -1,0 +1,27 @@
+{
+  "scope": "Successful Azure Search provisioning, followed by a local capture transport failure. No query or complete application pass.",
+  "files": {
+    "result.json": {
+      "sha256": "2e17d893fde080c60c4668fc1f05522422b94e971878b37387bdfdc07c63345f",
+      "bytes": 473510
+    },
+    "events.ndjson": {
+      "sha256": "524665cb11db5895adc561047e4dfb9fa41211aa68751526bdfed5f27b0d3731",
+      "bytes": 544889
+    },
+    "compiled-template.json": {
+      "sha256": "ac2bfa9d94979d2ab5fe9f6906d34d8f6d7b7b597e9801955febaa5881e82538",
+      "bytes": 3362
+    },
+    "recording.json": {
+      "sha256": "b25f12ef2992582c14589984feb2edc79de073285d6e35432581983730e43494",
+      "bytes": 642
+    }
+  },
+  "classification": "Runner defect: Node fetch replaced the requested Host header with the loopback connection address. Native HTTP transport regression now preserves the header.",
+  "limitations": [
+    "No fuzzy/vector paired query observation in this attempt.",
+    "The same compiled template provisioned both targets, but asynchronous lifecycle protocol parity is not established.",
+    "No Portal screenshots."
+  ]
+}

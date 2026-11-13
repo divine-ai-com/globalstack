@@ -1,0 +1,288 @@
+{
+  "startedAt": "2026-11-08T10:40:44.919Z",
+  "revision": "98e2923b55869968dcf449049ef6a0f7415e13cd",
+  "sourceDirty": false,
+  "scope": "Local ARM deployment and native ClamAV/YARA scanner through authenticated HTTPS ingress. No Azure or full document workflow.",
+  "imageId": "sha256:742cbf642f8fd492829e379d38e77c2117fd9a7b6eabaea0da0e31c35413463e",
+  "checks": [
+    {
+      "label": "missing-token",
+      "correlationId": "791571fb-a149-4c27-a0e1-0e07ecdd25ca",
+      "at": "2026-11-08T10:41:07.976Z",
+      "elapsedMs": 17,
+      "status": 401,
+      "body": null
+    },
+    {
+      "label": "wrong-audience",
+      "correlationId": "1ab6ce0a-231f-4135-826b-ca801af2ebee",
+      "at": "2026-11-08T10:41:07.992Z",
+      "elapsedMs": 9,
+      "status": 401,
+      "body": null
+    },
+    {
+      "label": "tampered-token",
+      "correlationId": "0111c717-3a43-47c7-bfd0-655ea4ce985a",
+      "at": "2026-11-08T10:41:07.998Z",
+      "elapsedMs": 6,
+      "status": 401,
+      "body": null
+    },
+    {
+      "label": "valid-unlisted-identity",
+      "correlationId": "15f97b9d-8698-49de-89bd-b1e15edc42b0",
+      "at": "2026-11-08T10:41:08.004Z",
+      "elapsedMs": 6,
+      "status": 403,
+      "body": null
+    },
+    {
+      "label": "clean-file",
+      "correlationId": "57630307-0cb7-4686-b42b-9422c2a39a89",
+      "at": "2026-11-08T10:41:08.070Z",
+      "elapsedMs": 66,
+      "status": 200,
+      "body": {
+        "sha256": "62a3267ce4691104a7c0d1f9dbad3ef051f28679cf840a0221484513cd9cd180",
+        "bytes": 48,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 33
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "clean",
+        "pages": [
+          {
+            "page": 1,
+            "method": "utf8",
+            "text": "Document scanner authenticated native execution."
+          }
+        ],
+        "extractionStatus": "completed",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "label": "yara-harmless-marker",
+      "correlationId": "3d40db71-4048-4372-a65f-46efa2974686",
+      "at": "2026-11-08T10:41:08.128Z",
+      "elapsedMs": 58,
+      "status": 200,
+      "body": {
+        "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+        "bytes": 30,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 33
+          },
+          {
+            "engine": "yara",
+            "status": "detected",
+            "findings": [
+              "PilotDocumentDetection"
+            ],
+            "durationMs": 17
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "label": "clamav-harmless-marker",
+      "correlationId": "5084e70b-1d7c-4fe6-abc1-e0c13d594a40",
+      "at": "2026-11-08T10:41:08.170Z",
+      "elapsedMs": 42,
+      "status": 200,
+      "body": {
+        "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+        "bytes": 68,
+        "mediaType": "text/plain",
+        "engines": [
+          {
+            "engine": "clamav",
+            "status": "detected",
+            "findings": [
+              "Eicar-Test-Signature"
+            ],
+            "durationMs": 16
+          },
+          {
+            "engine": "yara",
+            "status": "clean",
+            "findings": [],
+            "durationMs": 16
+          }
+        ],
+        "status": "detected",
+        "extractionStatus": "not_run",
+        "provenance": {
+          "versions": {
+            "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+            "yara": "4.2.3"
+          },
+          "clamavDatabases": [
+            {
+              "file": "bytecode.cvd",
+              "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+            },
+            {
+              "file": "daily.cvd",
+              "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+            },
+            {
+              "file": "main.cvd",
+              "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+            }
+          ],
+          "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+        }
+      }
+    },
+    {
+      "label": "auth-configuration-removed",
+      "correlationId": "e1796c4b-f8b4-4724-98a1-42f19f4d3a17",
+      "at": "2026-11-08T10:41:08.179Z",
+      "elapsedMs": 2,
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "ContainerAppAuthenticationNotImplemented"
+        }
+      }
+    },
+    {
+      "label": "app-deleted",
+      "correlationId": "29eef71c-bd57-47af-a5fd-6ff933693183",
+      "at": "2026-11-08T10:41:08.572Z",
+      "elapsedMs": 6,
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ContainerAppNotFound"
+        }
+      }
+    }
+  ],
+  "arm": [
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot",
+      "status": 201,
+      "at": "2026-11-08T10:40:45.098Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/scannerpilot-worker",
+      "status": 201,
+      "at": "2026-11-08T10:40:45.115Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.ManagedIdentity/userAssignedIdentities/scannerpilot-scanner",
+      "status": 201,
+      "at": "2026-11-08T10:40:45.121Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.Web/serverfarms/worker",
+      "status": 201,
+      "at": "2026-11-08T10:40:45.125Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.Web/sites/worker",
+      "status": 201,
+      "at": "2026-11-08T10:40:45.130Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.App/managedEnvironments/scanner",
+      "status": 201,
+      "at": "2026-11-08T10:40:45.135Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.Resources/deployments/scanner-app",
+      "status": 201,
+      "at": "2026-11-08T10:40:47.573Z"
+    },
+    {
+      "method": "PUT",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.Resources/deployments/scanner-auth",
+      "status": 201,
+      "at": "2026-11-08T10:41:07.486Z"
+    },
+    {
+      "method": "DELETE",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.App/containerApps/scannerpilot-scanner/authConfigs/current",
+      "status": 200,
+      "at": "2026-11-08T10:41:08.177Z"
+    },
+    {
+      "method": "DELETE",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scanner-pilot/providers/Microsoft.App/containerApps/scannerpilot-scanner",
+      "status": 200,
+      "at": "2026-11-08T10:41:08.186Z"
+    }
+  ],
+  "cleanup": true,
+  "ok": true,
+  "completedAt": "2026-11-08T10:41:08.579Z"
+}

@@ -1,3 +1,5 @@
+import { retryableDependencyFailure } from './dependency-retry.mjs';
+import { verifyProviderMirror } from './provider-mirror.mjs';
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { spawn, execFileSync } from 'node:child_process';
@@ -59,6 +61,13 @@ async function command(label, executable, args, options = {}) {
   });
   const log = `${String(++commandIndex).padStart(2, '0')}-${label}.log`;
   await writeFile(resolve(output, 'logs', log), result.stdout + '\n' + result.stderr);
+  if ((options.retryCount ?? 0) < 2 && retryableDependencyFailure(label, result.code, result.stderr)) {
+    record.dependencyRetries ??= [];
+    record.dependencyRetries.push({ label, exitCode: result.code, log, attempt: (options.retryCount ?? 0) + 1 });
+    await save();
+    await new Promise(done => setTimeout(done, 5000));
+    return command(label, executable, args, { ...options, retryCount: (options.retryCount ?? 0) + 1 });
+  }
   record.stages.push({ label, exitCode: result.code, log });
   await save();
   if (result.code !== 0) throw new Error(`${label} exited ${result.code}; see logs/${log}`);
@@ -131,7 +140,7 @@ try {
         const entity = { PartitionKey: 'claims', RowKey: event.id, ...item, status: 'queued' };
         const inserted = await storage.insertTableEntity(names.tableName, entity);
         if (inserted.status === 409) {
-          assert.equal(JSON.parse(inserted.body).error.code, 'EntityAlreadyExists');
+          assert.equal(JSON.parse(inserted.body)['odata.error'].code, 'EntityAlreadyExists');
           const existing = await storage.getTableEntity(names.tableName, 'claims', event.id);
           assert.equal(existing.status, 200);
           const retained = JSON.parse(existing.body);
@@ -147,6 +156,13 @@ try {
   await writeFile(resolve(output, 'shims/az'), `#!/bin/sh\ncase "$1 $2" in\n'account get-access-token') echo '${token}';;\n'account show') echo '${account}';;\n'cloud show') echo '${cloud}';;\n'version ') echo '{"azure-cli":"test-shim"}';;\n*) exit 1;;\nesac\n`, { mode: 0o755 });
   const inspected = JSON.parse(execFileSync('docker', ['image', 'inspect', imageName], { encoding: 'utf8' }))[0];
   record.runnerImage = { name: imageName, id: inspected.Id };
+  const mirror = process.env.CLAIMS_PROVIDER_MIRROR;
+  const mirrorArgs = [];
+  if (mirror) {
+    record.providerMirror = await verifyProviderMirror(mirror, resolve(bundle, 'lib/.terraform.lock.hcl'));
+    await writeFile(resolve(output, 'shims/terraform.rc'), 'provider_installation { filesystem_mirror { path = "/provider-mirror" include = ["registry.terraform.io/azure/azapi"] } }\n');
+    mirrorArgs.push('-v', `${mirror}:/provider-mirror:ro`, '-e', 'TF_CLI_CONFIG_FILE=/shims/terraform.rc');
+  }
   tf = async (label, args) => {
     const name = `gs-claims-${process.pid}-${commandIndex}`; containers.add(name);
     try {
@@ -156,7 +172,7 @@ try {
         '-w', '/work', '-e', 'PATH=/shims:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', '-e', 'HOME=/tmp',
         '-e', `ARM_RESOURCE_MANAGER_ENDPOINT=${tlsEndpoint}`, '-e', 'ARM_USE_CLI=true', '-e', `ARM_SUBSCRIPTION_ID=${localIdentity.subscriptionId}`,
         '-e', `ARM_TENANT_ID=${localIdentity.tenantId}`, '-e', 'SSL_CERT_FILE=/certs/ca.pem', '-e', 'AZURE_IDENTITY_DISABLE_INSTANCE_DISCOVERY=true',
-        '-e', 'TF_IN_AUTOMATION=1', '--entrypoint', 'terraform', imageName, ...args]);
+        '-e', 'TF_IN_AUTOMATION=1', ...mirrorArgs, '--entrypoint', 'terraform', imageName, ...args]);
     } finally { try { execFileSync('docker', ['rm', '-f', name], { stdio: 'ignore' }); } catch {} containers.delete(name); }
   };
   const setConfig = async (count, path = '/claims') => writeFile(resolve(output, 'task/lib/terraform.tfvars.json'), JSON.stringify({

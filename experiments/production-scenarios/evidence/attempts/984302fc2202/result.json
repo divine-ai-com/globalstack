@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "revision": "b603e107e424789b8caf3b7162f8dcd9dd3fca36",
+  "sourceDirty": false,
+  "source": {
+    "search-validation.bicep": "7dcc91770c867744b7edd3024a16805d750ee3367c56936bc148b7c2376ca71e",
+    "search-service.bicep": "40471251d5d95c2f3d4a8784b3e623470b2c1d95ca1202ac948704a1928e1c5f"
+  },
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "startedAt": "2026-11-07T05:29:56.707Z",
+  "scope": "Bicep-compiled Search foundation ARM validation, not full scenario deployment or integration.",
+  "transport": "Native Bicep compilation followed by direct ARM validation requests, not a native deployment CLI trace.",
+  "attempts": [],
+  "probes": [],
+  "portalEvidenceComplete": false,
+  "provisioningPerformed": false,
+  "error": "Command failed: docker run --rm --network none -v /home/dev/Documents/Codex/2026-10-22/can-you-give-me-a-brief/work/globalstack-review/experiments/production-scenarios/fixtures:/fixture:ro --entrypoint /root/.azure/bin/bicep sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186 build --file /fixture/search-validation.bicep --stdout\nUnrecognized command or argument '/fixture/search-validation.bicep'.\nUnrecognized parameter \"--file\"\n\n",
+  "completedAt": "2026-11-07T05:29:57.969Z"
+}

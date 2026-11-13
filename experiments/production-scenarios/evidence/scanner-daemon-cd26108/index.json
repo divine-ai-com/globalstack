@@ -1,0 +1,34 @@
+{
+  "scope": "Local HTTP scanner with official frozen ClamAV databases. No Azure or complete pipeline result.",
+  "files": {
+    "result.json": {
+      "sha256": "7861b303f05b7f0449736b4379811117f545f19d172bd73512d65bab360a0d07",
+      "bytes": 12335
+    },
+    "server.log": {
+      "sha256": "ce4f5344cebe9dd5dd6c8c4a806fd4577131ec943ed4a85ba01a8e8d5f58e426",
+      "bytes": 1998
+    },
+    "run.log": {
+      "sha256": "6b73a8cf68fbf46a3e2467b3a9cf52eac7cd32679d4857f510b10b121492d893",
+      "bytes": 815
+    }
+  },
+  "limits": {
+    "memoryGiB": 4,
+    "cpus": 2,
+    "pids": 64,
+    "tmpfsMiB": 256
+  },
+  "containerRemoved": true,
+  "sameSignatureProvenanceAsBaseline": true,
+  "probeSource": "experiments/production-scenarios/document-app/scanner/probe_vendor_http.py",
+  "probeSha256": "72f17e65dac2240eb9a68c9a6c0f1509488f986b4233a13d80db1c4fd8104253",
+  "observations": [
+    "Startup includes loading the shared engine and an actual two-engine readiness scan.",
+    "Four sequential HTTP scan decisions matched expectations. Both concurrent clean HTTP scans succeeded.",
+    "A deliberate engine termination produced readiness 503 and an unresolved scan with no searchable text.",
+    "All seven HTTP scan results have one matching correlation ID, content hash and decision in the server log.",
+    "This is one local diagnostic, not a repeated performance distribution or Azure/full-pipeline result. Before capture used direct process_document calls; after capture includes the HTTP worker."
+  ]
+}

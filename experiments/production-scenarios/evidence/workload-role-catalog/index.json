@@ -1,0 +1,320 @@
+{
+  "scope": "13 workload-role assignment lifecycles, Azure first then GlobalStack. Metadata and cleanup only; no downstream data access or business workflow.",
+  "redactions": "Principal identifiers in metadata redacted in addition to runner redactions.",
+  "attempts": [
+    {
+      "file": "before-00.json",
+      "phase": "before",
+      "role": "AcrPull",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": false,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-01.json",
+      "phase": "before",
+      "role": "AcrPush",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": false,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-02.json",
+      "phase": "before",
+      "role": "Azure Service Bus Data Receiver",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": false,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-03.json",
+      "phase": "before",
+      "role": "Azure Service Bus Data Sender",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": false,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-04.json",
+      "phase": "before",
+      "role": "Key Vault Secrets User",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-05.json",
+      "phase": "before",
+      "role": "Search Index Data Contributor",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-06.json",
+      "phase": "before",
+      "role": "Search Index Data Reader",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-07.json",
+      "phase": "before",
+      "role": "Search Service Contributor",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-08.json",
+      "phase": "before",
+      "role": "Storage Account Contributor",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": false,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-09.json",
+      "phase": "before",
+      "role": "Storage Blob Data Contributor",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-10.json",
+      "phase": "before",
+      "role": "Storage Blob Data Owner",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-11.json",
+      "phase": "before",
+      "role": "Storage Queue Data Contributor",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "before-12.json",
+      "phase": "before",
+      "role": "Storage Table Data Contributor",
+      "revision": "6fa54616f4804a2e76632af603061057f2acdf43",
+      "passed": false,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-00.json",
+      "phase": "after",
+      "role": "AcrPull",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-01.json",
+      "phase": "after",
+      "role": "AcrPush",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-02.json",
+      "phase": "after",
+      "role": "Azure Service Bus Data Receiver",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-03.json",
+      "phase": "after",
+      "role": "Azure Service Bus Data Sender",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-04.json",
+      "phase": "after",
+      "role": "Key Vault Secrets User",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-05.json",
+      "phase": "after",
+      "role": "Search Index Data Contributor",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-06.json",
+      "phase": "after",
+      "role": "Search Index Data Reader",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-07.json",
+      "phase": "after",
+      "role": "Search Service Contributor",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-08.json",
+      "phase": "after",
+      "role": "Storage Account Contributor",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-09.json",
+      "phase": "after",
+      "role": "Storage Blob Data Contributor",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-10.json",
+      "phase": "after",
+      "role": "Storage Blob Data Owner",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-11.json",
+      "phase": "after",
+      "role": "Storage Queue Data Contributor",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    },
+    {
+      "file": "after-12.json",
+      "phase": "after",
+      "role": "Storage Table Data Contributor",
+      "revision": "4ace72d58fbea9f2707bcaebe17b7ff830f9a934",
+      "passed": true,
+      "azureCleanup": true
+    }
+  ],
+  "files": {
+    "before-00.json": {
+      "sha256": "da05d23d1faab31c4a83488a3f2ca63bc096974c8d5de8df1eda42419fdc0ed0",
+      "bytes": 16718
+    },
+    "before-01.json": {
+      "sha256": "cb4b779da9b6d9a0db0ee62f5c068b79f45d6d8593a32eeafdc7e27eacf385b2",
+      "bytes": 16718
+    },
+    "before-02.json": {
+      "sha256": "37c13422838bb2c3980be11774ec7af2fb02f3771bca24adf6e1eea477ac9d59",
+      "bytes": 16742
+    },
+    "before-03.json": {
+      "sha256": "c2cf126979f8e845458b89002a7cf36de91b15fa5f7993702838dc98d185c3d2",
+      "bytes": 16740
+    },
+    "before-04.json": {
+      "sha256": "0db3c0e254aec4a02001aade51ee354373a1a56d195dd26924658145325674a2",
+      "bytes": 21311
+    },
+    "before-05.json": {
+      "sha256": "b36df06935dac649178a8854ff91b567ba0cd4fc1f31a58157d422db430d8658",
+      "bytes": 21318
+    },
+    "before-06.json": {
+      "sha256": "037590bb9abc92328f3599be3fc46d3cf997a75e1412b4896beabb986e20614a",
+      "bytes": 21313
+    },
+    "before-07.json": {
+      "sha256": "8981c71899ea583b99f9d63648c289257011b641433b07d664d7e469a04b2d23",
+      "bytes": 21315
+    },
+    "before-08.json": {
+      "sha256": "c442cae480353d60852e9f8f46408c141a841f52651788e7e88fa1c7da656e46",
+      "bytes": 16738
+    },
+    "before-09.json": {
+      "sha256": "63c4a0c606ea8a51bb816dd93363467d32e8243c80c1024940c319f18f9e0a7e",
+      "bytes": 21318
+    },
+    "before-10.json": {
+      "sha256": "4cd252222ee8529da910c35086e88775f9b9efa7f1bbe4e9fd6a376a317751b3",
+      "bytes": 21312
+    },
+    "before-11.json": {
+      "sha256": "1709211a6dd92dfbfeb83c481e7c349137a3d8495cff5c541a796204eeb599dd",
+      "bytes": 21319
+    },
+    "before-12.json": {
+      "sha256": "29a563da2f6bd4fb41d56640ddb72d610b7b3f6b0fe680e3bc8b68767d115617",
+      "bytes": 16741
+    },
+    "after-00.json": {
+      "sha256": "6deda386b4277094162617127f14eb6d99070b35de0f581bae2ed8efd6663fba",
+      "bytes": 21296
+    },
+    "after-01.json": {
+      "sha256": "02c10c5b092d039e4f4156607a3474610f2e8f8684cf5ec5a301cb9d2d4b961d",
+      "bytes": 21296
+    },
+    "after-02.json": {
+      "sha256": "df84e790241372cb681afd74e975791f4e00bdfa23fdaaa5866715a5ba43df1e",
+      "bytes": 21320
+    },
+    "after-03.json": {
+      "sha256": "ff3f22b2d2826a787adac3c6f78ed6cd27fd24416ab759e08eb8f8cc77893bc7",
+      "bytes": 21318
+    },
+    "after-04.json": {
+      "sha256": "0f38dcef502984a7856b99c2d18d8f4a74bf53f4fe47c0b8753cb66118c22133",
+      "bytes": 21311
+    },
+    "after-05.json": {
+      "sha256": "699bee80a068f23aea3220331e479fa9b6cde74ee33981af131c98719b4360d7",
+      "bytes": 21318
+    },
+    "after-06.json": {
+      "sha256": "8e2f39230dd88823fe5db2fe05beac1ad7679a5ad0660f9a4aed6cd593592685",
+      "bytes": 21313
+    },
+    "after-07.json": {
+      "sha256": "f386ccc84cffe0d8d5c4e03e9ba7bfa1512b28a3ddb81118eb71e13a4d7eec69",
+      "bytes": 21315
+    },
+    "after-08.json": {
+      "sha256": "0f6e253976b3f30d35354d2d9464a0acac9be455a465a2f0c51f2847241a198e",
+      "bytes": 21316
+    },
+    "after-09.json": {
+      "sha256": "0cb71b66157f4bc197f01beb783471140c01dd1eabeaec2c7b10a011683c52e8",
+      "bytes": 21318
+    },
+    "after-10.json": {
+      "sha256": "fa27c72b43f0e173752ef9f2db6302efe8c43934659571d5f31f9e22f9d57199",
+      "bytes": 21312
+    },
+    "after-11.json": {
+      "sha256": "2f5f29408ee1e6b0c94bd3f20a8bfa56365477c92fcb77784e2fc032316c0c3c",
+      "bytes": 21319
+    },
+    "after-12.json": {
+      "sha256": "0359ad0145bb9a9866a93b6f3afc9663d35639d83b7cf063436586f4c750cb29",
+      "bytes": 21319
+    }
+  }
+}

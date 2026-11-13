@@ -1,0 +1,14 @@
+[
+  {
+    "path": "result.json",
+    "sha256": "b813e4e8e1eb56751b2e5982581309b3c22d84afb9ecb4920f62b01224f55e67"
+  },
+  {
+    "path": "scanner-app.json",
+    "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+  },
+  {
+    "path": "scanner-auth.json",
+    "sha256": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe"
+  }
+]

@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "a0bca6ac93409212669600d3a6ffe243c32a88e0",
+  "startedAt": "2026-11-09T17:16:18.354Z",
+  "completedAt": "2026-11-09T17:28:57.767Z",
+  "stages": [
+    {
+      "stage": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    },
+    {
+      "stage": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    },
+    {
+      "stage": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azureStatus": 201,
+      "azureState": "Succeeded",
+      "localStatus": 201,
+      "localState": "Succeeded"
+    }
+  ],
+  "immediateStatusReads": [
+    {
+      "target": "azure",
+      "operation": "index",
+      "httpStatus": 200,
+      "result": null,
+      "elapsedAfterAcceptanceMs": 1033
+    },
+    {
+      "target": "azure",
+      "operation": "delete",
+      "httpStatus": 200,
+      "result": "success",
+      "elapsedAfterAcceptanceMs": 1133
+    },
+    {
+      "target": "local",
+      "operation": "index",
+      "httpStatus": 200,
+      "result": "success",
+      "elapsedAfterAcceptanceMs": 3
+    },
+    {
+      "target": "local",
+      "operation": "delete",
+      "httpStatus": 200,
+      "result": "success",
+      "elapsedAfterAcceptanceMs": 3
+    }
+  ],
+  "firstStatusBodies": [
+    {
+      "target": "azure",
+      "operation": "index",
+      "httpStatus": 200,
+      "topLevelStatus": "running",
+      "lastResultStatus": null,
+      "lastResultStartTime": null,
+      "executionHistoryCount": 0
+    },
+    {
+      "target": "azure",
+      "operation": "delete",
+      "httpStatus": 200,
+      "topLevelStatus": "running",
+      "lastResultStatus": "success",
+      "lastResultStartTime": "2026-11-09T17:27:13.887Z",
+      "executionHistoryCount": 2
+    },
+    {
+      "target": "local",
+      "operation": "index",
+      "httpStatus": 200,
+      "topLevelStatus": "running",
+      "lastResultStatus": "success",
+      "lastResultStartTime": "2026-11-09T17:27:26.736Z",
+      "executionHistoryCount": 1
+    },
+    {
+      "target": "local",
+      "operation": "delete",
+      "httpStatus": 200,
+      "topLevelStatus": "running",
+      "lastResultStatus": "success",
+      "lastResultStartTime": "2026-11-09T17:27:26.754Z",
+      "executionHistoryCount": 2
+    }
+  ],
+  "searchTraversal": [
+    {
+      "target": "azure",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    },
+    {
+      "target": "local",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    }
+  ],
+  "negativeWiring": [
+    {
+      "target": "azure",
+      "stages": [
+        {
+          "name": "data-source",
+          "status": 201,
+          "code": null
+        },
+        {
+          "name": "indexer",
+          "status": 401,
+          "code": ""
+        }
+      ],
+      "quarantineIndexed": false
+    },
+    {
+      "target": "local",
+      "stages": [
+        {
+          "name": "data-source",
+          "status": 201,
+          "code": null
+        },
+        {
+          "name": "indexer",
+          "status": 401,
+          "code": ""
+        }
+      ],
+      "quarantineIndexed": false
+    }
+  ],
+  "interpretation": "The first index status GET returned running with no lastResult on Azure after about one second, but running with a completed lastResult locally after about three milliseconds. Delete first-read success may reflect the previous run; it is not proof of immediate delete completion.",
+  "cleanup": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "independentAzureInventory": {
+    "resources": 0,
+    "deployments": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 350,
+    "conservativeAllocatedAfterRunUsd": 313,
+    "actualAzureChargesMeasured": false
+  },
+  "fullWorkflowCompleted": false,
+  "rawPrivateTraceSha256": "1149f210324e69f59459cb86b480cd469fda1a837a94aea616926994dcbd2277",
+  "publishedTraceSha256": "432cac218e8feef437a106e4b54847bf576fa206f5bc27cd12f3716dfc7afe5e",
+  "redaction": "Existing capture substitutions plus stable opaque aliases for remaining UUIDs and IPv4 addresses."
+}

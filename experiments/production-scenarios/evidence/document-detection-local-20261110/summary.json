@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "target": "GlobalStack local runtime only",
+  "sourceRevision": "2f68429",
+  "scope": "Two separate harmless detection-marker uploads through the production Event Grid and scanner path, with harness-prepared document ownership",
+  "attempts": [
+    {
+      "marker": "YARA pilot rule",
+      "productionEventGridState": "delivered",
+      "databaseScanStatus": "DETECTED",
+      "malwareFound": true,
+      "quarantineBytesMatchSourceSha256": true,
+      "pushSearchMatchingDocuments": 0,
+      "projectionIndexerStatus": "success",
+      "projectionSearchMatchingDocuments": 0,
+      "localCleanupComplete": true
+    },
+    {
+      "marker": "ClamAV EICAR harmless test signature",
+      "productionEventGridState": "delivered",
+      "databaseScanStatus": "DETECTED",
+      "malwareFound": true,
+      "quarantineBytesMatchSourceSha256": true,
+      "pushSearchMatchingDocuments": 0,
+      "projectionIndexerStatus": "success",
+      "projectionSearchMatchingDocuments": 0,
+      "localCleanupComplete": true
+    }
+  ],
+  "limits": [
+    "No matching live Azure end-to-end run at this revision",
+    "Production ingress was replaced by harness-owned database setup",
+    "The local Search indexer reads Blob state in process; Search-to-Blob HTTP behavior was not captured",
+    "Service Bus failure queue delivery was not exercised",
+    "No full-scenario acceptance score is claimed"
+  ]
+}

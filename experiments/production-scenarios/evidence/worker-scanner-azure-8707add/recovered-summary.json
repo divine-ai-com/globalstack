@@ -1,0 +1,119 @@
+{
+  "provenance": "Reconstructed from original timestamped events after the interactive recording process exited 143. This is not the missing original result.json.",
+  "revision": "8707addff1f1874cac77165cb16f38769b10042e",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T11:35:32.789Z",
+  "lastCapturedAt": "2026-11-08T11:55:53.164Z",
+  "interactiveRunnerExitCode": 143,
+  "componentChecksPassed": false,
+  "fullWorkflowCompleted": false,
+  "portalEvidenceComplete": false,
+  "observedCalls": [
+    {
+      "target": "azure",
+      "phase": "missing-host-key",
+      "method": "POST",
+      "path": "/api/scanner-diagnostic",
+      "authenticated": false,
+      "inputSha256": "388802e5d550264bfa4ca0568adb9a96f0337db90d6563f37c2c6e5e7fd058d8",
+      "status": 401,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "target": "local",
+      "phase": "missing-host-key",
+      "method": "POST",
+      "path": "/api/scanner-diagnostic",
+      "authenticated": false,
+      "inputSha256": "388802e5d550264bfa4ca0568adb9a96f0337db90d6563f37c2c6e5e7fd058d8",
+      "status": 401,
+      "body": null,
+      "headers": {}
+    },
+    {
+      "target": "azure",
+      "phase": "managed-identity-scans",
+      "method": "POST",
+      "path": "/api/scanner-diagnostic",
+      "authenticated": true,
+      "inputSha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+      "status": 200,
+      "body": {
+        "correlationId": "562e9708-091e-44c7-aeaf-e3f1902fb8c7",
+        "inputSha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+        "upstreamStatus": 200,
+        "scan": {
+          "sha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+          "bytes": 39,
+          "mediaType": "text/plain",
+          "engines": [
+            {
+              "engine": "clamav",
+              "status": "clean",
+              "findings": [],
+              "durationMs": 33
+            },
+            {
+              "engine": "yara",
+              "status": "clean",
+              "findings": [],
+              "durationMs": 16
+            }
+          ],
+          "status": "clean",
+          "pages": [
+            {
+              "page": 1,
+              "method": "utf8",
+              "text": "Actual Functions managed identity scan."
+            }
+          ],
+          "extractionStatus": "completed",
+          "provenance": {
+            "versions": {
+              "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+              "yara": "4.2.3"
+            },
+            "clamavDatabases": [
+              {
+                "file": "bytecode.cvd",
+                "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+              },
+              {
+                "file": "daily.cvd",
+                "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+              },
+              {
+                "file": "main.cvd",
+                "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+              }
+            ],
+            "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "target": "local",
+      "phase": "managed-identity-scans",
+      "method": "POST",
+      "path": "/api/scanner-diagnostic",
+      "authenticated": true,
+      "inputSha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+      "status": 502,
+      "body": {
+        "correlationId": "7253eba7-8834-4e12-8507-26ac70efbb94",
+        "inputSha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+        "error": "ScannerDiagnosticFailed"
+      },
+      "headers": {
+        "content-type": "application/json"
+      }
+    }
+  ],
+  "cleanup": "Local recovery verified. Azure watchdog still awaiting managed-environment absence at snapshot time."
+}

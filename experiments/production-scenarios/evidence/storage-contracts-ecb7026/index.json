@@ -1,0 +1,24 @@
+{
+  "scope": "Azure-first Storage API diagnostics followed by matching local requests. No native IaC or full application parity claim.",
+  "files": {
+    "result.json": {
+      "sha256": "ee9642aa303b0eee1234dab7ad09038406ef6ab61dfa7b09e38c67ef96a4d54b",
+      "bytes": 78583
+    },
+    "events.ndjson": {
+      "sha256": "9e859c3ad8b4b1dc2de6bf32ffc27834309a8413204684ffcfc3184df6f91d2e",
+      "bytes": 108370
+    },
+    "recording.json": {
+      "sha256": "65340ee8da37d99aa560c8c36b9fd981e728a9992f732fee527543a843bcb556",
+      "bytes": 643
+    }
+  },
+  "observations": [
+    "Container creation and duplicate rejection match status and error code.",
+    "Local conditional overwrite and lease enforcement fail and change protected content.",
+    "Local Table Shared Key requests are rejected while Azure accepts them.",
+    "Local queue creation fails while Azure accepts it.",
+    "Azure resource group and account absence verified after capture."
+  ]
+}

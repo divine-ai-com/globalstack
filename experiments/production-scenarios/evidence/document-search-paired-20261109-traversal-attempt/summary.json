@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "ecbd4084b20bc03cb894778819558428f7b8f019",
+  "startedAt": "2026-11-09T12:35:51.729Z",
+  "completedAt": "2026-11-09T12:50:49.720Z",
+  "scope": "Document Search paired pilot with intended Blob projection traversal",
+  "stages": [
+    {
+      "name": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    }
+  ],
+  "firstSearchDataPlaneReadiness": {
+    "target": "azure",
+    "method": "GET",
+    "path": "/indexes?api-version=2025-09-01",
+    "status": 401,
+    "responseBody": null,
+    "requestId": "eca02e81-4589-4e34-a57b-dbd0f60d8f1c"
+  },
+  "indexProvisionAttempted": false,
+  "blobUploaded": false,
+  "indexerExecuted": false,
+  "causeOf401Established": false,
+  "comparisonComplete": false,
+  "fullWorkflowCompleted": false,
+  "cleanup": {
+    "taskResourcesAbsent": true,
+    "deploymentRecordsAbsent": true,
+    "pilotGroupPreserved": true,
+    "independentAzureResourceInventoryCount": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 225,
+    "thisRunConservativeAllowanceUsd": 12,
+    "cumulativeConservativeAllowanceUsd": 217,
+    "remainingConservativeAllowanceUsd": 8,
+    "actualAzureChargesMeasured": false
+  },
+  "portalScreenshotsCaptured": false,
+  "videoCaptured": false
+}

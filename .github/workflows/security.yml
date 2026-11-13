@@ -23,8 +23,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Scan complete reachable history with Gitleaks
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail --silent --show-error --location https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz --output "$RUNNER_TEMP/gitleaks.tar.gz"
+          if ! curl --fail --silent --show-error --location --retry 4 --retry-max-time 120 --connect-timeout 15 --max-time 60 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz --output "$RUNNER_TEMP/gitleaks.tar.gz"; then
+            gh api repos/gitleaks/gitleaks/releases/assets/378332058 -H "Accept: application/octet-stream" > "$RUNNER_TEMP/gitleaks.tar.gz"
+          fi
           printf '%s  %s\n' '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb' "$RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check
           tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
           # Each push and PR checks its own reachable history. Other branches
@@ -82,8 +86,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      - name: Fetch the verified CodeQL javascript bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/repository/fetch-codeql.sh javascript "$RUNNER_TEMP/codeql-javascript.tar.zst"
       - uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4
         with:
+          tools: ${{ runner.temp }}/codeql-javascript.tar.zst
           languages: javascript-typescript
           build-mode: none
           queries: security-extended
@@ -102,9 +111,47 @@ jobs:
           path: codeql-results/*.sarif
           retention-days: 14
           if-no-files-found: error
+  codeql-python:
+    name: CodeQL Python
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CODEQL_ACTION_DIFF_INFORMED_QUERIES: 'false'
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Fetch the verified CodeQL python bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/repository/fetch-codeql.sh python "$RUNNER_TEMP/codeql-python.tar.zst"
+      - uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4
+        with:
+          tools: ${{ runner.temp }}/codeql-python.tar.zst
+          languages: python
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4
+        with:
+          category: python-security
+          output: codeql-python-results
+          upload-database: false
+      - name: Block high and critical Python security findings
+        run: node scripts/repository/check-sarif.mjs codeql-python-results
+      - name: Retain the Python static analysis report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: codeql-python-results
+          path: codeql-python-results/*.sarif
+          retention-days: 14
+          if-no-files-found: error
   gate:
     name: Security gate
-    needs: [secrets, dependencies, codeql]
+    needs: [secrets, dependencies, codeql, codeql-python]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -114,7 +161,9 @@ jobs:
           SECRETS: ${{ needs.secrets.result }}
           DEPENDENCIES: ${{ needs.dependencies.result }}
           CODEQL: ${{ needs.codeql.result }}
+          CODEQL_PYTHON: ${{ needs.codeql-python.result }}
         run: |
           test "$SECRETS" = success
           test "$DEPENDENCIES" = success
           test "$CODEQL" = success
+          test "$CODEQL_PYTHON" = success

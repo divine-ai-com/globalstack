@@ -1,0 +1,18 @@
+{
+  "scope": "Azure accepted resource-group hosting validation; GlobalStack returned 501. No deployment or workflow pass. No cloud resources created.",
+  "sourceRevision": "14e4f4a4332a324a0af8dd1a5ffcbb5629edc8c7",
+  "files": {
+    "result.json": {
+      "sha256": "3931606dc0e5041e05970b06d7f5dbe530e10ccbcd42258729b5f50d52d63564",
+      "bytes": 11588
+    },
+    "compiled-template.json": {
+      "sha256": "116d760efa3a1b5551552cdf09ef25f76318f723bdb989f2fb4c8a2ce39f37e0",
+      "bytes": 1296
+    },
+    "events.ndjson": {
+      "sha256": "50e18b3bab2d20d3e2c4ff046673813138e38bea6662bfd5ae22206d0b2b5387",
+      "bytes": 11661
+    }
+  }
+}

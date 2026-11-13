@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "5893514957065572421"
+    }
+  },
+  "parameters": {
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "tags": {
+      "project": "globalstack-production-scenarios",
+      "run": "[parameters('runId')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}-worker', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}-ingress', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]"
+    }
+  ],
+  "outputs": {
+    "workerPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').principalId]"
+    },
+    "ingressPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-ingress', parameters('serviceName'))), '2023-01-31').principalId]"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "scope": "Two hosting plans provisioned, updated and rejected invalid SKUs on both targets. Azure cleanup verified. No applications or full protocol parity claim.",
+  "sourceRevision": "c135f08c2519293b5f23f0ec11a5a1507bf21af3",
+  "files": {
+    "result.json": {
+      "sha256": "ddb2d352a162e18ada122c8d9fa6558f17a5f52fa9037b97f8145d529f824652",
+      "bytes": 110438
+    },
+    "compiled-template.json": {
+      "sha256": "c1e6df64064b50f0180e2b7be3cac6d22920eedb34f3434f9fa3fede73cfc9f2",
+      "bytes": 1580
+    },
+    "events.ndjson": {
+      "sha256": "8ec8b795d3d9d6e530455e952c10f9e56a12b3a56420ba65e675d52646a9d051",
+      "bytes": 115056
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "d5b43798aff61c669211dc7655080e0e63e9b063",
+  "startedAt": "2026-11-09T13:30:47.773Z",
+  "completedAt": "2026-11-09T13:44:37.014Z",
+  "scope": "Document Search identity, Storage and Search deployment, index/data-source provisioning, Blob projection traversal, and immediate cleanup. No full document workflow.",
+  "stages": [
+    {
+      "name": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    }
+  ],
+  "tokenAtSearchReadinessMinutesRemaining": 9,
+  "runnerStopReason": "The runner required more than 15 minutes of token life before any Search data-plane call.",
+  "firstSearchDataPlaneRequestSent": false,
+  "blobUploaded": false,
+  "indexerExecuted": false,
+  "comparisonComplete": false,
+  "fullWorkflowCompleted": false,
+  "cleanup": {
+    "taskResourcesAbsent": true,
+    "deploymentRecordsAbsent": true,
+    "pilotGroupPreserved": true,
+    "independentAzureResourceInventoryCount": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 300,
+    "thisRunConservativeAllowanceUsd": 12,
+    "cumulativeConservativeAllowanceUsd": 229,
+    "remainingConservativeAllowanceUsd": 71,
+    "actualAzureChargesMeasured": false
+  },
+  "portalScreenshotsCaptured": false,
+  "videoCaptured": false
+}

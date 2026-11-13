@@ -46,6 +46,7 @@ export const locationValidatedResourceTypes = new Set([
 
 export const putMissingParentResourceTypes = new Map([
   ['Microsoft.ApiManagement/service/apis', 'ResourceNotFound'],
+  ['Microsoft.ApiManagement/service/apis/operations', 'ResourceNotFound'],
   ['Microsoft.Cdn/profiles/afdEndpoints', 'ParentResourceNotFound'],
   ['Microsoft.Cdn/profiles/endpoints', 'ParentResourceNotFound'],
   ['Microsoft.Cdn/profiles/securityPolicies', 'ParentResourceNotFound'],
@@ -53,6 +54,8 @@ export const putMissingParentResourceTypes = new Map([
   ['Microsoft.DataMigration/services/projects/tasks', 'ParentResourceNotFound'],
   ['Microsoft.DBforMySQL/flexibleServers/databases', 'ResourceNotFound'],
   ['Microsoft.DBforPostgreSQL/flexibleServers/databases', 'ResourceNotFound'],
+  ['Microsoft.DBforPostgreSQL/flexibleServers/administrators', 'ResourceNotFound'],
+  ['Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', 'ResourceNotFound'],
   ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases', 'ResourceNotFound'],
   ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers', 'ResourceNotFound'],
   ['Microsoft.EventHub/namespaces/eventhubs', 'ParentResourceNotFound'],

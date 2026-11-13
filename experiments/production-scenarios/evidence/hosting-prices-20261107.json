@@ -1,0 +1,72 @@
+{
+  "source": "https://prices.azure.com/api/retail/prices",
+  "scope": "Retail list rates, not actual invoiced cost.",
+  "meters": [
+    {
+      "checkedAt": "2026-11-07T11:33:19.138Z",
+      "region": "westus2",
+      "productName": "Azure App Service Premium v3 Plan - Linux",
+      "skuName": "P0v3",
+      "meterName": "P0v3 App",
+      "retailPrice": 0.0775,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "meterId": "2fbf8f1e-c27b-5d98-b589-10f9471a4715"
+    },
+    {
+      "checkedAt": "2026-11-07T11:33:19.500Z",
+      "region": "westus2",
+      "productName": "Premium Functions",
+      "skuName": "Premium",
+      "meterName": "Premium Memory Duration",
+      "retailPrice": 0.0114,
+      "unitOfMeasure": "1 GiB Hour",
+      "currencyCode": "USD",
+      "meterId": "8615b5ec-4cad-4047-97b8-3b1f93486059"
+    },
+    {
+      "checkedAt": "2026-11-07T11:33:19.500Z",
+      "region": "westus2",
+      "productName": "Premium Functions",
+      "skuName": "Premium",
+      "meterName": "Premium vCPU Duration",
+      "retailPrice": 0.16,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "meterId": "ab996fa5-a5bf-4a1b-b568-4a5a330fcfc3"
+    },
+    {
+      "checkedAt": "2026-11-07T11:53:30.602Z",
+      "region": "northeurope",
+      "productName": "Azure App Service Premium v3 Plan - Linux",
+      "skuName": "P0v3",
+      "meterName": "P0v3 App",
+      "retailPrice": 0.084,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "meterId": "f6c489c1-1d1f-5534-b49d-2e0e4a63c100"
+    },
+    {
+      "checkedAt": "2026-11-07T11:53:30.919Z",
+      "region": "northeurope",
+      "productName": "Premium Functions",
+      "skuName": "Premium",
+      "meterName": "Premium vCPU Duration",
+      "retailPrice": 0.167,
+      "unitOfMeasure": "1 Hour",
+      "currencyCode": "USD",
+      "meterId": "a075cbcc-5ac3-4b30-ad03-be69f7c099c9"
+    },
+    {
+      "checkedAt": "2026-11-07T11:53:30.919Z",
+      "region": "northeurope",
+      "productName": "Premium Functions",
+      "skuName": "Premium",
+      "meterName": "Premium Memory Duration",
+      "retailPrice": 0.0119,
+      "unitOfMeasure": "1 GiB Hour",
+      "currencyCode": "USD",
+      "meterId": "b86a232a-3a3d-46f7-b843-c70a3364accd"
+    }
+  ]
+}

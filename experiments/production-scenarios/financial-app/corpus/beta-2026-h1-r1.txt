@@ -1,0 +1,15 @@
+SYNTHETIC REGULATORY-STYLE FILING. NOT A REAL COMPANY OR SEC SUBMISSION.
+Document ID: beta-2026-h1-r1
+Issuer: Fictional Beta Research
+Tenant: tenant-beta
+Reporting period: FY2026 H1
+Revision: 1
+Page 1 of 2
+Consolidated operating results (USD millions)
+Revenue | 154
+Operating expenses | 92
+Operating income | 62
+Page 2 of 2
+Management discussion
+This page contains narrative context, not additional financial line items.
+Employees at period end (people, not USD): 1380

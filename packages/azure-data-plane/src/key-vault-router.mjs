@@ -10,6 +10,7 @@ import {
 } from 'node:crypto';
 import { createServer } from 'node:http';
 import { URL } from 'node:url';
+import { keyVaultTokenAuthorizer } from './key-vault-token-auth.mjs';
 import { localIdentity } from '../../azure-control-plane/src/server-support.mjs';
 
 async function readBody(req) {
@@ -137,7 +138,9 @@ function requireBase64UrlString(value, label) {
 }
 
 export class KeyVaultRouter {
-  constructor({ onSecretSet, onSecretDelete, onKeyCreate, onKeyDelete } = {}) {
+  constructor({ onSecretSet, onSecretDelete, onKeyCreate, onKeyDelete, store, tokenTrusts = [] } = {}) {
+    if (!Array.isArray(tokenTrusts)) throw new Error('Key Vault token trusts must be an array.');
+    this.workloadAuthorization = tokenTrusts.length ? keyVaultTokenAuthorizer({ store, trusts: tokenTrusts }) : null;
     this.vaults = new Map();
     this.onSecretSet = onSecretSet ?? null;
     this.onSecretDelete = onSecretDelete ?? null;
@@ -260,6 +263,7 @@ export class KeyVaultRouter {
       const method = req.method.toUpperCase();
 
       if (method === 'GET' && url.pathname.startsWith('/_globalstack/key-vault/vaults/')) {
+        if (this.workloadAuthorization) return sendError(res, 403, 'Forbidden', 'Inspection routes are disabled on the workload-token surface.');
         const [, , , , vaultName, collection] = url.pathname.split('/');
         const vault = this.vaults.get(decodeURIComponent(vaultName ?? '').toLowerCase());
         if (!vault) return sendError(res, 404, 'VaultNotFound', `The vault '${vaultName}' was not found.`);
@@ -279,8 +283,9 @@ export class KeyVaultRouter {
       if (!vault) {
         return sendError(res, 404, 'VaultNotFound', `The vault '${vaultName}' was not found.`);
       }
-      const authError = requireAuth(req, vault);
-      if (authError) return sendError(res, authError.status, authError.code, authError.message, authError.headers);
+      const authError = this.workloadAuthorization
+        ? await this.workloadAuthorization({ req, url, vault }) : requireAuth(req, vault);
+      if (authError) return sendError(res, authError.status, authError.code, authError.message, authError.headers ?? (authError.status === 401 ? bearerChallengeHeaders(vault) : {}));
 
       const parts = url.pathname.split('/').filter(Boolean).map(segment => decodeURIComponent(segment));
       const [collection, name, action] = parts;

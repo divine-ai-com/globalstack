@@ -1,0 +1,68 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "1035828799510611430"
+    }
+  },
+  "parameters": {
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "imageReference": {
+      "type": "string"
+    },
+    "applicationSettings": {
+      "type": "array",
+      "defaultValue": []
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2024-11-01",
+      "name": "[format('{0}-worker', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "project": "globalstack-production-scenarios",
+        "run": "[parameters('runId')]"
+      },
+      "kind": "functionapp,linux,container",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))))]": {}
+        }
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', format('{0}-worker', parameters('serviceName')))]",
+        "httpsOnly": true,
+        "siteConfig": {
+          "linuxFxVersion": "[format('DOCKER|{0}', parameters('imageReference'))]",
+          "acrUseManagedIdentityCreds": true,
+          "acrUserManagedIdentityID": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').clientId]",
+          "ftpsState": "Disabled",
+          "minTlsVersion": "1.2",
+          "minimumElasticInstanceCount": 1,
+          "functionAppScaleLimit": 1,
+          "appSettings": "[concat(createArray(createObject('name', 'FUNCTIONS_EXTENSION_VERSION', 'value', '~4'), createObject('name', 'FUNCTIONS_WORKER_RUNTIME', 'value', 'node'), createObject('name', 'AZURE_CLIENT_ID', 'value', reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').clientId), createObject('name', 'AzureWebJobsStorage__accountName', 'value', format('{0}host', parameters('serviceName'))), createObject('name', 'AzureWebJobsStorage__credential', 'value', 'managedidentity'), createObject('name', 'AzureWebJobsStorage__clientId', 'value', reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').clientId), createObject('name', 'WEBSITES_ENABLE_APP_SERVICE_STORAGE', 'value', 'false')), parameters('applicationSettings'))]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "hostname": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', format('{0}-worker', parameters('serviceName'))), '2024-11-01').defaultHostName]"
+    }
+  }
+}

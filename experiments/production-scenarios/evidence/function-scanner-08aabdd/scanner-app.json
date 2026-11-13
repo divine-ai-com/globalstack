@@ -1,0 +1,125 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "4151721217486937079"
+    }
+  },
+  "parameters": {
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "environmentId": {
+      "type": "string"
+    },
+    "imageReference": {
+      "type": "string"
+    },
+    "registryHost": {
+      "type": "string"
+    },
+    "publicIngress": {
+      "type": "bool",
+      "defaultValue": false
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2025-01-01",
+      "name": "[format('{0}-scanner', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "project": "globalstack-production-scenarios",
+        "run": "[parameters('runId')]"
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-scanner', parameters('serviceName'))))]": {}
+        }
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('environmentId')]",
+        "configuration": {
+          "activeRevisionsMode": "Single",
+          "registries": [
+            {
+              "server": "[parameters('registryHost')]",
+              "identity": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-scanner', parameters('serviceName')))]"
+            }
+          ],
+          "ingress": {
+            "external": "[parameters('publicIngress')]",
+            "targetPort": 8080,
+            "transport": "http",
+            "allowInsecure": false
+          }
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "scanner",
+              "image": "[parameters('imageReference')]",
+              "resources": {
+                "cpu": 2,
+                "memory": "4Gi"
+              },
+              "env": [
+                {
+                  "name": "PORT",
+                  "value": "8080"
+                }
+              ],
+              "probes": [
+                {
+                  "type": "Startup",
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  },
+                  "periodSeconds": 3,
+                  "timeoutSeconds": 2,
+                  "failureThreshold": 60
+                },
+                {
+                  "type": "Readiness",
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  },
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 2,
+                  "failureThreshold": 3
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 1,
+            "maxReplicas": 1
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "hostname": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', format('{0}-scanner', parameters('serviceName'))), '2025-01-01').configuration.ingress.fqdn]"
+    },
+    "scannerId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.App/containerApps', format('{0}-scanner', parameters('serviceName')))]"
+    }
+  }
+}

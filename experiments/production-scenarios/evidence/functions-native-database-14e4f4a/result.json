@@ -1,0 +1,2546 @@
+{
+  "scope": "Local official Functions host against GlobalStack Storage routers. No Azure comparison or full application success.",
+  "sourceRevision": "14e4f4a4332a324a0af8dd1a5ffcbb5629edc8c7",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T21:54:15.187Z",
+  "configurationMode": "host-storage-only",
+  "requests": [
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": null,
+      "restype": "container",
+      "queryNames": [
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 17
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "60",
+        "x-ms-proposed-lease-id": "e49ebe36-5ccc-4dfd-ad81-fdaf0ca2696d"
+      },
+      "status": 404,
+      "durationMs": 3
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "60",
+        "x-ms-proposed-lease-id": "4fd22c97-7d51-4289-9691-e68eb6b64074"
+      },
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {
+        "if-none-match": "*"
+      },
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {
+        "if-none-match": "*"
+      },
+      "status": 404,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts",
+      "comp": null,
+      "restype": "container",
+      "queryNames": [
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 2
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts",
+      "comp": null,
+      "restype": "container",
+      "queryNames": [
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 409,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {
+        "if-none-match": "*"
+      },
+      "status": 201,
+      "durationMs": 2
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {
+        "if-none-match": "*"
+      },
+      "status": 201,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "60",
+        "x-ms-proposed-lease-id": "a018a944-f3f7-4030-ae8b-f5c6dc73421c"
+      },
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "60",
+        "x-ms-proposed-lease-id": "2f0d0d2a-f8dc-4d91-8539-a3cc5ffa2cae"
+      },
+      "status": 201,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {
+        "if-none-match": "*"
+      },
+      "status": 201,
+      "durationMs": 2
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 2
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/Tables",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-workitems",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 2
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-01",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 2
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-02",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-03",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-00",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "POST",
+      "path": "/DocumentPilotPartitions",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 2
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": "lease",
+      "restype": "container",
+      "queryNames": [
+        "comp",
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "60",
+        "x-ms-proposed-lease-id": "811c9dc5-0000-0000-0000-000000000000"
+      },
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease/documentpilot-appleaseinfo",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 2
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": "lease",
+      "restype": "container",
+      "queryNames": [
+        "comp",
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "811c9dc5-0000-0000-0000-000000000000"
+      },
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:23.936Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-00",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:23.929Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-01",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:23.933Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-02",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:23.934Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "PUT",
+      "path": "/documentpilot-control-03",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 404,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "15",
+        "x-ms-proposed-lease-id": "000000000000000000000000E3CF1DD5"
+      },
+      "status": 404,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {
+        "if-none-match": "*"
+      },
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "15",
+        "x-ms-proposed-lease-id": "000000000000000000000000E3CF1DD5"
+      },
+      "status": 201,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "HEAD",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": null,
+      "restype": null,
+      "queryNames": [],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "metadata",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-id": "00000000-0000-0000-0000-0000e3cf1dd5"
+      },
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/azure-webjobs-hosts",
+      "comp": null,
+      "restype": "container",
+      "queryNames": [
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:24.262Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:24.287Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:24.289Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:24.290Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "00000000-0000-0000-0000-0000e3cf1dd5"
+      },
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:34.301Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:34.303Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:34.304Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:34.305Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": "lease",
+      "restype": "container",
+      "queryNames": [
+        "comp",
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "811c9dc5-0000-0000-0000-000000000000"
+      },
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "00000000-0000-0000-0000-0000e3cf1dd5"
+      },
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.retryIndexChanges.Listener",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "2f0d0d2a-f8dc-4d91-8539-a3cc5ffa2cae"
+      },
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/Host.Functions.settleDocumentFailures.Listener",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "a018a944-f3f7-4030-ae8b-f5c6dc73421c"
+      },
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:44.307Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:44.309Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:44.310Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:44.311Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "GET",
+      "path": "/azure-webjobs-hosts",
+      "comp": null,
+      "restype": "container",
+      "queryNames": [
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:54.314Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:54.315Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:54.316Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:54:54.317Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "00000000-0000-0000-0000-0000e3cf1dd5"
+      },
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-03/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-00/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/documentpilot-applease",
+      "comp": "lease",
+      "restype": "container",
+      "queryNames": [
+        "comp",
+        "restype"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "811c9dc5-0000-0000-0000-000000000000"
+      },
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "GET",
+      "path": "/DocumentPilotPartitions()",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-00')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:55:04.320Z'\""
+      },
+      "status": 204,
+      "durationMs": 1
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-01')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:55:04.321Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-02')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:55:04.322Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "table",
+      "method": "PUT",
+      "path": "/DocumentPilotPartitions(PartitionKey='',RowKey='documentpilot-control-03')",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "$format"
+      ],
+      "query": {
+        "$format": "application/json;odata=minimalmetadata"
+      },
+      "requestHeaders": {
+        "if-match": "W/\"datetime'2026-11-07T21:55:04.323Z'\""
+      },
+      "status": 204,
+      "durationMs": 0
+    },
+    {
+      "surface": "blob",
+      "method": "PUT",
+      "path": "/azure-webjobs-hosts/locks/6eae566850e2-2137340777/host",
+      "comp": "lease",
+      "restype": null,
+      "queryNames": [
+        "comp"
+      ],
+      "query": {},
+      "requestHeaders": {
+        "x-ms-lease-action": "renew",
+        "x-ms-lease-id": "00000000-0000-0000-0000-0000e3cf1dd5"
+      },
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-02/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-workitems/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 0
+    },
+    {
+      "surface": "queue",
+      "method": "GET",
+      "path": "/documentpilot-control-01/messages",
+      "comp": null,
+      "restype": null,
+      "queryNames": [
+        "numofmessages",
+        "visibilitytimeout"
+      ],
+      "query": {},
+      "requestHeaders": {},
+      "status": 200,
+      "durationMs": 1
+    }
+  ],
+  "workerHealthReady": true,
+  "durableWorkerStarted": true,
+  "hostLeaseAcquired": true,
+  "businessWorkflowCompleted": false,
+  "cleanup": true,
+  "imageId": "sha256:9f06f0a7a3c4a6c839c00b30f159ae239d8ad2a5e491db992715bf23ea2690d2",
+  "nativeIdentity": {
+    "scope": "Native image SDK and unchanged source adapter; local identity and TLS transport only. No paired Azure identity or completed document workflow.",
+    "requests": [
+      {
+        "method": "PUT",
+        "path": "/identity-source",
+        "bearer": true,
+        "status": 201
+      },
+      {
+        "method": "PUT",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 201
+      },
+      {
+        "method": "PUT",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 201
+      },
+      {
+        "method": "GET",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 206
+      },
+      {
+        "method": "HEAD",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/identity-source",
+        "bearer": true,
+        "status": 200
+      },
+      {
+        "method": "HEAD",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 206
+      },
+      {
+        "method": "DELETE",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 202
+      },
+      {
+        "method": "HEAD",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 404
+      },
+      {
+        "method": "GET",
+        "path": "/identity-source",
+        "bearer": true,
+        "status": 200
+      },
+      {
+        "method": "HEAD",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 206
+      },
+      {
+        "method": "HEAD",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 403
+      },
+      {
+        "method": "PUT",
+        "path": "/identity-source/tenant/document.txt",
+        "bearer": true,
+        "status": 403
+      }
+    ],
+    "sdk": [
+      {
+        "phase": "authorized",
+        "historicalRead": true,
+        "rangeRead": true,
+        "deletedCurrentRead": true
+      },
+      {
+        "phase": "role-removed",
+        "readStatus": 403,
+        "writeStatus": 403
+      }
+    ],
+    "cleanup": true,
+    "database": {
+      "scope": "Application Key Vault secret lookup and native PostgreSQL TLS fixture. No Azure database or ARM database lifecycle comparison.",
+      "vaultRequests": [
+        {
+          "method": "GET",
+          "path": "/secrets/database-password",
+          "bearer": true,
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/secrets/database-password",
+          "bearer": true,
+          "status": 403
+        }
+      ],
+      "checks": [
+        {
+          "phase": "authorized",
+          "encrypted": true,
+          "tlsVersion": "TLSv1.3",
+          "schemaMigrated": true
+        },
+        {
+          "phase": "untrusted-ca",
+          "certificateRejected": true
+        },
+        {
+          "phase": "role-removed",
+          "connectionDenied": true
+        }
+      ],
+      "cleanup": true,
+      "databaseImage": "sha256:aa6cb33cf4c19c765cefcf48d96176258800870a9a1e930ad126200f9d825139"
+    }
+  },
+  "nativeRouting": {
+    "scope": "Operator-bound native host; ARM manages routing only, not container provisioning or package deployment.",
+    "arm": [
+      {
+        "method": "PUT",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-functions-probe-387bbb4cb1",
+        "status": 200
+      },
+      {
+        "method": "PUT",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-functions-probe-387bbb4cb1/providers/Microsoft.Web/serverfarms/gs-functions-probe-387bbb4cb1",
+        "status": 200
+      },
+      {
+        "method": "PUT",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-functions-probe-387bbb4cb1/providers/Microsoft.Web/sites/gs-functions-probe-387bbb4cb1",
+        "status": 200
+      },
+      {
+        "method": "DELETE",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gs-functions-probe-387bbb4cb1/providers/Microsoft.Web/sites/gs-functions-probe-387bbb4cb1",
+        "status": 200
+      }
+    ],
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "status": 502,
+        "at": "2026-11-07T21:54:18.725Z"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "status": 502,
+        "at": "2026-11-07T21:54:20.728Z"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "status": 502,
+        "at": "2026-11-07T21:54:22.732Z"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "status": 200,
+        "at": "2026-11-07T21:54:24.952Z"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "status": 502,
+        "at": "2026-11-07T21:55:25.715Z"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "status": 404,
+        "at": "2026-11-07T21:55:25.720Z"
+      }
+    ],
+    "stoppedWorkerStatus": 502,
+    "deletedSiteStatus": 404
+  },
+  "missingApplicationSettings": [
+    "STORAGE_RESOURCE_ID"
+  ],
+  "timerInvocations": [
+    {
+      "function": "settleDocumentFailures",
+      "outcome": "Failed"
+    },
+    {
+      "function": "retryIndexChanges",
+      "outcome": "Failed"
+    },
+    {
+      "function": "settleDocumentFailures",
+      "outcome": "Failed"
+    },
+    {
+      "function": "retryIndexChanges",
+      "outcome": "Failed"
+    },
+    {
+      "function": "retryIndexChanges",
+      "outcome": "Failed"
+    },
+    {
+      "function": "settleDocumentFailures",
+      "outcome": "Failed"
+    },
+    {
+      "function": "settleDocumentFailures",
+      "outcome": "Failed"
+    },
+    {
+      "function": "retryIndexChanges",
+      "outcome": "Failed"
+    }
+  ],
+  "completedAt": "2026-11-07T21:55:26.101Z"
+}

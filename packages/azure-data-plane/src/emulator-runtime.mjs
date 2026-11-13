@@ -1,11 +1,14 @@
+import { createContainerAppRouter } from './container-app-router.mjs';
 import { URL } from 'node:url';
 import { capabilityForResourceType } from '../../core/src/azure-tier1-capabilities.mjs';
 import { createActivityLogStore } from './activity-log-store.mjs';
 import { createAppConfigurationRouter } from './app-configuration-router.mjs';
+import { createApiManagementRouter } from './api-management-router.mjs';
 import { createDigitalTwinsRouter } from './digital-twins-router.mjs';
 import { createDnsRegistry } from './dns-registry.mjs';
 import { createEdgeRouter } from './edge-router.mjs';
 import { createEventGridRouter } from './event-grid-router.mjs';
+import { createNativeFunctionsLifecycle, isNativeFunction } from './native-functions-lifecycle.mjs';
 import { createFunctionsRouter } from './functions-router.mjs';
 import { createIotHubRouter } from './iot-hub-router.mjs';
 import { createKubernetesRouter } from './kubernetes-router.mjs';
@@ -18,6 +21,7 @@ import { createRelationalBackendManager } from './relational-backend-manager.mjs
 import { createSearchRouter } from './search-router.mjs';
 import { createServiceDiscoveryRegistry } from './service-discovery-registry.mjs';
 import { createStorageDataPlaneRouter } from './storage-router.mjs';
+import { StorageEventDelivery } from './storage-event-delivery.mjs';
 import { createWafEvaluator } from './waf-evaluator.mjs';
 import { createWorkflowRunner } from './workflow-runner.mjs';
 
@@ -136,12 +140,18 @@ function logAsyncRuntimeFailure(surface, error) {
   });
 }
 
-export function createEmulatorRuntime({ store }) {
-  const storageRouter = createStorageDataPlaneRouter();
+export function createEmulatorRuntime({ store, nativeFunctionsWorkers = [], nativeFunctionsProvisioner, nativeContainerAppProvisioner, containerAppTokenTrusts = [], storageTokenTrusts = [], keyVaultTokenTrusts = [], searchTokenTrusts = [] }) {
+  const containerAppRouter = createContainerAppRouter({ store, provision: nativeContainerAppProvisioner, trusts: containerAppTokenTrusts });
+  const storageRouter = createStorageDataPlaneRouter({ store, tokenTrusts: storageTokenTrusts });
+  const storageEventDelivery = new StorageEventDelivery({ store, storageRouter });
+  storageRouter.onBlobEvent = event => storageEventDelivery.publish(event);
   const appConfigurationRouter = createAppConfigurationRouter();
   const digitalTwinsRouter = createDigitalTwinsRouter();
   const eventGridRouter = createEventGridRouter();
-  const functionsRouter = createFunctionsRouter();
+  const functionsRouter = createFunctionsRouter({ nativeWorkers: nativeFunctionsWorkers });
+  const nativeFunctionsLifecycle = nativeFunctionsProvisioner
+    ? createNativeFunctionsLifecycle({ router: functionsRouter, provision: nativeFunctionsProvisioner }) : null;
+  storageEventDelivery.functionsRouter = functionsRouter;
   const iotHubRouter = createIotHubRouter();
   const serviceDiscoveryRegistry = createServiceDiscoveryRegistry();
   const dnsRegistry = createDnsRegistry();
@@ -149,7 +159,8 @@ export function createEmulatorRuntime({ store }) {
   const metricStore = createMetricStore();
   const logAnalyticsStore = createLogAnalyticsStore();
   const relationalBackends = createRelationalBackendManager();
-  const searchRouter = createSearchRouter();
+  const searchRouter = createSearchRouter({ store, storageRouter, tokenTrusts: searchTokenTrusts });
+  const apiManagementRouter = createApiManagementRouter();
   const migrationRunner = createMigrationPlanRunner({ relationalBackends });
   const wafEvaluator = createWafEvaluator();
   const edgeRouter = createEdgeRouter({ wafEvaluator });
@@ -164,6 +175,7 @@ export function createEmulatorRuntime({ store }) {
     },
   });
   const keyVaultRouter = createKeyVaultRouter({
+    store, tokenTrusts: keyVaultTokenTrusts,
     onSecretSet({ subscriptionId, resourceGroupName, vaultName, secretName, value, contentType, tags, attributes }) {
       if (!subscriptionId || !resourceGroupName) return;
       store.putResource({
@@ -571,7 +583,15 @@ export function createEmulatorRuntime({ store }) {
       storageRouter.registerStorageAccount({
         accountName: resource.name,
         accountKey: registeredStorageAccountKey(resourceStore, providerRoute),
+        allowSharedKeyAccess: resource.properties?.allowSharedKeyAccess,
+        resourceId: resource.id,
       });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices') {
+      storageRouter.configureBlobService({ accountName: providerRoute.typePath.split('/')[1],
+        isVersioningEnabled: resource.properties?.isVersioningEnabled });
       return;
     }
 
@@ -621,9 +641,27 @@ export function createEmulatorRuntime({ store }) {
 
     if (resourceType === 'Microsoft.Search/searchServices') {
       searchRouter.registerService({
+        resourceId: resource.id,
         serviceName: resource.name,
         endpoint: resource.properties?.endpoint,
       });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service') {
+      apiManagementRouter.registerService({ serviceName: resource.name, gatewayUrl: resource.properties?.gatewayUrl });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.registerApi({ serviceName: parts[1], apiId: parts[3], properties: resource.properties ?? {} });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis/operations') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.registerOperation({ serviceName: parts[1], apiId: parts[3], operationId: parts[5], properties: resource.properties });
       return;
     }
 
@@ -643,11 +681,19 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.App/containerApps') {
+      containerAppRouter.sync(resource);
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
       functionsRouter.registerApp({
         appName: resource.name,
+        resourceId: resource.id,
         defaultHostName: resource.properties?.defaultHostName,
+        requiresNativeWorker: isNativeFunction(resource),
       });
+      nativeFunctionsLifecycle?.sync(resource);
       return;
     }
 
@@ -1011,6 +1057,23 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.ApiManagement/service') {
+      apiManagementRouter.unregisterService(resource?.name ?? providerRoute.typePath.split('/')[1]);
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.unregisterApi({ serviceName: parts[1], apiId: parts[3] });
+      return;
+    }
+
+    if (resourceType === 'Microsoft.ApiManagement/service/apis/operations') {
+      const parts = providerRoute.typePath.split('/');
+      apiManagementRouter.unregisterOperation({ serviceName: parts[1], apiId: parts[3], operationId: parts[5] });
+      return;
+    }
+
     if (resourceType === 'Microsoft.DigitalTwins/digitalTwinsInstances') {
       digitalTwinsRouter.unregisterInstance(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
@@ -1021,7 +1084,13 @@ export function createEmulatorRuntime({ store }) {
       return;
     }
 
+    if (resourceType === 'Microsoft.App/containerApps') {
+      containerAppRouter.remove({ id: resource?.id ?? resourcePath(providerRoute) });
+      return;
+    }
+
     if (resourceType === 'Microsoft.Web/sites') {
+      nativeFunctionsLifecycle?.remove({ id: resource?.id ?? resourcePath(providerRoute) });
       functionsRouter.unregisterApp(resource?.name ?? providerRoute.typePath.split('/')[1]);
       return;
     }
@@ -1299,11 +1368,21 @@ export function createEmulatorRuntime({ store }) {
   }
 
   async function dispose() {
-    await kubernetesRouter.dispose?.();
+    storageEventDelivery.dispose();
+    const results = await Promise.allSettled([
+      Promise.resolve().then(() => kubernetesRouter.dispose?.()),
+      Promise.resolve().then(() => nativeFunctionsLifecycle?.dispose()),
+      Promise.resolve().then(() => containerAppRouter.dispose()),
+    ]);
+    const failures = results.filter(result => result.status === 'rejected').map(result => result.reason);
+    if (failures.length) throw new AggregateError(failures, 'Runtime cleanup is incomplete');
   }
 
   return {
+    nativeFunctionsLifecycle,
+    containerAppRouter,
     storageRouter,
+    storageEventDelivery,
     appConfigurationRouter,
     digitalTwinsRouter,
     eventGridRouter,
@@ -1319,6 +1398,7 @@ export function createEmulatorRuntime({ store }) {
     activityLogStore,
     logAnalyticsStore,
     searchRouter,
+    apiManagementRouter,
     dnsRegistry,
     networkModel,
     metricStore,

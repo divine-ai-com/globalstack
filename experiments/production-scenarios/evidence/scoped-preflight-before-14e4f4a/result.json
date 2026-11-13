@@ -1,0 +1,334 @@
+{
+  "schemaVersion": 1,
+  "revision": "14e4f4a4332a324a0af8dd1a5ffcbb5629edc8c7",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T21:54:09.873Z",
+  "scope": "Read-only resource-group access and provider validation. No cloud deployment, resource deletion, or business workflow.",
+  "cloudResourcesProvisioned": false,
+  "portalEvidenceComplete": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2022-09-01",
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "5dedce22-e9ad-46f7-83f2-8c1c1900fc22",
+        "x-ms-correlation-request-id": "5dedce22-e9ad-46f7-83f2-8c1c1900fc22"
+      },
+      "startedAt": "2026-11-07T21:54:09.874Z",
+      "completedAt": "2026-11-07T21:54:10.610Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": []
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "4711265b-f78d-46c1-ae3d-cf530ada01cb",
+        "x-ms-correlation-request-id": "4711265b-f78d-46c1-ae3d-cf530ada01cb"
+      },
+      "startedAt": "2026-11-07T21:54:10.611Z",
+      "completedAt": "2026-11-07T21:54:10.864Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Authorization/permissions?api-version=2022-04-01",
+      "status": 200,
+      "body": {
+        "value": [
+          {
+            "actions": [
+              "*"
+            ],
+            "notActions": [
+              "Microsoft.Authorization/*/Delete",
+              "Microsoft.Authorization/*/Write",
+              "Microsoft.Authorization/elevateAccess/Action",
+              "Microsoft.Blueprint/blueprintAssignments/write",
+              "Microsoft.Blueprint/blueprintAssignments/delete",
+              "Microsoft.Compute/galleries/share/action",
+              "Microsoft.Purview/consents/write",
+              "Microsoft.Purview/consents/delete",
+              "Microsoft.Resources/deploymentStacks/manageDenySetting/action",
+              "Microsoft.Subscription/cancel/action",
+              "Microsoft.Subscription/enable/action"
+            ],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ]
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "9e8c8c90-53c3-44a5-a480-9cda59b10db5",
+        "x-ms-correlation-request-id": "4460e33e-9b56-429d-a856-d2fdb58ddafc"
+      },
+      "startedAt": "2026-11-07T21:54:10.864Z",
+      "completedAt": "2026-11-07T21:54:11.145Z"
+    },
+    {
+      "target": "azure",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-preflight-12edcdd893b4/validate?api-version=2025-04-01",
+      "request": {
+        "properties": {
+          "mode": "Incremental",
+          "validationLevel": "Provider",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "5459198238252862264"
+              }
+            },
+            "parameters": {
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2024-11-01",
+                "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "kind": "linux",
+                "sku": {
+                  "name": "P0v3",
+                  "tier": "PremiumV3",
+                  "capacity": 1
+                },
+                "properties": {
+                  "reserved": true,
+                  "perSiteScaling": false,
+                  "elasticScaleEnabled": false
+                }
+              },
+              {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2024-11-01",
+                "name": "[format('{0}-worker', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "kind": "elastic",
+                "sku": {
+                  "name": "EP1",
+                  "tier": "ElasticPremium",
+                  "capacity": 1
+                },
+                "properties": {
+                  "reserved": true,
+                  "maximumElasticWorkerCount": 1
+                }
+              }
+            ]
+          },
+          "parameters": {
+            "serviceName": {
+              "value": "gs12edcdd893b4"
+            },
+            "location": {
+              "value": "westus2"
+            }
+          }
+        }
+      },
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-preflight-12edcdd893b4",
+        "name": "gs-preflight-12edcdd893b4",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "5459198238252862264",
+          "parameters": {
+            "serviceName": {
+              "type": "String",
+              "value": "gs12edcdd893b4"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2026-11-07T21:54:13.4819322Z",
+          "duration": "PT0S",
+          "correlationId": "3c6921a4-6f97-49b8-b6dd-cf98a63c3dcd",
+          "providers": [
+            {
+              "namespace": "Microsoft.Web",
+              "resourceTypes": [
+                {
+                  "resourceType": "serverfarms",
+                  "locations": [
+                    "westus2"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [],
+          "validatedResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs12edcdd893b4-ingress"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/gs12edcdd893b4-worker"
+            }
+          ],
+          "validationLevel": "Provider"
+        }
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "3c6921a4-6f97-49b8-b6dd-cf98a63c3dcd",
+        "x-ms-correlation-request-id": "3c6921a4-6f97-49b8-b6dd-cf98a63c3dcd"
+      },
+      "startedAt": "2026-11-07T21:54:12.955Z",
+      "completedAt": "2026-11-07T21:54:14.613Z"
+    },
+    {
+      "target": "local",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/gs-preflight-12edcdd893b4/validate?api-version=2025-04-01",
+      "request": {
+        "properties": {
+          "mode": "Incremental",
+          "validationLevel": "Provider",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "5459198238252862264"
+              }
+            },
+            "parameters": {
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2024-11-01",
+                "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "kind": "linux",
+                "sku": {
+                  "name": "P0v3",
+                  "tier": "PremiumV3",
+                  "capacity": 1
+                },
+                "properties": {
+                  "reserved": true,
+                  "perSiteScaling": false,
+                  "elasticScaleEnabled": false
+                }
+              },
+              {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2024-11-01",
+                "name": "[format('{0}-worker', parameters('serviceName'))]",
+                "location": "[parameters('location')]",
+                "kind": "elastic",
+                "sku": {
+                  "name": "EP1",
+                  "tier": "ElasticPremium",
+                  "capacity": 1
+                },
+                "properties": {
+                  "reserved": true,
+                  "maximumElasticWorkerCount": 1
+                }
+              }
+            ]
+          },
+          "parameters": {
+            "serviceName": {
+              "value": "gs12edcdd893b4"
+            },
+            "location": {
+              "value": "westus2"
+            }
+          }
+        }
+      },
+      "status": 501,
+      "body": {
+        "error": {
+          "code": "GlobalStackResourceTypeNotEmulated",
+          "message": "GlobalStack does not emulate Azure resource type Microsoft.Resources/deployments/validate.",
+          "details": [
+            {
+              "code": "ExplicitGap",
+              "message": "Add this exact resource type to the capability registry, bind a real emulator or metadata facade, and add conformance tests before returning success."
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T21:54:14.626Z",
+      "completedAt": "2026-11-07T21:54:14.631Z"
+    },
+    {
+      "target": "azure",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2021-04-01",
+      "status": 200,
+      "body": {
+        "value": []
+      },
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ms-request-id": "39bb0c39-647a-4060-8a6e-14c24a1f6532",
+        "x-ms-correlation-request-id": "39bb0c39-647a-4060-8a6e-14c24a1f6532"
+      },
+      "startedAt": "2026-11-07T21:54:14.632Z",
+      "completedAt": "2026-11-07T21:54:15.761Z"
+    }
+  ],
+  "region": "westus2",
+  "resourceCountBefore": 0,
+  "templateSha256": "116d760efa3a1b5551552cdf09ef25f76318f723bdb989f2fb4c8a2ce39f37e0",
+  "providerValidation": {
+    "azureStatus": 200,
+    "localStatus": 501,
+    "azureAccepted": true,
+    "localAccepted": false
+  },
+  "resourceCountAfter": 0,
+  "cloudGroupPreserved": true,
+  "completedAt": "2026-11-07T21:54:15.761Z"
+}

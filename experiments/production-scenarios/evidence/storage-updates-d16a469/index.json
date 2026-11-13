@@ -1,0 +1,23 @@
+{
+  "scope": "Second Azure-first Storage API capture. Thirty paired requests; no full application or native IaC deployment claim.",
+  "files": {
+    "result.json": {
+      "sha256": "c4d2828225498205492867a89c35587ffb589b30b74fec70284587f68fedfc3d",
+      "bytes": 91104
+    },
+    "events.ndjson": {
+      "sha256": "aae814575c8d2a4613964a2ea1488c43a08e6535a219b1dfccc6b03a538ab661",
+      "bytes": 125272
+    },
+    "recording.json": {
+      "sha256": "863bf21988bc792f0754819ab7d8152d04b4eb3722cb4b601362127815d2fb89",
+      "bytes": 643
+    }
+  },
+  "observations": [
+    "Previously corrected conditional-write, lease, Table create/query and queue behavior now match observed status/error codes in a fresh paired run.",
+    "Azure rejects unleased metadata changes and accepts the active lease; local metadata operation remains unsupported in this captured revision.",
+    "Azure rejects stale Table versions, accepts replacement/merge, and returns updated fields; local update methods remain unsupported in this captured revision.",
+    "Account and group cleanup verified."
+  ]
+}

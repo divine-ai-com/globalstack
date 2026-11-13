@@ -1,0 +1,19 @@
+{
+  "scope": "Local official Functions host against GlobalStack Storage. No Azure comparison or application success.",
+  "files": {
+    "result.json": {
+      "sha256": "a684ea0319e593508df5a725dfcb4c1e5f87b72f73860eedaa1a9298ff2bba6a",
+      "bytes": 6529
+    },
+    "host.log": {
+      "sha256": "0406e158cd9f13706399499124d743a17b2026d2eac14c5e1d7848ad3cec6c80",
+      "bytes": 103184
+    }
+  },
+  "observations": [
+    "HTTP health function executed successfully.",
+    "Durable startup repeatedly failed to create documentpilot-applease: PUT with restype=container returned 404.",
+    "Missing-blob HEAD 404 responses alone are not defects.",
+    "Temporary container and network cleanup completed."
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "path": "result.json",
+    "sha256": "1158bb375ceda71be991d46d83ad2bab32662bc7589640cbf30ffe01a61cf505"
+  },
+  {
+    "path": "events.ndjson",
+    "sha256": "0d8f3fe8940ffe1629ea765dbcf40c87a44cfb7e1acedabb513e69f79e55623a"
+  },
+  {
+    "path": "worker-host.json",
+    "sha256": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36"
+  },
+  {
+    "path": "worker-app.json",
+    "sha256": "a90e79e1d7e397e7bc6b3941e2c2d7ffdc91b0ca17929ffaffcc1817272aa547"
+  }
+]

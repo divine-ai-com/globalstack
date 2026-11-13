@@ -46,7 +46,7 @@ test('table insert rejects an existing key without replacing its value or metada
     for (const status of ['queued', 'overwritten']) {
       const conflict = await client.insertTableEntity('claims', { ...original, status });
       assert.equal(conflict.status, 409);
-      assert.equal(JSON.parse(conflict.body).error.code, 'EntityAlreadyExists');
+      assert.equal(JSON.parse(conflict.body)['odata.error'].code, 'EntityAlreadyExists');
       const retained = await client.getTableEntity('claims', 'claims', 'one');
       assert.equal(retained.status, 200);
       assert.deepEqual(JSON.parse(retained.body), JSON.parse(inserted.body));

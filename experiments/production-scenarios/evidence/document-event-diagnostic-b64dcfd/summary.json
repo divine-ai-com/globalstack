@@ -1,0 +1,37 @@
+{
+  "sourceRevision": "b64dcfd41f1ed9928307a44c24f11c84aa5f89d3",
+  "sourceDirty": false,
+  "target": "GlobalStack only",
+  "workerImageId": "sha256:326acb3ba0de15d3f83ac068bea0ee7aac9e09d13ec38639a4eef2cecea1b309",
+  "templateSha256": {
+    "host": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36",
+    "data": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+    "app": "0a9b65e63376a4b6a0e213f80d7e49586d0f8b5d28e7ae04c87fe9c28d255589",
+    "events": "d5c3938d5eb0d6f00f2dd88ba0cb7b44c199b27f6d815aae13103e6b6a5abc09",
+    "diagnostic": "5ba0b7f137557ff4db951414ffc18f282233e4f3473158e479ff0b8a3a96ebc8"
+  },
+  "nativeWorkerState": "running",
+  "diagnosticContainerOwned": true,
+  "uploadStatus": 201,
+  "uploadInputSha256": "5099a85faea7961120f1897d9c2be160bb5ee4236534bbcbed231faeb623efe6",
+  "eventMarker": {
+    "status": 200,
+    "sourceSha256": "5d499e00df3431ff63c0bd8d5279f02cc8afa4bff02139087963e92a7902f2fb"
+  },
+  "eventDelivery": [
+    {
+      "subscription": "document-diagnostic",
+      "state": "delivered",
+      "reason": null
+    },
+    {
+      "subscription": "document-revisions",
+      "state": "retrying",
+      "reason": "NativeEventGridHttp500"
+    }
+  ],
+  "error": null,
+  "localCleanupComplete": true,
+  "azureCompared": false,
+  "fullDocumentWorkflowCompleted": false
+}

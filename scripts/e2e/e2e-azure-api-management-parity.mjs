@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { request } from 'node:http';
+import { createServer, request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -14,6 +14,7 @@ const skipPlatforms = process.argv.includes('--skip-platforms');
 const subscriptionId = process.env.GLOBALSTACK_AZURE_SUBSCRIPTION_ID ?? '00000000-0000-0000-0000-000000000000';
 const token = process.env.GLOBALSTACK_AZURE_ACCESS_TOKEN ?? 'globalstack-local-token';
 const authHeader = `Bearer ${token}`;
+let backendOrigin;
 
 function run(command, args, options = {}) {
   return new Promise((resolve) => {
@@ -54,6 +55,16 @@ async function withArmServer(fn) {
 }
 
 async function withApiManagementRouter(fn) {
+  const backend = createServer(async (req, res) => {
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const text = Buffer.concat(chunks).toString();
+    res.setHeader('content-type', 'application/json');
+    res.setHeader('x-backend-proof', 'actual-local-worker');
+    res.end(JSON.stringify({ path: req.url, method: req.method, body: text ? JSON.parse(text) : null }));
+  });
+  await new Promise(resolve => backend.listen(0, '127.0.0.1', resolve));
+  backendOrigin = `http://127.0.0.1:${backend.address().port}`;
   const router = createApiManagementRouter();
   const server = createApiManagementRouterServer(router);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -61,7 +72,10 @@ async function withApiManagementRouter(fn) {
   try {
     return await fn(port, router);
   } finally {
+    server.closeAllConnections();
+    backend.closeAllConnections();
     await new Promise(resolve => server.close(resolve));
+    await new Promise(resolve => backend.close(resolve));
   }
 }
 
@@ -168,7 +182,7 @@ function apiBody(overrides = {}) {
       displayName: 'ingestion-api',
       path: 'ingest',
       protocols: ['https'],
-      serviceUrl: 'https://backend.example.com/api',
+      serviceUrl: `${backendOrigin}/api`,
       subscriptionRequired: false,
     },
     ...overrides,
@@ -517,6 +531,7 @@ async function runControlPlaneAndGatewayMatrix() {
         assert.equal(result.body.properties.path, 'ingest');
         assert.equal(result.body.globalstack.capabilityId, 'api-management');
         router.registerApi({ serviceName, apiId: apiName, properties: result.body.properties });
+        router.registerOperation({ serviceName, apiId: apiName, operationId: 'upload', properties: { method: 'POST', urlTemplate: '/documents' } });
         return { status: result.status, resourceId: result.body.id };
       });
 
@@ -526,7 +541,7 @@ async function runControlPlaneAndGatewayMatrix() {
             displayName: 'ingestion-api-v2',
             path: 'ingest',
             protocols: ['https'],
-            serviceUrl: 'https://backend.example.com/api/v2',
+            serviceUrl: `${backendOrigin}/api/v2`,
             subscriptionRequired: false,
           },
         }));
@@ -542,12 +557,13 @@ async function runControlPlaneAndGatewayMatrix() {
             displayName: 'secure-api',
             path: 'secure',
             protocols: ['https'],
-            serviceUrl: 'https://backend.example.com/secure',
+            serviceUrl: `${backendOrigin}/secure`,
             subscriptionRequired: true,
           },
         }));
         assert.equal(result.status, 201);
         router.registerApi({ serviceName, apiId: secureApiName, properties: result.body.properties });
+        router.registerOperation({ serviceName, apiId: secureApiName, operationId: 'status', properties: { method: 'GET', urlTemplate: '/status' } });
         return { status: result.status, resourceId: result.body.id };
       });
 
@@ -598,17 +614,18 @@ async function runControlPlaneAndGatewayMatrix() {
           'ocp-apim-subscription-key': 'globalstack-local-subscription-key',
         });
         assert.equal(result.status, 200);
-        assert.equal(result.body.apiId, secureApiName);
-        return { status: result.status, route: result.headers['x-globalstack-apim-route'] };
+        assert.equal(result.body.path, '/secure/status');
+        assert.equal(result.headers['x-backend-proof'], 'actual-local-worker');
+        return { status: result.status, backendPath: result.body.path };
       });
 
       await record('gateway routes configured api locally', async () => {
         const result = await httpDataPlaneJson(routerPort, 'POST', '/ingest/documents', { documentId: 'doc-001' }, { host: gatewayHost });
         assert.equal(result.status, 200);
-        assert.equal(result.body.serviceName, serviceName);
-        assert.equal(result.body.apiId, apiName);
+        assert.equal(result.body.path, '/api/v2/documents');
+        assert.equal(result.headers['x-backend-proof'], 'actual-local-worker');
         assert.equal(result.body.body.documentId, 'doc-001');
-        return { status: result.status, route: result.headers['x-globalstack-apim-route'] };
+        return { status: result.status, backendPath: result.body.path };
       });
 
       await record('gateway route remains stable across repeated requests', async () => {
@@ -616,11 +633,11 @@ async function runControlPlaneAndGatewayMatrix() {
         const second = await httpDataPlaneJson(routerPort, 'POST', '/ingest/documents', { documentId: 'doc-002' }, { host: gatewayHost });
         assert.equal(first.status, 200);
         assert.equal(second.status, 200);
-        assert.equal(first.headers['x-globalstack-apim-route'], second.headers['x-globalstack-apim-route']);
-        assert.equal(second.body.serviceName, serviceName);
-        assert.equal(second.body.apiId, apiName);
+        assert.equal(first.body.path, second.body.path);
+        assert.equal(second.body.path, '/api/v2/documents');
+        assert.equal(second.headers['x-backend-proof'], 'actual-local-worker');
         assert.equal(second.body.body.documentId, 'doc-002');
-        return { status: second.status, route: second.headers['x-globalstack-apim-route'] };
+        return { status: second.status, backendPath: second.body.path };
       });
 
       await record('inspection route exposes local apis', async () => {

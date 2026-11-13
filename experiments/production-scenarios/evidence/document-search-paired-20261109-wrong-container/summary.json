@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "6b83749ccee06ab5cede17164f8598d37cf14837",
+  "startedAt": "2026-11-09T14:09:04.650Z",
+  "completedAt": "2026-11-09T14:22:43.226Z",
+  "scope": "Azure-first wrong-container Search indexer creation after the bounded clean projection traversal",
+  "infrastructureStages": [
+    {
+      "name": "search-identities",
+      "templateSha256": "09748ab6c6c9cae0c76720b43bd7b3703bc62350b9b18e42064156448f327dac",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "data",
+      "templateSha256": "ab8308b2532861e533eea99718cba24971346f3b50587e4a6a9940390f9a706e",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    },
+    {
+      "name": "search",
+      "templateSha256": "73885b9cf242d15eadb0e2eb891869e1612381d9af011b81c6f258ea2b412aa8",
+      "azure": "Succeeded",
+      "globalstack": "Succeeded"
+    }
+  ],
+  "positiveProjectionTraversal": [
+    {
+      "target": "azure",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    },
+    {
+      "target": "local",
+      "indexed": true,
+      "quarantineExcluded": true,
+      "softDeleteObserved": true,
+      "indexerStatus": "success"
+    }
+  ],
+  "wrongContainer": {
+    "sourceContainer": "quarantine",
+    "searchIdentityReadGrant": "clean-projection only",
+    "azure": {
+      "dataSourcePutStatus": 201,
+      "indexerPutStatus": 401,
+      "errorCode": "",
+      "errorMessage": "Unable to retrieve blob container for account 'gs<run>docs' using your managed identity. Ensure the resource ID is correct and that the managed identity for your search service has been granted permission (e.g., Storage Blob Data Reader) to read blob container for this account. See https://go.microsoft.com/fwlink/?linkid=2193521 for detailed documentation of required permissions for your scenario.",
+      "requestId": "715edf8c-7fb4-498f-8c5f-c00b537f8e5d"
+    },
+    "globalstackBeforeFix": {
+      "dataSourcePutStatus": 201,
+      "indexerPutStatus": 201,
+      "indexerRunStatus": 202,
+      "lastResultStatus": "transientFailure",
+      "quarantineIndexed": false
+    },
+    "mismatch": "Azure rejects indexer creation; GlobalStack initially rejected only indexer execution."
+  },
+  "comparisonCompleteForNegativeCase": false,
+  "fullDocumentWorkflowCompleted": false,
+  "cleanup": {
+    "taskResourcesAbsent": true,
+    "deploymentRecordsAbsent": true,
+    "independentAzureResourceInventoryCount": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 300,
+    "thisRunConservativeAllowanceUsd": 12,
+    "cumulativeConservativeAllowanceUsd": 253,
+    "remainingConservativeAllowanceUsd": 47,
+    "actualAzureChargesMeasured": false
+  },
+  "portalScreenshotsCaptured": false,
+  "videoCaptured": false
+}

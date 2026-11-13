@@ -1,0 +1,10 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "5e6cab45e069394eaebe4b7eaac9c41486bda0e5d32e8ff0591837bced90a83c"
+  },
+  {
+    "path": "transitions.json",
+    "sha256": "3bf7f775b0abc53443382d9dd599c46260d6381531e05a26f9a0727fdcc6139c"
+  }
+]

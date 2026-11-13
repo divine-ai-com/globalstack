@@ -1,0 +1,1820 @@
+{
+  "schemaVersion": 1,
+  "revision": "7638f462f371860e67d5b5d0fc014d8a37dc9c4a",
+  "sourceDirty": false,
+  "startedAt": "2026-11-07T12:16:51.946Z",
+  "scope": "Two Linux hosting plans only. No application, private network or business workflow is deployed.",
+  "transport": "One native Bicep compilation, then direct ARM deployment and resource requests.",
+  "region": "westus2",
+  "portalEvidenceComplete": false,
+  "fullProtocolParityEvaluated": false,
+  "exchanges": [
+    {
+      "target": "azure",
+      "phase": "preflight",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T12:16:54.461Z",
+      "completedAt": "2026-11-07T12:16:55.329Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "provider-validation",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:16:58.631Z",
+      "completedAt": "2026-11-07T12:17:03.092Z",
+      "request": {
+        "location": "westus2",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "3213172505103540393"
+              }
+            },
+            "parameters": {
+              "groupName": {
+                "type": "string"
+              },
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2025-04-01",
+                "name": "[parameters('groupName')]",
+                "location": "[parameters('location')]",
+                "tags": {
+                  "project": "globalstack-production-scenarios",
+                  "run": "[parameters('runId')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2025-04-01",
+                "name": "web-component",
+                "resourceGroup": "[parameters('groupName')]",
+                "properties": {
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "mode": "Incremental",
+                  "parameters": {
+                    "serviceName": {
+                      "value": "[parameters('serviceName')]"
+                    },
+                    "location": {
+                      "value": "[parameters('location')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "metadata": {
+                      "_generator": {
+                        "name": "bicep",
+                        "version": "0.48.1.52935",
+                        "templateHash": "5459198238252862264"
+                      }
+                    },
+                    "parameters": {
+                      "serviceName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "linux",
+                        "sku": {
+                          "name": "P0v3",
+                          "tier": "PremiumV3",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "perSiteScaling": false,
+                          "elasticScaleEnabled": false
+                        }
+                      },
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-worker', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "elastic",
+                        "sku": {
+                          "name": "EP1",
+                          "tier": "ElasticPremium",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "maximumElasticWorkerCount": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "groupName": {
+              "value": "<group>"
+            },
+            "serviceName": {
+              "value": "<service>"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "dc2130ceca23"
+            }
+          },
+          "validationLevel": "Provider"
+        }
+      },
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "extensions": [],
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2026-11-07T12:16:59.3087991Z",
+          "duration": "PT0S",
+          "correlationId": "63e74f51-fdee-4241-8090-ceabf1651b7f",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ],
+          "validatedResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker"
+            }
+          ],
+          "validationLevel": "Provider"
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "provider-validation",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/validate?api-version=2025-04-01",
+      "request": {
+        "location": "westus2",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "3213172505103540393"
+              }
+            },
+            "parameters": {
+              "groupName": {
+                "type": "string"
+              },
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2025-04-01",
+                "name": "[parameters('groupName')]",
+                "location": "[parameters('location')]",
+                "tags": {
+                  "project": "globalstack-production-scenarios",
+                  "run": "[parameters('runId')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2025-04-01",
+                "name": "web-component",
+                "resourceGroup": "[parameters('groupName')]",
+                "properties": {
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "mode": "Incremental",
+                  "parameters": {
+                    "serviceName": {
+                      "value": "[parameters('serviceName')]"
+                    },
+                    "location": {
+                      "value": "[parameters('location')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "metadata": {
+                      "_generator": {
+                        "name": "bicep",
+                        "version": "0.48.1.52935",
+                        "templateHash": "5459198238252862264"
+                      }
+                    },
+                    "parameters": {
+                      "serviceName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "linux",
+                        "sku": {
+                          "name": "P0v3",
+                          "tier": "PremiumV3",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "perSiteScaling": false,
+                          "elasticScaleEnabled": false
+                        }
+                      },
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-worker', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "elastic",
+                        "sku": {
+                          "name": "EP1",
+                          "tier": "ElasticPremium",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "maximumElasticWorkerCount": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "groupName": {
+              "value": "<group>"
+            },
+            "serviceName": {
+              "value": "<service>"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "dc2130ceca23"
+            }
+          },
+          "validationLevel": "Provider"
+        }
+      },
+      "status": 200,
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "validationLevel": "Provider",
+          "mode": "Incremental",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "validatedResources": [
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress"
+            },
+            {
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker"
+            }
+          ],
+          "timestamp": "2026-11-07T12:17:03.120Z",
+          "duration": "PT0S",
+          "correlationId": "ef67e375-e190-44e2-b175-8d4e5a12b01b"
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T12:17:03.096Z",
+      "completedAt": "2026-11-07T12:17:03.126Z"
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 201,
+      "startedAt": "2026-11-07T12:17:03.140Z",
+      "completedAt": "2026-11-07T12:17:12.427Z",
+      "request": {
+        "location": "westus2",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "3213172505103540393"
+              }
+            },
+            "parameters": {
+              "groupName": {
+                "type": "string"
+              },
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2025-04-01",
+                "name": "[parameters('groupName')]",
+                "location": "[parameters('location')]",
+                "tags": {
+                  "project": "globalstack-production-scenarios",
+                  "run": "[parameters('runId')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2025-04-01",
+                "name": "web-component",
+                "resourceGroup": "[parameters('groupName')]",
+                "properties": {
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "mode": "Incremental",
+                  "parameters": {
+                    "serviceName": {
+                      "value": "[parameters('serviceName')]"
+                    },
+                    "location": {
+                      "value": "[parameters('location')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "metadata": {
+                      "_generator": {
+                        "name": "bicep",
+                        "version": "0.48.1.52935",
+                        "templateHash": "5459198238252862264"
+                      }
+                    },
+                    "parameters": {
+                      "serviceName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "linux",
+                        "sku": {
+                          "name": "P0v3",
+                          "tier": "PremiumV3",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "perSiteScaling": false,
+                          "elasticScaleEnabled": false
+                        }
+                      },
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-worker', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "elastic",
+                        "sku": {
+                          "name": "EP1",
+                          "tier": "ElasticPremium",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "maximumElasticWorkerCount": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "groupName": {
+              "value": "<group>"
+            },
+            "serviceName": {
+              "value": "<service>"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "dc2130ceca23"
+            }
+          }
+        }
+      },
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Accepted",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT0.0007517S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:12.428Z",
+      "completedAt": "2026-11-07T12:17:13.806Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT2.8906565S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T12:17:13.806Z",
+      "completedAt": "2026-11-07T12:17:14.190Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:17.191Z",
+      "completedAt": "2026-11-07T12:17:18.763Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT7.6300564S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:21.766Z",
+      "completedAt": "2026-11-07T12:17:25.462Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT7.6300564S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:28.465Z",
+      "completedAt": "2026-11-07T12:17:29.793Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT7.6300564S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deploy",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:29.794Z",
+      "completedAt": "2026-11-07T12:17:31.108Z",
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations/F4F0FC45F74EE8F0",
+            "operationId": "F4F0FC45F74EE8F0",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2026-11-07T12:17:17.4492284Z",
+              "duration": "PT12.7542826S",
+              "trackingId": "a22dddb0-9a15-484f-bb80-8d864c04afeb",
+              "statusCode": 429,
+              "statusMessage": {
+                "status": "Failed",
+                "error": {
+                  "code": "429",
+                  "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists.",
+                  "details": [
+                    {
+                      "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists."
+                    },
+                    {
+                      "code": "429"
+                    },
+                    {}
+                  ]
+                }
+              },
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress",
+                "resourceType": "Microsoft.Web/serverfarms",
+                "resourceName": "<service>-ingress"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations/2C49AFBB9B975DA3",
+            "operationId": "2C49AFBB9B975DA3",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2026-11-07T12:17:17.4492284Z",
+              "duration": "PT8.1335171S",
+              "trackingId": "502a58f0-1e31-4c1d-8fb8-3aa46482f87f",
+              "statusCode": 429,
+              "statusMessage": {
+                "status": "Failed",
+                "error": {
+                  "code": "429",
+                  "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists.",
+                  "details": [
+                    {
+                      "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists."
+                    },
+                    {
+                      "code": "429"
+                    },
+                    {}
+                  ]
+                }
+              },
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker",
+                "resourceType": "Microsoft.Web/serverfarms",
+                "resourceName": "<service>-worker"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deployment-diagnostic",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/operations?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:31.109Z",
+      "completedAt": "2026-11-07T12:17:33.286Z",
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/operations/6DA729AEDB51696D",
+            "operationId": "6DA729AEDB51696D",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2026-11-07T12:17:12.452063Z",
+              "duration": "PT4.7943542S",
+              "trackingId": "21c934ca-a33a-4bf0-9fa8-e3694aace1eb",
+              "statusCode": "Created",
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+                "resourceType": "Microsoft.Resources/deployments",
+                "resourceName": "web-component"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/operations/95CD7E18004520C8",
+            "operationId": "95CD7E18004520C8",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2026-11-07T12:17:12.452063Z",
+              "duration": "PT2.4817659S",
+              "trackingId": "9f31b490-f642-47fd-b5ff-6608235eb4eb",
+              "statusCode": "Created",
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                "resourceType": "Microsoft.Resources/resourceGroups",
+                "resourceName": "<group>"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "azure-deployment-diagnostic",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:33.287Z",
+      "completedAt": "2026-11-07T12:17:33.823Z",
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations/F4F0FC45F74EE8F0",
+            "operationId": "F4F0FC45F74EE8F0",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2026-11-07T12:17:17.4492284Z",
+              "duration": "PT12.7542826S",
+              "trackingId": "a22dddb0-9a15-484f-bb80-8d864c04afeb",
+              "statusCode": 429,
+              "statusMessage": {
+                "status": "Failed",
+                "error": {
+                  "code": "429",
+                  "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists.",
+                  "details": [
+                    {
+                      "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists."
+                    },
+                    {
+                      "code": "429"
+                    },
+                    {}
+                  ]
+                }
+              },
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress",
+                "resourceType": "Microsoft.Web/serverfarms",
+                "resourceName": "<service>-ingress"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component/operations/2C49AFBB9B975DA3",
+            "operationId": "2C49AFBB9B975DA3",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2026-11-07T12:17:17.4492284Z",
+              "duration": "PT14.5112448S",
+              "trackingId": "fd020129-6855-4154-aedc-b2e7293d5a28",
+              "statusCode": 429,
+              "statusMessage": {
+                "status": "Failed",
+                "error": {
+                  "code": "429",
+                  "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists.",
+                  "details": [
+                    {
+                      "message": "App Service Plan Create operation is throttled for subscription <subscription>. Please contact support if issue persists."
+                    },
+                    {
+                      "code": "429"
+                    },
+                    {}
+                  ]
+                }
+              },
+              "targetResource": {
+                "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker",
+                "resourceType": "Microsoft.Web/serverfarms",
+                "resourceName": "<service>-worker"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "target": "local",
+      "phase": "local-deploy",
+      "method": "PUT",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "request": {
+        "location": "westus2",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.48.1.52935",
+                "templateHash": "3213172505103540393"
+              }
+            },
+            "parameters": {
+              "groupName": {
+                "type": "string"
+              },
+              "serviceName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2025-04-01",
+                "name": "[parameters('groupName')]",
+                "location": "[parameters('location')]",
+                "tags": {
+                  "project": "globalstack-production-scenarios",
+                  "run": "[parameters('runId')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2025-04-01",
+                "name": "web-component",
+                "resourceGroup": "[parameters('groupName')]",
+                "properties": {
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "mode": "Incremental",
+                  "parameters": {
+                    "serviceName": {
+                      "value": "[parameters('serviceName')]"
+                    },
+                    "location": {
+                      "value": "[parameters('location')]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "metadata": {
+                      "_generator": {
+                        "name": "bicep",
+                        "version": "0.48.1.52935",
+                        "templateHash": "5459198238252862264"
+                      }
+                    },
+                    "parameters": {
+                      "serviceName": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      }
+                    },
+                    "resources": [
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-ingress', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "linux",
+                        "sku": {
+                          "name": "P0v3",
+                          "tier": "PremiumV3",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "perSiteScaling": false,
+                          "elasticScaleEnabled": false
+                        }
+                      },
+                      {
+                        "type": "Microsoft.Web/serverfarms",
+                        "apiVersion": "2024-11-01",
+                        "name": "[format('{0}-worker', parameters('serviceName'))]",
+                        "location": "[parameters('location')]",
+                        "kind": "elastic",
+                        "sku": {
+                          "name": "EP1",
+                          "tier": "ElasticPremium",
+                          "capacity": 1
+                        },
+                        "properties": {
+                          "reserved": true,
+                          "maximumElasticWorkerCount": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('groupName'))]"
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "groupName": {
+              "value": "<group>"
+            },
+            "serviceName": {
+              "value": "<service>"
+            },
+            "location": {
+              "value": "westus2"
+            },
+            "runId": {
+              "value": "dc2130ceca23"
+            }
+          }
+        }
+      },
+      "status": 201,
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "mode": "Incremental",
+          "timestamp": "2026-11-07T12:17:33.837Z",
+          "duration": "PT0S",
+          "outputs": {},
+          "globalstackDeploymentSteps": [
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress",
+              "status": 201
+            },
+            {
+              "operation": "PUT",
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker",
+              "status": 201
+            }
+          ]
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T12:17:33.824Z",
+      "completedAt": "2026-11-07T12:17:33.838Z"
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:35.288Z",
+      "completedAt": "2026-11-07T12:17:36.504Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Running",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT23.1721583S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "POST",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>/cancel?api-version=2025-04-01",
+      "status": 204,
+      "startedAt": "2026-11-07T12:17:36.505Z",
+      "completedAt": "2026-11-07T12:17:43.585Z",
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:46.588Z",
+      "completedAt": "2026-11-07T12:17:48.082Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Canceled",
+          "timestamp": "2026-11-07T12:17:04.0566338Z",
+          "duration": "PT30.0476385S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:48.083Z",
+      "completedAt": "2026-11-07T12:17:48.697Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "dc2130ceca23"
+        },
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/resources?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:48.698Z",
+      "completedAt": "2026-11-07T12:17:49.246Z",
+      "body": {
+        "value": []
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 202,
+      "startedAt": "2026-11-07T12:17:49.247Z",
+      "completedAt": "2026-11-07T12:17:49.627Z",
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:17:49.627Z",
+      "completedAt": "2026-11-07T12:17:49.875Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+        "name": "<group>",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "westus2",
+        "tags": {
+          "project": "globalstack-production-scenarios",
+          "run": "dc2130ceca23"
+        },
+        "properties": {
+          "provisioningState": "Deleting"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T12:17:52.877Z",
+      "completedAt": "2026-11-07T12:17:53.293Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress?api-version=2024-11-01",
+      "status": 404,
+      "startedAt": "2026-11-07T12:17:53.294Z",
+      "completedAt": "2026-11-07T12:17:54.400Z",
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group '<group>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker?api-version=2024-11-01",
+      "status": 404,
+      "startedAt": "2026-11-07T12:17:54.400Z",
+      "completedAt": "2026-11-07T12:17:54.663Z",
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'Microsoft.Web/serverFarms/<service>-worker' under resource group '<group>' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 202,
+      "startedAt": "2026-11-07T12:17:54.663Z",
+      "completedAt": "2026-11-07T12:18:02.710Z",
+      "body": null
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 200,
+      "startedAt": "2026-11-07T12:18:02.710Z",
+      "completedAt": "2026-11-07T12:18:04.004Z",
+      "body": {
+        "id": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+        "name": "<deployment>",
+        "type": "Microsoft.Resources/deployments",
+        "location": "westus2",
+        "properties": {
+          "templateHash": "3213172505103540393",
+          "parameters": {
+            "groupName": {
+              "type": "String",
+              "value": "<group>"
+            },
+            "serviceName": {
+              "type": "String",
+              "value": "<service>"
+            },
+            "location": {
+              "type": "String",
+              "value": "westus2"
+            },
+            "runId": {
+              "type": "String",
+              "value": "dc2130ceca23"
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Deleting",
+          "timestamp": "2026-11-07T12:17:48.0876539Z",
+          "duration": "PT44.0310201S",
+          "correlationId": "2b0a6c01-126f-4332-8ebc-b250e63eec4a",
+          "providers": [
+            {
+              "namespace": "Microsoft.Resources",
+              "resourceTypes": [
+                {
+                  "resourceType": "resourceGroups",
+                  "locations": [
+                    "westus2"
+                  ]
+                },
+                {
+                  "resourceType": "deployments",
+                  "locations": [
+                    null
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/<subscription>/resourceGroups/<group>",
+                  "resourceType": "Microsoft.Resources/resourceGroups",
+                  "resourceName": "<group>"
+                }
+              ],
+              "id": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Resources/deployments/web-component",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "web-component"
+            }
+          ],
+          "error": {
+            "code": "DeploymentCanceled",
+            "target": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>",
+            "message": "This deployment was canceled because a cancelation request was received at '11/7/2026 12:17:37 PM' using correlation id '090c5006-b725-4d53-8dff-1e7a12971cd8'."
+          }
+        }
+      }
+    },
+    {
+      "target": "azure",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/providers/Microsoft.Resources/deployments/<deployment>?api-version=2025-04-01",
+      "status": 404,
+      "startedAt": "2026-11-07T12:18:07.005Z",
+      "completedAt": "2026-11-07T12:18:07.105Z",
+      "body": {
+        "error": {
+          "code": "DeploymentNotFound",
+          "message": "Deployment '<deployment>' could not be found."
+        }
+      }
+    },
+    {
+      "target": "local",
+      "phase": "cleanup",
+      "method": "DELETE",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2025-04-01",
+      "status": 200,
+      "body": {
+        "status": "Deleted",
+        "id": "/subscriptions/<subscription>/resourceGroups/<group>"
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T12:18:07.115Z",
+      "completedAt": "2026-11-07T12:18:07.120Z"
+    },
+    {
+      "target": "local",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceGroupNotFound",
+          "message": "Resource group <group> was not found.",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T12:18:07.121Z",
+      "completedAt": "2026-11-07T12:18:07.124Z"
+    },
+    {
+      "target": "local",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-ingress?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'serverfarms/<service>-ingress' under resource group '<group>' was not found.",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T12:18:07.124Z",
+      "completedAt": "2026-11-07T12:18:07.131Z"
+    },
+    {
+      "target": "local",
+      "phase": "cleanup",
+      "method": "GET",
+      "path": "/subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.Web/serverfarms/<service>-worker?api-version=2024-11-01",
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource 'serverfarms/<service>-worker' under resource group '<group>' was not found.",
+          "details": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "startedAt": "2026-11-07T12:18:07.131Z",
+      "completedAt": "2026-11-07T12:18:07.134Z"
+    }
+  ],
+  "cleanup": {
+    "groupAbsent": true,
+    "plansAbsent": true,
+    "deploymentAbsent": true
+  },
+  "budget": {
+    "totalAuthorizedUsd": 150,
+    "thisRunEnvelopeUsd": 1,
+    "runtimeMinutes": 20,
+    "cleanupReserveMinutes": 10,
+    "hourlyRatesUsd": {
+      "P0v3": 0.0775,
+      "EP1": 0.19990000000000002
+    },
+    "maxInstancesPerPlan": 1,
+    "source": "Azure Retail Prices API, westus2 Linux P0v3 and Premium Functions CPU/memory, verified 2026-11-07.",
+    "ledger": {
+      "totalAuthorizedUsd": 150,
+      "allocatedUsd": 22,
+      "remainingUnallocatedUsd": 128
+    }
+  },
+  "image": "sha256:8b77ec7ddd593fe8c814c0bedbdce1f374859927c57bf53f725be40cb5872186",
+  "templateSha256": "cf92a03f88569e2717aee11c5914b737aaf35ea780f799cace8c6ca85a5a3b68",
+  "error": "Azure hosting creation is throttled; cancel this attempt and clean up",
+  "localCleanup": [
+    404,
+    404,
+    404
+  ],
+  "completedAt": "2026-11-07T12:18:07.135Z"
+}

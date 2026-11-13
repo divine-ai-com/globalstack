@@ -1,0 +1,30 @@
+[
+  {
+    "file": "README.md",
+    "sha256": "d94d52c24788a3653d6c3c621dac161d8ce3a26b2244e3b8859bd8b8783455d8"
+  },
+  {
+    "file": "image-reference/events.ndjson",
+    "sha256": "d3a77f86ce95e32ac3638abf43d2071ed7d0712fd16900cd1f42f181b2e5100b"
+  },
+  {
+    "file": "image-reference/recording.json",
+    "sha256": "e3673c2e1b40e3370fa7570cc38a114e023f40e590acf5c0b34e4d5575587a58"
+  },
+  {
+    "file": "image-reference/result.json",
+    "sha256": "f9d6ad5c3c8bc85a3a49319099cda4bc8795ce74808d7be57bc31adf103d882b"
+  },
+  {
+    "file": "provisioner-initialization/events.ndjson",
+    "sha256": "0154cd7c8e7fb976058ff1d788d939f7843f32e84c8ccede7850e15f0717b902"
+  },
+  {
+    "file": "provisioner-initialization/recording.json",
+    "sha256": "040ee9f2f1da9bc1a367746779c837211a272327ca317a64582f3a7979095db8"
+  },
+  {
+    "file": "provisioner-initialization/result.json",
+    "sha256": "7f0a0bae35ded77a3040c07b8b5679b1fe42fbe887fd7416bda5d1703df163ce"
+  }
+]

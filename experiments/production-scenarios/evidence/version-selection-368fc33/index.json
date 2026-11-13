@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "Local synthetic baseline. Not live Azure evidence.",
+  "files": {
+    "result.json": {
+      "sha256": "ee0359aa3b6654a580a969bf8b816bc3f78d8900ac5d9752c6a101365e2c64c6",
+      "bytes": 3012
+    }
+  }
+}

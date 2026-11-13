@@ -1,0 +1,131 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "8445357931539325002"
+    }
+  },
+  "parameters": {
+    "serviceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "publisherPrincipalId": {
+      "type": "string"
+    },
+    "roleAssignmentNames": {
+      "type": "array"
+    }
+  },
+  "variables": {
+    "tags": {
+      "project": "globalstack-production-scenarios",
+      "run": "[parameters('runId')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}-scanner', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}-worker', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]"
+    },
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2023-07-01",
+      "name": "[format('{0}images', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "sku": {
+        "name": "Basic"
+      },
+      "properties": {
+        "adminUserEnabled": false
+      }
+    },
+    {
+      "type": "Microsoft.App/managedEnvironments",
+      "apiVersion": "2025-01-01",
+      "name": "[format('{0}-scanner', parameters('serviceName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "appLogsConfiguration": {
+          "destination": "none"
+        },
+        "workloadProfiles": [
+          {
+            "name": "Consumption",
+            "workloadProfileType": "Consumption"
+          }
+        ],
+        "zoneRedundant": false
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+      "name": "[parameters('roleAssignmentNames')[0]]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-scanner', parameters('serviceName'))), '2023-01-31').principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-scanner', parameters('serviceName')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]",
+      "name": "[parameters('roleAssignmentNames')[1]]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')]",
+        "principalId": "[parameters('publisherPrincipalId')]",
+        "principalType": "ServicePrincipal",
+        "description": "[format('globalstack-production-scenarios:{0}', parameters('runId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName')))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "registryHost": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries', format('{0}images', parameters('serviceName'))), '2023-07-01').loginServer]"
+    },
+    "environmentId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.App/managedEnvironments', format('{0}-scanner', parameters('serviceName')))]"
+    },
+    "workerClientId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').clientId]"
+    },
+    "workerPrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-worker', parameters('serviceName'))), '2023-01-31').principalId]"
+    }
+  }
+}

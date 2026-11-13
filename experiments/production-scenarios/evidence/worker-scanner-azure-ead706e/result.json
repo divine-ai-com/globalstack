@@ -1,0 +1,1062 @@
+{
+  "revision": "ead706e06da269e55f261b347d3d7a9372fedc1e",
+  "sourceDirty": false,
+  "startedAt": "2026-11-08T12:09:04.831Z",
+  "scope": "Actual Functions HTTP handler, managed identity, and native ClamAV/YARA scanner on both targets. No Event Grid or full document workflow.",
+  "fullWorkflowCompleted": false,
+  "portalEvidenceComplete": false,
+  "calls": [
+    {
+      "label": "clean",
+      "azure": {
+        "status": 200,
+        "body": {
+          "correlationId": "407bd1fd-d158-4044-af2d-21ebd7fe8076",
+          "inputSha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+            "bytes": 39,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 33
+              },
+              {
+                "engine": "yara",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 16
+              }
+            ],
+            "status": "clean",
+            "pages": [
+              {
+                "page": 1,
+                "method": "utf8",
+                "text": "Actual Functions managed identity scan."
+              }
+            ],
+            "extractionStatus": "completed",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      },
+      "local": {
+        "status": 200,
+        "body": {
+          "correlationId": "34e584ec-cb53-41a5-88fb-6142558aa63f",
+          "inputSha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "aa8459dcb818a3ccc799c6047eaa8fdbfcbd53af4aeb7318d8f54127c0db524d",
+            "bytes": 39,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 65
+              },
+              {
+                "engine": "yara",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 33
+              }
+            ],
+            "status": "clean",
+            "pages": [
+              {
+                "page": 1,
+                "method": "utf8",
+                "text": "Actual Functions managed identity scan."
+              }
+            ],
+            "extractionStatus": "completed",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      }
+    },
+    {
+      "label": "yara",
+      "azure": {
+        "status": 200,
+        "body": {
+          "correlationId": "acdbfaa7-f02b-4557-a9bc-71bc377e60f8",
+          "inputSha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+            "bytes": 30,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 33
+              },
+              {
+                "engine": "yara",
+                "status": "detected",
+                "findings": [
+                  "PilotDocumentDetection"
+                ],
+                "durationMs": 17
+              }
+            ],
+            "status": "detected",
+            "extractionStatus": "not_run",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      },
+      "local": {
+        "status": 200,
+        "body": {
+          "correlationId": "d208dc1b-bc88-4316-a933-dd025ed0613a",
+          "inputSha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "4ea842981305fcf958a48b3980bd1e358aea54482d68142a7dc362f30591ba23",
+            "bytes": 30,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 35
+              },
+              {
+                "engine": "yara",
+                "status": "detected",
+                "findings": [
+                  "PilotDocumentDetection"
+                ],
+                "durationMs": 35
+              }
+            ],
+            "status": "detected",
+            "extractionStatus": "not_run",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      }
+    },
+    {
+      "label": "clamav-harmless-marker",
+      "azure": {
+        "status": 200,
+        "body": {
+          "correlationId": "4ad60dd1-8bdf-44cd-8b86-26a257fc421f",
+          "inputSha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+            "bytes": 68,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "detected",
+                "findings": [
+                  "Eicar-Test-Signature"
+                ],
+                "durationMs": 17
+              },
+              {
+                "engine": "yara",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 17
+              }
+            ],
+            "status": "detected",
+            "extractionStatus": "not_run",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      },
+      "local": {
+        "status": 200,
+        "body": {
+          "correlationId": "5d81d684-5dfc-4bf6-9ea9-940c0f06adb5",
+          "inputSha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+            "bytes": 68,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "detected",
+                "findings": [
+                  "Eicar-Test-Signature"
+                ],
+                "durationMs": 17
+              },
+              {
+                "engine": "yara",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 34
+              }
+            ],
+            "status": "detected",
+            "extractionStatus": "not_run",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      }
+    }
+  ],
+  "templates": [
+    {
+      "name": "worker-host",
+      "sha256": "c2c71ddf20108384ef7905856b4b12d3a9b00886c86cb217046f7a7d0c21fc36"
+    },
+    {
+      "name": "worker-app",
+      "sha256": "c8922c73b03d8f4f0a87c718a1c7450f425f1dbef7401ef3c4cbba28328e0ca9"
+    },
+    {
+      "name": "scanner-host",
+      "sha256": "02fb8b1d21975a281a5ce2c4ebaa7f639fd1de7728b8f276ac2f0a82ab170690"
+    },
+    {
+      "name": "scanner-app",
+      "sha256": "d7f6afdf108f7aec912baf372022cb8504ba2744a0cebfe6a0d8ad28fa14868b"
+    },
+    {
+      "name": "scanner-auth",
+      "sha256": "f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe"
+    }
+  ],
+  "cleanup": {
+    "worker": {
+      "resourcesAbsent": true,
+      "rolesAbsent": true,
+      "deploymentsAbsent": true,
+      "groupPreserved": true
+    },
+    "scanner": {
+      "resourcesAbsent": true,
+      "rolesAbsent": true,
+      "deploymentsAbsent": true,
+      "groupEmpty": true,
+      "groupPreserved": true
+    },
+    "resourcesAbsent": true,
+    "groupEmpty": true,
+    "groupPreserved": true
+  },
+  "budget": {
+    "totalAuthorizedUsd": 150,
+    "allocatedUsd": 97,
+    "remainingUnallocatedUsd": 53
+  },
+  "document-scanner": {
+    "id": "sha256:742cbf642f8fd492829e379d38e77c2117fd9a7b6eabaea0da0e31c35413463e",
+    "reference": "gs265dce76d1e4images.azurecr.io/document-scanner@sha256:742cbf642f8fd492829e379d38e77c2117fd9a7b6eabaea0da0e31c35413463e"
+  },
+  "document-worker": {
+    "id": "sha256:c9eb00bbf652ddd14546d28c587c3cab99f34c63551fcd5e358cbd9ad582f6ff",
+    "reference": "gs265dce76d1e4images.azurecr.io/document-worker@sha256:c9eb00bbf652ddd14546d28c587c3cab99f34c63551fcd5e358cbd9ad582f6ff"
+  },
+  "environmentMapping": {
+    "azureScanner": "gs265dce76d1e4-scanner.ambitiousfield-63f7e94f.westus2.azurecontainerapps.io",
+    "localScanner": "gs265dce76d1e4-scanner.<group>.globalstack.local",
+    "differences": [
+      "SCANNER_ENDPOINT is the deployed scanner output on each target; application and template bytes are identical."
+    ]
+  },
+  "workerAccessTestedOnAzure": true,
+  "policyTransitions": [
+    {
+      "label": "worker-policy-revoked",
+      "local": {
+        "status": 403,
+        "body": {
+          "correlationId": "8353f419-7456-4f69-b18f-a5bdc7064044",
+          "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+          "upstreamStatus": 403,
+          "scan": null
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      },
+      "azure": {
+        "ready": true,
+        "attempts": [
+          {
+            "attempt": 1,
+            "elapsedMs": 767,
+            "expectedStatus": 403,
+            "status": 200,
+            "body": {
+              "correlationId": "d9794ddf-c255-4eb6-a53e-626f33b49e1f",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 33
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 2,
+            "elapsedMs": 6755,
+            "expectedStatus": 403,
+            "status": 200,
+            "body": {
+              "correlationId": "4c2334bc-d469-4ffe-a4c8-fa9295104c47",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 16
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 16
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 3,
+            "elapsedMs": 12536,
+            "expectedStatus": 403,
+            "status": 200,
+            "body": {
+              "correlationId": "40d76993-7e5a-48a9-8a9b-49cc8c6cf581",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 9
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 4,
+            "elapsedMs": 18270,
+            "expectedStatus": 403,
+            "status": 200,
+            "body": {
+              "correlationId": "9dcb4e82-1677-4788-88b3-5c230bd5ab83",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 5,
+            "elapsedMs": 24005,
+            "expectedStatus": 403,
+            "status": 200,
+            "body": {
+              "correlationId": "76e56ebe-b24a-4668-9ca7-774ca34a59c8",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 6,
+            "elapsedMs": 29767,
+            "expectedStatus": 403,
+            "status": 200,
+            "body": {
+              "correlationId": "0a551fb0-4816-42e9-b434-339035b296c2",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 7,
+            "elapsedMs": 37057,
+            "expectedStatus": 403,
+            "status": 403,
+            "body": {
+              "correlationId": "268f465e-fbb1-4728-aba1-d3e23de86636",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          }
+        ],
+        "elapsedMs": 37057
+      }
+    },
+    {
+      "label": "worker-policy-restored",
+      "local": {
+        "status": 200,
+        "body": {
+          "correlationId": "9178b744-7a94-4e59-9d22-e30406b9bbc4",
+          "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+          "upstreamStatus": 200,
+          "scan": {
+            "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+            "bytes": 23,
+            "mediaType": "text/plain",
+            "engines": [
+              {
+                "engine": "clamav",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 69
+              },
+              {
+                "engine": "yara",
+                "status": "clean",
+                "findings": [],
+                "durationMs": 33
+              }
+            ],
+            "status": "clean",
+            "pages": [
+              {
+                "page": 1,
+                "method": "utf8",
+                "text": "Policy transition scan."
+              }
+            ],
+            "extractionStatus": "completed",
+            "provenance": {
+              "versions": {
+                "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                "yara": "4.2.3"
+              },
+              "clamavDatabases": [
+                {
+                  "file": "bytecode.cvd",
+                  "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                },
+                {
+                  "file": "daily.cvd",
+                  "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                },
+                {
+                  "file": "main.cvd",
+                  "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                }
+              ],
+              "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+            }
+          }
+        },
+        "headers": {
+          "content-type": "application/json"
+        }
+      },
+      "azure": {
+        "ready": true,
+        "attempts": [
+          {
+            "attempt": 1,
+            "elapsedMs": 714,
+            "expectedStatus": 200,
+            "status": 403,
+            "body": {
+              "correlationId": "311c1644-ffd4-49d1-93ce-675e6c6ee50e",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 2,
+            "elapsedMs": 6426,
+            "expectedStatus": 200,
+            "status": 403,
+            "body": {
+              "correlationId": "f7f0c0da-ba31-4cd9-aa57-535ce4de9531",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 3,
+            "elapsedMs": 12116,
+            "expectedStatus": 200,
+            "status": 403,
+            "body": {
+              "correlationId": "ff07a96f-d8fb-4d1a-a47c-76ea10fea456",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 4,
+            "elapsedMs": 17843,
+            "expectedStatus": 200,
+            "status": 403,
+            "body": {
+              "correlationId": "2f2d649d-9be3-4886-9374-29532c9de78d",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 5,
+            "elapsedMs": 23559,
+            "expectedStatus": 200,
+            "status": 403,
+            "body": {
+              "correlationId": "15459e10-81aa-4750-a803-c1f478f3ce92",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 6,
+            "elapsedMs": 29253,
+            "expectedStatus": 200,
+            "status": 403,
+            "body": {
+              "correlationId": "963afcb4-8ce6-4b4e-9299-02589b1fa60a",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 403,
+              "scan": null
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          },
+          {
+            "attempt": 7,
+            "elapsedMs": 36392,
+            "expectedStatus": 200,
+            "status": 200,
+            "body": {
+              "correlationId": "ffcebbff-5635-4447-84bf-dffddd2093d1",
+              "inputSha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+              "upstreamStatus": 200,
+              "scan": {
+                "sha256": "2da9d435b8e32f4002241087b71d70a88d5d4e0c02c04eb2b7a6d20d2b6ca78e",
+                "bytes": 23,
+                "mediaType": "text/plain",
+                "engines": [
+                  {
+                    "engine": "clamav",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 16
+                  },
+                  {
+                    "engine": "yara",
+                    "status": "clean",
+                    "findings": [],
+                    "durationMs": 17
+                  }
+                ],
+                "status": "clean",
+                "pages": [
+                  {
+                    "page": 1,
+                    "method": "utf8",
+                    "text": "Policy transition scan."
+                  }
+                ],
+                "extractionStatus": "completed",
+                "provenance": {
+                  "versions": {
+                    "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+                    "yara": "4.2.3"
+                  },
+                  "clamavDatabases": [
+                    {
+                      "file": "bytecode.cvd",
+                      "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+                    },
+                    {
+                      "file": "daily.cvd",
+                      "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+                    },
+                    {
+                      "file": "main.cvd",
+                      "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+                    }
+                  ],
+                  "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+                }
+              }
+            },
+            "headers": {
+              "content-type": "application/json"
+            }
+          }
+        ],
+        "elapsedMs": 36392
+      }
+    }
+  ],
+  "componentChecksPassed": true,
+  "localCleanupComplete": true,
+  "completedAt": "2026-11-08T12:43:40.568Z",
+  "exchangesRecorded": 816
+}

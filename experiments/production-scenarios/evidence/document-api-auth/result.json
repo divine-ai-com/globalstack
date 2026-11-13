@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-08T07:49:34.864Z",
+  "scope": "Live API token verified by unchanged application validator. No application deployment or full workflow.",
+  "checks": [
+    {
+      "role": "Documents.Read",
+      "accepted": true
+    },
+    {
+      "role": "Documents.Upload",
+      "accepted": true
+    },
+    {
+      "role": "Documents.Delete",
+      "accepted": true
+    },
+    {
+      "name": "wrong-audience",
+      "rejected": true,
+      "error": "invalid_token"
+    },
+    {
+      "name": "ungranted-role",
+      "rejected": true,
+      "error": "permission_denied"
+    }
+  ]
+}

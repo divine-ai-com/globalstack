@@ -1,0 +1,49 @@
+{
+  "sha256": "233b8fcd4a0840ba0d7a5b59683a294b7282c3d5e5801f0f7c92e2cf6f7c43ba",
+  "bytes": 37,
+  "mediaType": "text/plain",
+  "engines": [
+    {
+      "engine": "clamav",
+      "status": "clean",
+      "findings": [],
+      "durationMs": 20003
+    },
+    {
+      "engine": "yara",
+      "status": "clean",
+      "findings": [],
+      "durationMs": 33
+    }
+  ],
+  "status": "clean",
+  "pages": [
+    {
+      "page": 1,
+      "method": "utf8",
+      "text": "Financial report: revenue 123.45 USD."
+    }
+  ],
+  "extractionStatus": "completed",
+  "provenance": {
+    "versions": {
+      "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+      "yara": "4.2.3"
+    },
+    "clamavDatabases": [
+      {
+        "file": "bytecode.cvd",
+        "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+      },
+      {
+        "file": "daily.cvd",
+        "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+      },
+      {
+        "file": "main.cvd",
+        "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+      }
+    ],
+    "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+  }
+}

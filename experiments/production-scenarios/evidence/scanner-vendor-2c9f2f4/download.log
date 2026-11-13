@@ -1,0 +1,13 @@
+ClamAV update process started at Sat Nov  7 08:53:53 2026
+daily database available for download (remote version: 28176)
+Testing database: '/signatures/database/tmp.15f12e9857/clamav-0b7bcf3213d400b8307e02a057c65810.tmp-daily.cvd' ...
+Database test passed.
+daily.cvd updated (version: 28176, sigs: 355854, f-level: 90, builder: svc.clamav-publisher)
+main database available for download (remote version: 63)
+Testing database: '/signatures/database/tmp.15f12e9857/clamav-1917a14d406ef2401fd47b135d9c02b6.tmp-main.cvd' ...
+Database test passed.
+main.cvd updated (version: 63, sigs: 3287027, f-level: 90, builder: tomjudge)
+bytecode database available for download (remote version: 339)
+Testing database: '/signatures/database/tmp.15f12e9857/clamav-1901d98c947dbc3426119979df186749.tmp-bytecode.cvd' ...
+Database test passed.
+bytecode.cvd updated (version: 339, sigs: 80, f-level: 90, builder: nrandolp)

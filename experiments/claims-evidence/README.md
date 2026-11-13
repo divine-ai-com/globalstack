@@ -42,3 +42,13 @@ A process or host crash can prevent automatic cleanup. Keep the run directory is
 This is one first-party local scenario, with three chosen faults. It does not establish Azure parity, security certification, service-wide support, performance or model quality. Event Grid retries, delayed delivery, custom webhook validation, cloud authentication and business deduplication need a separately specified live experiment. Service Bus, Event Hubs, Files and App Configuration are provisioned but outside the observed event path. Queue observation is bounded at 32 messages and ledger checks address one key.
 
 The source is sufficient to run this case, but publication readiness also requires final authorship, independent review and a frozen paper artifact. See [the paper readiness checklist](../../docs/research/globalstack/study/READINESS.md).
+
+For an unavailable provider release download, `CLAIMS_PROVIDER_MIRROR` may name
+an absolute filesystem mirror containing the official AzAPI 2.13.0 Linux AMD64
+ZIP at `registry.terraform.io/azure/azapi/terraform-provider-azapi_2.13.0_linux_amd64.zip`.
+The runner checks its SHA-256 against the committed provider lock entry before
+mounting the mirror read-only. Terraform still initializes with
+`-lockfile=readonly` and verifies the package itself. CI retrieves that same
+release archive through GitHub's asset API. Neither a changed checksum nor a
+failed integrity check is retried as a transport failure. The result records
+the provider version and archive digest when this installation path is used.

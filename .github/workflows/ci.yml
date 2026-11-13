@@ -26,8 +26,12 @@ jobs:
           cache: npm
       - name: Lint workflow definitions
         if: matrix.node == 22
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail --silent --show-error --location https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz --output "$RUNNER_TEMP/actionlint.tar.gz"
+          if ! curl --fail --silent --show-error --location --retry 4 --retry-max-time 120 --connect-timeout 15 --max-time 60 https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz --output "$RUNNER_TEMP/actionlint.tar.gz"; then
+            gh api repos/rhysd/actionlint/releases/assets/384924896 -H "Accept: application/octet-stream" > "$RUNNER_TEMP/actionlint.tar.gz"
+          fi
           printf '%s  %s\n' '8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8' "$RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check
           tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
           "$RUNNER_TEMP/actionlint" -color
@@ -42,6 +46,24 @@ jobs:
       - run: npm run research:claims:test
       - run: node --test experiments/paired-lifecycle/*.test.mjs
       - run: node --test experiments/platform-lifecycle/*.test.mjs
+      - run: node --test experiments/production-scenarios/*.test.mjs
+      - run: node --test experiments/production-scenarios/financial-app/*.test.mjs
+      - run: node experiments/production-scenarios/financial-app/generate-corpus.mjs --check
+      - run: python3 -B -m unittest discover -s experiments/production-scenarios/operator -p 'test_*.py'
+      - name: Exercise document scanner binaries
+        if: matrix.node == 22
+        run: |
+          npm --prefix experiments/production-scenarios/document-app ci --ignore-scripts
+          npm --prefix experiments/production-scenarios/document-app audit --omit=dev --audit-level=moderate
+          node --test experiments/production-scenarios/document-app/dependencies.test.mjs experiments/production-scenarios/document-app/events.test.mjs experiments/production-scenarios/document-app/auth.test.mjs experiments/production-scenarios/document-app/source-revision.test.mjs experiments/production-scenarios/document-app/storage-identity.test.mjs experiments/production-scenarios/document-app/search-schema.test.mjs experiments/production-scenarios/document-app/search-provision.test.mjs experiments/production-scenarios/document-app/scanner-diagnostic.test.mjs experiments/production-scenarios/document-app/upload-diagnostic.test.mjs experiments/production-scenarios/document-app/database-diagnostic.test.mjs
+          docker build -t globalstack/document-worker:ci experiments/production-scenarios/document-app
+          docker run --rm --network none --workdir /home/site/wwwroot --entrypoint node globalstack/document-worker:ci --input-type=module -e 'await import("./functions.mjs")'
+          docker build -t globalstack/document-scanner:ci experiments/production-scenarios/document-app/scanner
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --memory 1g --cpus 2 --pids-limit 64 --tmpfs /tmp:rw,nosuid,nodev,size=268435456 \
+            -v "$PWD/experiments/production-scenarios/document-app/scanner:/app:ro" \
+            globalstack/document-scanner:ci python /app/test_worker.py
+          node --test experiments/production-scenarios/document-app/repository.test.mjs experiments/production-scenarios/document-app/ingress.test.mjs experiments/production-scenarios/document-app/database-bootstrap.test.mjs experiments/production-scenarios/document-app/postgres-wire-gateway.test.mjs experiments/production-scenarios/document-app/postgres-principal-gateway.test.mjs
       - run: node experiments/paired-lifecycle/verify-evidence.mjs
       - run: node experiments/paired-lifecycle/render-snapshots.mjs --check
       - run: node experiments/platform-lifecycle/render.mjs --check
@@ -72,9 +94,19 @@ jobs:
       - run: npm install --global npm@11.14.1
       - run: npm ci
       - run: npm run research:claims:build
+      - name: Fetch pinned provider archive through the release asset API
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLAIMS_PROVIDER_MIRROR: ${{ runner.temp }}/provider-mirror
+        run: |
+          archive="$CLAIMS_PROVIDER_MIRROR/registry.terraform.io/azure/azapi/terraform-provider-azapi_2.13.0_linux_amd64.zip"
+          mkdir -p "$(dirname "$archive")"
+          gh api repos/Azure/terraform-provider-azapi/releases/assets/594680645 -H 'Accept: application/octet-stream' > "$archive"
+          node --input-type=module -e 'import {verifyProviderMirror} from "./experiments/claims-evidence/provider-mirror.mjs"; console.log(await verifyProviderMirror(process.env.CLAIMS_PROVIDER_MIRROR, "experiments/claims-evidence/terraform/lib/.terraform.lock.hcl"));'
       - name: Run and verify native behavior
         env:
           CLAIMS_RUN_DIR: ${{ runner.temp }}/claims-reproduction
+          CLAIMS_PROVIDER_MIRROR: ${{ runner.temp }}/provider-mirror
         run: |
           npm run research:claims
           node experiments/claims-evidence/verify.mjs "$CLAIMS_RUN_DIR/result.json"

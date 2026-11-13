@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "23bc1b5993fdcd10e4aef277d5ae00147b9d4602",
+  "templateSha256": "47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9",
+  "startedAt": "2026-11-10T07:02:04.135Z",
+  "completedAt": "2026-11-10T07:09:57.535Z",
+  "azureDeployment": {
+    "initialStatus": 201,
+    "terminalState": "Succeeded"
+  },
+  "globalstackDeployment": {
+    "initialStatus": 201,
+    "terminalState": "Succeeded"
+  },
+  "firewall": {
+    "azure": {
+      "initialStatus": 202,
+      "readStatus": 200
+    },
+    "local": {
+      "initialStatus": 202,
+      "errorCode": null
+    }
+  },
+  "azureSql": {
+    "attempted": true,
+    "connectionAttempts": [
+      {
+        "status": "passed"
+      }
+    ],
+    "connection": {
+      "status": "passed",
+      "role": "globalstack-conformance-pilot"
+    },
+    "schema": {
+      "status": "passed",
+      "tables": [
+        "document_access",
+        "document_outbox",
+        "document_revisions",
+        "scanned_documents"
+      ]
+    }
+  },
+  "globalstackSql": {
+    "attempted": true,
+    "connection": {
+      "status": "passed",
+      "identity": "locally signed administrator token",
+      "backendRole": "operator-managed local PostgreSQL login"
+    },
+    "schema": {
+      "status": "passed",
+      "tables": [
+        "document_access",
+        "document_outbox",
+        "document_revisions",
+        "scanned_documents"
+      ]
+    }
+  },
+  "observationCount": 110,
+  "fullWorkflowCompleted": false,
+  "automaticAzureCleanup": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true
+  },
+  "localCleanup": {
+    "complete": true,
+    "failures": []
+  },
+  "independentAzureInventory": {
+    "resources": 0,
+    "deployments": 0
+  },
+  "budget": {
+    "authorizedCeilingUsd": 500,
+    "conservativeAllocatedAfterRunUsd": 325,
+    "actualAzureChargesMeasured": false
+  },
+  "rawPrivateTraceSha256": "59e042d43f4a99aeadd05a7db4dd69aa39f7cb461689cd337a4316446c776239",
+  "publishedTraceSha256": "3cd23a7630db08fe6086f2057c293de045761c8bc443fc9c971bcba183a2f1c8",
+  "redaction": "Runner substitutions plus stable opaque aliases for remaining UUIDs and IPv4 addresses."
+}

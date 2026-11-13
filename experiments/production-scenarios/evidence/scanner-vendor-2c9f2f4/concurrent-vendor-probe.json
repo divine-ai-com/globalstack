@@ -1,0 +1,97 @@
+{
+  "scope": "Two local concurrent scanner calls, not an application load test",
+  "durationMs": 20526,
+  "results": [
+    {
+      "sha256": "e5743f0f16069ce8893fb9ad3e74c2229274b0d1e32a8b76500fe19e30c12e2f",
+      "bytes": 41,
+      "mediaType": "text/plain",
+      "engines": [
+        {
+          "engine": "clamav",
+          "status": "error",
+          "reason": "engine_unavailable_or_timed_out",
+          "durationMs": 20102
+        },
+        {
+          "engine": "yara",
+          "status": "clean",
+          "findings": [],
+          "durationMs": 17
+        }
+      ],
+      "status": "unresolved",
+      "extractionStatus": "not_run",
+      "provenance": {
+        "versions": {
+          "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+          "yara": "4.2.3"
+        },
+        "clamavDatabases": [
+          {
+            "file": "bytecode.cvd",
+            "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+          },
+          {
+            "file": "daily.cvd",
+            "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+          },
+          {
+            "file": "main.cvd",
+            "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+          }
+        ],
+        "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+      }
+    },
+    {
+      "sha256": "87b5a2c2b2c16d63a83b8a171c1370f037fc6edc73d03377a2b7fce66f02d187",
+      "bytes": 41,
+      "mediaType": "text/plain",
+      "engines": [
+        {
+          "engine": "clamav",
+          "status": "clean",
+          "findings": [],
+          "durationMs": 19894
+        },
+        {
+          "engine": "yara",
+          "status": "clean",
+          "findings": [],
+          "durationMs": 17
+        }
+      ],
+      "status": "clean",
+      "pages": [
+        {
+          "page": 1,
+          "method": "utf8",
+          "text": "Concurrent document 1: revenue 123.45 USD"
+        }
+      ],
+      "extractionStatus": "completed",
+      "provenance": {
+        "versions": {
+          "clamav": "ClamAV 1.4.6/28176/Sat Nov  7 06:24:18 2026",
+          "yara": "4.2.3"
+        },
+        "clamavDatabases": [
+          {
+            "file": "bytecode.cvd",
+            "sha256": "6d4aa01f219e988060fc419f495d07f27e0cdf1a2cccc065971da922c76f7ffb"
+          },
+          {
+            "file": "daily.cvd",
+            "sha256": "6a9c90a3777e2a5b20d1af1b675aaa1cef84839919838dc7ff3ba875edcb720b"
+          },
+          {
+            "file": "main.cvd",
+            "sha256": "0b2182d229f46981ec8f535382222f7c9dfdd656b250ad47988b910a8d302365"
+          }
+        ],
+        "yaraRulesSha256": "db3ab161bc0f20b573d43ec9e10f1984e834242f45c5b246fd90037e7830599c"
+      }
+    }
+  ]
+}

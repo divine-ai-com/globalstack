@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "method": "Elapsed time from a successful indexer-run response to the first observed query result at roughly five-second polls. These values are not exact indexing latencies or a controlled performance comparison.",
+  "nPairedRuns": 3,
+  "runs": [
+    {
+      "runEvidenceDirectory": "document-search-paired-20261109-traversal",
+      "sourceRevision": "24875abe98e8c7bd65bd59355f4d384fd28889a9",
+      "targets": [
+        {
+          "target": "azure",
+          "indexerRunResponseAt": "2026-11-09T14:00:46.560Z",
+          "visibilityPolls": [
+            {
+              "at": "2026-11-09T14:00:48.847Z",
+              "resultCount": 0
+            },
+            {
+              "at": "2026-11-09T14:00:54.917Z",
+              "resultCount": 0
+            },
+            {
+              "at": "2026-11-09T14:01:01.194Z",
+              "resultCount": 1
+            }
+          ],
+          "firstObservedVisibleSecondsAfterRun": 14.634,
+          "deleteUploadResponseAt": "2026-11-09T14:01:03.251Z",
+          "deleteIndexerRunResponseAt": "2026-11-09T14:01:04.320Z",
+          "absencePolls": [
+            {
+              "at": "2026-11-09T14:01:05.312Z",
+              "resultCount": 0
+            }
+          ],
+          "firstObservedAbsentSecondsAfterDeleteRun": 0.992,
+          "firstObservedAbsentSecondsAfterUpload": 2.061
+        },
+        {
+          "target": "globalstack",
+          "indexerRunResponseAt": "2026-11-09T14:01:06.498Z",
+          "visibilityPolls": [
+            {
+              "at": "2026-11-09T14:01:06.503Z",
+              "resultCount": 1
+            }
+          ],
+          "firstObservedVisibleSecondsAfterRun": 0.005,
+          "deleteUploadResponseAt": "2026-11-09T14:01:06.511Z",
+          "deleteIndexerRunResponseAt": "2026-11-09T14:01:06.513Z",
+          "absencePolls": [
+            {
+              "at": "2026-11-09T14:01:06.516Z",
+              "resultCount": 0
+            }
+          ],
+          "firstObservedAbsentSecondsAfterDeleteRun": 0.003,
+          "firstObservedAbsentSecondsAfterUpload": 0.005
+        }
+      ]
+    },
+    {
+      "runEvidenceDirectory": "document-search-paired-20261109-wrong-container",
+      "sourceRevision": "6b83749ccee06ab5cede17164f8598d37cf14837",
+      "targets": [
+        {
+          "target": "azure",
+          "indexerRunResponseAt": "2026-11-09T14:20:51.236Z",
+          "visibilityPolls": [
+            {
+              "at": "2026-11-09T14:20:53.280Z",
+              "resultCount": 0
+            },
+            {
+              "at": "2026-11-09T14:20:59.358Z",
+              "resultCount": 0
+            },
+            {
+              "at": "2026-11-09T14:21:05.639Z",
+              "resultCount": 1
+            }
+          ],
+          "firstObservedVisibleSecondsAfterRun": 14.403,
+          "deleteUploadResponseAt": "2026-11-09T14:21:07.654Z",
+          "deleteIndexerRunResponseAt": "2026-11-09T14:21:08.694Z",
+          "absencePolls": [
+            {
+              "at": "2026-11-09T14:21:09.680Z",
+              "resultCount": 1
+            },
+            {
+              "at": "2026-11-09T14:21:16.020Z",
+              "resultCount": 0
+            }
+          ],
+          "firstObservedAbsentSecondsAfterDeleteRun": 7.326,
+          "firstObservedAbsentSecondsAfterUpload": 8.366
+        },
+        {
+          "target": "globalstack",
+          "indexerRunResponseAt": "2026-11-09T14:21:17.119Z",
+          "visibilityPolls": [
+            {
+              "at": "2026-11-09T14:21:17.124Z",
+              "resultCount": 1
+            }
+          ],
+          "firstObservedVisibleSecondsAfterRun": 0.005,
+          "deleteUploadResponseAt": "2026-11-09T14:21:17.132Z",
+          "deleteIndexerRunResponseAt": "2026-11-09T14:21:17.135Z",
+          "absencePolls": [
+            {
+              "at": "2026-11-09T14:21:17.137Z",
+              "resultCount": 0
+            }
+          ],
+          "firstObservedAbsentSecondsAfterDeleteRun": 0.002,
+          "firstObservedAbsentSecondsAfterUpload": 0.005
+        }
+      ]
+    },
+    {
+      "runEvidenceDirectory": "document-search-paired-20261109-wrong-container-retry",
+      "sourceRevision": "8af209b9725bc28ab37f5cc263e9db3152aa6409",
+      "targets": [
+        {
+          "target": "azure",
+          "indexerRunResponseAt": "2026-11-09T14:37:08.623Z",
+          "visibilityPolls": [
+            {
+              "at": "2026-11-09T14:37:10.939Z",
+              "resultCount": 0
+            },
+            {
+              "at": "2026-11-09T14:37:16.967Z",
+              "resultCount": 0
+            },
+            {
+              "at": "2026-11-09T14:37:23.020Z",
+              "resultCount": 1
+            }
+          ],
+          "firstObservedVisibleSecondsAfterRun": 14.397,
+          "deleteUploadResponseAt": "2026-11-09T14:37:25.052Z",
+          "deleteIndexerRunResponseAt": "2026-11-09T14:37:26.357Z",
+          "absencePolls": [
+            {
+              "at": "2026-11-09T14:37:27.357Z",
+              "resultCount": 1
+            },
+            {
+              "at": "2026-11-09T14:37:33.610Z",
+              "resultCount": 0
+            }
+          ],
+          "firstObservedAbsentSecondsAfterDeleteRun": 7.253,
+          "firstObservedAbsentSecondsAfterUpload": 8.558
+        },
+        {
+          "target": "globalstack",
+          "indexerRunResponseAt": "2026-11-09T14:37:34.790Z",
+          "visibilityPolls": [
+            {
+              "at": "2026-11-09T14:37:34.795Z",
+              "resultCount": 1
+            }
+          ],
+          "firstObservedVisibleSecondsAfterRun": 0.005,
+          "deleteUploadResponseAt": "2026-11-09T14:37:34.802Z",
+          "deleteIndexerRunResponseAt": "2026-11-09T14:37:34.805Z",
+          "absencePolls": [
+            {
+              "at": "2026-11-09T14:37:34.808Z",
+              "resultCount": 0
+            }
+          ],
+          "firstObservedAbsentSecondsAfterDeleteRun": 0.003,
+          "firstObservedAbsentSecondsAfterUpload": 0.006
+        }
+      ]
+    }
+  ]
+}

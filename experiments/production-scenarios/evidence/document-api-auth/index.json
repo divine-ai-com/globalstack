@@ -1,0 +1,19 @@
+{
+  "scope": "Operational live-token diagnostic using the application validator. The inline probe was not a pinned experiment runner. No deployed HTTP service, delegated user or scanner identity tested.",
+  "files": {
+    "result.json": {
+      "sha256": "e780c049e32dc33268097986f5509f2ec94503107b8a34c1091f30a6331cd6ac",
+      "bytes": 587
+    }
+  },
+  "validatorAndSetupFiles": [
+    {
+      "path": "experiments/production-scenarios/document-app/auth.mjs",
+      "sha256": "21dc71146be2db0daac925eb7651fd9386a644b70f085263d85fe226b978d6e3"
+    },
+    {
+      "path": "experiments/production-scenarios/operator/document_api.py",
+      "sha256": "b7fc0e76a3a9f89ed3c91951d3445385efe548b393bd501ff885f6f428acb1b9"
+    }
+  ]
+}

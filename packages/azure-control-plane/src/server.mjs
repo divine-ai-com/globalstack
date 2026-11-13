@@ -1,11 +1,15 @@
-import { createServer } from 'node:http';
+import { validateContainerEnvironment } from './container-environment-validation.mjs';
+import { createServer, STATUS_CODES } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
 import { allCapabilities, capabilityForResourceType, officialEmulatorOptions, tier1Capabilities, tier2Capabilities } from '../../core/src/azure-tier1-capabilities.mjs';
 import { buildHybridCoverage, summarizeCapability } from '../../core/src/hybrid-coverage.mjs';
 import { ResourceStore } from '../../core/src/resource-store.mjs';
+import { validateStorageSystemSubscription } from '../../core/src/event-grid-storage-contract.mjs';
 import { deterministicFunctionKey, deterministicHostKey } from '../../azure-data-plane/src/functions-router.mjs';
 import { acceptsDeleteMissing, capturedProviderValidation, capturedPutMissingParent, storageAccountNotProvisioned, storagePostDeleteNotFound } from './provider-validation.mjs';
+import { validateDeployment } from './deployment-validation.mjs';
+import { validateSearchServiceName } from './search-validation.mjs';
 import {
   authorizeRequest,
   apiManagementProductApiLinkedApiRoute,
@@ -14,12 +18,14 @@ import {
   exactCapabilityForResourceType,
   eventGridTopicListKeysRoute,
   expandDeploymentTemplate,
+  evaluateArmValue,
   facadeOrigin,
   isCollectionRoute,
   lowerSegments,
   nearestCapabilityParentRoute,
   normalizeProviderRoute,
   openIdConfiguration,
+  parameterContext,
   parseProviderRoute,
   parseResourceGroupRoute,
   parseResourceGroupDeploymentRoute,
@@ -31,6 +37,7 @@ import {
   readBody,
   scopedDiagnosticSettingsRoute,
   scopedEventGridEventSubscriptionRoute,
+  scopedRoleAssignmentRoute,
   segments,
   sendError,
   sendJson,
@@ -245,21 +252,98 @@ export function createArmRequestHandler({
   migrationRunner = null,
   metricStore = null,
   kubernetesRouter = null,
+  functionsRouter = null,
+  searchRouter = null,
 } = {}) {
   void persist;
   const completedDeploymentDeletions = new Map();
+  const postgresFirewallType = 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules';
+  const postgresFirewallBody = resource => ({
+    properties: {
+      startIpAddress: resource.properties.startIpAddress,
+      endIpAddress: resource.properties.endIpAddress,
+    },
+    id: resource.id,
+    name: resource.name.split('/').at(-1),
+    type: postgresFirewallType,
+  });
+
+  // Storage account PATCH (#54) changes only the fields it names. The update is
+  // bounded to settings the local account models; other fields, SKU or kind
+  // changes and invalid values are explicit gaps until Azure captures exist.
+  function patchStorageAccount({ providerRoute, apiVersion, body }) {
+    const gap = message => ({ status: 501, body: { error: { code: 'GlobalStackRouteNotImplemented', message, details: [{
+      code: 'ExplicitGap', message: 'Capture Azure storage account PATCH behavior before extending this local subset.' }] } } });
+    // Reuse the PUT path's API-version error; it returns before any mutation.
+    if (!apiVersion) return putProviderResource({ providerRoute, apiVersion, body: {} });
+    const existing = store.getResource(providerRoute);
+    if (!existing) {
+      const notFound = azureNotFoundFor({ method: 'GET', resourceType: 'Microsoft.Storage/storageAccounts', providerRoute, store });
+      return { status: notFound.status, body: { error: { code: notFound.code, message: notFound.message, details: [] } } };
+    }
+    if (store.resourceProvisioningState(providerRoute) !== 'Succeeded') return gap('PATCH of a storage account that is still provisioning is not implemented.');
+    const plain = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+    if (!plain(body) || !Object.keys(body).every(key => ['tags', 'sku', 'kind', 'properties'].includes(key))) {
+      return gap('Only tags and the modeled account properties can be changed by local storage account PATCH.');
+    }
+    if (body.tags !== undefined && !(plain(body.tags) && Object.values(body.tags).every(value => typeof value === 'string'))) {
+      return gap('Storage account PATCH tags must be an object of string values.');
+    }
+    if (body.sku !== undefined && !(plain(body.sku) && Object.keys(body.sku).join() === 'name' && body.sku.name === existing.sku?.name)) {
+      return gap('Changing the storage account SKU by PATCH is not implemented.');
+    }
+    if (body.kind !== undefined && body.kind !== existing.kind) return gap('Changing the storage account kind by PATCH is not implemented.');
+    const allowed = {
+      allowSharedKeyAccess: value => typeof value === 'boolean',
+      allowBlobPublicAccess: value => typeof value === 'boolean',
+      supportsHttpsTrafficOnly: value => typeof value === 'boolean',
+      minimumTlsVersion: value => ['TLS1_0', 'TLS1_1', 'TLS1_2'].includes(value),
+      publicNetworkAccess: value => ['Enabled', 'Disabled'].includes(value),
+    };
+    const properties = body.properties ?? {};
+    if (!plain(properties) || !Object.entries(properties).every(([key, value]) => Object.hasOwn(allowed, key) && allowed[key](value))) {
+      return gap(`Storage account PATCH supports only ${Object.keys(allowed).join(', ')} with valid values.`);
+    }
+    // The store keeps omitted properties, but resend location, SKU and kind so
+    // an update cannot clear them. Data-plane state is keyed by account and kept.
+    const result = putProviderResource({ providerRoute, apiVersion, body: {
+      location: existing.location, tags: body.tags ?? existing.tags, sku: existing.sku, kind: existing.kind, properties,
+    } });
+    if (result.status >= 400) return result;
+    return { status: 200, body: store.getResource(providerRoute) };
+  }
 
   function putProviderResource({ providerRoute, apiVersion, body }) {
     providerRoute = normalizeProviderRoute(providerRoute);
     const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
     const capability = capabilityForResourceType(resourceType);
+    if (resourceType.startsWith('Microsoft.EventGrid/systemTopics/') && !exactCapabilityForResourceType(resourceType)) {
+      return { status: 501, body: { error: { code: 'GlobalStackResourceTypeNotEmulated',
+        message: `GlobalStack does not emulate Azure resource type ${resourceType}.` } } };
+    }
     if (providerRoute.scopeId) {
       const scopeRoute = providerRouteFromResourceId(providerRoute.scopeId);
-      if (!scopeRoute || !store.getResource(scopeRoute)) {
+      if (!scopeRoute || !(store.getResource(scopeRoute)
+        || resourceType === 'Microsoft.Authorization/roleAssignments' && searchRouter?.resolveIndexScope(scopeRoute))) {
         return { status: 404, body: { error: { code: 'ResourceNotFound', message: 'The extension resource scope was not found.', details: [] } } };
       }
       if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
         body = { ...body, properties: { ...body.properties, scope: providerRoute.scopeId } };
+      }
+      if (resourceType === 'Microsoft.Authorization/roleAssignments') {
+        body = { ...body, properties: { ...body.properties, scope: providerRoute.scopeId } };
+        const existing = store.getResource(providerRoute);
+        if (existing && ['principalId', 'roleDefinitionId'].some(name => String(existing.properties?.[name]).toLowerCase() !== String(body.properties?.[name]).toLowerCase())) {
+          return { status: 400, body: { error: { code: 'RoleAssignmentUpdateNotPermitted', message: 'The principal, role and scope of an existing role assignment cannot be changed.' } } };
+        }
+      }
+    }
+    if (resourceType === 'Microsoft.Authorization/roleAssignments' && !providerRoute.scopeId && body.properties) {
+      const scope = `/subscriptions/${providerRoute.subscriptionId}/resourceGroups/${providerRoute.resourceGroupName}`;
+      body = { ...body, properties: { ...body.properties, scope } };
+      const existing = store.getResource(providerRoute);
+      if (existing && ['principalId', 'roleDefinitionId'].some(name => String(existing.properties?.[name]).toLowerCase() !== String(body.properties?.[name]).toLowerCase())) {
+        return { status: 400, body: { error: { code: 'RoleAssignmentUpdateNotPermitted', message: 'The principal, role and scope of an existing role assignment cannot be changed.' } } };
       }
     }
     if (!apiVersion) {
@@ -312,6 +396,18 @@ export function createArmRequestHandler({
       'Microsoft.Synapse/workspaces/sqlPools',
     ]);
     const referencesExistingServerFarm = siteReferencesExistingServerFarm(store, resourceType, body);
+    if (resourceType === 'Microsoft.ApiManagement/service/apis/operations') {
+      const properties = body.properties;
+      if (!properties || typeof properties.displayName !== 'string' || !properties.displayName
+        || !/^(GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS|TRACE|\*)$/i.test(properties.method ?? '')
+        || typeof properties.urlTemplate !== 'string' || !properties.urlTemplate.startsWith('/')) {
+        return { status: 400, body: { error: { code: 'ValidationError', message: 'An API operation requires displayName, an HTTP method and a URL template starting with /.' } } };
+      }
+    }
+    if (resourceType === 'Microsoft.Search/searchServices') {
+      const error = validateSearchServiceName(providerRoute.typePath.split('/').at(-1));
+      if (error) return { status: 400, body: { error } };
+    }
     const validationBeforeParent = validationBeforeParentTypes.has(resourceType) && body.properties !== null
       ? capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm })
       : null;
@@ -340,6 +436,11 @@ export function createArmRequestHandler({
       return storageAccountNotProvisioned();
     }
 
+    if (resourceType === 'Microsoft.App/managedEnvironments') {
+      const error = validateContainerEnvironment(body);
+      if (error) return { status: 400, body: { error } };
+    }
+
     if (resourceType === 'Microsoft.App/containerApps' && body.properties?.managedEnvironmentId) {
       const environmentRoute = providerRouteFromResourceId(body.properties.managedEnvironmentId);
       if (!environmentRoute || !store.getResource(environmentRoute)) {
@@ -356,6 +457,10 @@ export function createArmRequestHandler({
       }
     }
 
+    if (resourceType === 'Microsoft.EventGrid/systemTopics/eventSubscriptions') {
+      const eventValidation = validateStorageSystemSubscription(store, providerRoute, body, functionsRouter);
+      if (eventValidation) return eventValidation;
+    }
     const validation = capturedProviderValidation({ method: 'PUT', resourceType, body, providerRoute, referencesExistingServerFarm });
     if (validation) return validation;
 
@@ -382,6 +487,13 @@ export function createArmRequestHandler({
       if (!task.error) {
         result.resource = task.body;
       }
+    }
+    if (resourceType === postgresFirewallType) {
+      return {
+        status: 202,
+        body: { operation: 'UpsertServerFirewallRulesManagementOperation', startTime: new Date().toISOString() },
+        asyncOperation: true,
+      };
     }
     const storageCreatedOkTypes = new Set([
       'Microsoft.Storage/storageAccounts/queueServices/queues',
@@ -421,7 +533,8 @@ export function createArmRequestHandler({
         },
       };
     }
-    const expanded = expandDeploymentTemplate({
+    let expanded;
+    try { expanded = expandDeploymentTemplate({
       template,
       parameters: body.properties?.parameters ?? {},
       subscriptionId,
@@ -430,9 +543,69 @@ export function createArmRequestHandler({
       resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
       resourceGroupLocations: Object.fromEntries(store.listResourceGroups(subscriptionId).map(group => [group.name.toLowerCase(), group.location])),
     });
+    } catch (error) {
+      return { status: error.status ?? 400, body: { error: {
+        code: error.code ?? 'InvalidTemplate', message: error.message, details: [],
+      } } };
+    }
+    for (const operation of expanded.operations) {
+      if (operation.kind !== 'resource' || operation.providerRoute.providerNamespace !== 'Microsoft.App'
+        || operation.providerRoute.typePath.split('/')[0] !== 'managedEnvironments'
+        || operation.providerRoute.typePath.split('/').length !== 2) continue;
+      const error = validateContainerEnvironment(operation.body);
+      if (error) return { status: 400, body: { error: { code: 'InvalidTemplateDeployment',
+        message: `The template deployment '${body.name ?? 'deployment'}' is not valid according to the validation procedure. See inner errors for details.`,
+        details: [{ code: 'ValidationForResourceFailed', message: "Validation failed for a resource. Check 'Error.Details[0]' for more information.", details: [error] }],
+      } } };
+    }
     const operations = expanded.operations;
+    const resolvedParameters = parameterContext(template, body.properties?.parameters ?? {});
+    const responseParameters = Object.fromEntries(Object.entries(template.parameters ?? {}).map(([name, definition]) => [name, {
+      type: definition.type[0].toUpperCase() + definition.type.slice(1),
+      ...(/^secure/i.test(definition.type) ? {} : { value: resolvedParameters[name] }),
+    }]));
     const steps = [];
+    const operationRecords = [];
+    const deploymentName = body.name ?? 'deployment';
+    const deploymentId = resourceGroupName
+      ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${deploymentName}`
+      : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${deploymentName}`;
+    const startedAt = Date.now();
+    function recordStep(step, operationStartedAt) {
+      steps.push(step);
+      const route = providerRouteFromResourceId(step.id);
+      // Extension resources use their final provider namespace, not the parent resource type.
+      const parts = step.id.split('/providers/').at(-1).split('/');
+      const operationId = randomUUID().replaceAll('-', '').slice(0, 16).toUpperCase();
+      operationRecords.push({ id: `${deploymentId}/operations/${operationId}`, operationId, properties: {
+        provisioningOperation: 'Create', provisioningState: step.error ? 'Failed' : 'Succeeded',
+        timestamp: new Date().toISOString(), duration: `PT${(Date.now() - operationStartedAt) / 1000}S`,
+        statusCode: (STATUS_CODES[step.status] ?? String(step.status)).replaceAll(' ', ''),
+        statusMessage: step.error ? { status: 'Failed', error: step.error } : null,
+        targetResource: { id: step.id,
+          resourceType: route ? `${parts[0]}/${parts.slice(1).filter((_, i) => i % 2 === 0).join('/')}` : 'Microsoft.Resources/resourceGroups',
+          resourceName: route ? parts.slice(1).filter((_, i) => i % 2 === 1).join('/') : step.id.split('/').at(-1),
+        },
+      } });
+    }
+    function saveDeployment({ error, outputs } = {}) {
+      const saved = store.putDeployment({ subscriptionId, resourceGroupName, deploymentName, body: {
+        id: deploymentId, name: deploymentName, type: 'Microsoft.Resources/deployments', location: body.location,
+        properties: { provisioningState: error ? 'Failed' : 'Succeeded', mode: body.properties?.mode ?? 'Incremental',
+          parameters: responseParameters,
+          timestamp: new Date().toISOString(), duration: `PT${(Date.now() - startedAt) / 1000}S`,
+          ...(error ? { error } : { outputs }), globalstackDeploymentSteps: steps,
+        },
+      } });
+      store.putDeploymentOperations({ subscriptionId, resourceGroupName, deploymentName, operations: operationRecords });
+      return saved;
+    }
+    function failed(result) {
+      saveDeployment({ error: result.body?.error ?? result.body });
+      return result;
+    }
     for (const operation of operations) {
+      const operationStartedAt = Date.now();
       if (operation.kind === 'error') {
         return {
           status: operation.status,
@@ -447,60 +620,57 @@ export function createArmRequestHandler({
       }
       if (operation.kind === 'resourceGroup') {
         const result = store.putResourceGroup(operation.subscriptionId, operation.name, operation.body);
-        steps.push({
+        recordStep({
           operation: 'PUT',
           id: result.resourceGroup.id,
           status: result.created ? 201 : 200,
-        });
+        }, operationStartedAt);
         continue;
       }
-      const result = putProviderResource(operation);
+      let evaluatedBody;
+      const evaluationContext = { ...operation.evaluationContext, __deferResourceReferences: false,
+        __resourceLookup: id => { const route = providerRouteFromResourceId(id); return route ? store.getResource(route) : null; } };
+      try { evaluatedBody = evaluateArmValue(operation.body, evaluationContext); }
+      catch (error) { return failed({ status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message } } }); }
+      let result = putProviderResource({ ...operation, body: evaluatedBody });
       if (result.status === 202 || result.asyncOperation) {
         for (let attempt = 0; attempt < 6; attempt += 1) {
           const ready = store.getResource(operation.providerRoute);
           if (ready?.properties?.provisioningState === 'Succeeded') break;
+          if (ready?.properties?.provisioningState === 'Failed') {
+            result = { status: 409, body: { error: result.deferredProvisioningError ?? {
+              code: 'ResourceDeploymentFailure', message: 'The resource reached a failed provisioning state.',
+            } } };
+            break;
+          }
+          if (attempt === 5) result = { status: 501, body: { error: {
+            code: 'GlobalStackDeploymentNotImplemented', message: 'The resource did not reach a terminal state within the supported local deployment lifecycle.',
+          } } };
         }
       }
-      steps.push({
+      recordStep({
         operation: 'PUT',
         id: `${operation.providerRoute.scopeId ?? `/subscriptions/${operation.providerRoute.subscriptionId}/resourceGroups/${operation.providerRoute.resourceGroupName}`}/providers/${operation.providerRoute.providerNamespace}/${operation.providerRoute.typePath}`,
         status: result.status,
-        error: result.body?.error,
-      });
+        error: result.status >= 400 ? result.body?.error ?? result.body : undefined,
+      }, operationStartedAt);
       if (![200, 201, 202].includes(result.status)) {
-        return {
-          status: result.status,
-          body: result.body,
-        };
+        return failed({ status: result.status, body: result.body });
       }
     }
-    const deploymentBody = {
-      id: resourceGroupName
-        ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`
-        : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${body.name ?? 'deployment'}`,
-      name: body.name ?? 'deployment',
-      type: 'Microsoft.Resources/deployments',
-      location: body.location,
-      properties: {
-        provisioningState: 'Succeeded',
-        mode: body.properties?.mode ?? 'Incremental',
-        timestamp: new Date().toISOString(),
-        duration: 'PT0S',
-        outputs: expanded.outputs,
-        globalstackDeploymentSteps: steps,
-      },
-    };
-    store.putDeployment({
-      subscriptionId,
-      resourceGroupName,
-      deploymentName: body.name ?? 'deployment',
-      resourceGroupLocation: store.getResourceGroup(subscriptionId, resourceGroupName)?.location,
-      body: deploymentBody,
-    });
-    return {
-      status: 201,
-      body: deploymentBody,
-    };
+    let outputs;
+    try {
+      outputs = evaluateArmValue(expanded.outputs, { ...expanded.evaluationContext, __deferResourceReferences: false,
+        __resourceLookup: id => { const route = providerRouteFromResourceId(id); return route ? store.getResource(route) : null; } });
+    } catch (error) {
+      return failed({ status: error.status ?? 400, body: { error: { code: error.code ?? 'InvalidTemplate', message: error.message } } });
+    }
+    // Match observed ARM response casing without changing template evaluation.
+    for (const output of Object.values(outputs)) {
+      if (String(output.type).toLowerCase() === 'string') output.type = 'String';
+      if (String(output.type).toLowerCase() === 'array') output.type = 'Array';
+    }
+    return { status: 201, body: saveDeployment({ outputs }) };
   }
 
   return async (req, res) => {
@@ -629,7 +799,12 @@ export function createArmRequestHandler({
       }
 
       const subscriptionDeploymentRoute = parseSubscriptionDeploymentRoute(pathname);
-      if (subscriptionDeploymentRoute && method === 'GET') {
+      if (subscriptionDeploymentRoute && rawSegments.length === 7 && lowered[6] === 'validate' && method === 'POST') {
+        if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
+        const result = validateDeployment({ ...subscriptionDeploymentRoute, body: await readBody(req), resourceExists: id => { const route = providerRouteFromResourceId(id); return Boolean(route && store.getResource(route)); } });
+        return sendJson(res, result.status, result.body);
+      }
+      if (subscriptionDeploymentRoute && rawSegments.length === 6 && method === 'GET') {
         const deployment = store.getDeployment({
           subscriptionId: subscriptionDeploymentRoute.subscriptionId,
           resourceGroupName: null,
@@ -639,7 +814,7 @@ export function createArmRequestHandler({
         return sendJson(res, 200, deployment);
       }
 
-      if (subscriptionDeploymentRoute && method === 'PUT') {
+      if (subscriptionDeploymentRoute && rawSegments.length === 6 && method === 'PUT') {
         const body = await readBody(req);
         const result = applyDeployment({
           subscriptionId: subscriptionDeploymentRoute.subscriptionId,
@@ -653,6 +828,25 @@ export function createArmRequestHandler({
       }
 
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
+      if (resourceGroupDeploymentRoute && rawSegments.length === 9 && lowered[8] === 'validate' && method === 'POST') {
+        if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
+        const result = validateDeployment({ ...resourceGroupDeploymentRoute, body: await readBody(req), resourceExists: id => { const route = providerRouteFromResourceId(id); return Boolean(route && store.getResource(route)); } });
+        return sendJson(res, result.status, result.body);
+      }
+      const operationRoute = subscriptionDeploymentRoute ?? resourceGroupDeploymentRoute;
+      const operationOffset = subscriptionDeploymentRoute ? 6 : 8;
+      if (operationRoute && lowered[operationOffset] === 'operations' && method === 'GET'
+        && [operationOffset + 1, operationOffset + 2].includes(rawSegments.length)) {
+        if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
+        if (!store.getDeployment(operationRoute)) return sendError(res, 404, 'DeploymentNotFound', `Deployment '${operationRoute.deploymentName}' could not be found.`);
+        if ([...url.searchParams.keys()].some(key => key !== 'api-version')) return sendError(res, 501, 'NotImplemented', 'Deployment operation query options are not implemented.');
+        const records = store.listDeploymentOperations(operationRoute);
+        const operationId = rawSegments[operationOffset + 1];
+        if (!operationId) return sendJson(res, 200, { value: records });
+        const record = records.find(item => item.operationId.toLowerCase() === operationId.toLowerCase());
+        if (!record) return sendError(res, 404, 'DeploymentOperationNotFound', `Deployment operation '${operationId}' could not be found.`);
+        return sendJson(res, 200, record);
+      }
       const deleteRoute = subscriptionDeploymentRoute && segments(pathname).length === 6
         ? subscriptionDeploymentRoute
         : resourceGroupDeploymentRoute && segments(pathname).length === 8 ? resourceGroupDeploymentRoute : null;
@@ -668,7 +862,7 @@ export function createArmRequestHandler({
         res.writeHead(202, { location: `${facadeOrigin(req)}${operationPath}?api-version=${url.searchParams.get('api-version') ?? '2022-09-01'}`, 'retry-after': '0' });
         res.end(); return;
       }
-      if (resourceGroupDeploymentRoute && method === 'GET') {
+      if (resourceGroupDeploymentRoute && rawSegments.length === 8 && method === 'GET') {
         const deployment = store.getDeployment({
           subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
           resourceGroupName: resourceGroupDeploymentRoute.resourceGroupName,
@@ -678,7 +872,7 @@ export function createArmRequestHandler({
         return sendJson(res, 200, deployment);
       }
 
-      if (resourceGroupDeploymentRoute && method === 'PUT') {
+      if (resourceGroupDeploymentRoute && rawSegments.length === 8 && method === 'PUT') {
         const body = await readBody(req);
         const result = applyDeployment({
           subscriptionId: resourceGroupDeploymentRoute.subscriptionId,
@@ -942,6 +1136,29 @@ export function createArmRequestHandler({
           }
         }
 
+        const scopedAssignment = scopedRoleAssignmentRoute(providerRoute);
+        if (scopedAssignment) {
+          const parent = store.getResource(scopedAssignment.scopeRoute) ?? searchRouter?.resolveIndexScope(scopedAssignment.scopeRoute);
+          if (!parent) return sendError(res, 404, 'ResourceNotFound', 'The role assignment scope does not exist.');
+          const route = { ...scopedAssignment.assignmentRoute, scopeId: parent.id };
+          if (method === 'PUT') {
+            const result = putProviderResource({ providerRoute: route, apiVersion, body: await readBody(req) });
+            return sendJson(res, result.status, result.body);
+          }
+          const resource = store.getResource(route);
+          if (method === 'GET') {
+            if (!resource) return sendError(res, 404, 'RoleAssignmentDoesNotExist', 'The role assignment does not exist.');
+            return sendJson(res, 200, resource);
+          }
+          if (method === 'DELETE') {
+            if (!resource) return sendJson(res, 204);
+            store.deleteResource(route);
+            if (typeof onResourceDelete === 'function') onResourceDelete({ providerRoute: route, resourceType: 'Microsoft.Authorization/roleAssignments', resource });
+            return sendJson(res, 200, resource);
+          }
+          return sendError(res, 405, 'MethodNotAllowed', 'This operation is not supported for role assignments.');
+        }
+
         const scopedEventSubscriptionRoute = scopedEventGridEventSubscriptionRoute(providerRoute);
         if (scopedEventSubscriptionRoute) {
           if (!store.getResourceGroup(providerRoute.subscriptionId, providerRoute.resourceGroupName)) {
@@ -1026,6 +1243,10 @@ export function createArmRequestHandler({
           if (!site) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webHostKeysRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
           }
+          if (functionsRouter?.requiresNativeWorker(site.id)) {
+            const result = await functionsRouter.readNativeHostKeys(site.id);
+            return sendJson(res, result.status, result.body, { 'cache-control': 'no-store' });
+          }
           return sendJson(res, 200, {
             masterKey: deterministicHostKey(site.name, 'master'),
             functionKeys: {
@@ -1044,6 +1265,7 @@ export function createArmRequestHandler({
           if (!app) {
             return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
           }
+          if (functionsRouter?.requiresNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           const fn = store.getResource(webFunctionKeysRoute.functionRoute);
           if (!fn) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionKeysRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
@@ -1064,6 +1286,7 @@ export function createArmRequestHandler({
           if (!app) {
             return sendError(res, 404, 'ParentResourceNotFound', `The parent resource for ${providerRoute.typePath} was not found.`);
           }
+          if (functionsRouter?.requiresNativeWorker(app.id)) return sendError(res, 501, 'NativeFunctionsKeysNotImplemented', 'Native worker keys are owned by the Functions host; ARM key management is not implemented.');
           const fn = store.getResource(webFunctionSecretsRoute.functionRoute);
           if (!fn) {
             return sendError(res, 404, 'ResourceNotFound', `The Resource '${webFunctionSecretsRoute.functionRoute.typePath}' under resource group '${providerRoute.resourceGroupName}' was not found.`);
@@ -1698,6 +1921,7 @@ export function createArmRequestHandler({
           providerRoute.providerNamespace === 'Microsoft.DBforPostgreSQL'
           && resourceType.startsWith('Microsoft.DBforPostgreSQL/flexibleServers/')
           && resourceType !== 'Microsoft.DBforPostgreSQL/flexibleServers/databases'
+          && resourceType !== 'Microsoft.DBforPostgreSQL/flexibleServers/administrators'
           && !exactCapabilityForResourceType(resourceType)
         ) {
           return sendError(res, 501, 'GlobalStackResourceTypeNotEmulated', `GlobalStack does not emulate Azure resource type ${resourceType}.`, [
@@ -1906,6 +2130,11 @@ export function createArmRequestHandler({
           ]);
         }
 
+        if (method === 'PATCH' && resourceType === 'Microsoft.Storage/storageAccounts' && !isCollectionRoute(providerRoute)) {
+          const result = patchStorageAccount({ providerRoute, apiVersion, body: await readBody(req) });
+          return sendJson(res, result.status, result.body);
+        }
+
         if (method === 'PUT') {
           const body = await readBody(req);
           const result = putProviderResource({ providerRoute, apiVersion, body });
@@ -1932,6 +2161,15 @@ export function createArmRequestHandler({
           if (webAppConfig) {
             return sendJson(res, 200, webAppConfig);
           }
+          // A captured missing-role response must not hide an assignment that
+          // exists in the store, or turn the collection into a missing resource.
+          if (resourceType === 'Microsoft.Authorization/roleAssignments') {
+            if (isCollectionRoute(providerRoute)) return sendJson(res, 200, { value: store.listResourcesByType(providerRoute) });
+            const assignment = store.getResource(providerRoute);
+            if (assignment) return sendJson(res, 200, assignment);
+            const name = providerRoute.typePath.split('/').at(-1);
+            return sendJson(res, 404, { error: { code: 'RoleAssignmentNotFound', message: `The role assignment '${name}' is not found.` } });
+          }
           const validation = capturedProviderValidation({ method, resourceType, providerRoute });
           if (validation) return sendJson(res, validation.status, validation.body);
           const storageParent = storageAccountParentRoute(providerRoute);
@@ -1945,9 +2183,9 @@ export function createArmRequestHandler({
               const notFound = azureNotFoundFor({ method, resourceType, providerRoute, store });
               return sendError(res, notFound.status, notFound.code, notFound.message);
             }
-            return sendJson(res, 200, {
-              value: store.listResourcesByType(providerRoute),
-            });
+            const resources = store.listResourcesByType(providerRoute);
+            return sendJson(res, 200, { value: resourceType === postgresFirewallType
+              ? resources.map(postgresFirewallBody) : resources });
           }
           const resource = store.getResource(providerRoute);
           if (!resource) {
@@ -1966,6 +2204,7 @@ export function createArmRequestHandler({
             }
             return sendJson(res, 200, apiManagementProductApiContract(resource, linkedApi));
           }
+          if (resourceType === postgresFirewallType) return sendJson(res, 200, postgresFirewallBody(resource));
           return sendJson(res, 200, resource);
         }
 
@@ -2013,6 +2252,15 @@ export function createArmRequestHandler({
               resource: deletedResource,
             });
           }
+          if (resourceType === postgresFirewallType) {
+            const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+            const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
+            return sendJson(res, 202, { operation: 'DropServerFirewallRulesManagementOperation', startTime: new Date().toISOString() }, {
+              'azure-asyncoperation': operationUrl,
+              location: operationUrl,
+              'retry-after': '0',
+            });
+          }
           if (resourceType === 'Microsoft.ServiceBus/namespaces') {
             const operationId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
             const operationUrl = `${facadeOrigin(req)}/subscriptions/${providerRoute.subscriptionId}/providers/Microsoft.Resources/operationStatuses/${operationId}?api-version=2022-09-01`;
@@ -2025,6 +2273,7 @@ export function createArmRequestHandler({
               'retry-after': '0',
             });
           }
+          if (resourceType === 'Microsoft.Authorization/roleAssignments') return sendJson(res, 200, deletedResource);
           if (resourceType === 'Microsoft.Storage/storageAccounts') return sendJson(res, 200);
           if (resourceType.startsWith('Microsoft.Storage/storageAccounts/')) {
             const storageDeleteNoContentTypes = new Set([

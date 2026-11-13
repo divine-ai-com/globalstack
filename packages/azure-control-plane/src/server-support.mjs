@@ -794,6 +794,18 @@ export function scopedEventGridEventSubscriptionRoute(providerRoute) {
   };
 }
 
+export function scopedRoleAssignmentRoute(providerRoute) {
+  const marker = '/providers/microsoft.authorization/roleassignments/';
+  const index = providerRoute.typePath.toLowerCase().indexOf(marker);
+  if (index < 0) return null;
+  const scopeTypePath = providerRoute.typePath.slice(0, index);
+  const name = providerRoute.typePath.slice(index + marker.length);
+  if (!scopeTypePath || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(name)) return null;
+  return { scopeRoute: { ...providerRoute, typePath: scopeTypePath },
+    assignmentRoute: { subscriptionId: providerRoute.subscriptionId, resourceGroupName: providerRoute.resourceGroupName,
+      providerNamespace: 'Microsoft.Authorization', typePath: `roleAssignments/${name}` } };
+}
+
 export function aksCredentialActionRoute(providerRoute) {
   if (providerRoute.providerNamespace !== 'Microsoft.ContainerService') return null;
   const parts = providerRoute.typePath.split('/');
@@ -1355,12 +1367,27 @@ export function deploymentResourceId(subscriptionId, resourceGroupName, name) {
     : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${name}`;
 }
 
+export function copyContexts(copy, context, requireName = false) {
+  const fail = message => { const error = new Error(message); error.code = 'InvalidTemplate'; error.status = 400; throw error; };
+  if (!copy || typeof copy !== 'object' || Array.isArray(copy)) fail('A copy loop requires an object.');
+  if (requireName && (typeof copy.name !== 'string' || !copy.name)) fail('A resource copy loop requires a name.');
+  if (copy.mode !== undefined && copy.mode !== 'parallel') {
+    const error = new Error('Serial resource copy execution is not implemented.');
+    error.code = 'GlobalStackCopyNotImplemented'; error.status = 501; throw error;
+  }
+  const count = evaluateArmValue(copy.count, context);
+  if (!Number.isInteger(count) || count < 0 || count > 800) fail('Copy count must be an integer between 0 and 800.');
+  return Array.from({ length: count }, (_, index) => ({ ...context, __copyIndex: index,
+    __copyIndices: { ...context.__copyIndices, ...(copy.name ? { [copy.name]: index } : {}) } }));
+}
+
 export function templateOutputs(template, context) {
   return Object.fromEntries(Object.entries(template.outputs ?? {}).map(([name, output]) => [
     name,
     {
       type: output.type ?? 'string',
-      value: evaluateArmValue(output.value, context),
+      value: output.copy === undefined ? evaluateArmValue(output.value, context)
+        : copyContexts(output.copy, context).map(iteration => evaluateArmValue(output.copy.input, iteration)),
     },
   ]));
 }
@@ -1383,35 +1410,147 @@ function armResourcePath(resourceType, names) {
   return `${namespace}/${types.map((type, index) => `${type}/${names[index]}`).join('/')}`;
 }
 
+function validationExpressionValue(value, parameters) {
+  if (value === undefined && parameters.__strictValidation) {
+    const error = new Error('This ARM reference could not be resolved during local template validation.');
+    error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
+    throw error;
+  }
+  return value;
+}
+
+// Azure resolves reference() after the referenced resource exists, so template
+// validation can only carry the value. Only array and object constructors may
+// hold it; any function that computes with it is reported as unsupported.
+class DeferredArmReference {
+  constructor(id) { this.id = id; Object.freeze(this); }
+}
+
+export function isDeferredArmReference(value) {
+  return value instanceof DeferredArmReference;
+}
+
+function deferredReferenceError() {
+  const error = new Error('A reference() value cannot be computed during local template validation.');
+  error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
+  return error;
+}
+
+function evaluateArmArgument(value, context, allowDeferred = false) {
+  const text = value.trim();
+  if (/^-?\d+$/.test(text)) return Number(text);
+  const result = /^[A-Za-z_][A-Za-z0-9_]*\(/.test(text) ? evaluateArmExpression(text, context) : evaluateArmValue(value, context);
+  if (!allowDeferred && isDeferredArmReference(result)) throw deferredReferenceError();
+  return result;
+}
+
 export function evaluateArmExpression(expression, parameters) {
   const text = expression.trim();
+  if (parameters.__deferResourceReferences && /\breference\(/.test(text)) {
+    // Retain the loop index when references are resolved after resource creation.
+    return `[${text.replace(/\bcopyIndex\(([^()]*)\)/g, expression => String(evaluateArmExpression(expression, { ...parameters, __deferResourceReferences: false })))}]`;
+  }
+  if (/^-?\d+$/.test(text)) return Number(text);
+  if (text === 'true()') return true;
+  if (text === 'false()') return false;
+  if (text === 'null()') return null;
+  const equalsMatch = text.match(/^equals\((.*)\)$/s);
+  if (equalsMatch) {
+    const args = splitArmArgs(equalsMatch[1]);
+    if (args.length !== 2) { const error = new Error('ARM equals requires two arguments.'); error.code = 'InvalidTemplate'; throw error; }
+    return evaluateArmArgument(args[0], parameters) === evaluateArmArgument(args[1], parameters);
+  }
+  const ifMatch = text.match(/^if\((.*)\)$/s);
+  if (ifMatch) {
+    const args = splitArmArgs(ifMatch[1]);
+    if (args.length !== 3) { const error = new Error('ARM if requires three arguments.'); error.code = 'InvalidTemplate'; throw error; }
+    const condition = evaluateArmArgument(args[0], parameters);
+    if (typeof condition !== 'boolean') { const error = new Error('ARM if condition must be boolean.'); error.code = 'InvalidTemplate'; throw error; }
+    return evaluateArmArgument(args[condition ? 1 : 2], parameters);
+  }
+  const indexMatch = text.match(/^(.*\))\[(.*)\]$/s);
+  if (indexMatch) {
+    const array = evaluateArmExpression(indexMatch[1], parameters);
+    if (isDeferredArmReference(array)) throw deferredReferenceError();
+    const index = evaluateArmArgument(indexMatch[2], parameters);
+    if (!Array.isArray(array) || !Number.isInteger(index) || index < 0 || index >= array.length) {
+      const error = new Error('ARM array index is out of bounds or is not an integer.'); error.code = 'InvalidTemplate'; throw error;
+    }
+    return array[index];
+  }
+  const objectMatch = text.match(/^createObject\((.*)\)$/s);
+  if (objectMatch) {
+    const args = splitArmArgs(objectMatch[1]).map((arg, index) => evaluateArmArgument(arg, parameters, index % 2 === 1));
+    if (args.length % 2 || args.some((arg, index) => index % 2 === 0 && typeof arg !== 'string')) {
+      const error = new Error('ARM createObject requires string keys paired with values.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
+    }
+    return Object.fromEntries(Array.from({ length: args.length / 2 }, (_, index) => [args[index * 2], args[index * 2 + 1]]));
+  }
+  const arrayMatch = text.match(/^createArray\((.*)\)$/s);
+  if (arrayMatch) return splitArmArgs(arrayMatch[1]).map(arg => evaluateArmArgument(arg, parameters, true));
+  const lengthMatch = text.match(/^length\((.*)\)$/s);
+  if (lengthMatch) {
+    const value = evaluateArmValue(lengthMatch[1], parameters);
+    if (isDeferredArmReference(value)) throw deferredReferenceError();
+    if (!Array.isArray(value) && typeof value !== 'string') throw new Error('ARM length requires an array or string.');
+    return value.length;
+  }
+  const copyMatch = text.match(/^copyIndex\((.*)\)$/s);
+  if (copyMatch) {
+    const args = splitArmArgs(copyMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    const named = typeof args[0] === 'string';
+    const index = named ? parameters.__copyIndices?.[args[0]] : parameters.__copyIndex;
+    const offset = args[named ? 1 : 0] ?? 0;
+    if (args.length > (named ? 2 : 1) || !Number.isInteger(index) || !Number.isInteger(offset)) {
+      const error = new Error('copyIndex requires an active loop and an integer offset.'); error.code = 'InvalidTemplate'; throw error;
+    }
+    return index + offset;
+  }
   const parameterMatch = text.match(/^parameters\('([^']+)'\)$/);
-  if (parameterMatch) return parameters[parameterMatch[1]];
+  if (parameterMatch) return validationExpressionValue(parameters[parameterMatch[1]], parameters);
 
   const variableMatch = text.match(/^variables\('([^']+)'\)$/);
-  if (variableMatch) return parameters.__variables?.[variableMatch[1]];
+  if (variableMatch) return validationExpressionValue(parameters.__variables?.[variableMatch[1]], parameters);
 
   if (text === 'subscription().subscriptionId') return parameters.__subscriptionId;
   if (text === 'resourceGroup().name') return parameters.__resourceGroupName;
   if (text === 'resourceGroup().location') return parameters.__resourceGroupLocation;
   if (text === 'resourceGroup().id') return `/subscriptions/${parameters.__subscriptionId}/resourceGroups/${parameters.__resourceGroupName}`;
   if (text === 'subscription().tenantId') return localIdentity.tenantId;
+  // ARM template cloud metadata is separate from the local CLI transport
+  // metadata endpoint. This runtime currently targets Azure public cloud.
+  if (text === 'environment().authentication.loginEndpoint') return 'https://login.microsoftonline.com/';
+
+  const uriMatch = text.match(/^uri\((.*)\)$/s);
+  if (uriMatch) {
+    const args = splitArmArgs(uriMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    if (args.length !== 2 || args.some(arg => typeof arg !== 'string')) {
+      const error = new Error('ARM uri requires two string arguments.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
+    }
+    try { return new URL(args[1], args[0]).href; }
+    catch { const error = new Error('ARM uri requires a valid absolute base URI.'); error.code = 'InvalidTemplate'; error.status = 400; throw error; }
+  }
 
   const formatMatch = text.match(/^format\((.*)\)$/s);
   if (formatMatch) {
     const [formatString, ...args] = splitArmArgs(formatMatch[1]);
     return args.reduce(
-      (acc, arg, index) => acc.replaceAll(`{${index}}`, String(evaluateArmValue(arg, parameters))),
+      (acc, arg, index) => acc.replaceAll(`{${index}}`, String(evaluateArmArgument(arg, parameters))),
       unquoteArm(formatString),
     );
   }
 
   const concatMatch = text.match(/^concat\((.*)\)$/s);
-  if (concatMatch) return splitArmArgs(concatMatch[1]).map(arg => evaluateArmValue(arg, parameters)).join('');
+  if (concatMatch) {
+    const args = splitArmArgs(concatMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    if (args.length && args.every(Array.isArray)) return args.flat(1);
+    if (args.length && args.every(arg => typeof arg === 'string')) return args.join('');
+    const error = new Error('ARM concat requires arrays only or strings only.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
+  }
 
   const resourceIdMatch = text.match(/^(subscriptionResourceId|resourceId)\((.*)\)$/s);
   if (resourceIdMatch) {
-    const args = splitArmArgs(resourceIdMatch[2]).map(arg => evaluateArmValue(arg, parameters));
+    const args = splitArmArgs(resourceIdMatch[2]).map(arg => evaluateArmArgument(arg, parameters));
     const typeIndex = args.findIndex(arg => typeof arg === 'string' && /^[^/]+\.[^/]+\//.test(arg));
     if (typeIndex < 0 || typeIndex > 2) throw new Error('Unsupported ARM resource ID arguments.');
     const path = armResourcePath(args[typeIndex], args.slice(typeIndex + 1));
@@ -1429,7 +1568,7 @@ export function evaluateArmExpression(expression, parameters) {
 
   const extensionResourceIdMatch = text.match(/^extensionResourceId\((.*)\)$/s);
   if (extensionResourceIdMatch) {
-    const [base, type, ...names] = splitArmArgs(extensionResourceIdMatch[1]).map(arg => evaluateArmValue(arg, parameters));
+    const [base, type, ...names] = splitArmArgs(extensionResourceIdMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
     return `${String(base).replace(/\/$/, '')}/providers/${armResourcePath(type, names)}`;
   }
 
@@ -1444,27 +1583,70 @@ export function evaluateArmExpression(expression, parameters) {
       parameters.__deploymentOutputs?.[targetName] ??
       Object.entries(parameters.__deploymentOutputs ?? {})
         .find(([key]) => key.toLowerCase().endsWith(`/${String(targetName).toLowerCase()}`))?.[1];
-    return outputs?.[referenceOutputMatch[2]]?.value ?? `[${text}]`;
+    return validationExpressionValue(outputs?.[referenceOutputMatch[2]]?.value, parameters) ?? `[${text}]`;
   }
 
-  return expression;
+  const referenceMatch = text.match(/^reference\((.*)\)(?:\.([A-Za-z_][A-Za-z0-9_.]*))?$/s);
+  if (referenceMatch && typeof parameters.__resourceLookup === 'function') {
+    const [id, , mode] = splitArmArgs(referenceMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    const resource = parameters.__resourceLookup(id);
+    if (!resource) {
+      const error = new Error(`The referenced resource '${id}' was not found.`);
+      error.code = 'ResourceNotFound'; error.status = 404; throw error;
+    }
+    if (mode !== undefined && String(mode).toLowerCase() !== 'full') throw new Error('Unsupported ARM reference mode.');
+    let value = mode === undefined ? resource.properties : resource;
+    for (const key of referenceMatch[2]?.split('.') ?? []) {
+      if (['__proto__', 'constructor', 'prototype'].includes(key) || !value || typeof value !== 'object' || !Object.hasOwn(value, key)) {
+        const error = new Error(`The referenced resource has no property '${key}'.`);
+        error.code = 'InvalidTemplate'; error.status = 400; throw error;
+      }
+      value = value[key];
+    }
+    return value;
+  }
+
+  if (referenceMatch && parameters.__validationReferences) {
+    const args = splitArmArgs(referenceMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    const [id, apiVersion, mode] = args;
+    // Symbolic references and non-full modes are outside this bounded pass.
+    if (args.length > 3 || typeof id !== 'string' || !/^\/subscriptions\/[^/]+\/.*\/providers\/[^/]+\/[^/]+\/[^/]+/i.test(id)
+      || (apiVersion !== undefined && typeof apiVersion !== 'string')
+      || (mode !== undefined && String(mode).toLowerCase() !== 'full')) throw deferredReferenceError();
+    return new DeferredArmReference(id);
+  }
+
+  if (parameters.__strictValidation) {
+    const error = new Error('This ARM expression is not supported by local template validation.');
+    error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
+    throw error;
+  }
+  const error = new Error('This ARM expression is not implemented by the local deployment runtime.');
+  error.code = 'GlobalStackTemplateExpressionNotImplemented'; error.status = 501; throw error;
 }
 
 export function evaluateArmValue(value, parameters) {
   if (Array.isArray(value)) return value.map(item => evaluateArmValue(item, parameters));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, evaluateArmValue(item, parameters)]));
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => {
+      const evaluatedKey = key.startsWith('[') && key.endsWith(']') ? evaluateArmValue(key, parameters) : key;
+      if (typeof evaluatedKey !== 'string') {
+        const error = new Error('An ARM object property name must evaluate to a string.');
+        error.code = 'InvalidTemplate'; error.status = 400; throw error;
+      }
+      return [evaluatedKey, evaluateArmValue(item, parameters)];
+    }));
   }
   if (typeof value !== 'string') return value;
   const trimmed = value.trim();
   if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) return unquoteArm(trimmed);
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) return evaluateArmExpression(trimmed.slice(1, -1), parameters);
-  if (/^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
+  if (/^uri\(|^environment\(\)\.|^copyIndex\(|^createArray\(|^createObject\(|^length\(|^equals\(|^if\(|^parameters\('|^variables\('|^format\(|^concat\(|^resourceId\(|^subscriptionResourceId\(|^extensionResourceId\(|^reference\(|^subscription\(\)\.|^resourceGroup\(\)\./.test(trimmed)) return evaluateArmExpression(trimmed, parameters);
   return value;
 }
 
 export function sortDeploymentOperations(operations) {
-  return operations.sort((left, right) => {
+  const sorted = [...operations].sort((left, right) => {
     if (left.kind === 'resourceGroup' && right.kind !== 'resourceGroup') return -1;
     if (right.kind === 'resourceGroup' && left.kind !== 'resourceGroup') return 1;
     if (left.kind !== 'resource' || right.kind !== 'resource') return 0;
@@ -1472,6 +1654,23 @@ export function sortDeploymentOperations(operations) {
     const rightSegments = right.providerRoute.typePath.split('/').length + (right.providerRoute.scopeId?.split('/').length ?? 0);
     return leftSegments - rightSegments;
   });
+  const id = operation => operation.kind === 'resource'
+    ? `${operation.providerRoute.scopeId ?? `/subscriptions/${operation.providerRoute.subscriptionId}/resourceGroups/${operation.providerRoute.resourceGroupName}`}/providers/${operation.providerRoute.providerNamespace}/${operation.providerRoute.typePath}`.toLowerCase() : null;
+  const byId = new Map(sorted.filter(operation => id(operation)).map(operation => [id(operation), operation]));
+  const output = [], active = new Set(), complete = new Set();
+  function visit(operation) {
+    if (complete.has(operation)) return;
+    if (active.has(operation)) throw new Error('Circular resource dependency in deployment template.');
+    active.add(operation);
+    const ownId = id(operation);
+    const dependencies = new Set((operation.dependsOn ?? []).map(value => String(value).toLowerCase()));
+    if (ownId) for (const candidate of byId.keys()) if (ownId.startsWith(`${candidate}/`)) dependencies.add(candidate);
+    for (const dependency of dependencies) if (byId.has(dependency)) visit(byId.get(dependency));
+    active.delete(operation); complete.add(operation); output.push(operation);
+  }
+  try { for (const operation of sorted) visit(operation); }
+  catch (error) { return [{ kind: 'error', status: 400, code: 'InvalidTemplate', message: error.message }]; }
+  return output;
 }
 
 function armTemplateResourceEntries(template) {
@@ -1506,6 +1705,7 @@ export function expandDeploymentTemplate({
     __subscriptionId: subscriptionId,
     __resourceGroupName: resourceGroupName,
     __deploymentOutputs: deploymentOutputs,
+    __deferResourceReferences: true,
   });
   // Resolve group locations before nested templates, regardless of declaration order.
   for (const { rawResource } of armTemplateResourceEntries(template)) {
@@ -1515,7 +1715,13 @@ export function expandDeploymentTemplate({
   }
   const operations = [];
   const symbolicResourceNames = new Map();
-  function emitResource(rawResource, symbolicName = null, parentResource = null) {
+  const deploymentContext = context;
+  function emitResource(rawResource, symbolicName = null, parentResource = null, context = deploymentContext) {
+    if (rawResource.copy !== undefined) {
+      const { copy, ...resource } = rawResource;
+      for (const iteration of copyContexts(copy, context, true)) emitResource(resource, symbolicName, parentResource, iteration);
+      return;
+    }
     if (rawResource.type === 'Microsoft.Resources/resourceGroups') {
       const resource = evaluateArmValue(rawResource, context);
       if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
@@ -1586,7 +1792,7 @@ export function expandDeploymentTemplate({
       const groupId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}`;
       scopeId = String(resource.scope).startsWith('/') ? String(resource.scope) : `${groupId}/providers/${resource.scope}`;
       const scopeRoute = providerRouteFromResourceId(scopeId);
-      const supported = ['Microsoft.EventGrid/eventSubscriptions', 'Microsoft.Insights/diagnosticSettings'].includes(resource.type);
+      const supported = ['Microsoft.EventGrid/eventSubscriptions', 'Microsoft.Insights/diagnosticSettings', 'Microsoft.Authorization/roleAssignments'].includes(resource.type);
       if (!supported || !scopeRoute || scopeRoute.subscriptionId !== subscriptionId || scopeRoute.resourceGroupName !== resourceGroupName) {
         operations.push({ kind: 'error', status: 501, code: 'GlobalStackUnsupportedResourceScope', message: 'Only supported resource extensions in the deployment resource group are emulated.' });
         return;
@@ -1594,6 +1800,8 @@ export function expandDeploymentTemplate({
     }
     operations.push({
       kind: 'resource',
+      dependsOn: resource.dependsOn ?? [],
+      evaluationContext: context,
       providerRoute: {
         ...(scopeId ? { scopeId } : {}),
         subscriptionId,
@@ -1608,7 +1816,7 @@ export function expandDeploymentTemplate({
     });
     if (symbolicName) symbolicResourceNames.set(symbolicName, resource.name);
     for (const { symbolicName: childSymbolicName, rawResource: childRawResource } of armTemplateResourceEntries(rawResource)) {
-      emitResource(childRawResource, childSymbolicName, resource);
+      emitResource(childRawResource, childSymbolicName, resource, context);
     }
   }
 
@@ -1621,6 +1829,7 @@ export function expandDeploymentTemplate({
     operations: sortDeploymentOperations(operations),
     outputs,
     deploymentOutputs,
+    evaluationContext: context,
   };
 }
 

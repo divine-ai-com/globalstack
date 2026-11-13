@@ -6,6 +6,14 @@ useDefault = true
 [[rules]]
 id = "generic-api-key"
 
+# Exact compiled Bicep template digest in the reviewed paired-run summary.
+[[rules.allowlists]]
+description = "Scanner auth template SHA-256 in two paired document evidence summaries"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''^experiments/production-scenarios/evidence/(?:document-upload-azure-9a3a78a|document-event-paired-a21fb51)/summary\.json$''']
+regexes = ['''^f6eaf80d43b8cd51c8030414257f9f700bdaf798dc75ae6d16c2391e71d995fe$''']
+
 # Exact generated values and field shape in this reviewed file, not a UUID-wide exception.
 [[rules.allowlists]]
 description = "Synthetic event row identifiers in ci-reproduction.json"
@@ -156,3 +164,91 @@ condition = "AND"
 regexTarget = "match"
 paths = ['''^experiments/claims-evidence/run\.mjs$''', '''^scripts/repository/check-research-secret-scan\.mjs$''']
 regexes = ['''^eventKey = topicKeys\.body\.key1;$''']
+
+# Exact local Table pagination cursors from a reviewed synthetic fixture.
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in version setup evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/version-setup-1755e28/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+# Exact local Table pagination cursors from a reviewed synthetic fixture.
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in version baseline evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/version-baseline-97a7821/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+# Exact local Table pagination cursors from a reviewed synthetic fixture.
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in paired version evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/versions-after-2d66061/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+# Exact local Table pagination cursors from a reviewed synthetic fixture.
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in Blob event baseline evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-events-c806558/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in Blob event baseline evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-events-92b05a7/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in Blob event baseline evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-events-fc6c225/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Synthetic Table page cursors in Blob event baseline evidence, not credentials"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-events-after-2ee7731/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Durable instance partition identifier in native routing evidence"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/functions-native-routing-9ad66d3/result\.json$''']
+regexes = ['''^PartitionKey='probe-15ce06c4b2'$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Durable instance partition identifier in native host key evidence"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/functions-native-keys-1697560/result\.json$''']
+regexes = ['''^PartitionKey='probe-28706f33b5'$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Table page cursors in the pre-fix Blob range capture"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-ranges-before-d3e3ead/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Table page cursors in the post-fix Blob range capture"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/blob-ranges-after-f35ea4f/result\.json$''']
+regexes = ['''^x-ms-continuation-next(?:partition|row)key"\s*:\s*"(?:gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicGFydGl0aW9uIiwidGFza2h1YiJd|gs1\.WyJuYXRpdmVwYXJ0aXRpb25zIiwicm93IiwiMSJd)"$''']
+
+[[rules.allowlists]]
+description = "Exact synthetic Durable instance partition identifier in native event evidence"
+condition = "AND"
+regexTarget = "match"
+paths = ['''^experiments/production-scenarios/evidence/functions-native-events-3f4300f/result\.json$''']
+regexes = ['''^PartitionKey='probe-428aacc141'$''']

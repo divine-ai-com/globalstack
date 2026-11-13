@@ -1,0 +1,10 @@
+# Document PostgreSQL SQL pilot
+
+The [summary](summary.json) and [redacted HTTP trace](trace.json) record one clean-source, Azure-first run of the frozen `document-postgres.bicep` template. Azure and GlobalStack both reported `Succeeded` for the server, Entra administrator, and `documents` database. The runner then submitted the same temporary single-IPv4 firewall-rule request to both targets. Azure returned 202 and a successful readback. GlobalStack returned 501 (`GlobalStackResourceTypeNotEmulated`).
+
+The Azure service-principal administrator connected to `documents` using a PostgreSQL-scoped Entra token over verified TLS. The document schema migration succeeded, and a SQL readback found `document_access`, `scanned_documents`, `document_revisions`, and `document_outbox`. GlobalStack SQL was not attempted because this in-memory ARM replay does not expose an endpoint-routed PostgreSQL wire-protocol listener or Entra SQL authentication. This is a bounded data-plane gap, not a failed full document scenario. The pilot's public firewall rule does not satisfy the scenario's private-network requirement.
+The original runner exited with status 0 after its Azure SQL and cleanup gates passed, although its report explicitly marked local SQL unattempted. The runner now exits unsuccessfully for incomplete local firewall or SQL coverage. This evidence remains tied to the original source revision.
+
+The cleanup watchdog removed the firewall rule, server, and deployment record. A separate Azure CLI readback found zero resources and zero deployments in the preserved pilot group. The USD 12 run envelope brought the conservative allocation ledger to USD 277 of the authorized USD 350 ceiling. These allocations are not measured Azure charges.
+
+The private original trace is retained in the operator run directory. Its SHA-256 is in the summary. The published trace keeps request order, response status, error code, and resource state while replacing account identifiers, the runner IP, and remaining UUIDs with stable opaque aliases. No application document or production credential was used.

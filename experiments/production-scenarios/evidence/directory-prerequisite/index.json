@@ -1,0 +1,9 @@
+{
+  "scope": "Operational Microsoft Graph permission check, not a paired application experiment. Executed as an inline operator diagnostic, not a pinned experiment runner.",
+  "files": {
+    "result.json": {
+      "sha256": "52c6fa15e1e5cf2c1287f2b2009bbc561493de5f8c101bf580b0c2f8ac072249",
+      "bytes": 545
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "scope": "Actual Blob event delivered to the native documentUploaded Event Grid trigger. Expected application failure, not Azure or complete workflow parity.",
+  "sourceRevision": "3f4300fc5bbfc37d6c0a866576f9bfa7d2303239",
+  "files": {
+    "result.json": {
+      "sha256": "d5a1af4e7d75be42af2d9b8aa55669e42003f4f47dca94a4bbe2b84453425fb9",
+      "bytes": 293854
+    },
+    "host.log": {
+      "sha256": "4ecb0162d3d199f9f6d63136990c0ed787609b23ff5d9584223b7337d86348b8",
+      "bytes": 142185
+    }
+  }
+}

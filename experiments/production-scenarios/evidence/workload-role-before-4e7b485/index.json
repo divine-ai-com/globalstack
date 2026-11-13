@@ -1,0 +1,11 @@
+{
+  "sourceRevision": "4e7b485f8b6607d9febf7bac27c6cca79687ce03",
+  "scope": "Role lifecycle attempt. Setup failures and the group-role read mismatch retained separately. No business workflow.",
+  "redactions": "Principal identifiers in role metadata redacted in addition to runner redactions.",
+  "files": {
+    "result.json": {
+      "sha256": "ae7df46c988caf6490c621f60a7dd6b1f565d72a00e0b188d052cb2074f08b72",
+      "bytes": 18564
+    }
+  }
+}

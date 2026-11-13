@@ -1,0 +1,20 @@
+{
+  "scope": "Local official Functions host startup against GlobalStack Storage. No complete business workflow or Azure-host comparison.",
+  "files": {
+    "result.json": {
+      "sha256": "46b429ded838d69d1b0f31cc7c85dc34d62bb22199a1d28547cb8805668801b8",
+      "bytes": 38978
+    },
+    "host.log": {
+      "sha256": "6ff5b0573021a108c1bc7b7f2301e063b5db1229a713e24c02f3ad93f369bba1",
+      "bytes": 27780
+    }
+  },
+  "observations": [
+    "Native Durable task hub worker started.",
+    "Host lock lease was acquired.",
+    "HTTP health function executed.",
+    "Timer functions invoked application code and failed because this storage-only probe intentionally does not provide the application service settings.",
+    "Temporary container and network cleanup completed."
+  ]
+}

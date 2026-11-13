@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "efb90ad",
+  "originalResultSha256": "378872915c2d90d3966907b4edfa826a7beac0e4cf0871562b74503fbd635b36",
+  "firstPassCleanupComplete": false,
+  "watchdogCleanupComplete": false,
+  "recovery": {
+    "resourcesAbsent": true,
+    "deploymentsAbsent": true,
+    "groupPreserved": true,
+    "independentGroupResourceCount": 0,
+    "budgetEnvelopeUsd": 12,
+    "allocatedTotalUsd": 181,
+    "authorizedTotalUsd": 200,
+    "allocationCleanupVerifiedAt": "2026-11-08T19:31:57.997Z",
+    "actualAzureChargesMeasured": false
+  }
+}

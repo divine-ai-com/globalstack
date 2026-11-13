@@ -1,0 +1,20 @@
+{
+  "platform": "worker-scanner",
+  "startedAt": "2026-11-08T12:08:54.312Z",
+  "completedAt": "2026-11-08T12:46:16.497Z",
+  "exitCode": 0,
+  "eventCount": 818,
+  "originalVideoSha256": "ae8809bb8a46d41701d53ae409761dd19af62bae14a8f99b827ff802eb0dc767",
+  "originalVideoBytes": 918453407,
+  "durationSeconds": 2088.6,
+  "playbackCheckedAtSeconds": [
+    5,
+    1044,
+    2079
+  ],
+  "browserVersion": "156.0.8078.4",
+  "playwrightVersion": "1.64.1",
+  "publicEventsSha256": "5aeb5f653977c8bd29deb30b19cb9a05bdb0b750b75bcfa5b41826bdd672745f",
+  "videoDistribution": "Operator workspace only. This is a terminal/API view, not Portal footage.",
+  "privacyNote": "The original video contains tenant, client and resource-group identifiers. The public event trace redacts them. The video header overstates resource-group redaction."
+}

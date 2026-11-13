@@ -1,0 +1,20 @@
+{
+  "kind": "Partial original browser recording after interrupted cleanup",
+  "metadata": {
+    "width": 1600,
+    "height": 1000,
+    "duration": "1225.76",
+    "readyState": 4
+  },
+  "checks": [
+    {
+      "requestedSeconds": 5,
+      "frameDecoded": true
+    },
+    {
+      "requestedSeconds": 1210.374498534,
+      "frameDecoded": true
+    }
+  ],
+  "fullRunCompleted": false
+}

@@ -1,0 +1,23 @@
+{
+  "scope": "Selected Blob range API contracts, not full protocol or application parity.",
+  "revision": "f35ea4f7734083bc3c5675731ffc105b094f1dd0",
+  "comparedPhases": 21,
+  "statusMatches": 21,
+  "successfulBodiesAndSelectedHeadersMatch": true,
+  "knownDifferences": [
+    {
+      "phase": "range-large-end",
+      "status": 400,
+      "azure": "Front-end HTML response without x-ms-error-code",
+      "local": "XML InvalidHeaderValue response"
+    }
+  ],
+  "cleanupVerified": true,
+  "exclusions": [
+    "Error response body text and length",
+    "All unselected response headers",
+    "Malformed custom x-ms-range syntax",
+    "CRC64",
+    "Full IaC lifecycle and Portal screenshots"
+  ]
+}

@@ -1,3 +1,4 @@
+import { validateWebPlan } from './web-plan-validation.mjs';
 import { isIP } from 'node:net';
 
 import {
@@ -1794,21 +1795,33 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
         "Parameter 'Sku.Tier' must be specified. This parameter cannot be NULL or empty.",
       );
     }
-    if (!isNonEmptyString(body.properties?.administratorLogin)) {
+    const entraOnly = body.properties?.authConfig?.activeDirectoryAuth === 'Enabled'
+      && body.properties?.authConfig?.passwordAuth === 'Disabled';
+    if (!entraOnly && !isNonEmptyString(body.properties?.administratorLogin)) {
       return envelopedError(400, 'MissingRequiredParameter', "Parameter 'AdministratorLogin' must be specified. This parameter cannot be NULL or empty.");
     }
-    if (!isNonEmptyString(body.properties?.administratorLoginPassword)) {
+    if (!entraOnly && !isNonEmptyString(body.properties?.administratorLoginPassword)) {
       return envelopedError(
         400,
         'MissingRequiredParameter',
         "Parameter 'AdministratorLoginPassword' must be specified. This parameter cannot be NULL or empty.",
       );
     }
-    if (String(body.properties.administratorLoginPassword).length < 8) {
+    if (!entraOnly && String(body.properties.administratorLoginPassword).length < 8) {
       return envelopedError(400, 'InvalidParameterValue', 'The password validation failed. Please retry using a valid password.');
     }
     if (body.properties?.version && !['11', '12', '13', '14', '15', '16'].includes(String(body.properties.version))) {
       return envelopedError(400, 'InvalidParameterValue', 'Invalid value given for parameter Version. Specify a valid parameter value.');
+    }
+  }
+
+  if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/administrators') {
+    const name = providerRoute?.typePath?.split('/').at(-1) ?? '';
+    if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(name)
+      || body.properties?.principalType !== 'ServicePrincipal'
+      || !isNonEmptyString(body.properties?.principalName)
+      || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.properties?.tenantId ?? '')) {
+      return envelopedError(400, 'InvalidParameterValue', 'The PostgreSQL Entra administrator requires a service principal, object ID, name and tenant ID.');
     }
   }
 
@@ -1822,6 +1835,19 @@ function validatePostgresqlPayload(resourceType, body, providerRoute = null) {
     }
     if (!isNonEmptyString(body.properties?.collation)) {
       return envelopedError(400, 'MissingRequiredParameter', "Parameter 'Collation' must be specified. This parameter cannot be NULL or empty.");
+    }
+  }
+
+  if (resourceType === 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules') {
+    const name = providerRoute?.typePath?.split('/').at(-1) ?? '';
+    const start = body.properties?.startIpAddress;
+    const end = body.properties?.endIpAddress;
+    const address = value => isIP(value) === 4 && value.split('.').every(part => Number(part) <= 255);
+    const ordered = address(start) && address(end)
+      && start.split('.').reduce((number, part) => number * 256 + Number(part), 0)
+        <= end.split('.').reduce((number, part) => number * 256 + Number(part), 0);
+    if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/.test(name) || !ordered) {
+      return envelopedError(400, 'InvalidParameterValue', 'A PostgreSQL firewall rule requires a name and an ordered IPv4 start and end address.');
     }
   }
 
@@ -2351,9 +2377,7 @@ function isFunctionAppKind(kind) {
 
 function validateFunctionAppPayload(resourceType, body, options = {}) {
   if (resourceType === 'Microsoft.Web/serverfarms') {
-    if (body.sku?.name === 'GlobalStack_InvalidSku_For_Conformance') {
-      return appServiceError(400, 'BadRequest', 'The parameter SKU.Name has an invalid value.');
-    }
+    if (body.sku?.name !== 'Y1') return validateWebPlan(body);
     const reserved = body.properties?.reserved ?? body.reserved;
     const localSupportedConsumptionPlan =
       body.sku?.name === 'Y1'
@@ -2555,6 +2579,11 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
 
   if (method !== 'PUT') return null;
 
+  if (resourceType === 'Microsoft.Storage/storageAccounts/blobServices'
+    && body.properties?.isVersioningEnabled !== undefined && typeof body.properties.isVersioningEnabled !== 'boolean') {
+    return invalidRequestContent('properties.isVersioningEnabled must be a boolean');
+  }
+
   if (resourceType === 'Microsoft.EventGrid/eventSubscriptions') {
     const destination = body.properties?.destination ?? body.destination;
     if (!destination || typeof destination !== 'object') {
@@ -2579,6 +2608,18 @@ export function capturedProviderValidation({ method, resourceType, body = {}, pr
     }
     if (!isNonEmptyString(body.properties.roleDefinitionId)) {
       return invalidRequestContent('roleDefinitionId');
+    }
+    const role = body.properties.roleDefinitionId.match(/^\/subscriptions\/[a-f0-9-]{36}\/providers\/Microsoft\.Authorization\/roleDefinitions\/([a-f0-9-]{36})$/i)?.[1]?.toLowerCase();
+    if (['c6a89b2d-59bc-44d0-9896-0f6e12d7b80a', '974c5e8b-45b9-4653-ba55-5f855dd0fb88',
+      '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b',
+      '4633458b-17de-408a-b874-0445c86b69e6', '7ca78c08-252a-4471-8644-bb5ff32d4ba0',
+      '8ebe5a00-799e-43f5-93ac-243d3dce84a7', '1407120a-92aa-4202-b7e9-c0e197c71c8f',
+      // Assignment metadata observed in Azure. Data-plane enforcement is separate.
+      '7f951dda-4ed3-4680-a7ca-43fe172d538d', '8311e382-0749-4cb8-b61a-304f252e45ec',
+      '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0', '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39',
+      '17d1049b-9a84-46fb-8f53-869881c3d3ab', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'].includes(role)) {
+      if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.properties.principalId)) return invalidRequestContent('principalId');
+      return null;
     }
     return invalidRequestContent('roleDefinitionId');
   }

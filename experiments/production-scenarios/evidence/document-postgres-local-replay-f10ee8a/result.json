@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "revision": "f10ee8ac790dd31df30ceb844c3248ac4347e385",
+  "originalRevision": "efb90ad0a7b85d65e44289384a0fb15e3c007096",
+  "originalResultSha256": "378872915c2d90d3966907b4edfa826a7beac0e4cf0871562b74503fbd635b36",
+  "templateSha256": "47281bbb75f6f4e6c91534971535928ee1dc05ffd2418ae830744f17501444a9",
+  "sameSanitizedDeploymentRequest": true,
+  "scope": "Local ARM replay of the original Azure PostgreSQL deployment request. No SQL data-plane test.",
+  "startedAt": "2026-11-08T19:39:04.616Z",
+  "resources": {
+    "server": 200,
+    "administrator": 200,
+    "database": 200
+  },
+  "cleanup": {
+    "deleteStatus": 200,
+    "groupAbsent": true
+  },
+  "deployment": {
+    "status": 201,
+    "state": "Succeeded"
+  },
+  "completedAt": "2026-11-08T19:39:04.678Z"
+}
