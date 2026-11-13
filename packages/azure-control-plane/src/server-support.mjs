@@ -1367,7 +1367,7 @@ export function deploymentResourceId(subscriptionId, resourceGroupName, name) {
     : `/subscriptions/${subscriptionId}/providers/Microsoft.Resources/deployments/${name}`;
 }
 
-function copyContexts(copy, context, requireName = false) {
+export function copyContexts(copy, context, requireName = false) {
   const fail = message => { const error = new Error(message); error.code = 'InvalidTemplate'; error.status = 400; throw error; };
   if (!copy || typeof copy !== 'object' || Array.isArray(copy)) fail('A copy loop requires an object.');
   if (requireName && (typeof copy.name !== 'string' || !copy.name)) fail('A resource copy loop requires a name.');
@@ -1419,11 +1419,29 @@ function validationExpressionValue(value, parameters) {
   return value;
 }
 
-function evaluateArmArgument(value, context) {
+// Azure resolves reference() after the referenced resource exists, so template
+// validation can only carry the value. Only array and object constructors may
+// hold it; any function that computes with it is reported as unsupported.
+class DeferredArmReference {
+  constructor(id) { this.id = id; Object.freeze(this); }
+}
+
+export function isDeferredArmReference(value) {
+  return value instanceof DeferredArmReference;
+}
+
+function deferredReferenceError() {
+  const error = new Error('A reference() value cannot be computed during local template validation.');
+  error.code = 'GLOBALSTACK_VALIDATION_EXPRESSION';
+  return error;
+}
+
+function evaluateArmArgument(value, context, allowDeferred = false) {
   const text = value.trim();
   if (/^-?\d+$/.test(text)) return Number(text);
-  if (/^[A-Za-z_][A-Za-z0-9_]*\(/.test(text)) return evaluateArmExpression(text, context);
-  return evaluateArmValue(value, context);
+  const result = /^[A-Za-z_][A-Za-z0-9_]*\(/.test(text) ? evaluateArmExpression(text, context) : evaluateArmValue(value, context);
+  if (!allowDeferred && isDeferredArmReference(result)) throw deferredReferenceError();
+  return result;
 }
 
 export function evaluateArmExpression(expression, parameters) {
@@ -1453,6 +1471,7 @@ export function evaluateArmExpression(expression, parameters) {
   const indexMatch = text.match(/^(.*\))\[(.*)\]$/s);
   if (indexMatch) {
     const array = evaluateArmExpression(indexMatch[1], parameters);
+    if (isDeferredArmReference(array)) throw deferredReferenceError();
     const index = evaluateArmArgument(indexMatch[2], parameters);
     if (!Array.isArray(array) || !Number.isInteger(index) || index < 0 || index >= array.length) {
       const error = new Error('ARM array index is out of bounds or is not an integer.'); error.code = 'InvalidTemplate'; throw error;
@@ -1461,17 +1480,18 @@ export function evaluateArmExpression(expression, parameters) {
   }
   const objectMatch = text.match(/^createObject\((.*)\)$/s);
   if (objectMatch) {
-    const args = splitArmArgs(objectMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    const args = splitArmArgs(objectMatch[1]).map((arg, index) => evaluateArmArgument(arg, parameters, index % 2 === 1));
     if (args.length % 2 || args.some((arg, index) => index % 2 === 0 && typeof arg !== 'string')) {
       const error = new Error('ARM createObject requires string keys paired with values.'); error.code = 'InvalidTemplate'; error.status = 400; throw error;
     }
     return Object.fromEntries(Array.from({ length: args.length / 2 }, (_, index) => [args[index * 2], args[index * 2 + 1]]));
   }
   const arrayMatch = text.match(/^createArray\((.*)\)$/s);
-  if (arrayMatch) return splitArmArgs(arrayMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+  if (arrayMatch) return splitArmArgs(arrayMatch[1]).map(arg => evaluateArmArgument(arg, parameters, true));
   const lengthMatch = text.match(/^length\((.*)\)$/s);
   if (lengthMatch) {
     const value = evaluateArmValue(lengthMatch[1], parameters);
+    if (isDeferredArmReference(value)) throw deferredReferenceError();
     if (!Array.isArray(value) && typeof value !== 'string') throw new Error('ARM length requires an array or string.');
     return value.length;
   }
@@ -1584,6 +1604,16 @@ export function evaluateArmExpression(expression, parameters) {
       value = value[key];
     }
     return value;
+  }
+
+  if (referenceMatch && parameters.__validationReferences) {
+    const args = splitArmArgs(referenceMatch[1]).map(arg => evaluateArmArgument(arg, parameters));
+    const [id, apiVersion, mode] = args;
+    // Symbolic references and non-full modes are outside this bounded pass.
+    if (args.length > 3 || typeof id !== 'string' || !/^\/subscriptions\/[^/]+\/.*\/providers\/[^/]+\/[^/]+\/[^/]+/i.test(id)
+      || (apiVersion !== undefined && typeof apiVersion !== 'string')
+      || (mode !== undefined && String(mode).toLowerCase() !== 'full')) throw deferredReferenceError();
+    return new DeferredArmReference(id);
   }
 
   if (parameters.__strictValidation) {

@@ -756,7 +756,7 @@ export function createArmRequestHandler({
       const subscriptionDeploymentRoute = parseSubscriptionDeploymentRoute(pathname);
       if (subscriptionDeploymentRoute && rawSegments.length === 7 && lowered[6] === 'validate' && method === 'POST') {
         if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
-        const result = validateDeployment({ ...subscriptionDeploymentRoute, body: await readBody(req) });
+        const result = validateDeployment({ ...subscriptionDeploymentRoute, body: await readBody(req), resourceExists: id => { const route = providerRouteFromResourceId(id); return Boolean(route && store.getResource(route)); } });
         return sendJson(res, result.status, result.body);
       }
       if (subscriptionDeploymentRoute && rawSegments.length === 6 && method === 'GET') {
@@ -785,7 +785,7 @@ export function createArmRequestHandler({
       const resourceGroupDeploymentRoute = parseResourceGroupDeploymentRoute(pathname);
       if (resourceGroupDeploymentRoute && rawSegments.length === 9 && lowered[8] === 'validate' && method === 'POST') {
         if (!url.searchParams.get('api-version')) return sendError(res, 400, 'MissingApiVersionParameter', 'The api-version query parameter is required.');
-        const result = validateDeployment({ ...resourceGroupDeploymentRoute, body: await readBody(req) });
+        const result = validateDeployment({ ...resourceGroupDeploymentRoute, body: await readBody(req), resourceExists: id => { const route = providerRouteFromResourceId(id); return Boolean(route && store.getResource(route)); } });
         return sendJson(res, result.status, result.body);
       }
       const operationRoute = subscriptionDeploymentRoute ?? resourceGroupDeploymentRoute;

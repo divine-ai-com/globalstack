@@ -2,7 +2,8 @@ import { validateWebPlan } from './web-plan-validation.mjs';
 import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import {
-  addTemplateVariables, deploymentResourceId, evaluateArmValue, expandDeploymentTemplate, parameterContext,
+  addTemplateVariables, copyContexts, deploymentResourceId, evaluateArmValue, expandDeploymentTemplate, isDeferredArmReference,
+  parameterContext,
 } from './server-support.mjs';
 import { validateSearchServiceName } from './search-validation.mjs';
 
@@ -120,43 +121,174 @@ function checkTemplate(template, parameters, scope, path, depth = 0) {
   for (const [name, definition] of Object.entries(template.parameters ?? {})) {
     if (!object(definition) || typeof definition.type !== 'string') invalid(`Parameter '${name}' requires a type.`, `${path}.parameters.${name}`);
   }
-  const context = parameterContext(template, parameters, { ...scope, __strictValidation: true });
+  const context = parameterContext(template, parameters, { ...scope, __strictValidation: true, __validationReferences: true });
   checkParameters(template, parameters, context, path);
   if (!object(template.variables ?? {}) || !object(template.outputs ?? {})) invalid('Template variables and outputs must be objects.', path);
   addTemplateVariables(template, context);
   for (const [key, resource] of resources(template, path)) {
     const resourcePath = `${path}.resources.${key}`;
     if (!object(resource)) invalid('A resource must be an object.', resourcePath);
-    for (const feature of ['copy', 'condition', 'existing']) {
+    for (const feature of ['condition', 'existing']) {
       if (has(resource, feature)) unsupported(`Resource ${feature} validation is not implemented.`, resourcePath);
     }
     if (typeof resource.type !== 'string' || !resource.type.includes('/')) invalid('A resource requires its type.', resourcePath);
     if (typeof resource.apiVersion !== 'string' || !resource.apiVersion) invalid('A resource requires its apiVersion.', resourcePath);
-    const name = evaluateArmValue(resource.name, context);
-    if (typeof name !== 'string' || !name) invalid('A resource requires its name.', resourcePath);
-    if (resource.type === 'Microsoft.Resources/deployments') {
-      if (resource.properties?.templateLink) unsupported('Linked templates are not fetched during local validation.', resourcePath);
-      if (resource.subscriptionId !== undefined || resource.scope !== undefined) unsupported('Cross-scope nested validation is not implemented.', resourcePath);
-      if (resource.properties?.expressionEvaluationOptions?.scope === 'outer') unsupported('Outer-scope nested expression validation is not implemented.', resourcePath);
-      const nestedParameters = evaluateArmValue(resource.properties?.parameters ?? {}, context);
-      checkTemplate(resource.properties?.template, nestedParameters, {
-        ...scope, __resourceGroupName: evaluateArmValue(resource.resourceGroup, context) ?? scope.__resourceGroupName,
-      }, `${resourcePath}.properties.template`, depth + 1);
-    } else {
-      evaluateArmValue(resource, context);
-      if (resource.resources !== undefined) {
-        // Child-resource expansion is supported elsewhere; validation must not
-        // silently overlook constraints in a shape this pass does not inspect.
-        unsupported('Inline child-resource validation is not implemented.', resourcePath);
-      }
+    // Resource groups and nested deployments keep their own scope rules, so
+    // their loops remain outside this pass.
+    if (has(resource, 'copy') && ['Microsoft.Resources/deployments', 'Microsoft.Resources/resourceGroups'].includes(resource.type)) {
+      unsupported('Resource copy validation is not implemented for this resource type.', resourcePath);
     }
+    const iterations = has(resource, 'copy') ? copyIterations(resource.copy, context, resourcePath) : [context];
+    for (const iteration of iterations) checkResource(resource, iteration, scope, resourcePath, depth);
   }
   evaluateArmValue(template.outputs ?? {}, context);
 }
 
-// This pass deliberately has no store, network client or runtime callbacks.
+function copyIterations(copy, context, path) {
+  try {
+    return copyContexts(copy, context, true);
+  } catch (error) {
+    if (error.code === 'GlobalStackCopyNotImplemented') unsupported(error.message, path);
+    if (error.code === 'InvalidTemplate') invalid(error.message, path);
+    throw error;
+  }
+}
+
+function checkResource(rawResource, context, scope, resourcePath, depth) {
+  const { copy, ...resource } = rawResource;
+  const name = evaluateArmValue(resource.name, context);
+  if (typeof name !== 'string' || !name) invalid('A resource requires its name.', resourcePath);
+  if (resource.type === 'Microsoft.Resources/deployments') {
+    if (resource.properties?.templateLink) unsupported('Linked templates are not fetched during local validation.', resourcePath);
+    if (resource.subscriptionId !== undefined || resource.scope !== undefined) unsupported('Cross-scope nested validation is not implemented.', resourcePath);
+    if (resource.properties?.expressionEvaluationOptions?.scope === 'outer') unsupported('Outer-scope nested expression validation is not implemented.', resourcePath);
+    const nestedParameters = evaluateArmValue(resource.properties?.parameters ?? {}, context);
+    checkTemplate(resource.properties?.template, nestedParameters, {
+      ...scope, __resourceGroupName: evaluateArmValue(resource.resourceGroup, context) ?? scope.__resourceGroupName,
+    }, `${resourcePath}.properties.template`, depth + 1);
+    return;
+  }
+  const evaluated = evaluateArmValue(resource, context);
+  if (scope.__level !== 'Template') checkRuntimeValues(resource.type, evaluated, resourcePath);
+  if (resource.resources !== undefined) {
+    // Child-resource expansion is supported elsewhere; validation must not
+    // silently overlook constraints in a shape this pass does not inspect.
+    unsupported('Inline child-resource validation is not implemented.', resourcePath);
+  }
+}
+
+const guid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
+const onlyKeys = (value, keys) => object(value) && Object.keys(value).every(key => keys.includes(key));
+// Deployment expansion keeps reference() expressions as text, which cannot be
+// told apart from an escaped literal such as '[[reference(x)]'. Fields that may
+// hold a reference are therefore checked here, where it is an opaque value, and
+// the expanded text is accepted later only for those fields.
+const deferred = value => typeof value === 'string' && /^\[.*\breference\(/s.test(value);
+const runtimeGuid = value => isDeferredArmReference(value) || (typeof value === 'string' && guid.test(value));
+
+function checkRuntimeValues(type, evaluated, path) {
+  if (type === 'Microsoft.Authorization/roleAssignments' && !runtimeGuid(evaluated.properties?.principalId)) {
+    unsupported('Role assignment principals outside a GUID or reference() value are not validated locally.', path);
+  }
+  if (type !== 'Microsoft.Web/sites') return;
+  const config = evaluated.properties?.siteConfig ?? {};
+  if (config.acrUserManagedIdentityID !== undefined && !runtimeGuid(config.acrUserManagedIdentityID)) {
+    unsupported('Registry identity IDs outside a GUID or reference() value are not validated locally.', path);
+  }
+  const settings = config.appSettings;
+  if (settings !== undefined && !(Array.isArray(settings) && settings.every(item => onlyKeys(item, ['name', 'value'])
+    && typeof item.name === 'string' && item.name.length > 0 && (typeof item.value === 'string' || isDeferredArmReference(item.value))))) {
+    unsupported('Function app settings outside name and string value pairs are not validated locally.', path);
+  }
+}
+
+// Bounded provider checks for the captured document worker host and app
+// templates (#90). Shapes outside them remain explicit validation gaps.
+function validateDocumentWorker(type, route, body, { subscriptionId, declaredIds, resourceExists }) {
+  const path = 'properties.template.resources';
+  const name = route.typePath.split('/').at(-1);
+  const tagsOk = body.tags === undefined || (object(body.tags) && Object.values(body.tags).every(value => typeof value === 'string'));
+  const located = typeof body.location === 'string' && body.location.length > 0;
+  if (type === 'Microsoft.ManagedIdentity/userAssignedIdentities') {
+    if (!/^[A-Za-z0-9][A-Za-z0-9_-]{2,127}$/.test(name) || !located || !tagsOk || !onlyKeys(body, ['location', 'tags'])) {
+      unsupported('Managed identity validation outside the captured worker shape is not implemented.', path);
+    }
+    return;
+  }
+  if (type === 'Microsoft.Storage/storageAccounts') {
+    const p = body.properties;
+    if (!/^[a-z0-9]{3,24}$/.test(name) || !located || !tagsOk || body.kind !== 'StorageV2' || body.sku?.name !== 'Standard_LRS'
+      || !onlyKeys(body, ['location', 'tags', 'kind', 'sku', 'properties']) || !onlyKeys(body.sku, ['name'])
+      || !onlyKeys(p, ['minimumTlsVersion', 'supportsHttpsTrafficOnly', 'allowBlobPublicAccess', 'allowSharedKeyAccess'])
+      || p.minimumTlsVersion !== 'TLS1_2' || p.supportsHttpsTrafficOnly !== true
+      || p.allowBlobPublicAccess !== false || p.allowSharedKeyAccess !== false) {
+      unsupported('Storage account validation outside the captured worker host shape is not implemented.', path);
+    }
+    return;
+  }
+  if (type === 'Microsoft.ContainerRegistry/registries') {
+    if (!/^[A-Za-z0-9]{5,50}$/.test(name) || !located || !tagsOk || body.sku?.name !== 'Basic'
+      || !onlyKeys(body, ['location', 'tags', 'sku', 'properties']) || !onlyKeys(body.sku, ['name'])
+      || !onlyKeys(body.properties, ['adminUserEnabled']) || body.properties.adminUserEnabled !== false) {
+      unsupported('Container registry validation outside the captured worker host shape is not implemented.', path);
+    }
+    return;
+  }
+  if (type === 'Microsoft.Authorization/roleAssignments') {
+    const p = body.properties;
+    const definition = String(p?.roleDefinitionId ?? '').match(/^\/subscriptions\/([^/]+)\/providers\/Microsoft\.Authorization\/roleDefinitions\/([^/]+)$/i);
+    const groupScope = `/subscriptions/${subscriptionId}/resourceGroups/`.toLowerCase();
+    if (!guid.test(name) || !onlyKeys(body, ['properties']) || !onlyKeys(p, ['roleDefinitionId', 'principalId', 'principalType', 'description'])
+      || !definition || definition[1].toLowerCase() !== subscriptionId.toLowerCase() || !guid.test(definition[2])
+      || !(guid.test(p.principalId ?? '') || deferred(p.principalId)) || p.principalType !== 'ServicePrincipal'
+      || (p.description !== undefined && typeof p.description !== 'string')
+      || !route.scopeId?.toLowerCase().startsWith(groupScope) || !declaredIds.has(route.scopeId.toLowerCase())) {
+      unsupported('Role assignment validation outside the captured worker grants is not implemented.', path);
+    }
+    return;
+  }
+  if (type === 'Microsoft.Web/sites') {
+    const p = body.properties ?? {};
+    const c = p.siteConfig ?? {};
+    const identities = body.identity?.userAssignedIdentities;
+    const identityIds = object(identities) ? Object.keys(identities) : [];
+    const identityPrefix = `/subscriptions/${subscriptionId}/resourceGroups/`.toLowerCase();
+    const plan = String(p.serverFarmId ?? '');
+    const settingsOk = deferred(c.appSettings) || (Array.isArray(c.appSettings) && c.appSettings.every(item => onlyKeys(item, ['name', 'value'])
+      && typeof item.name === 'string' && item.name.length > 0 && (typeof item.value === 'string' || deferred(item.value))));
+    if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,58}[A-Za-z0-9])?$/.test(name) || !located || !tagsOk
+      || body.kind !== 'functionapp,linux,container' || !onlyKeys(body, ['location', 'tags', 'kind', 'identity', 'properties'])
+      || body.identity?.type !== 'UserAssigned' || identityIds.length !== 1
+      || !identityIds.every(id => id.toLowerCase().startsWith(identityPrefix) && /\/providers\/Microsoft\.ManagedIdentity\/userAssignedIdentities\/[^/]+$/i.test(id)
+        && onlyKeys(identities[id], []))
+      || !onlyKeys(p, ['serverFarmId', 'httpsOnly', 'siteConfig']) || p.httpsOnly !== true
+      || !/^\/subscriptions\/[^/]+\/resourceGroups\/[^/]+\/providers\/Microsoft\.Web\/serverfarms\/[^/]+$/i.test(plan)
+      || !onlyKeys(c, ['linuxFxVersion', 'acrUseManagedIdentityCreds', 'acrUserManagedIdentityID', 'ftpsState', 'minTlsVersion',
+        'minimumElasticInstanceCount', 'functionAppScaleLimit', 'appSettings'])
+      || !/^DOCKER\|[^\s|]+$/.test(c.linuxFxVersion ?? '') || c.acrUseManagedIdentityCreds !== true
+      || !(guid.test(c.acrUserManagedIdentityID ?? '') || deferred(c.acrUserManagedIdentityID))
+      || c.ftpsState !== 'Disabled' || c.minTlsVersion !== '1.2' || c.minimumElasticInstanceCount !== 1 || c.functionAppScaleLimit !== 1
+      || !settingsOk) {
+      unsupported('Function app validation outside the captured document worker shape is not implemented.', path);
+    }
+    // Azure's response for a plan or identity that does not exist yet was not captured.
+    for (const id of [plan, ...identityIds]) {
+      if (!declaredIds.has(id.toLowerCase()) && !resourceExists(id)) {
+        unsupported('Function app validation against an absent hosting plan or identity is not implemented.', path);
+      }
+    }
+    return;
+  }
+  unsupported(`Provider validation for ${type} is not implemented.`, path);
+}
+
+const documentWorkerTypes = new Set(['Microsoft.ManagedIdentity/userAssignedIdentities', 'Microsoft.Storage/storageAccounts',
+  'Microsoft.ContainerRegistry/registries', 'Microsoft.Authorization/roleAssignments', 'Microsoft.Web/sites']);
+
+// This pass deliberately has no network client or runtime callbacks; the only
+// state it may read is whether a resource referenced by a function app exists.
 // Unsupported providers return an explicit gap instead of a deployment promise.
-export function validateDeployment({ subscriptionId, resourceGroupName = null, deploymentName, body }) {
+export function validateDeployment({ subscriptionId, resourceGroupName = null, deploymentName, body, resourceExists = () => false }) {
   try {
     if (!object(body) || !object(body.properties)) invalid('Deployment properties must be an object.', 'properties');
     if (body.properties.templateLink || body.properties.parametersLink) unsupported('Linked templates and parameters are not fetched during local validation.', 'properties');
@@ -166,12 +298,19 @@ export function validateDeployment({ subscriptionId, resourceGroupName = null, d
     if (!resourceGroupName && body.properties.mode === 'Complete') invalid('Complete mode requires a resource-group deployment.', 'properties.mode');
     const template = body.properties.template;
     const parameters = body.properties.parameters ?? {};
-    checkTemplate(template, parameters, { __subscriptionId: subscriptionId, __resourceGroupName: resourceGroupName }, 'properties.template');
+    checkTemplate(template, parameters, { __subscriptionId: subscriptionId, __resourceGroupName: resourceGroupName, __level: level }, 'properties.template');
     const expanded = expandDeploymentTemplate({
       template, parameters, subscriptionId, resourceGroupName, deploymentName,
       inheritedParameters: { __strictValidation: true },
     });
     const validatedResources = [];
+    const resourceId = route => `${route.scopeId ?? `/subscriptions/${subscriptionId}/resourceGroups/${route.resourceGroupName}`}/providers/${route.providerNamespace}/${route.typePath}`;
+    const declaredIds = new Set();
+    for (const operation of expanded.operations.filter(item => item.providerRoute)) {
+      const id = resourceId(operation.providerRoute);
+      if (declaredIds.has(id.toLowerCase())) invalid(`The resource '${id}' is defined multiple times in a template.`, 'properties.template.resources');
+      declaredIds.add(id.toLowerCase());
+    }
     for (const operation of expanded.operations) {
       if (operation.kind === 'error') throw new ValidationFailure(operation.code, operation.message, 'properties.template.resources', operation.status);
       if (operation.kind === 'resourceGroup') {
@@ -181,8 +320,13 @@ export function validateDeployment({ subscriptionId, resourceGroupName = null, d
       }
       const route = operation.providerRoute;
       const type = `${route.providerNamespace}/${route.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
-      const id = `${route.scopeId ?? `/subscriptions/${subscriptionId}/resourceGroups/${route.resourceGroupName}`}/providers/${route.providerNamespace}/${route.typePath}`;
+      const id = resourceId(route);
       if (level !== 'Template') {
+        if (documentWorkerTypes.has(type)) {
+          validateDocumentWorker(type, route, operation.body, { subscriptionId, declaredIds, resourceExists });
+          validatedResources.push({ id });
+          continue;
+        }
         if (type.startsWith('Microsoft.DBforPostgreSQL/flexibleServers')) {
           validateDocumentPostgres(type, route, operation.body);
           validatedResources.push({ id });
@@ -223,8 +367,8 @@ export function validateDeployment({ subscriptionId, resourceGroupName = null, d
       },
     } };
   } catch (error) {
-    if (!(error instanceof ValidationFailure) && error.code !== 'GLOBALSTACK_VALIDATION_EXPRESSION') throw error;
-    return { status: error.status ?? 501, body: { error: {
+    if (!(error instanceof ValidationFailure) && !['GLOBALSTACK_VALIDATION_EXPRESSION', 'InvalidTemplate'].includes(error.code)) throw error;
+    return { status: error.status ?? (error.code === 'InvalidTemplate' ? 400 : 501), body: { error: {
       code: error.code === 'GLOBALSTACK_VALIDATION_EXPRESSION' ? 'GlobalStackValidationNotImplemented' : error.code,
       message: error.message,
       ...(error.path ? { additionalInfo: [{ type: 'TemplateViolation', info: { path: error.path } }] } : {}),
