@@ -126,6 +126,7 @@ export const tier1Capabilities = [
       'ResourceGroups.Get',
       'ResourceGroups.Delete',
       'StorageAccounts.CreateOrUpdate',
+      'StorageAccounts.Update',
       'StorageAccounts.Get',
       'StorageAccounts.Delete',
       'BlobContainers.Create',

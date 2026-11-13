@@ -268,6 +268,51 @@ export function createArmRequestHandler({
     type: postgresFirewallType,
   });
 
+  // Storage account PATCH (#54) changes only the fields it names. The update is
+  // bounded to settings the local account models; other fields, SKU or kind
+  // changes and invalid values are explicit gaps until Azure captures exist.
+  function patchStorageAccount({ providerRoute, apiVersion, body }) {
+    const gap = message => ({ status: 501, body: { error: { code: 'GlobalStackRouteNotImplemented', message, details: [{
+      code: 'ExplicitGap', message: 'Capture Azure storage account PATCH behavior before extending this local subset.' }] } } });
+    // Reuse the PUT path's API-version error; it returns before any mutation.
+    if (!apiVersion) return putProviderResource({ providerRoute, apiVersion, body: {} });
+    const existing = store.getResource(providerRoute);
+    if (!existing) {
+      const notFound = azureNotFoundFor({ method: 'GET', resourceType: 'Microsoft.Storage/storageAccounts', providerRoute, store });
+      return { status: notFound.status, body: { error: { code: notFound.code, message: notFound.message, details: [] } } };
+    }
+    if (store.resourceProvisioningState(providerRoute) !== 'Succeeded') return gap('PATCH of a storage account that is still provisioning is not implemented.');
+    const plain = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+    if (!plain(body) || !Object.keys(body).every(key => ['tags', 'sku', 'kind', 'properties'].includes(key))) {
+      return gap('Only tags and the modeled account properties can be changed by local storage account PATCH.');
+    }
+    if (body.tags !== undefined && !(plain(body.tags) && Object.values(body.tags).every(value => typeof value === 'string'))) {
+      return gap('Storage account PATCH tags must be an object of string values.');
+    }
+    if (body.sku !== undefined && !(plain(body.sku) && Object.keys(body.sku).join() === 'name' && body.sku.name === existing.sku?.name)) {
+      return gap('Changing the storage account SKU by PATCH is not implemented.');
+    }
+    if (body.kind !== undefined && body.kind !== existing.kind) return gap('Changing the storage account kind by PATCH is not implemented.');
+    const allowed = {
+      allowSharedKeyAccess: value => typeof value === 'boolean',
+      allowBlobPublicAccess: value => typeof value === 'boolean',
+      supportsHttpsTrafficOnly: value => typeof value === 'boolean',
+      minimumTlsVersion: value => ['TLS1_0', 'TLS1_1', 'TLS1_2'].includes(value),
+      publicNetworkAccess: value => ['Enabled', 'Disabled'].includes(value),
+    };
+    const properties = body.properties ?? {};
+    if (!plain(properties) || !Object.entries(properties).every(([key, value]) => Object.hasOwn(allowed, key) && allowed[key](value))) {
+      return gap(`Storage account PATCH supports only ${Object.keys(allowed).join(', ')} with valid values.`);
+    }
+    // The store keeps omitted properties, but resend location, SKU and kind so
+    // an update cannot clear them. Data-plane state is keyed by account and kept.
+    const result = putProviderResource({ providerRoute, apiVersion, body: {
+      location: existing.location, tags: body.tags ?? existing.tags, sku: existing.sku, kind: existing.kind, properties,
+    } });
+    if (result.status >= 400) return result;
+    return { status: 200, body: store.getResource(providerRoute) };
+  }
+
   function putProviderResource({ providerRoute, apiVersion, body }) {
     providerRoute = normalizeProviderRoute(providerRoute);
     const resourceType = `${providerRoute.providerNamespace}/${providerRoute.typePath.split('/').filter((_, index) => index % 2 === 0).join('/')}`;
@@ -2083,6 +2128,11 @@ export function createArmRequestHandler({
               message: 'Unsupported Azure Database Migration Service child and action routes must fail closed until captured and implemented.',
             },
           ]);
+        }
+
+        if (method === 'PATCH' && resourceType === 'Microsoft.Storage/storageAccounts' && !isCollectionRoute(providerRoute)) {
+          const result = patchStorageAccount({ providerRoute, apiVersion, body: await readBody(req) });
+          return sendJson(res, result.status, result.body);
         }
 
         if (method === 'PUT') {

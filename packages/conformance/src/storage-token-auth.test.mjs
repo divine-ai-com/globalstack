@@ -173,6 +173,63 @@ test('queue grants cannot reach sibling queues and table-scoped grants cannot au
   assert.equal((await f.send('POST', '/$batch', signed, '', 'tokenaccount', 'table')).status, 403);
 });
 
+test('ARM PATCH changes only named storage settings and keeps account data', async t => {
+  const f = await fixture(t), account = 'tokenaccount', signed = await token();
+  const path = `${accountId(account)}?api-version=2023-05-01`;
+  const key = () => f.runtime.storageRouter.account(account).accountKey;
+  const blob = { surface: 'blob', method: 'PUT', path: '/landing/kept.txt', body: 'kept bytes', headers: { 'x-ms-blob-type': 'BlockBlob' } };
+  const read = { surface: 'blob', method: 'GET', path: '/landing/kept.txt' };
+  const exchange = (operation, name = account) => storageExchange({ account: name, key: f.runtime.storageRouter.account(name).accountKey,
+    origin: f.endpoints[operation.surface], ...operation });
+  // GET responses count reads in GlobalStack metadata; compare Azure fields only.
+  const visible = resource => { const copy = structuredClone(resource); delete copy.globalstack; return copy; };
+  assert.equal((await exchange(blob)).status, 201);
+  const before = (await f.management('GET', path)).body;
+  const unchangedKey = key();
+
+  const missing = await f.management('PATCH', `${accountId('absentaccount')}?api-version=2023-05-01`, { properties: { allowSharedKeyAccess: false } });
+  assert.equal(missing.status, 404);
+  assert.equal(missing.body.error.code, 'ResourceNotFound');
+  assert.equal((await f.management('GET', `${accountId('absentaccount')}?api-version=2023-05-01`)).status, 404);
+
+  const disabled = await f.management('PATCH', path, { properties: { allowSharedKeyAccess: false } });
+  assert.equal(disabled.status, 200, JSON.stringify(disabled.body));
+  const expected = visible(before);
+  expected.properties.allowSharedKeyAccess = false;
+  assert.deepEqual(visible(disabled.body), expected);
+  assert.deepEqual(visible((await f.management('GET', path)).body), expected);
+  assert.equal(key(), unchangedKey);
+  const denied = await exchange(read);
+  assert.equal(denied.status, 403);
+  assert.match(denied.body, /KeyBasedAuthenticationNotPermitted/);
+  assert.equal((await exchange(blob, 'otheraccount')).status, 201, 'other accounts keep shared-key access');
+  await f.role('44444444-4444-4444-8444-444444444444', accountId(account), blobDataRoles.reader);
+  const bearerRead = await f.send('GET', '/landing/kept.txt', signed);
+  assert.equal(bearerRead.status, 200);
+  assert.equal(bearerRead.body, 'kept bytes');
+
+  const tagged = await f.management('PATCH', path, { tags: { owner: 'documents' } });
+  assert.equal(tagged.status, 200);
+  assert.deepEqual(tagged.body.tags, { owner: 'documents' });
+  assert.equal(tagged.body.properties.allowSharedKeyAccess, false, 'omitted properties keep their values');
+  assert.equal((await exchange(read)).status, 403);
+
+  const before501 = visible((await f.management('GET', path)).body);
+  for (const body of [{ location: 'eastus2' }, { sku: { name: 'Standard_GRS' } }, { kind: 'BlobStorage' }, { identity: { type: 'SystemAssigned' } },
+    { properties: { allowSharedKeyAccess: 'true' } }, { properties: { networkAcls: { defaultAction: 'Deny' } } }, { tags: { count: 1 } }, []]) {
+    const rejected = await f.management('PATCH', path, body);
+    assert.equal(rejected.status, 501, JSON.stringify(body));
+    assert.equal(rejected.body.error.code, 'GlobalStackRouteNotImplemented');
+  }
+  assert.deepEqual(visible((await f.management('GET', path)).body), before501);
+  assert.equal((await f.management('PATCH', `${accountId(account)}`, { tags: {} })).status, 400);
+
+  assert.equal((await f.management('PATCH', path, { properties: { allowSharedKeyAccess: true } })).status, 200);
+  const restored = await exchange(read);
+  assert.equal(restored.status, 200);
+  assert.equal(restored.body, 'kept bytes');
+});
+
 test('ARM shared-key setting blocks signed storage requests without disabling bearer access', async t => {
   const f = await fixture(t), account = 'tokenaccount', signed = await token();
   const operations = [
